@@ -1,0 +1,19 @@
+<li class="dropdown projects-menu">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        <i class="fa fa-exchange"></i> <span>{{ active }}</span>
+    </a>
+    <ul class="dropdown-menu">
+		<li class="header">{{ 'Your workspaces' |trans }}</li>
+		{% for workspace in workspaces %}
+		{% if not workspace.hidden %}
+		<li><a href="{{ path(workspace.homePage) }}">{{ workspace.title | trans({}, 'pages') }}</a></li>
+		{% endif %}
+		{% endfor %}
+		{% if hasProjects %}
+        <li class="header">{{ 'You are a member of:' |trans }}</li>
+		{% for project in projects %}
+        <li><a href="{{ path(project.route, {slug: project.slug }) }}">{{ project.translationKey | trans([ project.name ]) }}</a></li>
+		{% endfor %}
+		{% endif %}
+    </ul>
+</li>

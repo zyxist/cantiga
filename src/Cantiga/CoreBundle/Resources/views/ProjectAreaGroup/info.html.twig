@@ -1,0 +1,116 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ pageTitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ pageSubtitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+<div class="row" id="ppp">
+	<div class="col-md-7 col-sm-6 col-xs-12">
+		<h4>{{ 'Group details: 0' | trans([item.name]) }}</h4>
+		<div class="box">
+			<div class="box-body box-status">
+				<div class="status-line">
+					<div class="status-actions">
+						<div class="btn-group">
+							<button type="button" class="btn btn-default btn-sm">{{ 'Manage' | trans([], 'general') }}</button>
+							<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+								<span class="caret"></span>
+								<span class="sr-only">{{ 'Toggle dropdown' | trans([], 'general') }}</span>
+							</button>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="{{ spath('project_group_membership_index', {'id': item.id }) }}">{{ 'Members' | trans({}, 'general') }}</a></li>
+								<li><a href="{{ spath('project_area_group_edit', {'id': item.id }) }}">{{ 'Edit' | trans({}, 'general') }}</a></li>
+								<li><a href="{{ spath('project_area_group_remove', {'id': item.id }) }}">{{ 'Remove' | trans({}, 'general') }}</a></li>
+							</ul>
+						</div>
+						<a href="{{ spath('project_area_group_index') }}" class="btn btn-default btn-sm">{{ 'Back' | trans([], 'general') }}</a>
+					</div>
+				</div>
+				<div class="status-info">
+					<div class="info-item">
+						<h4><i class="fa fa-flag-o"></i> {{ 'Area number' | trans }}</h4>
+						<span class="value">{{ item.areaNum }}</span>
+					</div>
+					<div class="info-item">
+						<h4><i class="fa fa-user"></i> {{ 'Member number' | trans }}</h4>
+						<span class="value">{{ item.memberNum }}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="nav-tabs-custom">
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#areas" aria-controls="areas" role="tab" data-toggle="tab">{{ 'Areas' | trans }}</a></li>
+				<li><a href="#members" aria-controls="members" role="tab" data-toggle="tab">{{ 'Members' | trans([], 'general') }}</a></li>
+			</ul>
+			<div class="tab-content">
+				<div role="tabpanel" class="tab-pane active" id="areas">
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>{{ 'Area' | trans }}</th>
+								<th width="17%">{{ 'Status' | trans }}</th>
+								<th width="17%">{{ 'Territory' | trans }}</th>
+								<th width="17%">{{ 'Member number' | trans }}</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for area in custom.areas %}
+							<tr>
+								<td><a href="{{ spath('project_area_info', {'id': area.id}) }}">{{area.name}}</a></td>
+								<td><span class="label label-{{area.statusLabel}}">{{area.statusName | trans([], 'statuses')}}</span></td>
+								<td>{{area.territoryName}}</td>
+								<td>{{area.memberNum}}</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+				<div role="tabpanel" class="tab-pane" id="members">
+					<table class="table table-hover" id="member-table">
+						<thead>
+							<tr>
+								<th width="32"></th>
+								<th>{{ 'Name' | trans }}</th>
+								<th width="17%">{{ 'Location' | trans }}</th>
+								<th width="17%">{{ 'Public e-mail' | trans }}</th>
+								<th width="17%">{{ 'Telephone' | trans }}</th>
+								<th width="17%">{{ 'Note' | trans }}</th>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>						
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-5 col-sm-6 col-xs-12">
+		{{ custom.extensions | raw }}
+	</div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script src="{{ asset('js/jquery-ui.min.js') }}"></script>
+	<script src="{{ asset('js/members-display.js') }}"></script>
+{% endblock %}
+
+{% block javascripts_inline %}
+	<script type="text/javascript">
+	$(document).ready(function() {
+		$('#member-table').membersDisplay({
+			url: '{{ spath('project_area_group_ajax_members', {'id': item.id}) }}',
+			table: '#member-table',
+			tab: 'members',
+			avatars: '{{ asset('ph') }}'
+		});
+	});
+	</script>
+{% endblock %}

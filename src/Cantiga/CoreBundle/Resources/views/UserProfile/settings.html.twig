@@ -1,0 +1,22 @@
+{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+
+{% block page_title %}
+	{{ 'Settings' | trans([], 'pages') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{'Your own profile' | trans([], 'pages') }}
+{% endblock %}
+
+{% block box_body %}
+{{ form_start(form) }}
+<div class="row">
+	<div class="col-md-6">
+		{{ form_row(form.settingsLanguage, { 'label_col': 4, 'widget_col': 8}) }}
+	</div>
+	<div class="col-md-6">
+		{{ form_row(form.settingsTimezone, { 'label_col': 4, 'widget_col': 8}) }}
+	</div>
+</div>
+{{ form_end(form) }}
+{% endblock %}

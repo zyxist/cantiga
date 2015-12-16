@@ -1,0 +1,11 @@
+{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+
+{% block page_title %}
+{{ 'Request area' | trans({}, 'pages') }}
+{% endblock %}
+
+{% block box_body %}
+	{{ form_start(form) }}
+	{{ form_row(form.name) }}
+	{{ form_end(form) }}
+{% endblock %}

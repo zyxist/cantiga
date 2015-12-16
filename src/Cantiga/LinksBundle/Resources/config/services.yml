@@ -1,0 +1,21 @@
+imports:
+    - { resource: ../../../../../app/config/parameters.yml }
+
+services:
+    cantiga.links.repo.links:
+        class:     Cantiga\LinksBundle\Repository\LinkRepository
+        arguments: ["@database_connection", "@cantiga.transaction"]
+    cantiga.links.dashboard:
+        class:     Cantiga\LinksBundle\Extension\DashboardExtension
+        arguments: ["@cantiga.links.repo.links"]
+        tags:
+            - { name: cantiga.extension, point: core.dashboard.user.right }
+            - { name: cantiga.extension, point: core.dashboard.admin.right }
+            - { name: cantiga.extension, point: core.dashboard.project.right, module: links }
+            - { name: cantiga.extension, point: core.dashboard.group.right, module: links }
+            - { name: cantiga.extension, point: core.dashboard.area.right, module: links }
+    cantiga.links.workspace_listener:
+        class: Cantiga\LinksBundle\EventListener\WorkspaceListener
+        tags:
+            - { name: kernel.event_listener, event: cantiga.workspace.project, method: onProjectWorkspace }
+            - { name: kernel.event_listener, event: cantiga.workspace.admin, method: onAdminWorkspace }

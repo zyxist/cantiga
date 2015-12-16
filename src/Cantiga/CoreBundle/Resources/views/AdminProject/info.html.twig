@@ -1,0 +1,52 @@
+{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+
+{% block box_header %}
+	<h4>{{ 'Details: 0' | trans([item.name], 'general') }}</h4>
+{% endblock %}
+
+{% block box_body %}
+<table class="table table-hover">
+	<tbody>
+		<tr>
+			<td width="30%">{{ 'Name' | trans }}</td>
+			<td>{{ item.name }}</td>
+		</tr>
+		<tr>
+			<td width="30%">{{ 'Description' | trans }}</td>
+			<td>{{ item.description }}</td>
+		</tr>
+		<tr>
+			<td width="30%">{{ 'Created at' | trans }}</td>
+			<td>{{ format_time(TimeFormatter.FORMAT_DATE_LONG, item.createdAt) }} ({{ ago(item.createdAt) }})</td>
+		</tr>
+		{% if item.parentProject %}
+		<tr>
+			<td width="30%">{{ 'Parent project' | trans }}</td>
+			<td><a href="{{ path('admin_archived_project_info', {'id': item.id }) }}">{{ item.parentProject.name }}</a></td>
+		</tr>
+		{% endif %}
+		<tr>
+			<td width="30%">{{ 'Modules' | trans }}</td>
+			<td><ul>{% for module in item.modules %}
+					<li>{{ module_name(module) }}</li>
+				{% endfor %}</ul>
+			</td>
+		</tr>
+		<tr>
+			<td width="30%">{{ 'Areas allowed?' | trans }}</td>
+			<td>{{ boolean_mark(item.areasAllowed) }}</td>
+		</tr>
+		<tr>
+			<td width="30%">{{ 'Area registration allowed?' | trans }}</td>
+			<td>{{ boolean_mark(item.areaRegistrationAllowed) }}</td>
+		</tr>
+	</tbody>
+</table>
+{% endblock %}
+
+{% block box_footer %}
+<p>
+	<a href="{{ path('admin_project_index') }}" class="btn btn-default btn-sm" role="button">{{ 'Back' | trans({}, 'general') }}</a>
+	<a href="{{ path('admin_project_edit', {'id': item.id }) }}" class="btn btn-warning btn-sm" role="button">{{ 'Edit' | trans({}, 'general') }}</a>
+</p>
+{% endblock %}

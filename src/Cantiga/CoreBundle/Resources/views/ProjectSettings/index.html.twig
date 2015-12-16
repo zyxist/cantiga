@@ -1,0 +1,37 @@
+{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+
+{% block page_title %}
+{{ project.name }}
+{% endblock %}
+
+
+{% block page_subtitle %}
+{{ 'Manage project settings' | trans({}, 'pages') }}
+{% endblock %}
+
+{% block box_body %}
+	{{ form_start(form) }}
+	{% for module, settings in projectSettings %}
+	<fieldset>
+		{% if module == 'core' %}
+		<legend>{{ 'Core settings' | trans }}</legend>
+		{% else %}
+		<legend>{{ modules[module].name | trans }}</legend>
+		{% endif %}
+		{% for row in settings | batch(2) %}
+		<div class="row">
+			{% for setting in row %}
+			<div class="col-md-6">
+				{{ form_row(form.offsetGet(setting.key)) }}
+			</div>
+			{% endfor %}
+		</div>
+		{% endfor %}
+	</fieldset>
+	{% endfor %}
+	{{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts_inline %}
+{{ use_icheck() }}
+{% endblock %}

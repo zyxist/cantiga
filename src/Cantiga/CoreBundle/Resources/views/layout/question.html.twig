@@ -1,0 +1,28 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ pageTitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ pageSubtitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+	<div class="col-md-offset-4 col-md-4">
+	<div class="box box-warning">
+		<div class="box-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span></button>
+			<h4 class="panel-title">{{ questionTitle }}</h4>
+		</div>
+		<div class="box-body">
+			<p>{{ question }}</p>
+		</div>
+		<div class="box-footer">
+			<a href="{{successPath|raw}}" role="button" class="btn btn-primary pull-left">{{successBtn}}</a>
+			<a href="{{failurePath|raw}}" role="button" class="btn btn-default pull-right">{{failureBtn}}</a>
+		</div>
+	</div>
+	</div>
+{% endblock %}

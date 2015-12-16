@@ -1,0 +1,53 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ pageTitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ pageSubtitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+	<div class="row">
+	{% for request in requests %}
+		<div class="col-md-4 col-xs-12">
+			<div class="box box-{{request.statusLabel}}">
+				<div class="box-header with-border">
+					<h3 class="box-title">{{ request.name }}</h3>
+					<div class="box-tools pull-right">
+						<span class="label label-{{ request.statusLabel }}">{{ request.statusText | trans({}, 'statuses') }}</span>
+					</div>
+				</div>
+				<div class="box-body no-padding">
+					<table class="table table-condensed">
+						<tbody>
+							<tr>
+								<td width="30%">{{ 'Project' | trans }}</td>
+								<td>{{ request.projectName }}</td>
+							</tr>
+							<tr>
+								<td width="30%">{{ 'Request date' | trans }}</td>
+								<td>{{ ago(request.createdAt) }}</td>
+							</tr>
+							<tr>
+								<td width="30%">{{ 'Last update' | trans }}</td>
+								<td>{{ ago(request.lastUpdatedAt) }}</td>
+							</tr>
+							<tr>
+								<td width="30%">{{ 'Comments' | trans }}</td>
+								<td>{{ request.commentNum }}</td>
+							</tr>
+						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="2"><a class="btn btn-primary btn-xs" href="{{path('user_area_request_info', {'id': request.id }) }}">{{ 'Choose' | trans({}, 'general') }}</a></td>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>
+		</div>
+	{% endfor %}
+	</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+imports:
+    - { resource: ../../../../../app/config/parameters.yml }
+
+parameters:
+    mail_db_loader.class: Cantiga\CoreBundle\Mail\MailDatabaseLoader
+    mail_twig_extension.class: Cantiga\CoreBundle\Twig\CantigaMailExtension
+    twig.class: Twig_Environment
+    mail_sender.class: Cantiga\CoreBundle\Mail\MailSender
+    mailing_listener.class: Cantiga\CoreBundle\EventListener\MailingListener
+services:
+    cantiga.mail.db_loader:
+        class:     "%mail_db_loader.class%"
+        arguments: ["@database_connection", "@=service('cantiga.locale').getLocale()"]
+    cantiga.mail.twig_extension:
+        class:     "%mail_twig_extension.class%"
+        arguments: ["@router", "@cantiga.time", "@translator"]
+    cantiga.mail.templates:
+        class:     "%twig.class%"
+        arguments: ["@cantiga.mail.db_loader", [cache: "%kernel.cache_dir%/mail" ]]
+        calls:
+            - [addExtension, ["@cantiga.mail.twig_extension"]]
+    cantiga.mail.sender:
+        class:     "%mail_sender.class%"
+        arguments: ["@mailer", "@cantiga.mail.db_loader", "@cantiga.mail.templates", "@logger", "%sourceMail%"]
+    cantiga.mail_listener:
+        class:     "%mailing_listener.class%"
+        arguments: ["@cantiga.mail.sender"]
+        tags:
+            - { name: kernel.event_listener, event: cantiga.user.registration, method: onUserRegistration }
+            - { name: kernel.event_listener, event: cantiga.user.password-recovery, method: onPasswordRecovery }
+            - { name: kernel.event_listener, event: cantiga.user.password-recovery-completed, method: onPasswordRecoveryCompleted }
+            - { name: kernel.event_listener, event: cantiga.user.credential-change, method: onCredentialChange }
+            - { name: kernel.event_listener, event: cantiga.invitation.created, method: onInvitation }
+            - { name: kernel.event_listener, event: cantiga.area-request.verification, method: onAreaRequestVerification }
+            - { name: kernel.event_listener, event: cantiga.area-request.revoked, method: onAreaRequestRevoked }
+            - { name: kernel.event_listener, event: cantiga.area-request.approved, method: onAreaRequestApproved }

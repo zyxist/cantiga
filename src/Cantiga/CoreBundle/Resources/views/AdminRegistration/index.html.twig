@@ -1,0 +1,31 @@
+{% extends 'CantigaCoreBundle:layout:list-layout.html.twig' %}
+
+{% block column_list %}
+<tr>
+	<th width="30">#</th>
+	<th>{{ 'Name' | trans }}</th>
+	<th width="150">{{ 'Login' | trans }}</th>
+	<th width="110">{{ 'Registered at' | trans }}</th>
+	<th width="110">{{ 'IP address' | trans }}</th>
+	<th width="120">{{ 'Actions' | trans({}, 'general') }}</th>
+</tr>
+{% endblock %}
+
+{% block box_footer %}
+<p>
+	<a href="{{ path('admin_registration_prune') }}" class="btn btn-success btn-sm" role="button">{{ 'Prune' | trans({}, 'general') }}</a>
+</p>
+{% endblock %}
+
+{% block custom_datatable_config %}
+	ajax: "{{ path('admin_registration_ajax_list') }}",
+	columnDefs: [
+		{{ dt_col_link(dataTable, 'name', 'info_link') }}
+		{{ dt_col_rewrite(dataTable, 'requestTime', 'requestTimeFormatted') }}
+		{{ dt_col_rewrite(dataTable, 'requestIp', 'requestIpFormatted') }}
+		{{ dt_actions(dataTable, [
+			{ 'link': 'info_link', 'name': 'Info' | trans({}, 'general'), 'label': 'btn-primary' },
+			{ 'link': 'remove_link', 'name': 'Remove' | trans({}, 'general'), 'label': 'btn-danger' },
+		]) }}
+	]
+{% endblock %}

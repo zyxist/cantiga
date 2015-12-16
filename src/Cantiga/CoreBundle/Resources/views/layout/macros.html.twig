@@ -1,0 +1,108 @@
+{% block box_collapse %}
+    <button class="btn btn-{{ type|default('info') }} btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+{% endblock %}
+{% block box_remove %}
+    <button class="btn btn-{{ type|default('info') }} btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
+{% endblock %}
+
+{% block box_header_buttons %}
+    {% if collapse or remove %}
+        <div class="box-tools pull-right">
+            {% if collapse %}
+                {{ block('box_collapse') }}
+            {% endif %}
+            {% if remove %}
+                {{ block('box_remove') }}
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% macro box_header(title, collapse, remove, type) %}
+
+    <div class="box-header">
+        <h3 class="box-title">{{ title }}</h3>
+        {{ block('box_header_buttons') }}
+    </div>
+{% endmacro %}
+
+{% macro menu_item(item) %}
+    <li id="{{ item.identifier }}" class=" {{ item.isActive ? 'active' : '' }} {{ item.hasChildren? 'treeview' : '' }}">
+        <a href="{{ item.hasChildren ? '#': '/' in item.route ? item.route : path(item.route, item.routeArgs) }}">
+            {% if item.icon %} <i class="{{ item.icon }}"></i> {% endif %}
+            <span>{{ item.label }}</span>
+            {% if item.badge %}
+                <small class="label pull-right bg-{{ item.badgeColor }}">{{ item.badge }}</small>
+            {% endif %}
+            {% if item.hasChildren %}<i class="fa fa-angle-left pull-right"></i>{% endif %}
+        </a>
+
+        {% if item.hasChildren %}
+            <ul class="treeview-menu">
+                {% for child in item.children %}
+                    <li class="{{ child.isActive ? 'active':'' }}" id="{{ child.identifier }}">
+                        <a href="{{ '/' in child.route ? child.route : path(child.route, child.routeArgs) }}">
+                            <i class="fa fa-circle-o"></i>
+                            {{ child.label }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </li>
+{% endmacro %}
+
+{% macro hint_box(hintText) %}
+<div class="row">
+	<div class="col-md-6">
+		<div class="box box-solid">
+			<div class="box-header with-border">
+				<i class="fa fa-info"></i>
+				<h3 class="box-title">{{ 'Please note that...' | trans([], 'general') }}</h3>
+			</div>
+			<div class="box-body">
+				<p>{{ hintText | raw }}</p>
+			</div>
+		</div>
+	</div>
+</div>
+{% endmacro %}
+
+{% macro message_box(messageText) %}
+	<div class="col-md-6">
+		<div class="box box-solid">
+			<div class="box-header with-border">
+				<i class="fa fa-info"></i>
+				<h3 class="box-title">{{ 'Message' | trans([], 'general') }}</h3>
+			</div>
+			<div class="box-body">
+				<p>{{ messageText | raw }}</p>
+			</div>
+		</div>
+	</div>
+{% endmacro %}
+
+{% macro chat_box(title, idPrefix) %}
+		<div class="box box-primary direct-chat direct-chat-primary">
+			<div class="box-header with-border">
+				<h3 class="box-title">{{ title }}</h3>
+				<div class="box-tools pull-right">
+					<span id="{{ idPrefix }}-summary" class="badge bg-light-blue"></span>
+					<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+				</div>
+			</div>
+			<div class="box-body">
+				<div class="direct-chat-messages" id="{{ idPrefix }}-body"></div>
+			</div>
+			<div class="box-footer">
+				<form method="post" id="{{ idPrefix }}-form">
+					<div class="input-group">
+						<input type="text" name="message" placeholder="{{ 'Type Message ...' | trans({}, 'general') }}" class="form-control">
+						<span class="input-group-btn">
+							<button type="submit" class="btn btn-primary btn-flat">{{ 'Send' | trans({}, 'general') }}</button>
+						</span>
+					</div>
+				</form>
+			</div>
+		</div>
+{% endmacro %}

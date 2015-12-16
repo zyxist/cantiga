@@ -1,0 +1,13 @@
+{% for group in formRenderer %}
+<fieldset>
+	<legend>{{ group.name | trans }}</legend>
+	{% if group.description %}<p>{{ group.description | trans | raw }}</p>{% endif %}
+	<div class="row">
+		{% for field in group.fields %}
+			<div class="col-md-6 col-xs-12">
+				{{ form_row(form.customData.offsetGet(field)) }}
+			</div>
+		{% endfor %}
+	</div>
+</fieldset>
+{% endfor %}

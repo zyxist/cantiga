@@ -1,0 +1,69 @@
+{% extends 'CantigaCoreBundle:layout:login-layout.html.twig' %}
+
+{% block javascripts_inline %}
+	<script>
+	  $(function () {
+		$('input').iCheck({
+		  checkboxClass: 'icheckbox_square-blue',
+		  radioClass: 'iradio_square-blue',
+		  increaseArea: '20%' // optional
+		});
+	  });
+	</script>
+{% endblock %}
+
+{% block page_title %}
+	Cantiga Project
+{% endblock %}
+
+{% block page_content %}
+	<div class="login-container">
+			<div class="login-logo">
+				<img src="{{ asset(Branding.LOGO_FILE) }}" width="42" />
+				<a href="{{ path('cantiga_auth_login') }}">{{ Branding.APP_NAME }}</a>
+			</div><!-- /.login-logo -->
+		<div class="login-box login-left">
+			<div class="login-box-body">
+				{% if error %}
+					<div class="alert alert-danger" role="alert">{{ error.message |trans({}, 'messages') }}</div>
+				{% endif %}
+				<p class="login-box-msg">{{ 'Please log in' |trans }}</p>
+				<form action="{{ path(authCheckRoute) }}" method="post">
+					<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" >
+					<div class="form-group has-feedback">
+						<input type="text" name="_username" class="form-control" placeholder="{{ 'Login' |trans }}">
+						<span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+					</div>
+					<div class="form-group has-feedback">
+						<input type="password" name="_password" class="form-control" placeholder="{{ 'Password' |trans }}">
+						<span class="glyphicon glyphicon-lock form-control-feedback"></span>
+					</div>
+					<div class="row">
+						<div class="col-xs-8">
+							<div class="checkbox icheck">
+								<label>
+									<input type="checkbox" name="_remember_me"> {{ 'Remember me' |trans }}
+								</label>
+							</div>
+						</div><!-- /.col -->
+						<div class="col-xs-4">
+							<button type="submit" class="btn btn-primary btn-block btn-flat">{{ 'Enter' |trans }}</button>
+						</div><!-- /.col -->
+					</div>
+				</form>
+
+				<a href="{{ path('cantiga_auth_recovery') }}">{{ 'I forgot my password' |trans }}</a><br>
+				<a href="{{ path('cantiga_auth_register') }}" class="text-center">{{ 'Create account' |trans }}</a>
+			</div>
+		</div>
+		<div class="login-info">
+			{{ text.content | raw }}
+		</div>
+		<div class="login-bottom">
+			<p>{% for lang in languages %}<a href="{{ path('cantiga_auth_login', {'_locale': lang} ) }}">{{ lang | upper }}</a>{% if not loop.last %} &bull; {% endif %}{% endfor %}</p>
+		</div>
+		<div class="login-bottom">
+			<p>{{ 'CookieUsageInfoText' | trans }}</p>
+		</div>
+	</div>
+{% endblock %}

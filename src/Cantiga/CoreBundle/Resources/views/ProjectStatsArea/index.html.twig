@@ -1,0 +1,44 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ 'Area statistics' | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ 'Analyze the data through charts' | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+<div class="row">
+	{% for placeholder in output %}
+	<div class="col-md-6 col-xs-12">
+		<div class="box box-success">
+			<div class="box-header with-border">
+				<h3 class="box-title">{{ placeholder.title | trans }}</h3>
+
+				<div class="box-tools pull-right">
+					<button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+					</button>
+					<button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+				</div>
+			</div>
+			<div class="box-body">
+				{{ placeholder.html | raw }}
+			</div>
+		</div>
+	</div>
+	{% endfor %}
+</div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script src="{{ asset('js/Chart.min.js') }}"></script>
+	<script src="{{ asset('js/Chart.StackedBar.js') }}"></script>
+{% endblock %}
+
+{% block javascripts_inline %}
+{% for placeholder in output %}
+	{{ placeholder.js | raw }}
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,6 @@
+<h4>{{ 'Important links' | trans([], 'pages') }}</h4>
+<div class="list-group">
+	{% for link in links %}
+	<a href="{{link.url}}" class="list-group-item">{{link.name}}</a>
+	{% endfor %}
+</div>

@@ -1,0 +1,28 @@
+{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+
+{% block box_header %}
+	<h4>{{ 'Create' | trans([], 'general') }}</h4>
+{% endblock %}
+
+{% block box_body %}
+	{{ form_start(form) }}
+	<div class="row">
+		<div class="col-md-6 col-xs-12">
+			{{ form_row(form.name) }}
+		</div>
+		<div class="col-md-6 col-xs-12">
+			{{ form_row(form.url) }}
+		</div>
+		<div class="col-md-6 col-xs-12">
+			{{ form_row(form.presentedTo) }}
+		</div>
+		<div class="col-md-6 col-xs-12">
+			{{ form_row(form.listOrder) }}
+		</div>
+	</div>
+	{{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts_inline %}
+{{ use_icheck() }}
+{% endblock %}

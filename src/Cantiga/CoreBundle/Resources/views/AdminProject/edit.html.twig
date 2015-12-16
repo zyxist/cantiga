@@ -1,0 +1,42 @@
+{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+
+{% block box_body %}
+	{{ form_start(form) }}
+	<div class="row">
+		<div class="col-md-7">
+			{{ form_row(form.name) }}
+		</div>
+		<div class="col-md-5">
+			{{ form_row(form.areasAllowed) }}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-7">
+			{{ form_row(form.description) }}
+		</div>
+		<div class="col-md-5">
+			{{ form_row(form.areaRegistrationAllowed) }}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-7">
+			{{ form_row(form.parentProject) }}
+		</div>
+		<div class="col-md-5">
+			
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-7">
+			{{ form_row(form.modules) }}
+		</div>
+		<div class="col-md-5">
+			
+		</div>
+	</div>
+	{{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts_inline %}
+{{ use_icheck() }}
+{% endblock %}

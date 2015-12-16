@@ -1,0 +1,43 @@
+{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+
+{% block box_header %}
+	<h3>{{ 'Create new application text' | trans }}</h3>
+	<p>{{ 'To create different language versions of the same text, create multiple application texts assigned to the same place, but with different locale code.' | trans }}</p>
+{% endblock %}
+
+{% block box_body %}
+	{{ form_start(form) }}
+	<div class="row">
+		<div class="col-md-3 col-xs-12">
+			{{ form_row(form.place, { 'label_col': 4, 'widget_col': 8}) }}
+		</div>
+		<div class="col-md-6 col-xs-12">
+			{{ form_row(form.title, { 'label_col': 4, 'widget_col': 8}) }}
+		</div>
+		<div class="col-md-3 col-xs-12">
+			{{ form_row(form.locale, { 'label_col': 4, 'widget_col': 8}) }}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12 col-xs-12">
+			{{ form_row(form.content, { 'label_col': 4, 'widget_col': 8, 'id': 'content'}) }}
+		</div>
+	</div>
+	{{ form_end(form) }}
+{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" href="{{ asset('css/bootstrap3-wysihtml5.min.css') }}" />
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script src="{{ asset('js/bootstrap3-wysihtml5.all.min.js') }}"></script>
+{% endblock %}
+
+{% block javascripts_inline %}
+	<script>
+		$('#content').wysihtml5();
+	</script>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+
+{% block page_title %}
+	{{ 'Manage photo' | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{'Your own profile' | trans({}, 'pages') }}
+{% endblock %}
+{% block page_content %}
+<div class="row">
+	<div class="col-md-6">
+		<div class="box">
+			<div class="box-header with-border">
+				<h3 class="box-title">{{ 'Current photo' | trans }}</h3>
+			</div>
+			<div class="box-body">
+				<p class="text-center"><img class="img img-circle" src="{{ asset(avatar(user)) }}" /></p>
+				
+				<p>{{ 'PhotoUsageText' | trans }}</p>
+				<p>{{ 'PhotoUploadRulesText' | trans}}</p>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="box">
+			<div class="box-header with-border">
+				<h3 class="box-title">{{ 'Upload new photo' | trans }}</h3>
+			</div>
+			<div class="box-body">
+				{{ form_start(form) }}
+				{{ form_row(form.photo, { 'label_col': 4, 'widget_col': 4}) }}
+				{{ form_end(form) }}
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

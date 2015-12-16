@@ -1,0 +1,28 @@
+{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+
+{% block box_header %}
+	<h3>{{ 'Create new mail template' | trans }}</h3>
+	<p>{{ 'To create different language versions of the same mail message, create multiple mail templates assigned to the same place, but with different locale code.' | trans }}</p>
+	<p>{{ 'The content must be composed in Twig templating language syntax.' | trans }} <a href="http://twig.sensiolabs.org/doc/templates.html">{{ 'Twig for template designers' | trans }}</a></p>
+{% endblock %}
+
+{% block box_body %}
+	{{ form_start(form) }}
+	<div class="row">
+		<div class="col-md-3 col-xs-12">
+			{{ form_row(form.place, { 'label_col': 4, 'widget_col': 8}) }}
+		</div>
+		<div class="col-md-6 col-xs-12">
+			{{ form_row(form.subject, { 'label_col': 4, 'widget_col': 8}) }}
+		</div>
+		<div class="col-md-3 col-xs-12">
+			{{ form_row(form.locale, { 'label_col': 4, 'widget_col': 8}) }}
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12 col-xs-12">
+			{{ form_row(form.content, { 'label_col': 4, 'widget_col': 8, 'id': 'content'}) }}
+		</div>
+	</div>
+	{{ form_end(form) }}
+{% endblock %}

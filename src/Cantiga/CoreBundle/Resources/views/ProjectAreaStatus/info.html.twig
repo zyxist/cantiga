@@ -1,0 +1,40 @@
+{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+
+{% block box_header %}
+	<h4>{{ 'Details: 0' | trans([item.name], 'general') }}</h4>
+{% endblock %}
+
+{% block box_body %}
+<table class="table table-hover">
+	<tbody>
+		<tr>
+			<td width="30%">{{ 'Name' | trans }}</td>
+			<td>{{ item.name }}</td>
+		</tr>
+		<tr>
+			<td width="30%">{{ 'Translation to current language' | trans }}</td>
+			<td>{{ item.name | trans([], 'statuses') }}</td>
+		</tr>
+		<tr>
+			<td width="30%">{{ 'CSS Label' | trans }}</td>
+			<td><span class="label label-{{item.label}}">{{ item.label }}</span></td>
+		</tr>
+		<tr>
+			<td width="30%">{{ 'Is default?' | trans }}</td>
+			<td>{{ boolean_mark(item.isDefault) }}</td>
+		</tr>
+		<tr>
+			<td width="30%">{{ 'Area number' | trans }}</td>
+			<td>{{ item.areaNum }}</td>
+		</tr>
+	</tbody>
+</table>
+{% endblock %}
+
+{% block box_footer %}
+<p>
+	<a href="{{ spath('project_area_status_index') }}" class="btn btn-default btn-sm" role="button">{{ 'Back' | trans({}, 'general') }}</a>
+	<a href="{{ spath('project_area_status_edit', {'id': item.id }) }}" class="btn btn-warning btn-sm" role="button">{{ 'Edit' | trans({}, 'general') }}</a>
+	<a href="{{ spath('project_area_status_remove', {'id': item.id }) }}" class="btn btn-danger btn-sm" role="button">{{ 'Remove' | trans({}, 'general') }}</a>
+</p>
+{% endblock %}

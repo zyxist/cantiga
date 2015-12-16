@@ -1,0 +1,28 @@
+{% extends 'CantigaCoreBundle:layout:list-layout.html.twig' %}
+
+{% block column_list %}
+<tr>
+	<th width="30">#</th>
+	<th width="25%">{{ 'Place' | trans }}</th>
+	<th>{{ 'Title' | trans }}</th>
+	<th width="140">{{ 'Locale' | trans }}</th>
+	<th width="120">{{ 'Actions' | trans({}, 'general') }}</th>
+</tr>
+{% endblock %}
+
+{% block box_footer %}
+<p>
+	<a href="{{ spath(insertPage) }}" class="btn btn-success btn-sm" role="button">{{ 'Insert' | trans({}, 'general') }}</a>
+</p>
+{% endblock %}
+
+{% block custom_datatable_config %}
+	ajax: "{{ spath(ajaxListPage) }}",
+	columnDefs: [
+		{{ dt_actions(dataTable, [
+			{ 'link': 'info_link', 'name': 'Info' | trans({}, 'general'), 'label': 'btn-primary' },
+			{ 'link': 'edit_link', 'name': 'Edit' | trans({}, 'general'), 'label': 'btn-warning' },
+			{ 'link': 'remove_link', 'name': 'Remove' | trans({}, 'general'), 'label': 'btn-danger' },
+		]) }}
+	]
+{% endblock %}

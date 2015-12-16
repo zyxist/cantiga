@@ -1,0 +1,24 @@
+{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+
+{% block box_body %}
+	{{ form_start(form) }}
+	<div class="row">
+		<div class="col-md-6 col-xs-12">
+			{{ form_row(form.name) }}
+		</div>
+		<div class="col-md-6 col-xs-12">
+			{{ form_row(form.email) }}
+		</div>
+		<div class="col-md-6 col-xs-12">
+			{{ form_row(form.active) }}
+		</div>
+		<div class="col-md-6 col-xs-12">
+			{{ form_row(form.admin) }}
+		</div>
+	</div>
+	{{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts_inline %}
+{{ use_icheck() }}
+{% endblock %}

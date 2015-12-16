@@ -1,0 +1,276 @@
+<?php
+namespace Cantiga\CoreBundle\Twig;
+
+use Cantiga\Branding;
+use Cantiga\CoreBundle\Api\Modules;
+use Cantiga\CoreBundle\Api\Workspaces;
+use Cantiga\CoreBundle\Api\WorkspaceSourceInterface;
+use Cantiga\CoreBundle\Block\BlockLauncherInterface;
+use Cantiga\CoreBundle\Entity\User;
+use Cantiga\Metamodel\DataTable;
+use Cantiga\Metamodel\MembershipToken;
+use Cantiga\Metamodel\TimeFormatterInterface;
+use ReflectionClass;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Serializer\Exception\LogicException;
+use Twig_Extension;
+use Twig_SimpleFunction;
+
+
+/**
+ * Exposes cantiga-specific helpers to Twig
+ *
+ * @author Tomasz Jędrzejewski
+ */
+class CantigaExtension extends Twig_Extension
+{
+	/**
+	 * @var WorkspaceSourceInterface 
+	 */
+	private $workspaceSource;
+	/**
+	 * @var TimeFormatterInterface 
+	 */
+	private $timeFormatter;
+	/**
+	 * @var TokenStorageInterface
+	 */
+	private $tokenStorage;
+	/**
+	 * @var RouterInterface
+	 */
+	private $router;
+	/**
+	 * @var BlockLauncherInterface
+	 */
+	private $blockLauncher;
+	
+	public function __construct(WorkspaceSourceInterface $workspaceSource, TimeFormatterInterface $timeFormatter, TokenStorageInterface $tokenStorage, RouterInterface $router, BlockLauncherInterface $blockLauncher)
+	{
+		$this->workspaceSource = $workspaceSource;
+		$this->timeFormatter = $timeFormatter;
+		$this->tokenStorage = $tokenStorage;
+		$this->router = $router;
+		$this->blockLauncher = $blockLauncher;
+	}
+	
+	public function getName()
+	{
+		return 'cantiga';
+	}
+	
+	public function getGlobals()
+	{
+        $tf = new ReflectionClass(TimeFormatterInterface::class);
+		$br = new ReflectionClass(Branding::class);
+		$tfConstants = $tf->getConstants();
+		$brConstants = $br->getConstants();
+
+		return array('TimeFormatter' => $tfConstants, 'Branding' => $brConstants);
+	}
+	
+	public function getFunctions()
+	{
+		return array(
+			new Twig_SimpleFunction('dt_columns', [$this, 'dataTableColumns'], array('is_safe' => array('html'))),
+			new Twig_SimpleFunction('dt_actions', [$this, 'dataTableActions'], array('is_safe' => array('html'))),
+			new Twig_SimpleFunction('dt_col_link', [$this, 'dataTableLink'], array('is_safe' => array('html'))),
+			new Twig_SimpleFunction('dt_col_label', [$this, 'dataTableLabel'], array('is_safe' => array('html'))),
+			new Twig_SimpleFunction('dt_col_rewrite', [$this, 'dataTableRewrite'], array('is_safe' => array('html'))),
+			new Twig_SimpleFunction('dt_col_boolean', [$this, 'dataTableBoolean'], array('is_safe' => array('html'))),
+			new Twig_SimpleFunction('avatar', [$this, 'avatar']),
+			new Twig_SimpleFunction('format_time', [$this, 'formatTime']),
+			new Twig_SimpleFunction('format_date', [$this, 'formatDate']),
+			new Twig_SimpleFunction('ago', [$this, 'ago']),
+			new Twig_SimpleFunction('workspace_skin', [$this, 'workspaceSkin']),
+			new Twig_SimpleFunction('use_icheck', [$this, 'useICheck'], array('is_safe' => array('html'))),
+			new Twig_SimpleFunction('boolean_mark', [$this, 'booleanMark'], array('is_safe' => array('html'))),
+			new Twig_SimpleFunction('empty_boolean_mark', [$this, 'emptyBooleanMark'], array('is_safe' => array('html'))),
+			new Twig_SimpleFunction('callback_transform', [$this, 'callbackTransform'], array('is_safe' => array('html'))),
+			new Twig_SimpleFunction('spath', [$this, 'spath']),
+			new Twig_SimpleFunction('launch', [$this, 'launch'], array('is_safe' => array('html'))),
+			new Twig_SimpleFunction('module_name', function($id) {
+				$module = Modules::get($id);
+				return $module['name'];
+			}),
+		);
+	}
+	
+	public function dataTableColumns(DataTable $dt, $useActionColumn = true)
+	{
+		$data = [];
+		$id = null;
+		foreach ($dt->getColumnDefinitions() as $column) {
+			if ($column['type'] == DataTable::TYPE_ID) {
+				$id = $column['name'];
+			}
+			$data[] = ['data' => $column['name']];
+		}
+		if ($useActionColumn && null !== $id) {
+			$data[] = ['data' => $id];
+		}
+		return json_encode($data);
+	}
+	
+	public function dataTableActions(DataTable $dt, array $actions)
+	{
+		$code = '{ targets: '.$dt->columnCount().', render: function(data, type, row) { '."\n".'return ';
+		
+		$first = true;
+		foreach ($actions as $action) {
+			if (!isset($action['link']) || !isset($action['name']) || !isset($action['label'])) {
+				throw new LogicException('The action is missing one of the properties: link, name, label');
+			}
+			if (!$first) {
+				$code .= ' + ';
+			}
+			$first = false;
+			if (isset($action['when'])) {
+				$code .= '(row[\''.$action['when'].'\'] ? \'<a href="\' + row[\''.$action['link'].'\'] + \'" class="btn btn-xs '.$action['label'].'" role="button">'.$action['name'].'</a> \' : \'\') ';
+			} else {
+				$code .= '\'<a href="\' + row[\''.$action['link'].'\'] + \'" class="btn btn-xs '.$action['label'].'" role="button">'.$action['name'].'</a> \' ';
+			}
+		}
+		$code .= ";\n } }";
+		return $code;
+	}
+	
+	public function dataTableLink(DataTable $dt, $columnName, $linkName)
+	{
+		$i = 0;
+		foreach ($dt->getColumnDefinitions() as $column) {
+			if ($column['name'] == $columnName) {
+				return '{ targets: '.$i.', render: function(data, type, row) { return \'<a href="\'+row[\''.$linkName.'\']+\'">\'+row[\''.$columnName.'\']+\'</a>\'; } }, ';
+			}
+			$i++;
+		}
+		return '';
+	}
+	
+	public function dataTableRewrite(DataTable $dt, $columnName, $takeFrom)
+	{
+		$i = 0;
+		foreach ($dt->getColumnDefinitions() as $column) {
+			if ($column['name'] == $columnName) {
+				return '{ targets: '.$i.', render: function(data, type, row) { return row[\''.$takeFrom.'\']; } }, ';
+			}
+			$i++;
+		}
+		return '';
+	}
+	
+	public function dataTableLabel(DataTable $dt, $columnName, $takeText, $takeLabel)
+	{
+		$i = 0;
+		foreach ($dt->getColumnDefinitions() as $column) {
+			if ($column['name'] == $columnName) {
+				return '{ targets: '.$i.', render: function(data, type, row) { return \'<span class="label label-\'+row[\''.$takeLabel.'\']+\'">\'+row[\''.$takeText.'\']+\'</span>\'; } }, ';
+			}
+			$i++;
+		}
+		return '';
+	}
+	
+	public function dataTableBoolean(DataTable $dt, $columnName)
+	{
+		$i = 0;
+		foreach ($dt->getColumnDefinitions() as $column) {
+			if ($column['name'] == $columnName) {
+				return '{ targets: '.$i.', render: function(data, type, row) { return (row[\''.$columnName.'\'] == 1) ? \'<span class="glyphicon glyphicon-ok"></span>\' : \'\'; }, createdCell: function(td, cellData, rowData, row, col) { $(td).addClass(\'text-center\'); } }, ';
+			}
+			$i++;
+		}
+		return '';
+	}
+	
+	public function workspaceSkin()
+	{
+		$workspace = $this->workspaceSource->getWorkspace();
+
+		if (null !== $workspace) {
+			$workspaceInfo = Workspaces::get($workspace->getKey());
+			return !empty($workspaceInfo['skin']) ? $workspaceInfo['skin'] : 'blue';
+		}
+		return 'blue';
+	}
+	
+	public function spath($route, $args = [], $referenceType = null)
+	{
+		$token = $this->tokenStorage->getToken();
+		if ($token instanceof MembershipToken) {
+			$args['slug'] = $token->getMembershipEntity()->getSlug();
+		}
+		return $this->router->generate($route, $args, $referenceType);
+	}
+	
+	public function launch($blockName, $args = [])
+	{
+		return $this->blockLauncher->launchBlock($blockName, $args);
+	}
+	
+	public function formatTime($format, $utcTimestamp)
+	{
+		return $this->timeFormatter->format($format, $utcTimestamp);
+	}
+	
+	public function formatDate(array $date)
+	{
+		return $this->timeFormatter->formatDate($date);
+	}
+	
+	public function ago($utcTimestamp)
+	{
+		return $this->timeFormatter->ago($utcTimestamp);
+	}
+	
+	public function useICheck()
+	{
+		return '	<script>
+	  $(function () {
+		$(\'input\').iCheck({
+		  checkboxClass: \'icheckbox_square-blue\',
+		  radioClass: \'iradio_square-blue\'
+		});
+	  });
+	</script>';
+	}
+	
+	public function booleanMark($value)
+	{
+		if ($value) {
+			return '<span class="glyphicon glyphicon-ok"></span>';
+		} else {
+			return '<span class="glyphicon glyphicon-remove"></span>';
+		}
+	}
+	
+	public function emptyBooleanMark($value)
+	{
+		if ($value) {
+			return '<p class="text-center"><span class="glyphicon glyphicon-ok"></span></p>';
+		} 
+		return '';
+	}
+	
+	public function callbackTransform($value, $callback)
+	{
+		return $callback($value);
+	}
+	
+	public function avatar($user, $size = 128)
+	{
+		if (is_array($user)) {
+			$avatar = $user['avatar'];
+		} elseif ($user instanceof User) {
+			$avatar = $user->getAvatar();
+		}
+		if (!empty($avatar)) {
+			$firstTwo = substr($avatar, 0, 2);
+			$secondTwo = substr($avatar, 2, 2);
+			return '/ph/'.$size.'/'.$firstTwo.'/'.$secondTwo.'/'.$avatar;
+		} else {
+			return '/ph/default.gif';
+		}
+	}
+}

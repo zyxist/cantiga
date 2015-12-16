@@ -1,0 +1,30 @@
+{% import "CantigaCoreBundle:layout:macros.html.twig" as macro %}
+<!doctype html>
+<!--[if lt IE 7 ]><html lang="en" class="no-js ie6"> <![endif]-->
+<!--[if IE 7 ]><html lang="en" class="no-js ie7"> <![endif]-->
+<!--[if IE 8 ]><html lang="en" class="no-js ie8"> <![endif]-->
+<!--[if IE 9 ]><html lang="en" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--><html lang="en" class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta name="author" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>{% block title %}{{ Branding.APP_NAME }}{% endblock %}</title>
+    {% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}" />
+	<link rel="stylesheet" href="{{ asset('css/font-awesome.min.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/ionicons.min.css') }}">
+	<link rel="stylesheet" href="{{ asset('css/AdminLTE.min.css') }}" />
+	<link rel="stylesheet" href="{{ asset('css/skins/skin-'~workspace_skin()~'.min.css') }}" />
+	<link rel="stylesheet" href="{{ asset('css/blue.css') }}" />
+	<link rel="stylesheet" href="{{ asset('css/cantiga.css') }}" />
+    {% endblock %}
+    <link rel="icon" type="image/x-icon" href="{{ asset(Branding.LOGO_FILE) }}" />
+    {%  block javascripts_head %}
+    {% endblock %}
+</head>
+<body class="hold-transition login-page">
+    {% block page_content %}{% endblock %}
+</body>
+</html>

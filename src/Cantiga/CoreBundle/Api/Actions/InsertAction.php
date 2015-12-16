@@ -1,0 +1,104 @@
+<?php
+namespace Cantiga\CoreBundle\Api\Actions;
+
+use Cantiga\CoreBundle\Api\Controller\CantigaController;
+use Cantiga\Metamodel\Capabilities\InsertableEntityInterface;
+use Cantiga\Metamodel\CustomForm\CustomFormModelInterface;
+use Cantiga\Metamodel\Exception\ItemNotFoundException;
+use Cantiga\Metamodel\Exception\ModelException;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Serializer\Exception\LogicException;
+
+/**
+ * @author Tomasz Jędrzejewski
+ */
+class InsertAction extends AbstractAction
+{
+	private $insertOperation;
+	private $formType;
+	private $formBuilder;
+	private $customForm;
+	private $entity;
+	
+	public function __construct(CRUDInfo $crudInfo, $entity, AbstractType $formType)
+	{
+		$this->info = $crudInfo;
+		$this->entity = $entity;
+		$this->insertOperation = function($repository, $item) {
+			return $repository->insert($item);
+		};
+		$this->formBuilder = function($controller, $item, $formType, $action) use($formType) {
+			return $controller->createForm($formType, $item, array('action' => $action));
+		};
+	}
+	
+	public function insert($callback)
+	{
+		$this->insertOperation = $callback;
+		return $this;
+	}
+	
+	public function form($callback)
+	{
+		$this->formBuilder = $callback;
+		return $this;
+	}
+	
+	public function customForm(CustomFormModelInterface $customForm)
+	{
+		$this->customForm = $customForm;
+		return $this;
+	}
+		
+	public function run(CantigaController $controller, Request $request)
+	{
+		try {
+			$repository = $this->info->getRepository();
+			$item = $this->entity;			
+					
+			if (!$item instanceof InsertableEntityInterface) {
+				throw new LogicException('This entity does not support inserting.');
+			}
+			$call = $this->formBuilder;
+			$form = $call($controller, $item, $this->formType, $controller->generateUrl($this->info->getInsertPage(), $this->slugify()));
+			$form->handleRequest($request);
+			
+			if ($form->isValid()) {
+				$call = $this->insertOperation;
+				$id = $call($repository, $item);
+				
+				$nameProperty = 'get'.ucfirst($this->info->getItemNameProperty());
+				$name = $item->$nameProperty();
+				
+				$controller->get('session')->getFlashBag()->add('info', $controller->trans($this->info->getItemCreatedMessage(), [$name]));
+				return $controller->redirect($controller->generateUrl($this->info->getInfoPage(), $this->slugify(['id' => $id])));
+			}
+			
+			if ($this->hasBreadcrumbs()) {
+				$controller->breadcrumbs()->item($this->breadcrumbs);
+			} else {
+				$controller->breadcrumbs()->link($controller->trans('Insert', [], 'general'), $this->info->getInsertPage(), $this->slugify());
+			}
+			
+			$vars = $this->getVars();
+			$vars['pageTitle'] = $this->info->getPageTitle();
+			$vars['pageSubtitle'] = $this->info->getPageSubtitle();
+			$vars['item'] = $item;
+			$vars['form'] = $form->createView();
+			$vars['user'] = $controller->getUser();
+			$vars['formRenderer'] = (null !== $this->customForm ? $this->customForm->createFormRenderer() : null);
+			$vars['indexPage'] = $this->info->getIndexPage();
+			$vars['infoPage'] = $this->info->getInfoPage();
+			$vars['insertPage'] = $this->info->getInsertPage();
+			$vars['editPage'] = $this->info->getEditPage();
+			$vars['removePage'] = $this->info->getRemovePage();
+			
+			return $controller->render($this->info->getTemplateLocation().'insert.html.twig', $vars);
+		} catch(ItemNotFoundException $exception) {
+			return $this->onError($controller, $controller->trans($this->info->getItemNotFoundErrorMessage()));
+		} catch(ModelException $exception) {
+			return $this->onError($controller, $controller->trans($exception->getMessage()));
+		}
+	}
+}

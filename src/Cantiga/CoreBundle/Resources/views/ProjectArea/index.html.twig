@@ -1,0 +1,30 @@
+{% extends 'CantigaCoreBundle:layout:list-layout.html.twig' %}
+
+{% block column_list %}
+<tr>
+	<th width="30">#</th>
+	<th>{{ 'Name' | trans }}</th>
+	<th width="120">{{ 'Territory' | trans }}</th>
+	<th width="120">{{ 'Group' | trans }}</th>
+	<th width="120">{{ 'Status' | trans }}</th>
+	<th width="120">{{ 'Member number' | trans }}</th>
+	<th width="120">{{ 'Actions' | trans({}, 'general') }}</th>
+</tr>
+{% endblock %}
+
+{% block box_footer %}
+<p>
+	<a href="{{ spath('project_area_insert') }}" class="btn btn-success btn-sm" role="button">{{ 'Insert' | trans({}, 'general') }}</a>
+</p>
+{% endblock %}
+
+{% block custom_datatable_config %}
+	ajax: "{{ spath('project_area_ajax_list') }}",
+	columnDefs: [
+		{{ dt_col_label(dataTable, 'status', 'statusName', 'statusLabel') }}
+		{{ dt_actions(dataTable, [
+			{ 'link': 'info_link', 'name': 'Info' | trans({}, 'general'), 'label': 'btn-primary' },
+			{ 'link': 'edit_link', 'name': 'Edit' | trans({}, 'general'), 'label': 'btn-warning' }
+		]) }}
+	]
+{% endblock %}

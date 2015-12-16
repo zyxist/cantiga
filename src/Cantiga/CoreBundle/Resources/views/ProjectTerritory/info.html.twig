@@ -1,0 +1,34 @@
+{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+
+{% block box_header %}
+	<h4>{{ 'Details: 0' | trans([item.name], 'general') }}</h4>
+{% endblock %}
+
+{% block box_body %}
+<table class="table table-hover">
+	<tbody>
+		<tr>
+			<td width="30%">{{ 'Name' | trans }}</td>
+			<td>{{ item.name }}</td>
+		</tr>
+		<tr>
+			<td width="30%">{{ 'Area number' | trans }}</td>
+			<td>{{ item.areaNum }}</td>
+		</tr>
+		<tr>
+			<td width="30%">{{ 'Request number' | trans }}</td>
+			<td>{{ item.requestNum }}</td>
+		</tr>
+	</tbody>
+</table>
+{% endblock %}
+
+{% block box_footer %}
+<p>
+	<a href="{{ spath('project_territory_index') }}" class="btn btn-default btn-sm" role="button">{{ 'Back' | trans({}, 'general') }}</a>
+	<a href="{{ spath('project_territory_edit', {'id': item.id }) }}" class="btn btn-warning btn-sm" role="button">{{ 'Edit' | trans({}, 'general') }}</a>
+	{% if item.canRemove() %}
+	<a href="{{ spath('project_territory_remove', {'id': item.id }) }}" class="btn btn-danger btn-sm" role="button">{{ 'Remove' | trans({}, 'general') }}</a>
+	{% endif %}
+</p>
+{% endblock %}

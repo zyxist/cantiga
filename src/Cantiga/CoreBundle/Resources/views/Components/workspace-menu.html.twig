@@ -1,0 +1,28 @@
+<ul class="sidebar-menu">
+	<li class="header">{{ workspaceInfo.title | trans({}, 'pages') }}</li>
+	<li><a href="{{ spath(workspaceInfo.homePage) }}">
+			<i class="fa fa-dashboard"></i> <span>{{ 'Dashboard' | trans({}, 'pages') }}</span>
+		</a></li>
+	{% for workgroup in workspace.workgroups %}
+	{% if workgroup.key == currentWorkgroup %}
+	<li class="active treeview">
+	{% else %}
+	<li class="treeview">
+	{% endif %}
+		<a href="#">
+			<i class="fa fa-{{workgroup.icon }}"></i> <span>{{ workgroup.name | trans({}, 'pages') }}</span> <i class="fa fa-angle-left pull-right"></i>
+		</a>
+		{% if workspace.workgroupHasContent(workgroup) %}
+		<ul class="treeview-menu">
+			{% for workitem in workspace.workitemsOf(workgroup) %}
+			{% if workitem.route == currentPage %}
+			<li class="active"><a href="{{ spath(workitem.route) }} "><i class="fa fa-circle-o"></i> {{ workitem.name | trans({}, 'pages') }}</a></li>	
+			{% else %}
+			<li><a href="{{ spath(workitem.route) }} "><i class="fa fa-circle-o"></i> {{ workitem.name | trans({}, 'pages') }}</a></li>
+			{% endif %}
+			{% endfor %}
+		</ul>
+		{% endif %}
+	</li>
+	{% endfor %}
+</ul>

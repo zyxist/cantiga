@@ -1,0 +1,52 @@
+<?php
+return array(
+	'Parish information' => 'Dane parafii',
+	'Parish name' => 'Nazwa parafii',
+	'Parish address' => 'Adres parafii',
+	'Postal code' => 'Kod pocztowy',
+	'Parish website' => 'Strona internetowa parafii',
+	'Responsible persons' => 'Opiekunowie rejonu',
+	'Priest' => 'Ksiądz (opiekun rejonu)',
+	'Area coordinator' => 'Koordynator rejonu',
+	
+	'Your Extreme Way' => 'Twoja Ekstremalna Droga',
+	'Type of the way you wish to create' => 'Rodzaj drogi, którą chcesz utworzyć',
+	'Extreme Way of the Cross' => 'Ekstremalna Droga Krzyżowa (pełny rejon)',
+	'Inspired by Extreme Way of the Cross' => 'Droga na wzór EDK',
+	'Proposed route' => 'Proponowana trasa',
+	'ProposedRouteInformationText' => 'Aby zgłosić rejon EDK, należy mieć pomysł na przynajmniej jedną trasę spełniającą standardy EDK. Po  zaakceptowaniu rejonu będzie można dodać dowolną liczbę tras.',	
+	'Beginning of the route' => 'Początek trasy',
+	'End of the route' => 'Koniec trasy',
+	'Type of the way' => 'Rodzaj drogi',
+	'Route length' => 'Długość trasy',
+	'Route ascent' => 'Suma podejść',
+	'In kilometres' => 'W kilometrach',
+	'In metres' => 'W metrach',
+	
+	'EWC information' => 'Informacje o EDK',
+	'-- none --' => '-- brak --',
+	'Date of Extreme Way of the Cross' => 'Data Ekstremalnej Drogi Krzyżowej',
+	'AreaLocationInfoText' => 'Podaj lokalizację na mapie miasta, z którego rusza EDK. Liczby te możesz wygenerować np. z poziomu map Google\'a.',
+	'LattitudeHintText' => 'Podaj szerokość geograficzną, która wskaże na mapie siedzibę rejonu, np. 50.043500',
+	'LongitudeHintText' => 'Podaj długość geograficzną, która wskaże na mapie siedzibę rejonu, np. 19.949770',
+	'ParishWebsiteUrlInvalidText' => 'Proszę podać poprawny adres WWW lokalnej strony internetowej parafii (razem z przedrostkiem "http://")',
+	'ContactPhoneNumberInvalidText' => 'Proszę podać prawidłowy numer telefonu',
+	'AreaWebsiteUrlInvalidText' => 'Proszę podać poprawny adres WWW lokalnej strony internetowej rejonu (razem z przedrostkiem "http://")',
+	'AreaFacebookProfileInvalidText' => 'Nazwa profilu może zawierać jedynie litery, cyfry, kropki oraz myślnik.',
+	
+	'ContactPhoneHintText' => 'Uczestnicy powinni mieć możliwość kontaktu z rejonem pod tym numerem.',
+	'FacebookProfileHintText' => 'W formacie "NAZWAMIEJSCOWOSCI.EDK"',
+	
+	'Date of Extreme Way of the Cross*' => 'Data Ekstremalnej Drogi Krzyżowej*',
+	'Area location' => 'Położenie rejonu',
+	'Area location (lattitude)*' => 'Położenie rejonu (szerokość)*',
+	'Area location (longitude)*' => 'Położenie rejonu (długość)*',
+	'Parish city' => 'Miejscowość parafii',
+	
+	'Contact information' => 'Informacje kontaktowe',
+	'Contact telephone' => 'Publiczny telefon kontaktowy',
+	'Area website' => 'Strona internetowa rejonu',
+	'Facebook profile' => 'Nazwa profilu Facebook',
+	
+	'RequiredFieldsForProfilePublicationText' => 'Pola oznaczone jako * są wymagane, aby profil pojawił się na stronie internetowej EDK.',
+);

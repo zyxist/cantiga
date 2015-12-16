@@ -1,0 +1,23 @@
+imports:
+    - { resource: ../../../../../app/config/parameters.yml }
+
+parameters:
+    edk_area_request_form.class: WIO\EdkBundle\CustomForm\AreaRequestModel
+    edk_area_form.class: WIO\EdkBundle\CustomForm\AreaModel
+    
+services:
+    wio.edk.extension.area_information_map:
+        class:     WIO\EdkBundle\Extension\AreaInformationMapExtension
+        arguments: ["@translator"]
+        tags:
+            - { name: cantiga.extension, point: core.page.area.info, module: edk }
+    wio.edk.form.area_request:
+        class:     "%edk_area_request_form.class%"
+        arguments: ["@translator"]
+        tags:
+            - { name: cantiga.extension, point: core.form.area-request, module: edk, description: "EDK area request form" }
+    wio.edk.form.area:
+        class:     "%edk_area_form.class%"
+        arguments: ["@translator"]
+        tags:
+            - { name: cantiga.extension, point: core.form.area, module: edk, description: "EDK area form" }

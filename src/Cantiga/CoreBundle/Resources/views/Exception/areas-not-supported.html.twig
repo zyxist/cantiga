@@ -1,0 +1,17 @@
+{% extends 'CantigaCoreBundle:layout:error-layout.html.twig' %}
+
+{% block page_title %}
+{{ 'Error' | trans([], 'general') }}
+{% endblock %}
+
+{% block page_content %}
+	<div class="error-page">
+		<h2 class="headline text-red">403</h2>
+
+        <div class="error-content">
+			<h3><i class="fa fa-warning text-red"></i> {{ 'Area functionality not supported' | trans }}</h3>
+
+			<p>{{ 'Sorry, this project does not support areas.' | trans }}</p>
+        </div>
+	</div>
+{% endblock %}

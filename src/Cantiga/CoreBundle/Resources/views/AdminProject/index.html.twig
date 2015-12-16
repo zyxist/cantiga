@@ -1,0 +1,32 @@
+{% extends 'CantigaCoreBundle:layout:list-layout.html.twig' %}
+
+{% block column_list %}
+<tr>
+	<th width="30">#</th>
+	<th>{{ 'Name' | trans }}</th>
+	<th width="100">{{ 'Created at' | trans }}</th>
+	<th width="80">{{ 'Areas?' | trans }}</th>
+	<th width="80">{{ 'Area reg.?' | trans }}</th>
+	<th width="80">{{ 'Actions' | trans({}, 'general') }}</th>
+</tr>
+{% endblock %}
+
+{% block box_footer %}
+<p>
+	<a href="{{ path('admin_project_insert') }}" class="btn btn-success btn-sm" role="button">{{ 'Insert' | trans({}, 'general') }}</a>
+</p>
+{% endblock %}
+
+{% block custom_datatable_config %}
+	ajax: "{{ path('admin_project_ajax_list') }}",
+	columnDefs: [
+		{{ dt_col_link(dataTable, 'name', 'info_link') }}
+		{{ dt_col_rewrite(dataTable, 'createdAt', 'createdAtFormatted') }}
+		{{ dt_col_boolean(dataTable, 'areasAllowed') }}
+		{{ dt_col_boolean(dataTable, 'areaRegistrationAllowed') }}
+		{{ dt_actions(dataTable, [
+			{ 'link': 'info_link', 'name': 'Info' | trans({}, 'general'), 'label': 'btn-primary' },
+			{ 'link': 'edit_link', 'name': 'Edit' | trans({}, 'general'), 'label': 'btn-warning' },
+		]) }}
+	]
+{% endblock %}

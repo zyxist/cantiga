@@ -1,0 +1,36 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ pageTitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ pageSubtitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+	{% block content_before %}
+	{% endblock %}	
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="box">
+				<div class="box-header">
+					{% block box_header %}
+					{% endblock %}
+				</div>
+				<div class="box-body">
+					{% block box_body %}
+
+					{% endblock %}
+				</div>
+				<div class="box-footer">
+					{% block box_footer %}
+					{% endblock %}
+				</div>
+			</div>
+		</div>
+	</div>
+					
+	{% block content_after %}
+	{% endblock %}
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ 'Request a new area' | trans }}
+{% endblock %}
+
+{% block page_content %}
+<div class="row">
+	<div class="col-md-12">
+		<div class="box">
+			<div class="box-header with-border">
+				<h3 class="box-title">{{ text.title }}</h3>
+			</div>
+			<div class="box-body">
+				{{ text.content | raw }}
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	{% for project in availableProjects %}
+	<div class="col-lg-3 col-xs-6">
+		<!-- small box -->
+		<div class="small-box bg-aqua">
+            <div class="inner">
+				<h3>{{ project.name }}</h3>
+
+				<p>{{ project.description }}</p>
+            </div>
+            <div class="icon">
+				<i class="ion ion-flag"></i>
+            </div>
+            <a href="{{ path('user_area_request_insert_cont', { 'projectId': project.id }) }}" class="small-box-footer">Wybierz <i class="fa fa-arrow-circle-right"></i></a>
+		</div>
+	</div>
+	{% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+
+{% block box_body %}
+	<p>{{ 'AreaStatusDescriptionFormText' | trans | raw }}</p>
+	
+	{{ form_start(form) }}
+	{{ form_row(form.name) }}
+	{{ form_row(form.label) }}
+	{{ form_row(form.isDefault) }}
+	{{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts_inline %}
+{{ use_icheck() }}
+{% endblock %}

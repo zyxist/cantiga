@@ -1,0 +1,16 @@
+{% extends 'CantigaCoreBundle:layout:login-layout.html.twig' %}
+
+{% block page_content %}
+	{% include 'CantigaCoreBundle:layout:flash.html.twig' %}
+    <div class="terms-box">
+		<div class="login-logo">
+				<img src="{{ asset(Branding.LOGO_FILE) }}" width="42" />
+				<a href="{{ path('cantiga_auth_login') }}">{{ Branding.APP_NAME }}</a>
+		</div><!-- /.login-logo -->
+		<div class="terms-box-body">
+			<h4>{{ text.title }}</h4>
+			{{ text.content | raw }}
+			<p class="terms-box-msg"><a href="{{ path('cantiga_auth_login') }}" class="text-center">{{ 'Back to login' | trans }}</a></p>
+		</div>
+	</div>
+{% endblock %}

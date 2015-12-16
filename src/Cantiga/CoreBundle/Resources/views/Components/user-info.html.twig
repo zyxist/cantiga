@@ -1,0 +1,42 @@
+<!-- User Account: style can be found in dropdown.less -->
+{% import "CantigaCoreBundle:layout:macros.html.twig" as macro %}
+<li class="dropdown user user-menu">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+		<img src="{{ asset(avatar(user, 32)) }}" class="user-image">
+        <span class="hidden-xs">{{ user.name }}</span>
+    </a>
+    <ul class="dropdown-menu">
+        <!-- User image -->
+		
+        <li class="user-header">
+			<img src="{{ asset(avatar(user)) }}" class="img img-circle" alt="{{user.name}}">
+            <p>
+                {{user.name}}
+				{% if user.membership %}
+				<small>{{user.membership.note}}</small>
+				{% endif %}
+            </p>
+        </li>
+        <!-- Menu Body -->
+        <li class="user-body">
+            <div class="col-xs-4 text-center">
+                <a href="{{ path('user_place_index') }}">{{ 'Places' |trans([], 'pages')}}</a>
+            </div>
+            <div class="col-xs-4 text-center">
+                <a href="{{ path('user_area_request_index') }}">{{ 'Requests' |trans([], 'pages')}}</a>
+            </div>
+            <div class="col-xs-4 text-center">
+                <a href="{{ path('user_invitation_index') }}">{{ 'Invitations' |trans([], 'pages')}}</a>
+            </div>
+        </li>
+        <!-- Menu Footer-->
+        <li class="user-footer">
+            <div class="pull-left">
+                <a href="{{ path('cantiga_home_page') }}" class="btn btn-default btn-flat">{{'Profile' | trans({}, 'pages')}}</a>
+            </div>
+            <div class="pull-right">
+                <a href="{{ path('cantiga_auth_logout') }}" class="btn btn-default btn-flat">{{ 'Sign out' | trans({}, 'pages') }}</a>
+            </div>
+        </li>
+    </ul>
+</li>

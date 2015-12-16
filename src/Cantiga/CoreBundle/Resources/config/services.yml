@@ -1,0 +1,268 @@
+imports:
+    - { resource: ../../../../../app/config/parameters.yml }
+
+parameters:
+    extensions.class: Cantiga\CoreBundle\Api\ExtensionPoints\ExtensionPoints
+    locale_provider.class: Cantiga\Metamodel\LocaleProvider
+    user_provider.class: Cantiga\CoreBundle\Repository\AuthRepository
+    transaction.class: Cantiga\Metamodel\Transaction
+    time_formatter.class: Cantiga\Metamodel\TimeFormatter
+    role_resolver.class: Cantiga\Metamodel\MembershipRoleResolver
+    database_settings_storage.class: Cantiga\CoreBundle\Settings\DatabaseSettingsStorage
+    project_settings.class: Cantiga\CoreBundle\Settings\ProjectSettings
+    archived_project_repository.class: Cantiga\CoreBundle\Repository\ArchivedProjectRepository
+    language_repository.class: Cantiga\CoreBundle\Repository\LanguageRepository
+    project_repository.class: Cantiga\CoreBundle\Repository\ProjectRepository
+    profile_repository.class: Cantiga\CoreBundle\Repository\ProfileRepository
+    admin_membership_repository.class: Cantiga\CoreBundle\Repository\AdminMembershipRepository
+    area_memberlist_repository.class: Cantiga\CoreBundle\Repository\AreaMemberListRepository
+    group_membership_repository.class: Cantiga\CoreBundle\Repository\GroupMembershipRepository
+    project_group_membership_repository.class: Cantiga\CoreBundle\Repository\ProjectGroupMembershipRepository
+    project_membership_repository.class: Cantiga\CoreBundle\Repository\ProjectMembershipRepository
+    project_memberlist_repository.class: Cantiga\CoreBundle\Repository\ProjectMemberListRepository
+    AdminUserRepository.class: Cantiga\CoreBundle\Repository\AdminUserRepository
+    UserRegistrationRepository.class: Cantiga\CoreBundle\Repository\UserRegistrationRepository
+    user_area_request_repository.class: Cantiga\CoreBundle\Repository\UserAreaRequestRepository
+    project_area_request_repository.class: Cantiga\CoreBundle\Repository\ProjectAreaRequestRepository
+    project_group_repository.class: Cantiga\CoreBundle\Repository\ProjectGroupRepository
+    project_area_repository.class: Cantiga\CoreBundle\Repository\ProjectAreaRepository
+    project_area_membership_repository.class: Cantiga\CoreBundle\Repository\ProjectAreaMembershipRepository
+    app_text_repository.class: Cantiga\CoreBundle\Repository\AppTextRepository
+    app_mail_repository.class: Cantiga\CoreBundle\Repository\AppMailRepository
+    invitation_repository.class: Cantiga\CoreBundle\Repository\InvitationRepository
+    project_membership_loader.class: Cantiga\CoreBundle\Entity\Membership\ProjectMembershipLoader
+    group_membership_loader.class: Cantiga\CoreBundle\Entity\Membership\GroupMembershipLoader
+    area_membership_loader.class: Cantiga\CoreBundle\Entity\Membership\AreaMembershipLoader
+    ui_block.class: Cantiga\CoreBundle\Block\UiBlock
+    block_launcher.class: Cantiga\CoreBundle\Block\BlockLauncher
+    area_membership_repository.class: Cantiga\CoreBundle\Repository\AreaMembershipRepository
+    project_area_status.class: Cantiga\CoreBundle\Repository\ProjectAreaStatusRepository
+    project_territory.class: Cantiga\CoreBundle\Repository\ProjectTerritoryRepository
+    cantiga.controller.exception.class: Cantiga\CoreBundle\Controller\ExceptionController
+    area_per_status_stats.class: Cantiga\CoreBundle\Statistics\AreasPerStatusStats
+    
+services:
+    cantiga.extensions:
+        class:     "%extensions.class%"
+        arguments: ["@service_container"]
+    cantiga.locale:
+        class:     "%locale_provider.class%"
+        arguments: ["%locale%"]
+    cantiga.user_provider:
+        class:     "%user_provider.class%"
+        arguments: ["@database_connection"]
+    cantiga.blocks:
+        class:     "%block_launcher.class%"
+        arguments: ["@service_container"]
+    cantiga.transaction:
+        class:     "%transaction.class%"
+        arguments: ["@database_connection"]
+    cantiga.time:
+        class:     "%time_formatter.class%"
+        arguments: ["%defaultTimezone%"]
+    cantiga.roles:
+        class:     "%role_resolver.class%"
+    cantiga.project.settings.database_storage:
+        class:     "%database_settings_storage.class%"
+        arguments: ["@database_connection"]
+    cantiga.project.settings:
+        class:     "%project_settings.class%"
+        arguments: ["@cantiga.project.settings.database_storage"]
+    cantiga.controller.exception:
+        class:     "%cantiga.controller.exception.class%"
+        arguments: ["@twig", "%kernel.debug%"]
+    cantiga.core.block.ui:
+        class:     "%ui_block.class%"
+        arguments: ["@cantiga.workspace_listener", "@event_dispatcher", "@twig", "@translator"]
+    cantiga.core.membership.project:
+        class:     "%project_membership_loader.class%"
+        arguments: ["@database_connection", "@cantiga.roles"]
+        tags:
+            - { name: cantiga.extension, point: core.membership.loader }
+    cantiga.core.membership.group:
+        class:     "%group_membership_loader.class%"
+        arguments: ["@database_connection", "@cantiga.roles"]
+        tags:
+            - { name: cantiga.extension, point: core.membership.loader }
+    cantiga.core.membership.area:
+        class:     "%area_membership_loader.class%"
+        arguments: ["@database_connection", "@cantiga.roles"]
+        tags:
+            - { name: cantiga.extension, point: core.membership.loader }
+    cantiga.core.repo.language:
+        class:     "%language_repository.class%"
+        arguments: ["@database_connection", "@cantiga.transaction"]
+    cantiga.core.repo.admin_user:                                                                                                                                                       
+        class:     "%AdminUserRepository.class%"                                                                                                                                     
+        arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher", "@cantiga.time"]
+    cantiga.core.repo.project:                                                                                                                                                     
+        class:     "%project_repository.class%"                                                                                                           
+        arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.time", "@event_dispatcher", "@cantiga.project.settings.database_storage"]
+    cantiga.core.repo.archived_project:                                                                                                                                                     
+        class:     "%archived_project_repository.class%"                                                                                                           
+        arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.time"]
+    cantiga.core.repo.profile:
+        class:     "%profile_repository.class%"
+        arguments: ["@database_connection", "@cantiga.transaction"]
+    cantiga.core.repo.user_registration:                                                                                                                                                
+        class:     "%UserRegistrationRepository.class%"
+        arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher", "@security.encoder_factory", "@cantiga.time"]
+    cantiga.core.repo.admin_membership:
+        class:     "%admin_membership_repository.class%"
+        arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.roles"]
+    cantiga.core.repo.area_membership:
+        class:     "%area_membership_repository.class%"
+        arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.roles"]
+        tags:
+            - { name: cantiga.invitation-aware, entity: Area }
+    cantiga.core.repo.group_membership:
+        class:     "%group_membership_repository.class%"
+        arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.roles"]
+        tags:
+            - { name: cantiga.invitation-aware, entity: Group }
+    cantiga.core.repo.project_group_membership:
+        class:     "%project_group_membership_repository.class%"
+        arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.roles"]
+        tags:
+            - { name: cantiga.invitation-aware, entity: Group }
+    cantiga.core.repo.project_membership:
+        class:     "%project_membership_repository.class%"
+        arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.roles"]
+        tags:
+            - { name: cantiga.invitation-aware, entity: Project }
+    cantiga.core.repo.project_area_membership:
+        class:     "%project_area_membership_repository.class%"
+        arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.roles"]
+        tags:
+            - { name: cantiga.invitation-aware, entity: Area }
+    cantiga.core.repo.project_memberlist:
+        class:     "%project_memberlist_repository.class%"
+        arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.roles"]
+    cantiga.core.repo.area_memberlist:
+        class:     "%area_memberlist_repository.class%"
+        arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.roles"]
+    cantiga.core.repo.user_area_request:
+        class:     "%user_area_request_repository.class%"
+        arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher", "@cantiga.time", "@security.token_storage"]
+    cantiga.core.repo.project_area_request:
+        class:     "%project_area_request_repository.class%"
+        arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.time", "@event_dispatcher", "@cantiga.roles"]
+    cantiga.core.repo.project_group:
+        class:     "%project_group_repository.class%"
+        arguments: ["@database_connection", "@cantiga.transaction"]
+    cantiga.core.repo.project_area:
+        class:     "%project_area_repository.class%"
+        arguments: ["@database_connection", "@cantiga.transaction"]
+    cantiga.core.repo.project_area_status:
+        class:     "%project_area_status.class%"
+        arguments: ["@database_connection", "@cantiga.transaction"]
+    cantiga.core.repo.project_territory:
+        class:     "%project_territory.class%"
+        arguments: ["@database_connection", "@cantiga.transaction"]
+    cantiga.core.repo.text:
+        class:     "%app_text_repository.class%"
+        arguments: ["@database_connection", "@cantiga.transaction"]
+    cantiga.core.repo.mail:
+        class:     "%app_mail_repository.class%"
+        arguments: ["@database_connection", "@cantiga.transaction"]
+    cantiga.core.repo.statistics:                                                                                                                               
+        class:     Cantiga\CoreBundle\Repository\CoreStatisticsRepository
+        arguments: ["@database_connection"]
+        tags:
+            - { name: kernel.event_listener, event: cantiga.area-request.created, method: onAreaRequestStatusChange }
+            - { name: kernel.event_listener, event: cantiga.area-request.verification, method: onAreaRequestStatusChange }
+            - { name: kernel.event_listener, event: cantiga.area-request.approved, method: onAreaRequestStatusChange }
+            - { name: kernel.event_listener, event: cantiga.area-request.revoked, method: onAreaRequestStatusChange }
+    cantiga.core.repo.invitation:
+        class:     "%invitation_repository.class%"
+        arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher"]
+        tags:
+            - { name: kernel.event_listener, event: cantiga.user.activated, method: onUserActivated }
+            - { name: kernel.event_listener, event: cantiga.user.removed, method: onUserRemoved }
+    cantiga.core.stats.area_per_status:
+        class:     "%area_per_status_stats.class%"
+        arguments: ["@database_connection"]
+        tags:
+            - { name: cantiga.extension, point: core.stats.area }
+    cantiga.core.stats.area_requests_over_time:
+        class:     Cantiga\CoreBundle\Statistics\AreaRequestsOverTimeStats
+        arguments: ["@database_connection", "@cantiga.core.repo.statistics", "@translator"]
+        tags:
+            - { name: cantiga.extension, point: core.stats.area }
+    cantiga.core.dashboard.text:
+        class:     Cantiga\CoreBundle\Extension\DashboardTextExtension
+        arguments: ["@cantiga.core.repo.text"]
+        tags:
+            - { name: cantiga.extension, point: core.dashboard.user.right }
+            - { name: cantiga.extension, point: core.dashboard.admin.right }
+            - { name: cantiga.extension, point: core.dashboard.project.right }
+            - { name: cantiga.extension, point: core.dashboard.group.right }
+            - { name: cantiga.extension, point: core.dashboard.area.right }
+    cantiga.core.dashboard.project_summary:
+        class: Cantiga\CoreBundle\Extension\ProjectSummaryExtension
+        arguments: ["@cantiga.core.repo.statistics"]
+        tags:
+            - { name: cantiga.extension, point: core.dashboard.project.top }
+    cantiga.core.dashboard.admin_summary:
+        class: Cantiga\CoreBundle\Extension\AdminSummaryExtension
+        arguments: ["@cantiga.core.repo.statistics"]
+        tags:
+            - { name: cantiga.extension, point: core.dashboard.admin.top }
+    cantiga.theme_listener:
+        class: Cantiga\CoreBundle\EventListener\UiListener
+        arguments: ["@security.token_storage", "@security.authorization_checker", "@router", "@cantiga.workspace_listener"]
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }
+            - { name: kernel.event_listener, event: cantiga.ui.user, method: showUser }
+            - { name: kernel.event_listener, event: cantiga.ui.help, method: showHelpPages }
+            - { name: kernel.event_listener, event: cantiga.ui.workspaces, method: showWorkspaces }
+            - { name: kernel.event_listener, event: cantiga.ui.tasks, method: showTasks }
+            - { name: kernel.event_listener, event: cantiga.ui.breadcrumbs, method: showBreadcrumbs }
+            - { name: kernel.event_listener, event: cantiga.workspace.general, method: showMenu }
+    cantiga.workspace_listener:
+        class: Cantiga\CoreBundle\EventListener\WorkspaceListener
+        arguments: ["@security.authorization_checker", "@security.token_storage", "@cantiga.extensions"]
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller, method: onControllerSelected }
+            - { name: kernel.event_listener, event: cantiga.workspace.user, method: onUserWorkspace }
+            - { name: kernel.event_listener, event: cantiga.workspace.area, method: onAreaWorkspace }
+            - { name: kernel.event_listener, event: cantiga.workspace.group, method: onGroupWorkspace }
+            - { name: kernel.event_listener, event: cantiga.workspace.project, method: onProjectWorkspace }
+            - { name: kernel.event_listener, event: cantiga.workspace.admin, method: onAdminWorkspace }
+            - { name: kernel.event_listener, event: cantiga.ui.projects, method: onProjectList }
+    cantiga.general_listener:
+        class: Cantiga\CoreBundle\EventListener\GeneralListener
+        arguments: ["@security.authorization_checker", "@security.token_storage", "@cantiga.transaction", "@session", "@cantiga.time"]
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+            - { name: kernel.event_listener, event: security.interactive_login, method: onInteractiveLogin }
+    cantiga.error_listener:
+        class: Cantiga\CoreBundle\EventListener\ErrorListener
+        arguments: ["@security.http_utils"]
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
+    cantiga.core.project_listener:
+        class: Cantiga\CoreBundle\EventListener\ProjectListener
+        arguments: ["@database_connection"]
+        tags:
+            - { name: kernel.event_listener, event: cantiga.project.created, method: onProjectCreated }
+    cantiga.twig_extension:
+        class:     Cantiga\CoreBundle\Twig\CantigaExtension
+        arguments: [ "@cantiga.workspace_listener", "@cantiga.time", "@security.token_storage", "@router", "@cantiga.blocks"]
+        tags:
+            - { name: twig.extension }
+    cantiga.bootstrap_form_extension:
+        class:     Cantiga\CoreBundle\Twig\BootstrapFormExtension
+        arguments: ["glyphicon", "span"]
+        tags:
+            - { name: twig.extension }
+    cantiga.core.form.default_area_request:
+        class:     Cantiga\CoreBundle\CustomForm\DefaultAreaRequestModel
+        tags:
+            - { name: cantiga.extension, point: core.form.area-request, module: core, description: "Default area request form" }
+    cantiga.core.form.default_area:
+        class:     Cantiga\CoreBundle\CustomForm\DefaultAreaModel
+        tags:
+            - { name: cantiga.extension, point: core.form.area, module: core, description: "Default area form" }

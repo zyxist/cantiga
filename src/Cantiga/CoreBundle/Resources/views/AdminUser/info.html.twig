@@ -1,0 +1,100 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ pageTitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ pageSubtitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+<div class="row" id="ppp">
+	<div class="col-md-7 col-sm-6 col-xs-12">
+		<h4>{{ 'User details: 0' | trans([item.name]) }}</h4>
+		<div class="box">
+			<div class="box-body box-status">
+				<div class="status-line">
+					{% if item.admin %}
+					<div class="status-item status-danger">{{ 'Administrator' | trans }}</div>
+					{% else %}
+					<div class="status-item status-success">{{ 'Regular user' | trans }}</div>
+					{% endif %}
+					
+					<div class="status-actions">
+						<div class="btn-group">
+							<button type="button" class="btn btn-default btn-sm">{{ 'Manage' | trans([], 'general') }}</button>
+							<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+								<span class="caret"></span>
+								<span class="sr-only">{{ 'Toggle dropdown' | trans([], 'general') }}</span>
+							</button>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="{{ path('admin_user_edit', {'id': item.id }) }}">{{ 'Edit' | trans({}, 'general') }}</a></li>
+								<li><a href="{{ path('admin_user_remove', {'id': item.id }) }}">{{ 'Remove' | trans({}, 'general') }}</a></li>
+							</ul>
+						</div>
+						<a href="{{ path('admin_user_index') }}" class="btn btn-default btn-sm" role="button">{{ 'Back' | trans({}, 'general') }}</a>
+					</div>
+				</div>
+				<div class="status-info">
+					<div class="info-item">
+						<h4><i class="fa fa-envelope"></i> {{ 'E-mail' | trans }}</h4>
+						<span class="value"><a href="mailto:{{ item.email }}">{{ item.email }}</a></span>
+					</div>
+					<div class="info-item">
+						<h4><i class="fa fa-calendar"></i> {{ 'Registered at' | trans }}</h4>
+						<span class="value">{{ format_time(TimeFormatter.FORMAT_SHORT, item.registeredAt) }} ({{ ago(item.registeredAt) }})</span>
+					</div>
+					<div class="info-item">
+						<h4><i class="fa fa-clock-o"></i> {{ 'Last visit' | trans }}</h4>
+						<span class="value">{{ format_time(TimeFormatter.FORMAT_SHORT, item.lastVisit) }} ({{ ago(item.lastVisit) }})</span>
+					</div>
+					<div class="info-item">
+						<h4><i class="fa fa-lightbulb-o"></i> {{ 'Project number' | trans }}</h4>
+						<span class="value">{{ item.projectNum }}</span>
+					</div>
+					<div class="info-item">
+						<h4><i class="fa fa-group"></i> {{ 'Group number' | trans }}</h4>
+						<span class="value">{{ item.groupNum }}</span>
+					</div>
+					<div class="info-item">
+						<h4><i class="fa fa-flag"></i> {{ 'Area number' | trans }}</h4>
+						<span class="value">{{ item.areaNum }}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="nav-tabs-custom">
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#places" aria-controls="places" role="tab" data-toggle="tab">{{ 'Places' | trans }}</a></li>
+			</ul>
+			<div class="tab-content">
+				<div role="tabpanel" class="tab-pane active" id="places">
+					{% if custom.places %}
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>{{ 'Name' | trans }}</th>
+								<th width="25%">{{ 'Role' | trans }}</th>
+								<th width="25%">{{ 'Note' | trans }}</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for place in custom.places %}
+							<tr>
+								<td><a href="{{ path(place.route, {'slug': place.slug}) }}">{{ place.translationKey | trans([place.name]) }}</td>
+								<td>{{ place.role.name | trans }}</td>
+								<td>{{ place.note }}</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+					{% else %}
+					{{ 'This user is not a member of any place.' | trans }}
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

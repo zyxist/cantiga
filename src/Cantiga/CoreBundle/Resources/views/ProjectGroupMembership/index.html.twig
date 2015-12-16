@@ -1,0 +1,113 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ group.name }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ 'Manage members of this group' | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+	<div class="row" id="ppp">
+		<div class="col-xs-12">
+			<div class="box">
+				<div class="box-header">
+					<a href="{{ spath('project_group_membership_invite', {id: group.id }) }}" role="btn" class="btn btn-app"><i class="fa fa-tag"></i> {{ 'Invite' | trans([], 'general') }}</a>
+				</div>
+				<div class="box-body no-padding">
+					<table class="table table-striped" id="membershipTable">
+						<thead>
+							<tr>
+								<th width="30">#</th>
+								<th>{{ 'Name' | trans }}</th>
+								<th width="200">{{ 'Role' | trans }}</th>
+								<th width="200">{{ 'Note' | trans }}</th>
+								<th width="180">{{ 'Actions' | trans({}, 'general') }}</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="edit-modal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">{{ 'Set a new role' | trans }}: <span role="title"></span></h4>
+				</div>
+				<div class="modal-body">
+					<form role="form" class="form">
+						<div class="form-group">
+							<label class="control-label required" for="role-selector-ed">{{ 'Select a new role' | trans }}</label>
+							<select name="role" id="role-selector-ed" role="role-selector" class="form-control">
+							{% for role in roles %}
+								<option value="{{ role.id }}">{{ role.name | trans }}</option>
+							{% endfor %}
+							</select>
+						</div>
+						<div class="form-group">
+							<label class="control-label required" for="note-selector-ed">{{ 'Enter some note' | trans }}</label>
+							<input type="text" name="note" id="note-selector-ed" role="note-selector" class="form-control" />
+							<p class="help-block">{{ 'NoteHintText' | trans }}</p>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal" id="edit-modal-cancel">{{ 'Cancel' | trans({}, 'general') }}</button>
+					<button type="button" class="btn btn-primary" id="edit-modal-confirm">{{ 'Save' | trans({}, 'general') }}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="remove-modal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">{{ 'Confirm removal' | trans }}: <span role="title"></span></h4>
+				</div>
+				<div class="modal-body">
+					<p>{{ 'Do you really want to revoke the membership for this user?' | trans }}</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal" id="remove-modal-cancel">{{ 'Not really' | trans({}, 'general') }}</button>
+					<button type="button" class="btn btn-primary" id="remove-modal-confirm">{{ 'Indeed' | trans({}, 'general') }}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script src="{{ asset('js/jquery-ui.min.js') }}"></script>
+	<script src="{{ asset('js/membership.js') }}"></script>
+{% endblock %}
+
+{% block javascripts_inline %}
+	<script type="text/javascript">
+	$(document).ready(function() {
+		$('#ppp').membership({
+			dataTable: '#membershipTable',
+			selectedProject: {{ group.id }},
+			removeModal: '#remove-modal',
+			removeModalConfirm: '#remove-modal-confirm',
+			editModal: '#edit-modal',
+			editModalConfirm: '#edit-modal-confirm',
+			memberReloadUrl: '{{ spath('project_group_membership_ajax_reload', {id: group.id }) }}',
+			memberEditUrl: '{{ spath('project_group_membership_ajax_edit', {id: group.id }) }}',
+			memberRemoveUrl: '{{ spath('project_group_membership_ajax_remove', {id: group.id }) }}',
+			lang: {
+				remove: '{{ 'Remove' | trans({}, 'general') }}',
+				role: '{{ 'Change role' | trans }}',
+				Member: '{{ 'Member' | trans }}',
+				Manager: '{{ 'Manager' | trans }}',
+			}
+		});
+	});
+	</script>
+{% endblock %}

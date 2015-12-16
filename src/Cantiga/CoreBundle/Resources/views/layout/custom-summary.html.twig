@@ -1,0 +1,22 @@
+{% for property in summary %}
+		<tr>
+			<td width="30%">{{ property.label | trans }}</td>
+			<td>{% if not item.get(property.name) %}<em>{{ 'Not specified' | trans({}, 'general') }}</em>{%else%}
+			{% if property.type == 'string' %}
+			{{ item.get(property.name) }}
+			{% elseif property.type == 'boolean' %}
+			{{ boolean_mark(item.get(property.name)) }}
+			{% elseif property.type == 'date' %}
+			{{ format_date(item.get(property.name)) }}
+			{% elseif property.type == 'callback' %}
+			{{ callback_transform(item.get(property.name), property.callback) }}
+			{% elseif property.type == 'callback-raw' %}
+			{{ callback_transform(item.get(property.name), property.callback) | raw }}
+			{% elseif property.type == 'choice' %}
+			{{ property.callback[item.get(property.name)] | trans }}
+			{% endif %}
+			{% endif %}
+			</td>
+		</tr>
+{% endfor %}
+

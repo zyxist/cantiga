@@ -1,0 +1,49 @@
+{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+
+{% block box_body %}
+	<table id="data-grid" class="table table-striped table-bordered">
+		<thead>
+			{% block column_list %}
+			<tr>
+				<th width="30">#</th>
+				<th>{{ 'Name' | trans }}</th>
+				<th>{{ 'Locale' | trans }}</th>
+				<th width="200">{{ 'Actions' | trans({}, 'general') }}</th>
+			</tr>
+			{% endblock %}
+		</thead>
+		<tfoot>
+			{{ block('column_list') }}
+		</tfoot>
+	</table>
+{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" href="{{ asset('css/dataTables.bootstrap.css') }}" />
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script src="{{ asset('js/datatables.js') }}"></script>
+{% endblock %}
+
+{% block javascripts_inline %}
+	<script type="text/javascript">
+	$(document).ready(function() {
+		$('#data-grid').DataTable({
+			processing: true,
+			serverSide: true,
+			columns: {{ dt_columns(dataTable, true) }},
+			{% if locale != 'en' %}
+			language: {url: '{{asset('js/datatables.'~locale~'.js') }}' },	
+			{% endif %}
+			{% block custom_datatable_config %}
+			columnDefs: [
+				{{ dt_actions(dataTable, []) }}
+			]
+			{% endblock %}
+		});
+	});
+	</script>
+{% endblock %}

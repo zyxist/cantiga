@@ -1,0 +1,78 @@
+{% extends 'CantigaCoreBundle:layout:login-layout.html.twig' %}
+
+{% block javascripts_inline %}
+	<script>
+	  $(function () {
+		$('input').iCheck({
+		  checkboxClass: 'icheckbox_square-blue',
+		  radioClass: 'iradio_square-blue',
+		  increaseArea: '20%' // optional
+		});
+	  });
+	</script>
+{% endblock %}
+
+{% block page_content %}
+	{% include 'CantigaCoreBundle:layout:flash.html.twig' %}
+    <div class="register-box">
+		<div class="register-logo">
+				<img src="{{ asset(Branding.LOGO_FILE) }}" width="42" />
+				<a href="{{ path('cantiga_auth_login') }}">{{ Branding.APP_NAME }}</a>
+		</div><!-- /.login-logo -->
+		<div class="register-box-body">
+			{{ form_start(form) }}
+			<p class="login-box-msg">{{ 'Create a new user account' | trans }}</p>
+			
+			{{ form_errors(form) }}
+			
+			<div class="form-group has-feedback">
+				{{ form_widget(form.name) }}
+				<span class="glyphicon glyphicon-user form-control-feedback"></span>
+				{{ form_errors(form.name) }}
+			</div>
+			<div class="form-group has-feedback">
+				{{ form_widget(form.login) }}
+				<span class="glyphicon glyphicon-tag form-control-feedback"></span>
+				{{ form_errors(form.login) }}
+			</div>
+			<div class="form-group has-feedback">
+				{{ form_widget(form.email) }}
+				<span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+				{{ form_errors(form.email) }}
+			</div>
+			<div class="form-group has-feedback">
+				{{ form_widget(form.password) }}
+				<span class="glyphicon glyphicon-lock form-control-feedback"></span>
+				{{ form_errors(form.password) }}
+			</div>
+			<div class="form-group has-feedback">
+				{{ form_widget(form.repeatPassword) }}
+				<span class="glyphicon glyphicon-log-in form-control-feedback"></span>
+				{{ form_errors(form.repeatPassword) }}
+			</div>
+			<div class="form-group has-feedback">
+				{{ form_widget(form.language) }}
+				<span class="glyphicon glyphicon-globe form-control-feedback"></span>
+				{{ form_errors(form.language) }}
+			</div>
+			<div class="row">
+				<div class="col-xs-1">
+					<div class="checkbox icheck" name="acceptRules">
+						<label>
+							{{ form_widget(form.acceptRules) }}
+						</label>
+					</div>
+				</div>
+				<div class="col-xs-6">
+					<label for="{{ form.acceptRules.vars.id }}" style="font-weight: normal">{{ 'I have read and accept the terms of use' | trans }}</label>
+				</div>
+				<!-- /.col -->
+				<div class="col-xs-4">
+					<button type="submit" class="btn btn-primary btn-block btn-flat">{{ 'Register' |trans }}</button>
+				</div>
+			</div>
+			<p class="login-box-msg"><a href="{{ path('cantiga_auth_terms') }}">{{ 'Terms of use' | trans }}</a> &bull; <a href="{{ path('cantiga_auth_login') }}" class="text-center">{{ 'Back to login' | trans }}</a></p>
+			{{ form_end(form) }}
+		</div>
+	</div>
+{% endblock %}

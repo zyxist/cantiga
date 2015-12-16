@@ -1,0 +1,70 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+{% import "CantigaCoreBundle:layout:macros.html.twig" as macro %}
+
+{% block page_title %}
+	{{ 'Invitations' | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ 'See if someone invites you to cooperate' | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+	<div class="row">
+		<div class="col-md-12 col-xs-12">
+			<div class="box box-primary">
+				<div class="box-body">
+					<form class="form-inline" method="post" action="{{ path('user_invitation_find') }}">
+						<div class="form-group">
+							<label for="invitationKey">{{ 'Find invitation' | trans }}</label>
+							<input type="text" class="form-control" size="80" id="invitationKey" name="invitationKey" placeholder="{{ 'FindInvitationPlaceholder' | trans }}">
+						</div>
+						<button type="submit" class="btn btn-default">{{ 'Find' | trans([], 'general') }}</button>
+					</form>
+				</div>
+			</div>
+		</div>		
+	</div>
+	
+	<div class="row">
+	{% if invitations %}
+	{% for invitation in invitations %}
+		<div class="col-md-4 col-xs-12">
+			<div class="box box-primary box-solid">
+				<div class="box-header with-border">
+					<h3 class="box-title">{{ (invitation.resourceType~'Nominative: 0') | trans([invitation.resourceName]) }}</h3>
+				</div>
+				<div class="box-body no-padding">
+					<table class="table table-condensed">
+						<tbody>
+							<tr>
+								<td width="30%">{{ 'Inviter' | trans }}</td>
+								<td>{{ invitation.inviterName }}</td>
+							</tr>
+							<tr>
+								<td width="30%">{{ 'Invitation date' | trans }}</td>
+								<td>{{ ago(invitation.createdAt) }}</td>
+							</tr>
+							<tr>
+								<td width="30%">{{ 'Note' | trans }}</td>
+								<td>{{ invitation.note }}</td>
+							</tr>
+						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="2">
+									<a class="btn btn-primary btn-xs" href="{{ path('user_invitation_accept', {'id': invitation.id }) }}">{{ 'Accept' | trans({}, 'general') }}</a>
+									<a class="btn btn-default btn-xs" href="{{ path('user_invitation_revoke', {'id': invitation.id }) }}">{{ 'Revoke' | trans({}, 'general') }}</a>
+								</td>
+							</tr>
+						</tfoot>
+					</table>
+				</div>
+			</div>
+		</div>
+	{% endfor %}
+	{% else %}
+		{{ macro.message_box('Nobody has sent you invitations.' | trans) }}
+	{% endif %}
+	</div>
+{% endblock %}

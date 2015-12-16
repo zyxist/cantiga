@@ -1,0 +1,8 @@
+{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+
+{% block box_body %}
+	{{ form_start(form) }}
+	{{ form_row(form.name) }}
+	{{ form_row(form.locale) }}
+	{{ form_end(form) }}
+{% endblock %}

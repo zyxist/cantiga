@@ -1,0 +1,21 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ 'Administration' | trans([], 'pages') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ 'Control panel' | trans([], 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+	<div class="row">
+		{{ topExtensions | raw }}
+		<div class="col-md-8">
+			{{ centralExtensions | raw }}
+		</div>
+		<div class="col-md-4">
+			{{ rightExtensions | raw }}
+		</div>
+	</div>
+{% endblock %}

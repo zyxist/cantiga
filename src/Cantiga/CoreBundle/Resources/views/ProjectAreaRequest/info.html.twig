@@ -1,0 +1,131 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+{% import "CantigaCoreBundle:layout:macros.html.twig" as macro %}
+
+{% block page_title %}
+	{{ 'AreaRequest: 0' | trans([item.name]) }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ pageSubtitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+<div class="row" id="ppp">
+	<div class="col-lg-7 col-xs-12">
+		<div class="box">
+			<div class="box-body box-status">
+				<div class="status-line">
+					<div class="status-item status-{{ item.getStatusLabel() }}">{{ item.getStatusText() | trans({}, 'statuses') }}</div>
+					<div class="status-actions">
+						{% if custom.actions %}
+						<div class="btn-group">
+							{% for action in custom.actions %}
+							<a class="btn btn-{{ action.type }} btn-sm" href="{{ spath(action.route, action.args) }}">{{ action.name }}</a>
+							{% endfor %}
+						</div>
+						{% endif %}
+						<div class="btn-group">
+							{% if item.canRemove() %}
+							<button type="button" class="btn btn-default btn-sm">{{ 'Actions' | trans([], 'general') }}</button>
+							<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+								<span class="caret"></span>
+								<span class="sr-only">{{ 'Toggle dropdown' | trans([], 'general') }}</span>
+							</button>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="{{ spath('project_area_request_remove', {'id' : item.id }) }}">{{ 'Remove' | trans([], 'general') }}</a></li>
+							</ul>
+							{% endif %}
+						</div>
+						<a href="{{ spath('project_area_request_index') }}" class="btn btn-default btn-sm">{{ 'Back' | trans([], 'general') }}</a>
+					</div>
+				</div>
+				<div class="status-info">
+					<div class="info-item">
+						<h4><i class="fa fa-clock-o"></i> {{ 'Request date' | trans }}</h4>
+						<span class="value">{{ format_time(TimeFormatter.FORMAT_DATE_LONG, item.createdAt) }} ({{ ago(item.createdAt) }})</span>
+					</div>
+					<div class="info-item">
+						<h4><i class="fa fa-wrench"></i> {{ 'Last update' | trans }}</h4>
+						<span class="value">{{ format_time(TimeFormatter.FORMAT_LONG, item.lastUpdatedAt) }} ({{ ago(item.lastUpdatedAt) }})</span>
+					</div>
+					{% if item.verifier %}
+					<div class="info-item">
+						<h4><i class="fa fa-user"></i> {{ 'Verifier' | trans }}</h4>
+						<span class="value"><a href="{{ spath('project_memberlist_profile', {'id': item.verifier.id }) }}">{{ item.verifier.name }}</a></span>
+					</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+		<div class="nav-tabs-custom">
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#request-info" aria-controls="request-info" role="tab" data-toggle="tab">{{ 'Request information' | trans }}</a></li>
+				<li><a href="#requestor" aria-controls="requestor" role="tab" data-toggle="tab">{{ 'Requestor' | trans }}</a></li>
+			</ul>
+			<div class="tab-content">
+				<div role="tabpanel" class="tab-pane active" id="request-info">
+					<table class="table table-hover">
+						<tbody>
+							{% include custom.summary.template with { 'summary': custom.summary, 'item': item } only %}
+						</tbody>
+					</table>
+				</div>
+				<div role="tabpanel" class="tab-pane" id="requestor">
+					<div class="row">
+						<div class="box-profile col-lg-4">
+							<img class="profile-user-img img-responsive img-circle" src="{{ asset(avatar(item.requestor)) }}" alt="User profile picture">
+							<h3 class="profile-username text-center">{{ item.requestor.name }}</h3>
+						</div>
+						<div class="col-lg-8">
+							<table class="table table-hover">
+								<tbody>
+									<tr>
+										<td width="30%">{{ 'Member since' |trans }}</td>
+										<td>{{ format_time(TimeFormatter.FORMAT_DATE_SHORT, item.requestor.registeredAt) }}</td>
+									</tr>
+									<tr>
+										<td width="30%">{{ 'Last visit' | trans }}</td>
+										<td>{% if item.requestor.lastVisit %}{{ format_time(TimeFormatter.FORMAT_DATE_SHORT, item.requestor.lastVisit) }}{% else %} - {% endif %}</td>
+									</tr>
+									<tr>
+										<td width="30%">{{ 'Location' | trans }}</td>
+										<td>{{ item.requestor.location }}</td>
+									</tr>
+									<tr>
+										<td width="30%">{{ 'Public e-mail' | trans }}</td>
+										<td>{% if not item.requestor.publicMail %}<i>{{ 'Not specified' | trans({}, 'general')}}</i>{%else%}<a href="mailto:{{ item.requestor.publicMail }}">{{ item.requestor.publicMail }}</a>{%endif%}</td>
+									</tr>
+								</tbody>								
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-5 col-xs-12">
+		{{ macro.chat_box('Feedback' | trans, 'feedback') }}
+	</div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script src="{{ asset('js/jquery-ui.min.js') }}"></script>
+	<script src="{{ asset('js/chatbox.js') }}"></script>
+{% endblock %}
+
+{% block javascripts_inline %}
+	<script type="text/javascript">
+	$(document).ready(function() {
+		$('#ppp').chatbox({
+			chatboxSummary: '#feedback-summary',
+			chatboxBody: '#feedback-body',
+			chatboxForm: '#feedback-form',
+			chatboxFeedUrl: '{{ spath('project_area_request_ajax_feed', {'id': item.id} ) }}',
+			chatboxPostUrl: '{{ spath('project_area_request_ajax_post', {'id': item.id} ) }}',
+			avatars: '{{ asset('ph') }}'
+		});
+	});
+	</script>
+{% endblock %}

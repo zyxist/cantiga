@@ -1,0 +1,19 @@
+<ol class="breadcrumb">
+    <li>
+        <a href="{{ path('cantiga_home_page') }}">
+            <i class="fa fa-dashboard"></i>
+            {{ 'Home'|trans([], 'pages') }}
+        </a>
+    </li>
+    {% if hasBreadcrumbs %}
+        {% for item in breadcrumbs %}
+			{% if loop.last %}
+			<li class="active">{{ item.text }}</li>
+			{% elseif item.link is empty %}
+			<li>{{ item.text }}</li>
+			{% else %}
+			<li><a href="{{ item.link }}">{{ item.text }}</a></li>
+			{% endif %}
+        {% endfor %}
+    {% endif %}
+</ol>

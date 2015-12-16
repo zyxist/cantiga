@@ -1,0 +1,6 @@
+_project_links_controller:                                                                                                                                                   
+    resource: "@CantigaLinksBundle/Controller/ProjectLinksController.php"                                                                                                      
+    type:     annotation
+_admin_links_controller:                                                                                                                                                   
+    resource: "@CantigaLinksBundle/Controller/AdminLinksController.php"                                                                                                      
+    type:     annotation
