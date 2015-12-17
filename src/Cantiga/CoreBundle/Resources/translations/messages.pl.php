@@ -139,6 +139,12 @@ return array(
 	'PhotoUsageText' => 'Twoje zdjęcie jest wyświetlane w wielu miejscach systemu, najczęściej obok treści, którą stworzyłeś.',
 	'PhotoUploadRulesText' => 'Możesz załadować dowolny obrazek o rozmiarze do 700x700 punktów w jednym z formatów: JPG, PNG, GIF. Obrazek jest automatycznie skalowany do wymiarów 128x128, 64x64, 32x32 oraz 16x16 punktów. Jeżeli załadowany obrazek nie jest kwadratem, brana jest jego centralna część.',
 	'Your profile has been updated.' => 'Twój profil został zaktualizowany.',
+	'The new image has been set up.' => 'Nowe zdjęcie zostało poprawnie załadowane.',
+	'The specified image is not big enough. I cannot scale it up.' => 'Podany obrazek jest zbyt mały - nie da się przeskalować go do większego rozmiaru.',
+	'The specified image is too big.' => 'Podany obrazek jest zbyt duży.',
+	'ConfirmationLinkChangePasswordSentText' => 'Odnośnik do aktywacji nowego hasła został wysłany na Twoją skrzynkę e-mail. Proszę otworzyć wiadomość i kliknąć w podany link bez wylogowywania się z panelu.',
+	'ConfirmationLinkChangeEmailSentText' => 'Odnośnik do aktywacji nowego adresu został wysłany na Twoją starą skrzynkę e-mail. Proszę otworzyć wiadomość i kliknąć w podany link bez wylogowywania się z panelu.',
+
 	'Who can see my phone number?' => 'Kto może widzieć mój numer telefonu?',
 	'Who can see my public e-mail?' => 'Kto może widzieć mój publiczny e-mail?',
 	'Who can see my notes?' => 'Kto może widzieć moje notatki?',

@@ -81,7 +81,7 @@ class UserProfileController extends UserPageController
 		return $action->action($this->generateUrl('user_profile_change_mail'))
 			->template('CantigaCoreBundle:UserProfile:change-email.html.twig')
 			->redirect($this->generateUrl('user_profile_change_mail'))
-			->formSubmittedMessage('The confirmation link to change the e-mail has been sent to your old e-mail address. Please open the message and click on it.')
+			->formSubmittedMessage('ConfirmationLinkChangeEmailSentText')
 			->onSubmit(function(EmailChangeIntent $intent) use($repo) {
 				$intent->execute();
 			})
@@ -99,8 +99,8 @@ class UserProfileController extends UserPageController
 		$action = new FormAction($intent, new UserChangePasswordForm());
 		return $action->action($this->generateUrl('user_profile_change_password'))
 			->template('CantigaCoreBundle:UserProfile:change-password.html.twig')
-			->redirect($this->generateUrl('user_profile_change_mail'))
-			->formSubmittedMessage('The confirmation link to change the password has been sent to your e-mail address. Please open the message and click on it.')
+			->redirect($this->generateUrl('user_profile_change_password'))
+			->formSubmittedMessage('ConfirmationLinkChangePasswordSentText')
 			->onSubmit(function(PasswordChangeIntent $intent) use($repo) {
 				$intent->execute();
 			})
