@@ -75,7 +75,7 @@ class PhotoFormatter
 		$startScale *= 2;
 		while ($startScale > 16) {
 			$startScale = (int) ($startScale / 2);
-			$path = $this->output.DIRECTORY_SEPARATOR.$size.DIRECTORY_SEPARATOR.$firstTwo.DIRECTORY_SEPARATOR.$secondTwo.DIRECTORY_SEPARATOR.$name;
+			$path = $this->output.DIRECTORY_SEPARATOR.$startScale.DIRECTORY_SEPARATOR.$firstTwo.DIRECTORY_SEPARATOR.$secondTwo.DIRECTORY_SEPARATOR.$name;
 			if (file_exists($path)) {
 				unlink($path);
 			}
