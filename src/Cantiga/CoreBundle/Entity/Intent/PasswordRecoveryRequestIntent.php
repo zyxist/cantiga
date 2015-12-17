@@ -37,7 +37,7 @@ class PasswordRecoveryRequestIntent
 	public function execute()
 	{
 		$user = $this->repository->findUserByNameMail($this->login, $this->email);
-		if (null !== $user) {
+		if (false !== $user) {
 			$request = $this->repository->createPasswordRecoveryRequest($user, $_SERVER['REMOTE_ADDR']);
 			$this->dispatcher->dispatch(CantigaEvents::USER_PASSWORD_RECOVERY, new PasswordRecoveryEvent($request));
 		}
