@@ -35,6 +35,7 @@ class CoreTexts
 	const INVITATION_ANONYMOUS_MAIL = 'cantiga:invitation-anonymous';
 	const INVITATION_MEMBER_MAIL = 'cantiga:invitation-member';
 	
+	const AREA_REQUEST_CREATED_MAIL = 'cantiga:area-request:created';
 	const AREA_REQUEST_VERIFICATION_MAIL = 'cantiga:area-request:verification';
 	const AREA_REQUEST_APPROVED_MAIL = 'cantiga:area-request:approved';
 	const AREA_REQUEST_REVOKED_MAIL = 'cantiga:area-request:revoked';

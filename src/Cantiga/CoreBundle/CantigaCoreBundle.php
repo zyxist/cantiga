@@ -50,6 +50,7 @@ class CantigaCoreBundle extends Bundle
 		AppMails::registerName(CoreTexts::INVITATION_MEMBER_MAIL);
 		AppMails::registerName(CoreTexts::INVITATION_ANONYMOUS_MAIL);
 		
+		AppMails::registerName(CoreTexts::AREA_REQUEST_CREATED_MAIL);
 		AppMails::registerName(CoreTexts::AREA_REQUEST_VERIFICATION_MAIL);
 		AppMails::registerName(CoreTexts::AREA_REQUEST_APPROVED_MAIL);
 		AppMails::registerName(CoreTexts::AREA_REQUEST_REVOKED_MAIL);

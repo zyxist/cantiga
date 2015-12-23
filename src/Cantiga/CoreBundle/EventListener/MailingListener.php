@@ -105,6 +105,17 @@ class MailingListener
 		}
 	}
 	
+	public function onAreaRequestCreated(AreaRequestEvent $event)
+	{
+		$request = $event->getAreaRequest();
+		$this->mailSender->send(
+			CoreTexts::AREA_REQUEST_CREATED_MAIL,
+			$request->getRequestor()->getEmail(),
+			'notification about creating area request \''.$request->getName().'\' sent to \''.$request->getRequestor()->getEmail().'\'',
+			[ 'request' => $request ]
+		);
+	}
+	
 	public function onAreaRequestVerification(AreaRequestEvent $event)
 	{
 		$request = $event->getAreaRequest();

@@ -31,6 +31,7 @@ services:
             - { name: kernel.event_listener, event: cantiga.user.password-recovery-completed, method: onPasswordRecoveryCompleted }
             - { name: kernel.event_listener, event: cantiga.user.credential-change, method: onCredentialChange }
             - { name: kernel.event_listener, event: cantiga.invitation.created, method: onInvitation }
+            - { name: kernel.event_listener, event: cantiga.area-request.created, method: onAreaRequestCreated }
             - { name: kernel.event_listener, event: cantiga.area-request.verification, method: onAreaRequestVerification }
             - { name: kernel.event_listener, event: cantiga.area-request.revoked, method: onAreaRequestRevoked }
             - { name: kernel.event_listener, event: cantiga.area-request.approved, method: onAreaRequestApproved }
