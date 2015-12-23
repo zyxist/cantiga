@@ -10,7 +10,7 @@ return array(
 	'InvitationRevokedText' => 'The invitation has been revoked and deleted.',
 	
 	// Public texts
-	'CookieUsageInfoText' => 'This web application uses cookies solely for authentication purposes.',
+	'CookieUsageInfoText' => 'This web application uses cookies solely for authentication purposes and keeping the information about the chosen language.',
 	'AccountActivatedText' => 'Your account has been activated. You can now log in.',
 	'PasswordRecoveryIntroductionText' => 'Please enter your credentials. You will receive an e-mail message with the link for changing your password.',
 	'PasswordRecoveryEnterNewPasswordText' => 'Thank you, please enter the new password for your account. Remember to keep it complex and nontrivial!',

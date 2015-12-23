@@ -22,7 +22,7 @@ return array(
 	'The specified login cannot be used.' => 'Podany login nie może zostać użyty.',
 	'Enter' => 'Wejdź',
 	
-	'CookieUsageInfoText' => 'Ta aplikacja wykorzystuje ciasteczka wyłącznie do celów uwierzytelniania użytkownika.',
+	'CookieUsageInfoText' => 'Ta aplikacja wykorzystuje ciasteczka wyłącznie do celów uwierzytelniania użytkownika oraz pamiętania informacji o wybranym języku.',
 	'UserRegistrationConfirmationText' => 'Twoje konto zostało utworzone, jednak musisz je wpierw aktywować. Sprawdź swoją skrzynkę e-mail, w przeciągu kilku minut powinieneś otrzymać wiadomość z linkiem aktywacyjnym.',
 	'AccountActivatedText' => 'Twoje konto zostało aktywowane. Możesz się teraz zalogować.',
 	'PasswordRecoveryIntroductionText' => 'Podaj dane swojego konta. Na Twoją skrzynkę zostanie wysłany e-mail z odnośnikiem, przy pomocy którego ustawisz nowe hasło.',

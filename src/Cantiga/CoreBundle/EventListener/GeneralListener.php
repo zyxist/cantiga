@@ -2,14 +2,13 @@
 namespace Cantiga\CoreBundle\EventListener;
 
 use Cantiga\CoreBundle\Api\Controller\CantigaController;
-use Cantiga\CoreBundle\Exception\AreasNotSupportedException;
 use Cantiga\Metamodel\TimeFormatter;
 use Cantiga\Metamodel\Transaction;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
@@ -20,6 +19,8 @@ use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 class GeneralListener
 {
 	const FALLBACK_LOCALE = 'en';
+	const LAST_LANG_COOKIE = 'cc-last-lang';
+	const DEF_LAST_LANG_TIME = 2592000; // 30 days
 	
 	/**
 	 * @var AuthorizationCheckerInterface 
@@ -59,6 +60,10 @@ class GeneralListener
 			$request->getSession()->set('_locale', $locale);
 		} else if($request->attributes->get('_localeFromQuery') && $request->query->has('_locale')) {
 			$request->getSession()->set('_locale', $request->query->get('_locale', self::FALLBACK_LOCALE));
+		} else if($request->getSession()->has('_user_locale')) {
+			$request->getSession()->set('_locale', $request->getSession()->get('_user_locale'));
+		} else if($request->cookies->has(self::LAST_LANG_COOKIE)) {
+			$request->getSession()->set('_locale', $request->cookies->get(self::LAST_LANG_COOKIE));
 		}
 		$request->setLocale($request->getSession()->get('_locale'));
 	}
@@ -99,6 +104,9 @@ class GeneralListener
 		if($event->isMasterRequest()) {
 			$this->transaction->closeTransaction();
 		}
+		if ($event->getRequest()->getSession()->has('_locale')) {
+			$event->getResponse()->headers->setCookie(new Cookie(self::LAST_LANG_COOKIE, $event->getRequest()->getSession()->get('_locale'), time() + self::DEF_LAST_LANG_TIME));
+		}
 	}
 	
 	public function onInteractiveLogin(InteractiveLoginEvent $event)
@@ -112,8 +120,8 @@ class GeneralListener
 		
 		$locale = $user->getSettingsLanguage()->getLocale();
 		if (empty($locale)) {
-			$locale = 'en_EN'; // fallback to English in case of some misconfiguration
+			$locale = 'en'; // fallback to English in case of some misconfiguration
 		}
-		$this->session->set('_locale', $locale);
+		$this->session->set('_user_locale', $locale);
 	}
 }
