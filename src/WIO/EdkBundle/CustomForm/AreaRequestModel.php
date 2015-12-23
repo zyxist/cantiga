@@ -6,6 +6,7 @@ use Cantiga\Metamodel\CustomForm\DefaultCustomFormRenderer;
 use Cantiga\Metamodel\CustomForm\DefaultCustomFormSummary;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -44,6 +45,31 @@ class AreaRequestModel implements CustomFormModelInterface
 		$builder->add('routeAscent', new NumberType, array('label' => 'Route ascent', 'attr' => ['help_text' => 'In metres'], 'constraints' => [
 			new Range(['min' => 0, 'max' => 5000])
 		]));
+		
+		$builder->add('whyCreatingArea', new TextareaType, array('label' => 'WhyCreatingAreaFormLabel', 'attr' => ['help_text' => 'Max400Chars'], 'constraints' => [
+			new NotNull,
+			new Length(['min' => 10, 'max' => 400])
+		]));
+		$builder->add('intersectionPoint', new TextareaType, array('label' => 'IntersectionPointFormLabel', 'attr' => ['help_text' => 'Max400Chars'], 'constraints' => [
+			new NotNull,
+			new Length(['min' => 10, 'max' => 400])
+		]));
+		$builder->add('leaderGoals', new TextareaType, array('label' => 'LeaderGoalsFormLabel', 'attr' => ['help_text' => 'Max400Chars'], 'constraints' => [
+			new NotNull,
+			new Length(['min' => 10, 'max' => 400])
+		]));
+		$builder->add('particiaptionDetails', new TextareaType, array('label' => 'ParticipationDetailsFormLabel', 'attr' => ['help_text' => 'Max400Chars'], 'constraints' => [
+			new NotNull,
+			new Length(['min' => 3, 'max' => 400])
+		]));
+		$builder->add('projectMgmtExperiences', new TextareaType, array('label' => 'ProjectMgmtExperienceFormLabel', 'attr' => ['help_text' => 'ProjectMgmtExperiencesHelp'], 'constraints' => [
+			new NotNull,
+			new Length(['min' => 3, 'max' => 400])
+		]));
+		$builder->add('threeBiggestSuccesses', new TextareaType, array('label' => 'ThreeBiggestSuccessesFormLabel', 'attr' => ['help_text' => 'Max400Chars'], 'constraints' => [
+			new NotNull,
+			new Length(['min' => 10, 'max' => 400])
+		]));
 	}
 	
 	public function validateForm($data, ExecutionContextInterface $context)
@@ -72,6 +98,8 @@ class AreaRequestModel implements CustomFormModelInterface
 		$r->group('Proposed route', 'ProposedRouteInformationText');
 		$r->fields('routeFrom', 'routeTo');
 		$r->fields('routeLength', 'routeAscent');
+		$r->group('About you', 'AboutYouEwcText');
+		$r->fields('whyCreatingArea', 'intersectionPoint', 'leaderGoals', 'particiaptionDetails', 'projectMgmtExperiences', 'threeBiggestSuccesses');
 		return $r;
 	}
 	
@@ -87,6 +115,12 @@ class AreaRequestModel implements CustomFormModelInterface
 		$s->present('routeAscent', 'Route ascent', 'callback', function($length) {
 			return $length.' m';
 		});
+		$s->present('whyCreatingArea', 'WhyCreatingAreaFormLabel', 'string');
+		$s->present('intersectionPoint', 'IntersectionPointFormLabel', 'string');
+		$s->present('leaderGoals', 'LeaderGoalsFormLabel', 'string');
+		$s->present('particiaptionDetails', 'ParticipationDetailsFormLabel', 'string');
+		$s->present('projectMgmtExperiences', 'ProjectMgmtExperienceFormLabel', 'string');
+		$s->present('threeBiggestSuccesses', 'ThreeBiggestSuccessesFormLabel', 'string');
 		return $s;
 	}
 	

@@ -49,4 +49,15 @@ return array(
 	'Facebook profile' => 'Nazwa profilu Facebook',
 	
 	'RequiredFieldsForProfilePublicationText' => 'Pola oznaczone jako * są wymagane, aby profil pojawił się na stronie internetowej EDK.',
+	
+	'About you' => 'O Tobie',
+	'AboutYouEwcText' => 'Podaj kilka informacji o sobie, swoich motywacjach i osiągnięciach.',
+	'WhyCreatingAreaFormLabel' => 'Dlaczego chcesz stworzyć rejon EDK?',
+	'IntersectionPointFormLabel' => 'Gdzie jest punkt styku pomiędzy duchowością EDK, a tym co jest dla Ciebie ważne?',
+	'LeaderGoalsFormLabel' => 'Jakie cele stawiasz sobie, pełniąc rolę lidera rejonu EDK?',
+	'ParticipationDetailsFormLabel' => 'Czy organizowałeś lub brałeś udział w EDK? Jeśli tak, napisz na czym polegało Twoje zaangażowanie.',
+	'ProjectMgmtExperienceFormLabel' => 'Czy posiadasz doświadczenie w zarządzaniu projektem, zarządzaniu ludźmi bądź organizowaniu wydarzeń? Jeśli tak, opisz je krótko.',
+	'ThreeBiggestSuccessesFormLabel' => 'Przedstaw trzy Twoje największe sukcesy związane z Twoją pracą/hobby/działalnością społeczną, w tym jeden który wymagał od Ciebie dodatkowej determinacji i pokonywania wielu trudności.',	
+	'ProjectMgmtExperiencesHelp' => 'Popatrz na to szeroko, jako na doświadczenie z pracy, uczelni, szkoły, wolontariatu (max. 400 znaków)',
+	'Max400Chars' => 'Max. 400 znaków',
 );
