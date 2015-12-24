@@ -74,6 +74,9 @@ final class DataMappers
 		}
 		foreach ($properties as $property) {
 			$getter = 'get' . ucfirst($property);
+			if (!method_exists($entity, $getter)) {
+				throw new \LogicException('No such getter: \''.$getter.'()\' for property '.$property);
+			}
 			$value = $entity->$getter();
 			
 			if (is_object($value) && $value instanceof IdentifiableInterface) {

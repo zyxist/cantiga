@@ -18,6 +18,7 @@ class AppKernel extends Kernel
 			new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
 			new Cantiga\CoreBundle\CantigaCoreBundle(),
 			new Cantiga\LinksBundle\CantigaLinksBundle(),
+			new Cantiga\MilestoneBundle\CantigaMilestoneBundle(),
 			new WIO\EdkBundle\WioEdkBundle(),
 		);
 

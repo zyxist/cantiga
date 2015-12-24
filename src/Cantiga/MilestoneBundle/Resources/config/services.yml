@@ -1,0 +1,11 @@
+imports:
+    - { resource: ../../../../../app/config/parameters.yml }
+
+services:
+    cantiga.milestone.repo.milestone:
+        class:     Cantiga\MilestoneBundle\Repository\ProjectMilestoneRepository
+        arguments: ["@database_connection", "@cantiga.transaction"]
+    cantiga.milestone.workspace_listener:
+        class: Cantiga\MilestoneBundle\EventListener\WorkspaceListener
+        tags:
+            - { name: kernel.event_listener, event: cantiga.workspace.project, method: onProjectWorkspace }

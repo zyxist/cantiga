@@ -4,3 +4,6 @@ cantiga_core_bundle:
 cantiga_links_bundle:
     resource: "@CantigaLinksBundle/Resources/config/routing.yml"
     prefix:   /
+cantiga_milestone_bundle:
+    resource: "@CantigaMilestoneBundle/Resources/config/routing.yml"
+    prefix:   /
