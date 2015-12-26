@@ -40,6 +40,7 @@ parameters:
     project_territory.class: Cantiga\CoreBundle\Repository\ProjectTerritoryRepository
     cantiga.controller.exception.class: Cantiga\CoreBundle\Controller\ExceptionController
     area_per_status_stats.class: Cantiga\CoreBundle\Statistics\AreasPerStatusStats
+    db_files: %kernel.root_dir%/../db/
     
 services:
     cantiga.extensions:

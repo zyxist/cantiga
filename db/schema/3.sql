@@ -33,20 +33,21 @@ CREATE TABLE IF NOT EXISTS `cantiga_training_tests` (
   PRIMARY KEY (`trainingId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-ALTER TABLE `cantiga_training_results`
-  ADD CONSTRAINT `cantiga_training_results_fk1` FOREIGN KEY (`areaId`) REFERENCES `cantiga_areas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `cantiga_training_results_fk2` FOREIGN KEY (`trainingId`) REFERENCES `cantiga_trainings` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE  `cantiga_training_tests` ADD CONSTRAINT  `cantiga_training_tests_fk1` FOREIGN KEY (  `trainingId` ) REFERENCES `cantiga_trainings` (`id`) ON DELETE CASCADE ON UPDATE CASCADE ;
-
 CREATE TABLE IF NOT EXISTS `cantiga_training_progress` (
   `areaId` INT(11) NOT NULL,
   `mandatoryTrainingNum` INT(11) NOT NULL DEFAULT 0,
   `passedTrainingNum` INT(11) NOT NULL DEFAULT 0,
   `failedTrainingNum` INT(11) NOT NULL DEFAULT 0,
-  PRIMARY KEY(`area_id`),
-  KEY `passed_training_num` (`passed_training_num`)
+  PRIMARY KEY(`areaId`),
+  KEY `passedTrainingNum` (`passedTrainingNum`)
 ) ENGINE=InnoDB;
+
+ALTER TABLE `cantiga_training_results`
+  ADD CONSTRAINT `cantiga_training_results_fk1` FOREIGN KEY (`areaId`) REFERENCES `cantiga_areas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `cantiga_training_results_fk2` FOREIGN KEY (`trainingId`) REFERENCES `cantiga_trainings` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE  `cantiga_training_tests`
+  ADD CONSTRAINT  `cantiga_training_tests_fk1` FOREIGN KEY (  `trainingId` ) REFERENCES `cantiga_trainings` (`id`) ON DELETE CASCADE ON UPDATE CASCADE ;
 
 ALTER TABLE `cantiga_training_progress`
   ADD CONSTRAINT `cantiga_training_progress_fk1` FOREIGN KEY (`areaId`) REFERENCES `cantiga_areas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;

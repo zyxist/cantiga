@@ -299,7 +299,7 @@ class Training implements InsertableEntityInterface, EditableEntityInterface, Re
 		$this->setId($conn->lastInsertId());
 
 		if($this->getPublished()) {
-			$this->incrementMandatoryTrainings();
+			$this->incrementMandatoryTrainings($conn);
 		}
 		return $this->getId();
 	}
@@ -360,7 +360,7 @@ class Training implements InsertableEntityInterface, EditableEntityInterface, Re
 		if(null === $this->getId()) {
 			throw new LogicException('Cannot perform remove() on an unpersisted Training instance.');
 		}		
-		$this->refresh();
+		$this->refresh($conn);
 		if($this->published) {
 			$this->decrementMandatoryTrainings($conn);
 			$this->cancelTrainingFromAreaRecords($conn);
@@ -387,29 +387,29 @@ class Training implements InsertableEntityInterface, EditableEntityInterface, Re
 	
 	private function incrementMandatoryTrainings(Connection $conn)
 	{
-		$conn->query('UPDATE `'.TrainingTables::TRAINING_RECORD_TBL.'` SET `mandatoryTrainingNum` = (`mandatoryTrainingNum` + 1)');
+		$conn->query('UPDATE `'.TrainingTables::TRAINING_PROGRESS_TBL.'` SET `mandatoryTrainingNum` = (`mandatoryTrainingNum` + 1)');
 	}
 	
 	private function decrementMandatoryTrainings(Connection $conn)
 	{
-		$conn->query('UPDATE `'.TrainingTables::TRAINING_RECORD_TBL.'` SET `mandatoryTrainingNum` = (`mandatoryTrainingNum` - 1)');
+		$conn->query('UPDATE `'.TrainingTables::TRAINING_PROGRESS_TBL.'` SET `mandatoryTrainingNum` = (`mandatoryTrainingNum` - 1)');
 	}
 	
 	private function cancelTrainingFromAreaRecords(Connection $conn) {
-		$conn->executeUpdate('UPDATE `'.TrainingTables::TRAINING_PROGRESS_TBL.'` r INNER JOIN `'.TrainingTables::TRAINING_RESULTS_TBL.'` tt ON tt.`areaId` = r.`areaId` '
+		$conn->executeUpdate('UPDATE `'.TrainingTables::TRAINING_PROGRESS_TBL.'` r INNER JOIN `'.TrainingTables::TRAINING_RESULT_TBL.'` tt ON tt.`areaId` = r.`areaId` '
 			. 'SET r.`passedTrainingNum` = (`passedTrainingNum` - 1)  WHERE tt.`result` = '.Question::RESULT_CORRECT.' AND tt.`trainingId` = :trainingId',
 			array(':trainingId' => $this->getId()));
-		$conn->executeUpdate('UPDATE `'.TrainingTables::TRAINING_PROGRESS_TBL.'` r INNER JOIN `'.TrainingTables::TRAINING_RESULTS_TBL.'` tt ON tt.`areaId` = r.`areaId` '
+		$conn->executeUpdate('UPDATE `'.TrainingTables::TRAINING_PROGRESS_TBL.'` r INNER JOIN `'.TrainingTables::TRAINING_RESULT_TBL.'` tt ON tt.`areaId` = r.`areaId` '
 			. 'SET r.`failedTrainingNum` = (`failedTrainingNum` - 1) WHERE tt.`result` = '.Question::RESULT_INVALID.' AND tt.`trainingId` = :trainingId',
 			array(':trainingId' => $this->getId()));
 	}
 	
 	private function revokeTrainingFromAreaRecords(Connection $conn)
 	{
-		$conn->executeUpdate('UPDATE `'.TrainingTables::TRAINING_PROGRESS_TBL.'` r INNER JOIN `'.TrainingTables::TRAINING_RESULTS_TBL.'` tt ON tt.`areaId` = r.`areaId` '
+		$conn->executeUpdate('UPDATE `'.TrainingTables::TRAINING_PROGRESS_TBL.'` r INNER JOIN `'.TrainingTables::TRAINING_RESULT_TBL.'` tt ON tt.`areaId` = r.`areaId` '
 			. 'SET r.`passedTrainingNum` = (`passedTrainingNum` + 1)  WHERE tt.`result` = '.Question::RESULT_CORRECT.' AND tt.`trainingId` = :trainingId',
 			array(':trainingId' => $this->getId()));
-		$conn->executeUpdate('UPDATE `'.TrainingTables::TRAINING_PROGRESS_TBL.'` r INNER JOIN `'.TrainingTables::TRAINING_RESULTS_TBL.'` tt ON tt.`areaId` = r.`areaId` '
+		$conn->executeUpdate('UPDATE `'.TrainingTables::TRAINING_PROGRESS_TBL.'` r INNER JOIN `'.TrainingTables::TRAINING_RESULT_TBL.'` tt ON tt.`areaId` = r.`areaId` '
 			. 'SET r.`failedTrainingNum` = (`failedTrainingNum` + 1) WHERE tt.`result` = '.Question::RESULT_INVALID.' AND tt.`trainingId` = :trainingId',
 			array(':trainingId' => $this->getId()));
 	}

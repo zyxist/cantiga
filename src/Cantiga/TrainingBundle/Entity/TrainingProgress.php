@@ -18,12 +18,25 @@ class TrainingProgress implements InsertableEntityInterface
 	private $mandatoryTrainingNum = 0;
 	private $passedTrainingNum = 0;
 	private $failedTrainingNum = 0;
-	/*
+	
+	public static function fetchByArea(Connection $conn, Area $area)
+	{
+		$data = $conn->fetchAssoc('SELECT * FROM `'.TrainingTables::TRAINING_PROGRESS_TBL.'` WHERE `areaId` = :areaId', [':areaId' => $area->getId()]);
+		if (false === $data) {
+			return false;
+		}
+		$item = new TrainingProgress($area);
+		$item->mandatoryTrainingNum = $data['mandatoryTrainingNum'];
+		$item->passedTrainingNum = $data['passedTrainingNum'];
+		$item->failedTrainingNum = $data['failedTrainingNum'];
+		return $item;
+	}
+
 	public function __construct(Area $area)
 	{
 		$this->area = $area;
 	}
-	
+	/*
 	public static function fromArray(Area $area, array $data, $prefix = '') {
 		$record = new TrainingRecord($area);
 		$record->mandatoryTrainingNum = $data[$prefix.'mandatoryTrainingNum'];
@@ -55,7 +68,7 @@ class TrainingProgress implements InsertableEntityInterface
 	 */
 	public function updateResults(Connection $conn, TestResult $result, TestTrial $trial)
 	{
-		$this->refresh();
+		$this->refresh($conn);
 		if($trial->getResult() == Question::RESULT_CORRECT) {
 			$this->passedTrainingNum++;
 		} elseif($trial->getResult() == Question::RESULT_INVALID) {
@@ -86,7 +99,7 @@ class TrainingProgress implements InsertableEntityInterface
 			'passedTrainingNum' => $this->passedTrainingNum,
 			'failedTrainingNum' => $this->failedTrainingNum
 		], ['areaId' => $this->area->getId()]);
-		$this->refresh();
+		$this->refresh($conn);
 	}
 	
 	public function refresh(Connection $conn)

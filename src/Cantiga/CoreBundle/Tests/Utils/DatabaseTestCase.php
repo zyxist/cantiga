@@ -58,6 +58,8 @@ class DatabaseTestCase extends \PHPUnit_Framework_TestCase {
 	 */
 	protected static $dbInitializer;
 	
+	private static $loadedFixtures = [];
+	
 	private static $dbReused = false;
 	
 	public static function setUpBeforeClass() {
@@ -117,7 +119,10 @@ class DatabaseTestCase extends \PHPUnit_Framework_TestCase {
 	
 	protected static final function importFixture($fixture)
 	{
-		self::runCommand('dbal:import', array('file' => self::$dbInitializer->fixture($fixture)));
+		if (!in_array($fixture, self::$loadedFixtures)) {
+			self::runCommand('dbal:import', array('file' => self::$dbInitializer->fixture($fixture)));
+			self::$loadedFixtures[] = $fixture;
+		}
 	}
 	
 	/**

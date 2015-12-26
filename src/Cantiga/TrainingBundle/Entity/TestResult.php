@@ -182,7 +182,7 @@ class TestResult {
 	
 	protected function save(Connection $conn)
 	{		
-		$stmt = $conn->prepare('INSERT INTO `'.TrainingTables::TRAINING_RESULTS_TBL.'` '
+		$stmt = $conn->prepare('INSERT INTO `'.TrainingTables::TRAINING_RESULT_TBL.'` '
 			. '(`areaId`, `trainingId`, `trialNumber`, `startedAt`, `completedAt`, `result`, `totalQuestions`, `passedQuestions`) '
 			. 'VALUES(:areaId, :trainingId, :trialNum, :startedAt, :completedAt, :result, :totalQuestions, :passedQuestions) '
 			. 'ON DUPLICATE KEY UPDATE `trialNumber` = VALUES(`trialNumber`), `startedAt` = VALUES(`startedAt`), '

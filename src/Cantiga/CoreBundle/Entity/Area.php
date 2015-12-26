@@ -34,6 +34,16 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 	private $oldGroup;
 	private $oldStatus;
 	private $oldTerritory;
+	
+	public static function newArea(Project $project, Territory $territory, AreaStatus $status, $name)
+	{
+		$item = new Area();
+		$item->setProject($project);
+		$item->setTerritory($territory);
+		$item->setStatus($status);
+		$item->setName($name);
+		return $item;
+	}
 
 	public static function fetchActive(Connection $conn, $id)
 	{

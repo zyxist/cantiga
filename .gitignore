@@ -16,3 +16,4 @@
 /bin/
 /composer.phar
 /nbproject/
+/app/config/parameters_test.yml

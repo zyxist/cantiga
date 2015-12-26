@@ -1,0 +1,7 @@
+parameters:
+    test_database_driver: pdo_mysql
+    test_database_host: 127.0.0.1
+    test_database_port: null
+    test_database_name: cantiga_test
+    test_database_user: root
+    test_database_password: root
