@@ -1,0 +1,108 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+{% import "CantigaCoreBundle:layout:macros.html.twig" as macro %}
+
+{% block page_title %}
+	{{ 'Course: 0' | trans([item.name]) }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ pageSubtitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+<div class="row" id="ppp">
+	<div class="col-lg-8 col-xs-12">
+		<div class="box">
+			<div class="box-body box-status">
+				<div class="status-line">
+					{% if item.published %}
+					<div class="status-item status-success">{{ 'Published' | trans }}</div>
+					{% else %}
+					<div class="status-item status-danger">{{ 'Not published' | trans }}</div>
+					{% endif %}
+					<div class="status-actions">
+						<div class="btn-group">
+							<button type="button" class="btn btn-default btn-sm">{{ 'Actions' | trans([], 'general') }}</button>
+							<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+								<span class="caret"></span>
+								<span class="sr-only">{{ 'Toggle dropdown' | trans([], 'general') }}</span>
+							</button>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="{{ spath(editPage, {'id' : item.id }) }}">{{ 'Edit' | trans([], 'general') }}</a></li>
+								{% if item.canRemove() %}
+								<li><a href="{{ spath(removePage, {'id' : item.id }) }}">{{ 'Remove' | trans([], 'general') }}</a></li>
+								{% endif %}
+							</ul>
+							
+						</div>
+						<a href="{{ spath(indexPage) }}" class="btn btn-default btn-sm">{{ 'Back' | trans([], 'general') }}</a>
+					</div>
+				</div>
+				<div class="status-info">
+					<div class="info-item">
+						<h4><i class="fa fa-clock-o"></i> {{ 'Deadline' | trans }}</h4>
+						{% if item.deadline %}
+						<span class="value">{{ format_time(TimeFormatter.FORMAT_DATE_LONG, item.deadline) }}</span>
+						{% else %}
+						<span class="value">---</span>
+						{% endif %}
+					</div>
+					<div class="info-item">
+						<h4><i class="fa fa-wrench"></i> {{ 'Last update' | trans }}</h4>
+						<span class="value">{{ format_time(TimeFormatter.FORMAT_LONG, item.lastUpdated) }} ({{ ago(item.lastUpdated) }})</span>
+					</div>
+					<div class="info-item">
+						<h4><i class="fa fa-user"></i> {{ 'Author' | trans }}</h4>
+						<span class="value"><a href="mailto:{{ item.authorEmail }}">{{ item.authorName }}</a></span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="nav-tabs-custom">
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#course-info" aria-controls="course-info" role="tab" data-toggle="tab">{{ 'Course information' | trans }}</a></li>
+				<li><a href="#presentation" aria-controls="presentation" role="tab" data-toggle="tab">{{ 'Presentation' | trans }}</a></li>
+			</ul>
+			<div class="tab-content">
+				<div role="tabpanel" class="tab-pane active" id="course-info">
+					<table class="table table-hover">
+						<tbody>
+							<tr>
+								<td width="30%">{{ 'Name' | trans }}</td>
+								<td>{{ item.name }}</td>
+							</tr>
+							<tr>
+								<td width="30%">{{ 'Description' | trans }}</td>
+								<td>{{ item.description }}</td>
+							</tr>
+							<tr>
+								<td width="30%">{{ 'Presentation URL' | trans }}</td>
+								<td><a href="{{ item.presentationLink }}">{{ item.presentationLink }}</a></td>
+							</tr>
+							<tr>
+								<td width="30%">{{ 'Display order' | trans }}</td>
+								<td><a href="{{ item.displayOrder }}">{{ item.displayOrder }}</a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div role="tabpanel" class="tab-pane" id="presentation">
+					<div class="row">
+						{{ item.generatePresentationCode() | raw }}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-4 col-xs-12">
+		<div class="box">
+			<div class="box-header">
+				<h4>{{ 'Notes' | trans }}</h4>
+			</div>
+			<div class="box-body">
+				<p>{{ item.notes }}</p>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
