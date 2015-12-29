@@ -27,4 +27,10 @@ return array(
 	'CourseTestNotNeededText: 0' => 'To szkolenie można ukończyć bez konieczności rozwiązywania testu. Kliknij w poniższy przycisk, aby potwierdzić, że zapoznałeś się z treścią prezentacji. Termin zaliczenia szkolenia mija 0.',
 	'CourseTestNotNeededText' => 'To szkolenie można ukończyć bez konieczności rozwiązywania testu. Kliknij w poniższy przycisk, aby potwierdzić, że zapoznałeś się z treścią prezentacji.',
 	'Confirm course completion' => 'Potwierdź ukończenie kursu',
+	'Upload test: 0' => 'Załaduj pytania testowe: 0',
+	'Upload the test' => 'Załaduj pytania testowe',
+	'XML file' => 'Plik XML',
+	'Upload questions' => 'Załaduj pytania',
+	'ExampleTestFileText' => 'Zestaw pytań należy zapisać jako plik XML i wgrać na serwer przy pomocy poniższego formularza. Poniżej możesz zobaczyć przykładową strukturę pliku z pytaniami.',
+	'The test has not been published for this course.' => 'Dla tego kursu nie zostały opublikowane pytania testowe.',
 );

@@ -3,4 +3,5 @@ return array(
 	'Passed' => 'Zdany',
 	'Failed' => 'Niezdany',	
 	'Not started' => 'Niezaczęty',
+	'Test' => 'Test',
 );

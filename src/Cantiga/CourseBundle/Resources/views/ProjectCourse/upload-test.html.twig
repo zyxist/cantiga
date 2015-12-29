@@ -1,0 +1,31 @@
+{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+
+{% block box_header %}
+	<h4>{{ 'Upload test: 0' | trans([item.name]) }}</h4>
+{% endblock %}
+
+{% block box_body %}
+	
+	<p>{{ 'ExampleTestFileText' | trans }}</p>
+	
+	<pre>
+&lt;?xml version="1.0"?&gt;
+&lt;test question-number="10"&gt;
+	&lt;question content="Is this a correct answer?"&gt;
+		&lt;answer correct="yes"&gt;Yes&lt;/answer&gt;
+		&lt;answer correct="yes"&gt;Definitely&lt;/answer&gt;
+		&lt;answer&gt;No&lt;/answer&gt;
+		&lt;answer&gt;Not at all&lt;/answer&gt;
+	&lt;/question&gt;
+	&lt;question content="How many is 2+2?"&gt;
+		&lt;answer correct="yes"&gt;4&lt;/answer&gt;
+		&lt;answer&gt;5&lt;/answer&gt;
+		&lt;answer&gt;3&lt;/answer&gt;
+		&lt;answer&gt;7&lt;/answer&gt;
+	&lt;/question&gt;
+&lt;/test&gt;</pre>
+
+	{{ form_start(form) }}
+		{{ form_row(form.file) }}
+	{{ form_end(form) }}
+{% endblock %}

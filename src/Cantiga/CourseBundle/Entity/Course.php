@@ -70,8 +70,13 @@ class Course implements InsertableEntityInterface, EditableEntityInterface, Remo
 		if (empty($data)) {
 			return false;
 		}
+		$test = $conn->fetchAssoc('SELECT * FROM `'.CourseTables::COURSE_TEST_TBL.'` WHERE `courseId` = :id', [':id' => $id]);
+		
 		$item = self::fromArray($data);
 		$item->project = $project;
+		if (false !== $test) {
+			$item->test = new CourseTest($item, $test['testStructure']);
+		}
 		return $item;
 	}
 	
@@ -81,8 +86,12 @@ class Course implements InsertableEntityInterface, EditableEntityInterface, Remo
 		if (empty($data)) {
 			return false;
 		}
+		$test = $conn->fetchAssoc('SELECT * FROM `'.CourseTables::COURSE_TEST_TBL.'` WHERE `courseId` = :id', [':id' => $id]);
 		$item = self::fromArray($data);
 		$item->project = $project;
+		if (false !== $test) {
+			$item->test = new CourseTest($item, $test['testStructure']);
+		}
 		return $item;
 	}
 	

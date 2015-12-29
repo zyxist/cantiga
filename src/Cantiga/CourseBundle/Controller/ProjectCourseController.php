@@ -18,19 +18,23 @@
  */
 namespace Cantiga\CourseBundle\Controller;
 
+use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
+use Cantiga\CoreBundle\Api\Actions\EditAction;
+use Cantiga\CoreBundle\Api\Actions\InfoAction;
+use Cantiga\CoreBundle\Api\Actions\InsertAction;
+use Cantiga\CoreBundle\Api\Actions\RemoveAction;
+use Cantiga\CoreBundle\Api\Controller\ProjectPageController;
+use Cantiga\CourseBundle\Entity\Course;
+use Cantiga\CourseBundle\Form\CourseForm;
+use Cantiga\CourseBundle\Form\CourseTestUploadForm;
+use Cantiga\Metamodel\Exception\ItemNotFoundException;
+use Cantiga\Metamodel\Exception\ModelException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
-use Cantiga\CoreBundle\Api\Actions\RemoveAction;
-use Cantiga\CoreBundle\Api\Actions\InsertAction;
-use Cantiga\CoreBundle\Api\Actions\EditAction;
-use Cantiga\CoreBundle\Api\Actions\InfoAction;
-use Cantiga\CoreBundle\Api\Controller\ProjectPageController;
-use Cantiga\CourseBundle\Form\CourseForm;
-use Cantiga\CourseBundle\Entity\Course;
 
 /**
  * @Route("/project/{slug}/courses")
@@ -141,5 +145,45 @@ class ProjectCourseController extends ProjectPageController
 		$action = new RemoveAction($this->crudInfo);
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
+	}
+	
+	/**
+	 * @Route("/{id}/upload-test", name="project_course_upload_test")
+	 */
+	public function uploadTestAction($id, Request $request)
+	{
+		try {
+			$repository = $this->crudInfo->getRepository();
+			$item = $repository->getItem($id);
+			$form = $this->createForm(new CourseTestUploadForm());
+			$form->handleRequest($request);
+			
+			if($form->isValid()) {
+				$data = $form->getData();
+				if(!$data['file'] instanceof UploadedFile) {
+					return $this->showPageWithError($this->trans('An error occurred during uploading the test questions.'), $this->crudInfo->getInfoPage(), array('id' => $id, 'slug' => $this->getSlug()));
+				}
+				if($data['file']->getMimeType() != 'application/xml') {
+					return $this->showPageWithError($this->trans('Please upload an XML file!'), $this->crudInfo->getInfoPage(), array('id' => $id, 'slug' => $this->getSlug()));
+				}
+				$content = file_get_contents($data['file']->getRealPath());
+				$item->createTest($content);
+				$repository->saveTest($item);
+				return $this->showPageWithMessage($this->trans('The course test questions have been uploaded correctly.'), $this->crudInfo->getInfoPage(), array('id' => $id, 'slug' => $this->getSlug()));
+			}
+			$this->breadcrumbs()
+				->link($item->getName(), 'project_course_info', ['id' => $item->getId(), 'slug' => $this->getSlug()])
+				->link($this->trans('Upload test'), 'project_course_upload_test', ['id' => $item->getId(), 'slug' => $this->getSlug()]);
+			return $this->render($this->crudInfo->getTemplateLocation().'upload-test.html.twig', array(
+				'pageTitle' => $this->crudInfo->getPageTitle(),
+				'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
+				'item' => $item,
+				'form' => $form->createView(),
+			));
+		} catch(ItemNotFoundException $exception) {
+			return $this->showPageWithError($this->crudInfo->getItemNotFoundErrorMessage(), $this->crudInfo->getIndexPage());
+		} catch(ModelException $exception) {
+			return $this->showPageWithError($this->trans($exception->getMessage()), $this->crudInfo->getIndexPage());
+		}
 	}
 }

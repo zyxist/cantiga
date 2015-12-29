@@ -134,6 +134,19 @@ class ProjectCourseRepository
 		}
 	}
 	
+	public function saveTest(Course $item)
+	{
+		$this->transaction->requestTransaction();
+		try {
+			if ($item->hasTest()) {
+				$item->getTest()->save($this->conn);
+			}
+		} catch(Exception $ex) {
+			$this->transaction->requestRollback();
+			throw $ex;
+		}
+	}
+	
 	public function update(Course $item)
 	{
 		$this->transaction->requestTransaction();

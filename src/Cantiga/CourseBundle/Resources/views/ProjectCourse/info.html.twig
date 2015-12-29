@@ -28,6 +28,7 @@
 								<span class="sr-only">{{ 'Toggle dropdown' | trans([], 'general') }}</span>
 							</button>
 							<ul class="dropdown-menu" role="menu">
+								<li><a href="{{ spath('project_course_upload_test', {'id' : item.id }) }}">{{ 'Upload the test' | trans([], 'general') }}</a></li>
 								<li><a href="{{ spath(editPage, {'id' : item.id }) }}">{{ 'Edit' | trans([], 'general') }}</a></li>
 								{% if item.canRemove() %}
 								<li><a href="{{ spath(removePage, {'id' : item.id }) }}">{{ 'Remove' | trans([], 'general') }}</a></li>
@@ -62,6 +63,7 @@
 			<ul class="nav nav-tabs">
 				<li class="active"><a href="#course-info" aria-controls="course-info" role="tab" data-toggle="tab">{{ 'Course information' | trans }}</a></li>
 				<li><a href="#presentation" aria-controls="presentation" role="tab" data-toggle="tab">{{ 'Presentation' | trans }}</a></li>
+				<li><a href="#test" aria-controls="test" role="tab" data-toggle="tab">{{ 'Test' | trans([], 'course') }}</a></li>
 			</ul>
 			<div class="tab-content">
 				<div role="tabpanel" class="tab-pane active" id="course-info">
@@ -81,7 +83,7 @@
 							</tr>
 							<tr>
 								<td width="30%">{{ 'Display order' | trans }}</td>
-								<td><a href="{{ item.displayOrder }}">{{ item.displayOrder }}</a></td>
+								<td>{{ item.displayOrder }}</td>
 							</tr>
 						</tbody>
 					</table>
@@ -90,6 +92,13 @@
 					<div class="row">
 						{{ item.generatePresentationCode() | raw }}
 					</div>
+				</div>
+				<div role="tabpanel" class="tab-pane" id="test">
+					{% if item.hasTest() %}
+						<pre>{{ item.getTest().getContent() }}</pre>
+					{% else %}
+						<p>{{ 'The test has not been published for this course.' | trans }}</p>
+					{% endif %}
 				</div>
 			</div>
 		</div>
