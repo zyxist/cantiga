@@ -20,5 +20,11 @@ return array(
 	'The course \'0\' has been updated.' => 'Szkolenie "0" zostało zmienione.',
 	'The course \'0\' has been removed.' => 'Szkolenie "0" zostało usunięte.',
 	'CourseRemoveQuestion' => 'Czy na pewno chcesz usunąć szkolenie "0"? Spowoduje to również bezpowrotne usunięcie wszystkich wyników tego szkolenia!',
-	'' => '',
+	'See the course' => 'Zobacz szkolenie',
+	'CourseTestNeededText' => 'Po przerobieniu prezentacji możesz rozpocząć test. Test jest ograniczony czasowo (1 minuta na pytanie), a do zaliczenia wymagane jest uzyskanie 80% poprawnych odpowiedzi. Pytania są jedno- i wielokrotnego wyboru. Jeżeli nie uda Ci się zaliczyć testu, następną próbę będziesz mógł podjąć po upływie 24 godzin.',
+	'Deadline for completing the test' => 'Graniczny termin zaliczenia testu',
+	'Start the test!' => 'Rozpocznij test!',
+	'CourseTestNotNeededText: 0' => 'To szkolenie można ukończyć bez konieczności rozwiązywania testu. Kliknij w poniższy przycisk, aby potwierdzić, że zapoznałeś się z treścią prezentacji. Termin zaliczenia szkolenia mija 0.',
+	'CourseTestNotNeededText' => 'To szkolenie można ukończyć bez konieczności rozwiązywania testu. Kliknij w poniższy przycisk, aby potwierdzić, że zapoznałeś się z treścią prezentacji.',
+	'Confirm course completion' => 'Potwierdź ukończenie kursu',
 );

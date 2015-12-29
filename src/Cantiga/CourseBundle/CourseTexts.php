@@ -16,29 +16,13 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-namespace Cantiga\CourseBundle\EventListener;
-
-use Cantiga\CoreBundle\Api\WorkItem;
-use Cantiga\CoreBundle\Event\WorkspaceEvent;
+namespace Cantiga\CourseBundle;
 
 /**
  * @author Tomasz Jędrzejewski
  */
-class WorkspaceListener
+class CourseTexts
 {
-	public function onProjectWorkspace(WorkspaceEvent $event)
-	{
-		$workspace = $event->getWorkspace();
-		if ($workspace->getProject()->supportsModule('course')) {
-			$workspace->addWorkItem('manage', new WorkItem('project_course_index', 'Courses'));
-		}
-	}
-	
-	public function onAreaWorkspace(WorkspaceEvent $event)
-	{
-		$workspace = $event->getWorkspace();
-		if ($workspace->getProject()->supportsModule('course')) {
-			$workspace->addWorkItem('area', new WorkItem('area_course_index', 'Courses'));
-		}
-	}
+	const AREA_COURSE_LIST_TEXT = 'course:list:area';
+	const GROUP_COURSE_LIST_TEXT = 'course:list:group';
 }

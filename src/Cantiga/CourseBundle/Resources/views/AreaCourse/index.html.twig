@@ -1,0 +1,64 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ pageTitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ pageSubtitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+	{{ courseListText.content | raw }}
+	<hr>
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="box box-solid">
+				<div class="box-body">					
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>{{ 'Name' | trans }}</th>
+								<th width="15%">{{ 'Deadline' | trans }}</th>
+								<th width="10%">{{ 'Status' | trans }}</th>
+								<th width="10%">{{ 'Area result' | trans }}</th>
+								<th width="10%">{{ 'Completed at' | trans }}</th>
+								<th width="10%">{{ 'Your result' | trans }}</th>
+								<th width="120">{{ 'Options' | trans }}</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for item in items %}
+							<tr>
+								<td><a href="{{ spath(infoPage, {'id': item.id }) }}">{{ item.name }}</a></td>
+								{% if item.deadline %}
+								<td>{{ format_time(TimeFormatter.FORMAT_DATE_LONG, item.deadline) }}</td>
+								{% else %}
+								<td><em>{{ 'None' | trans([], 'general') }}</em></td>
+								{% endif %}
+								{% if item.result == 0 %}
+								<td>{{ 'Not started' | trans([], 'course') }}</td>
+								<td>---</td>
+								<td>---</td>
+								{% else %}
+								{% if item.result == 1 %}
+								<td class="success">{{ 'Passed' | trans([], 'course') }}</td>
+								{% else %}
+								<td class="danger">{{ 'Failed' | trans([], 'course') }}</td>
+								{% endif %}
+								<td>{{ item.score }} %</td>
+								<td>{{ ago(item.completedAt) }}</td>
+								{% endif %}
+								<td>--</td>
+								<td>
+									<a class="btn btn-xs btn-primary" href="{{ spath(infoPage, {'id': item.id }) }}">{{ 'See the course' | trans }}</a>
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

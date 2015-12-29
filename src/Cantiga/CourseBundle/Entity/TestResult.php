@@ -19,8 +19,9 @@
 namespace Cantiga\CourseBundle\Entity;
 
 use Cantiga\CoreBundle\Entity\Area;
-use Cantiga\CourseBundle\Exception\CourseTestException;
 use Cantiga\CourseBundle\CourseTables;
+use Cantiga\CourseBundle\Exception\CourseTestException;
+use Cantiga\Metamodel\DataMappers;
 use Doctrine\DBAL\Connection;
 use Exception;
 
@@ -48,6 +49,22 @@ class TestResult {
 	private $result;
 	private $totalQuestions;
 	private $passedQuestions;
+	
+	public static function fetchResult(Connection $conn, Area $area, Course $course)
+	{
+		$data = $conn->fetchAssoc('SELECT * FROM `'.CourseTables::COURSE_RESULT_TBL.'` WHERE `areaId` = :areaId AND `courseId` = :courseId', 
+			array(':areaId' => $area->getId(), ':courseId' => $course->getId())
+		);
+		$result = new TestResult();
+		$result->area = $area;
+		$result->course = $course;
+		$result->result = Question::RESULT_UNKNOWN;
+		if (false === $data) {
+			return $result;
+		}
+		DataMappers::fromArray($result, $data);
+		return $result;
+	}
 	
 	/**
 	 * @return Area

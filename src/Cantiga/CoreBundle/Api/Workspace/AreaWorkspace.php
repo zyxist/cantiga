@@ -42,6 +42,10 @@ class AreaWorkspace extends Workspace
 	 * @var string
 	 */
 	private $slug;
+	/**
+	 * @var Project
+	 */
+	private $project;
 	
 	public function __construct(AreaMembershipLoader $pml)
 	{
@@ -51,6 +55,14 @@ class AreaWorkspace extends Workspace
 	public function getKey()
 	{
 		return 'area';
+	}
+	
+	/**
+	 * @return Project
+	 */
+	public function getProject()
+	{
+		return $this->project;
 	}
 	
 	public function getMembershipLoader()
@@ -66,7 +78,8 @@ class AreaWorkspace extends Workspace
 	public function onWorkspaceLoaded(Membership $membership)
 	{
 		$this->slug = $membership->getItem()->getSlug();
-		if (!$membership->getItem()->getProject()->getAreasAllowed()) {
+		$this->project = $membership->getItem()->getProject();
+		if (!$this->project->getAreasAllowed()) {
 			throw new AreasNotSupportedException('This project does not support areas.');
 		}
 	}

@@ -75,6 +75,17 @@ class Course implements InsertableEntityInterface, EditableEntityInterface, Remo
 		return $item;
 	}
 	
+	public static function fetchPublished(Connection $conn, $id, Project $project)
+	{
+		$data = $conn->fetchAssoc('SELECT * FROM `'.CourseTables::COURSE_TBL.'` WHERE `id` = :id AND `projectId` = :projectId AND `isPublished` = 1', [':id' => $id, ':projectId' => $project->getId()]);
+		if (empty($data)) {
+			return false;
+		}
+		$item = self::fromArray($data);
+		$item->project = $project;
+		return $item;
+	}
+	
 	public static function fromArray($array, $prefix = '')
 	{
 		$item = new Course;

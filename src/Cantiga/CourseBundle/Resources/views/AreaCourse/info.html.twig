@@ -1,0 +1,93 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+{% import "CantigaCoreBundle:layout:macros.html.twig" as macro %}
+
+{% block page_title %}
+	{{ 'Course: 0' | trans([item.name]) }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ pageSubtitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_content %}	
+<div class="row">
+	<div class="col-lg-8 col-md-12 col-xs-12">
+		<div class="box">
+			<div class="box-body">
+				<p>{{ item.description }}</p>
+				{{ item.generatePresentationCode() | raw }}
+				
+				{% if item.hasTest() %}
+				<h4>{{ 'Test' | trans([], 'course') }}</h4>
+				{% if result.isSolved() %}
+				<div class="col-md-4">
+					<table class="table">
+						<tbody>
+							<tr>
+								<td width="30%">Twój status</td>
+								{% if result.getResult() == 1 %}
+								<td class="success">{{ 'Passed' | trans([], 'course') }}</td>
+								{% else %}
+								<td class="danger">{{ 'Failed' | trans([], 'course') }}</td>	
+								{% endif %}
+							</tr>
+							<tr>
+								<td>Twój wynik</td>
+								<td>{{ result.getPercentageResult() }}%</td>
+							</tr>
+							<tr>
+								<td>Data rozpoczęcia</td>
+								<td>{{ format_time(TimeFormatter.FORMAT_SHORT, result.startedAt) }}</td>
+							</tr>
+							<tr>
+								<td>Data ukończenia</td>
+								<td>{{ format_time(TimeFormatter.FORMAT_SHORT, result.completedAt) }}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				{% else %}
+				<p>{{ 'CourseTestNeededText' | trans }}</p>
+				{% if item.deadline %}
+				<p class="lead">{{'Deadline for completing the test' | trans }}: {{ format_date(item.deadline) }}</p>
+				{% endif %}
+				{% endif %}
+
+				{% if result.canBeStarted() %}	
+				<a href="{{ spath('area_course_test', {'id': item.id})}}" class="btn btn-primary" role="button">{{ 'Start the test!' | trans }}</a>
+				{% endif %}
+				{% else %}
+				<h4>Ukończenie</h4>
+				{% if result.isSolved() %}
+				<div class="col-md-4">
+					<table class="table">
+						<tbody>
+							<tr>
+								<td width="30%">Twój status</td>
+								{% if result.getResult() == 1 %}
+								<td class="success">Zdany</td>
+								{% else %}
+								<td class="danger">Niezdany</td>	
+								{% endif %}
+							</tr>
+							<tr>
+								<td>Data ukończenia</td>
+								<td>{{ timeService.format(TimeFormatter.FORMAT_SHORT, result.completedAt) }}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				{% else %}
+				{% if item.deadline %}
+				<p>{{ 'CourseTestNotNeededText: 0' | trans([ format_time(TimeFormatter.FORMAT_DATE_LONG, item.deadline)]) }}</p>
+				{% else %}
+				<p>{{ 'CourseTestNotNeededText' | trans }}</p>
+				{% endif %}
+				<a href="{{ spath('area_course_complete', {'id': item.id})}}" class="btn btn-primary" role="button">{{ 'Confirm course completion' | trans }}</a>
+				{% endif %}
+				{% endif %}
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

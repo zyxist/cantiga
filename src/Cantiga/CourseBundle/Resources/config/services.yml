@@ -5,7 +5,11 @@ services:
     cantiga.course.repo.course:
         class:     Cantiga\CourseBundle\Repository\ProjectCourseRepository
         arguments: ["@database_connection", "@cantiga.transaction"]
+    cantiga.course.repo.area_course:
+        class:     Cantiga\CourseBundle\Repository\AreaCourseRepository
+        arguments: ["@database_connection", "@cantiga.transaction"]
     cantiga.course.workspace_listener:
         class: Cantiga\CourseBundle\EventListener\WorkspaceListener
         tags:
             - { name: kernel.event_listener, event: cantiga.workspace.project, method: onProjectWorkspace }
+            - { name: kernel.event_listener, event: cantiga.workspace.area, method: onAreaWorkspace }
