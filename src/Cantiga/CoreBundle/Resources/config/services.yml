@@ -121,6 +121,9 @@ services:
         arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.roles"]
         tags:
             - { name: cantiga.invitation-aware, entity: Group }
+    cantiga.core.repo.group_memberlist:
+        class: Cantiga\CoreBundle\Repository\GroupMemberListRepository
+        arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.roles"]
     cantiga.core.repo.project_group_membership:
         class:     "%project_group_membership_repository.class%"
         arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.roles"]

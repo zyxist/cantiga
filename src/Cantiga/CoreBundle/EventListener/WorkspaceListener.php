@@ -174,18 +174,8 @@ class WorkspaceListener implements WorkspaceSourceInterface
 	{
 		$workspace = $event->getWorkspace();
 		$workspace->addWorkgroup(new Workgroup('community', 'Community', 'users', 1));
-		/*
-		$workspace->addWorkItem('community', new WorkItem('project_memberlist_index', 'Member list'));
 		
-		$workspace->addWorkItem('statistics', new WorkItem('project_stats_area_index', 'Area statistics'));
-		
-		$workspace->addWorkItem('data', new WorkItem('project_area_request_index', 'Area requests'));
-		$workspace->addWorkItem('data', new WorkItem('project_dashboard', 'Areas'));
-		$workspace->addWorkItem('data', new WorkItem('project_area_group_index', 'Area groups'));
-		
-		$workspace->addWorkItem('manage', new WorkItem('project_settings_index', 'Settings'));
-		$workspace->addWorkItem('manage', new WorkItem('project_membership_index', 'Project members'));
-		 */
+		$workspace->addWorkItem('community', new WorkItem('group_memberlist_index', 'Member list'));
 	}
 	
 	public function onAreaWorkspace(WorkspaceEvent $event)
