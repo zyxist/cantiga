@@ -29,7 +29,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ProjectDashboardController extends ProjectPageController
 {
-	use DashboardTrait;
+	use Traits\DashboardTrait;
 	
 	/**
 	 * @Route("/index", name="project_dashboard")

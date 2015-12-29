@@ -66,6 +66,14 @@ class ProjectPageController extends CantigaController implements WorkspaceAwareI
 	}
 	
 	/**
+	 * @return Membership
+	 */
+	public function getMembership()
+	{
+		return $this->tokenStorage->getToken()->getMembership();
+	}
+	
+	/**
 	 * @return Project
 	 */
 	public function getActiveProject()

@@ -1,0 +1,37 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ pageTitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ pageSubtitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_content %}	
+	<div class="row">
+	{% for member in members %}
+	<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+		<div class="box box-widget widget-user-2">
+            <!-- Add the bg color to the header using any of the bg-* classes -->
+            <div class="widget-user-header bg-primary">
+				<div class="widget-user-image">
+					<img class="img-circle" src="{{ asset(avatar(member)) }}" alt="av">
+				</div>
+				<!-- /.widget-user-image -->
+				<h3 class="widget-user-username">{{ member.name }}</h3>
+				<h5 class="widget-user-desc">{% if member.membership.note %}{{ member.membership.note }}{% else %}&nbsp;{% endif %}</h5>
+            </div>
+            <div class="box-footer no-padding">
+				<ul class="list-summary">
+					<li class="list-summary-item">{{ 'Role' | trans }} <span class="pull-right">{{ member.membership.role.name | trans }}</span></li>
+					<li class="list-summary-item">{{ 'Location' | trans }} <span class="pull-right">{{ member.location }}</span></li>
+					<li class="list-summary-item">{{ 'Last visit' | trans }} <span class="pull-right">{{ ago(member.lastVisit) }}</span></li>
+					<li class="list-summary-footer"><a href="{{ spath(profilePage, {'id': member.id }) }}">{{ 'See profile' | trans }}</a></li>
+				</ul>
+            </div>
+		</div>
+	</div>
+	{% endfor %}
+	</div>
+{% endblock %}

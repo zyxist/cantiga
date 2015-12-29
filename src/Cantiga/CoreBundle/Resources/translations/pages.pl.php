@@ -84,6 +84,7 @@ return array(
 	
 	// Supplementary texts for area
 	'Edit the details of your area' => 'Edytuj informacje o swoim rejonie',
+	'Area member profile' => 'Profil członka rejonu',
 	
 	// Supplementary texts for project
 	'Project page' => 'Strona projektu',

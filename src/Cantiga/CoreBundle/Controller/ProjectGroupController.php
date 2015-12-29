@@ -40,7 +40,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class ProjectGroupController extends ProjectPageController
 {
-	use InformationTrait;
+	use Traits\InformationTrait;
 
 	const REPOSITORY_NAME = 'cantiga.core.repo.project_group';
 	/**

@@ -243,3 +243,22 @@ div.box-status div.status-info div.info-item span {
   display: inline-block;
   width: auto;
 }
+ul.list-summary {
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+ul.list-summary li.list-summary-item {
+  list-style: none;
+  padding: 5px 7px;
+  border-bottom: 1px solid #eeeeee;
+}
+ul.list-summary li.list-summary-item:last-child {
+  border-bottom: none;
+}
+ul.list-summary li.list-summary-footer {
+  list-style: none;
+  padding: 7px 7px;
+  text-align: center;
+}

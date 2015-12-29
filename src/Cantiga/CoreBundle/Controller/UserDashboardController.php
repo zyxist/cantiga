@@ -31,7 +31,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class UserDashboardController extends UserPageController
 {
-	use DashboardTrait;
+	use Traits\DashboardTrait;
 	
     public function indexAction(Request $request)
     {

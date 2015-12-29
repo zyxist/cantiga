@@ -29,7 +29,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class GroupDashboardController extends GroupPageController
 {
-	use DashboardTrait;
+	use Traits\DashboardTrait;
 	
 	/**
 	 * @Route("/index", name="group_dashboard")

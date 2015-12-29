@@ -20,11 +20,9 @@ namespace Cantiga\CoreBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
-use Cantiga\CoreBundle\Api\Actions\InfoAction;
 use Cantiga\CoreBundle\Api\Controller\ProjectPageController;
 
 /**
@@ -33,6 +31,7 @@ use Cantiga\CoreBundle\Api\Controller\ProjectPageController;
  */
 class ProjectMemberListController extends ProjectPageController
 {
+	use Traits\MemberListTrait;
 	const REPOSITORY_NAME = 'cantiga.core.repo.project_memberlist';
 	/**
 	 * @var CRUDInfo
@@ -42,7 +41,7 @@ class ProjectMemberListController extends ProjectPageController
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 		$this->crudInfo = $this->newCrudInfo(self::REPOSITORY_NAME)
-			->setTemplateLocation('CantigaCoreBundle:ProjectMemberList:')
+			->setTemplateLocation('CantigaCoreBundle:MemberList:')
 			->setItemNameProperty('name')
 			->setPageTitle('Member list')
 			->setPageSubtitle('Explore your colleagues')
@@ -54,19 +53,17 @@ class ProjectMemberListController extends ProjectPageController
 			->entryLink($this->trans('Member list', [], 'pages'), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
 	}
 	
+	protected function profilePageSubtitle()
+	{
+		return 'Project member profile';
+	}
+	
 	/**
 	 * @Route("/index", name="project_memberlist_index")
 	 */
     public function indexAction(Request $request)
     {
-		$repository = $this->get(self::REPOSITORY_NAME);
-		$dataTable = $repository->createDataTable();
-        return $this->render('CantigaCoreBundle:ProjectMemberList:index.html.twig', array(
-			'pageTitle' => $this->crudInfo->getPageTitle(),
-			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
-			'dataTable' => $dataTable,
-			'locale' => $request->getLocale()
-		));
+		return $this->onIndex($request);
     }
 
 	/**
@@ -74,26 +71,6 @@ class ProjectMemberListController extends ProjectPageController
 	 */
 	public function profileAction($id, Request $request)
 	{
-		$action = new InfoAction($this->crudInfo);
-		$action->slug($this->getSlug());
-		$project = $this->getActiveProject();
-		return $action
-			->fetch(function($repository, $id) use($project) {
-				return $repository->getItem($project, $id);
-			})
-			->run($this, $id);
-	}
-	
-	/**
-	 * @Route("/ajax/list", name="project_memberlist_ajax_list")
-	 */
-	public function ajaxListAction(Request $request)
-	{
-		$routes = $this->dataRoutes()->link('profile_link', 'project_memberlist_profile', ['id' => '::id', 'slug' => $this->getSlug()]);
-
-		$repository = $this->get(self::REPOSITORY_NAME);
-		$dataTable = $repository->createDataTable();
-		$dataTable->process($request);
-        return new JsonResponse($routes->process($repository->listData($this->getActiveProject(), $dataTable)));
+		return $this->onProfile($id, $request);
 	}
 }

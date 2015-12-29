@@ -29,7 +29,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class AreaDashboardController extends AreaPageController
 {
-	use DashboardTrait;
+	use Traits\DashboardTrait;
 	
 	/**
 	 * @Route("/index", name="area_dashboard")

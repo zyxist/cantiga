@@ -31,7 +31,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class AdminDashboardController extends AdminPageController
 {
-	use DashboardTrait;
+	use Traits\DashboardTrait;
 	
 	/**
 	 * @Route("/index", name="admin_dashboard")
