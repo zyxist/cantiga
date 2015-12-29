@@ -1,4 +1,21 @@
 <?php
+/*
+ * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
+ *
+ * Cantiga Project is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Cantiga Project is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Foobar; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 namespace Cantiga\CoreBundle\Entity;
 
 use Cantiga\CoreBundle\CoreTables;
@@ -10,7 +27,11 @@ use Cantiga\Metamodel\QueryClause;
 use Doctrine\DBAL\Connection;
 
 /**
- * Description of Invitation
+ * Invitations are a way to join to the existing project, group or area. The manager of the place can
+ * send an invitation to the specified e-mail address. The owner of the mailbox - if he has an account -
+ * will see the invitation in his/her profile and can accept it or reject. When the invitation is
+ * accepted, the user joins the given place. If the user does not have an account yet, he/she must
+ * create one and then the invitation will be linked to the newly created profile.
  *
  * @author Tomasz Jędrzejewski
  */
@@ -109,6 +130,13 @@ class Invitation implements IdentifiableInterface, InsertableEntityInterface, Re
 		return $this->createdAt;
 	}
 	
+	/**
+	 * Unique, 40-character key of the invitation. It is sent together with the invitation to a person
+	 * who does not have an account yet. The person may want to create an account with a different e-mail
+	 * address and the unique key can be used to bind the original invitation to the new profile.
+	 * 
+	 * @return string
+	 */
 	public function getAssignmentKey()
 	{
 		return $this->assignmentKey;

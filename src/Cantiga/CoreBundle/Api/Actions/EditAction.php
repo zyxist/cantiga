@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Serializer\Exception\LogicException;
 
 /**
+ * Generic action for handling the form to update entitites.
+ * 
  * @author Tomasz Jędrzejewski
  */
 class EditAction extends AbstractAction

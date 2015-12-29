@@ -1,5 +1,21 @@
 <?php
-
+/*
+ * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
+ *
+ * Cantiga Project is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Cantiga Project is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Foobar; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 namespace Cantiga\Metamodel;
 
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
@@ -7,7 +23,7 @@ use Doctrine\DBAL\Connection;
 use LogicException;
 
 /**
- * Description of DataMappers
+ * Static utilities for writing entities.
  *
  * @author Tomasz Jędrzejewski
  */
@@ -90,11 +106,25 @@ final class DataMappers
 		return $result;
 	}
 
+	/**
+	 * Produces an array with a single key: <tt>id</tt>. The array can be used as an input
+	 * for the last argument of <tt>$conn->update()</tt>
+	 * @param IdentifiableInterface $entity
+	 * @return array
+	 */
 	public static function id(IdentifiableInterface $entity)
 	{
 		return array('id' => $entity->getId());
 	}
 	
+	/**
+	 * Checks whether the two identifiable objects are the same in terms of their unique ID-s. The method
+	 * correctly handles NULL instances, and is recommended to use.
+	 * 
+	 * @param IdentifiableInterface $a
+	 * @param IdentifiableInterface $b
+	 * @return boolean
+	 */
 	public static function same(IdentifiableInterface $a = null, IdentifiableInterface $b = null)
 	{
 		if ($a === null && $b === null) {
@@ -107,6 +137,17 @@ final class DataMappers
 		return $a->getId() == $b->getId();
 	}
 	
+	/**
+	 * Helps manipulating the static, denormalized counters, when some counted entity appears or disappears. If the old
+	 * entity is set, the counter is decremented. If the new entity is set, the counter is incremented. 
+	 * 
+	 * @param Connection $conn
+	 * @param string $table
+	 * @param IdentifiableEntity $old
+	 * @param IdentifiableEntity $new
+	 * @param string $countField
+	 * @param string $idField
+	 */
 	public static function recount(Connection $conn, $table, $old, $new, $countField, $idField)
 	{
 		$idGetter = 'get'.ucfirst($idField);
