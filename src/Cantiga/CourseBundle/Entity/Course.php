@@ -326,9 +326,9 @@ class Course implements InsertableEntityInterface, EditableEntityInterface, Remo
 		}
 		try {
 			$stmt = $conn->prepare('INSERT INTO `'.CourseTables::COURSE_RESULT_TBL.'` '
-				. '(`areaId`, `courseId`, `trialNumber`, `startedAt`, `completedAt`, `result`, `totalQuestions`, `passedQuestions`) '
-				. 'VALUES(:areaId, :courseId, 1, :startedAt, :completedAt, :result, :totalQuestions, :passedQuestions)');
-			$stmt->bindValue(':areaId', $area->getId());
+				. '(`userId`, `courseId`, `trialNumber`, `startedAt`, `completedAt`, `result`, `totalQuestions`, `passedQuestions`) '
+				. 'VALUES(:userId, :courseId, 1, :startedAt, :completedAt, :result, :totalQuestions, :passedQuestions)');
+			$stmt->bindValue(':userId', $user->getId());
 			$stmt->bindValue(':courseId', $this->getId());
 			$stmt->bindValue(':result', Question::RESULT_CORRECT);
 			$stmt->bindValue(':startedAt', time());
@@ -337,8 +337,16 @@ class Course implements InsertableEntityInterface, EditableEntityInterface, Remo
 			$stmt->bindValue(':passedQuestions', 1);
 			$stmt->execute();
 			
-			$progress = CourseProgress::fetchByArea($conn, $area);
-			$progress->updateGoodFaithCompletion($conn);
+			$areaResult = AreaCourseResult::fetchResult($conn, $area, $this);
+			if ($areaResult->getResult() == Question::RESULT_UNKNOWN) {
+				$conn->insert(CourseTables::COURSE_AREA_RESULT_TBL, [
+					'userId' => $user->getId(),
+					'areaId' => $area->getId(),
+					'courseId' => $this->id
+				]);
+				$progress = CourseProgress::fetchByArea($conn, $area);
+				$progress->updateGoodFaithCompletion($conn);
+			}
 		} catch(UniqueConstraintViolationException $exception) {
 			throw new ModelException('Cannot complete a completed test!');
 		}
