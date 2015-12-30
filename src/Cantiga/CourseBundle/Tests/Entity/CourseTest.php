@@ -21,13 +21,15 @@ namespace Cantiga\CourseBundle\Tests\Entity;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Area;
 use Cantiga\CoreBundle\Entity\AreaStatus;
+use Cantiga\CoreBundle\Entity\Language;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Entity\Territory;
 use Cantiga\CoreBundle\Tests\Utils\DatabaseTestCase;
-use Cantiga\CourseBundle\Entity\Question;
+use Cantiga\CourseBundle\CourseTables;
 use Cantiga\CourseBundle\Entity\Course;
 use Cantiga\CourseBundle\Entity\CourseProgress;
-use Cantiga\CourseBundle\CourseTables;
+use Cantiga\CourseBundle\Entity\Question;
+use Cantiga\CoreBundle\Entity\User;
 
 class CourseTest extends DatabaseTestCase {
 	private $project;
@@ -36,6 +38,9 @@ class CourseTest extends DatabaseTestCase {
 	
 	private $area;
 	private $area2;
+	
+	private $user;
+	private $user2;
 	
 	protected static function customSetup()
 	{
@@ -52,6 +57,15 @@ class CourseTest extends DatabaseTestCase {
 		$this->area->insert(self::$conn);
 		$this->area2 = Area::newArea($this->project, $this->territory, $this->status, 'Area2');
 		
+		$lang = new Language();
+		$lang->setId(1);
+		
+		$this->user = User::newUser('login', 'Some user', $lang);
+		$this->user->insert(self::$conn);
+		
+		$this->user2 = User::newUser('login2', 'Another user', $lang);
+		$this->user2->insert(self::$conn);
+		
 		$tpa1 = new CourseProgress($this->area);
 		$tpa1->insert(self::$conn);
 	}
@@ -60,6 +74,7 @@ class CourseTest extends DatabaseTestCase {
 	{
 		self::$conn->executeUpdate('DELETE FROM `'.CourseTables::COURSE_RESULT_TBL.'`');
 		self::$conn->executeUpdate('DELETE FROM `'.CoreTables::AREA_TBL.'`');
+		self::$conn->executeUpdate('DELETE FROM `'.CoreTables::USER_TBL.'`');
 		self::$conn->executeUpdate('DELETE FROM `'.CourseTables::COURSE_TBL.'`');
 	}
 	
@@ -112,8 +127,8 @@ class CourseTest extends DatabaseTestCase {
 		$course->setIsPublished(true);
 		$course->insert(self::$conn);
 		
-		$this->insertResult($course, $this->area, Question::RESULT_CORRECT);
-		$this->insertResult($course, $this->area2, Question::RESULT_INVALID);
+		$this->insertResult($course, $this->area, $this->user, Question::RESULT_CORRECT);
+		$this->insertResult($course, $this->area2, $this->user2, Question::RESULT_INVALID);
 		
 		$this->fillRecord($this->area, 3, 2, 1);
 		$this->fillRecord($this->area2, 3, 2, 1);
@@ -141,8 +156,8 @@ class CourseTest extends DatabaseTestCase {
 		$course->setIsPublished(false);
 		$course->insert(self::$conn);
 		
-		$this->insertResult($course, $this->area, Question::RESULT_CORRECT);
-		$this->insertResult($course, $this->area2, Question::RESULT_INVALID);
+		$this->insertResult($course, $this->area, $this->user, Question::RESULT_CORRECT);
+		$this->insertResult($course, $this->area2, $this->user2, Question::RESULT_INVALID);
 		
 		$this->fillRecord($this->area, 3, 2, 1);
 		$this->fillRecord($this->area2, 3, 2, 1);
@@ -170,8 +185,8 @@ class CourseTest extends DatabaseTestCase {
 		$course->setIsPublished(true);
 		$course->insert(self::$conn);
 		
-		$this->insertResult($course, $this->area, Question::RESULT_CORRECT);
-		$this->insertResult($course, $this->area2, Question::RESULT_INVALID);
+		$this->insertResult($course, $this->area, $this->user, Question::RESULT_CORRECT);
+		$this->insertResult($course, $this->area2, $this->user2, Question::RESULT_INVALID);
 		
 		$this->fillRecord($this->area, 3, 2, 1);
 		$this->fillRecord($this->area2, 3, 2, 1);
@@ -198,8 +213,8 @@ class CourseTest extends DatabaseTestCase {
 		$course->setIsPublished(false);
 		$course->insert(self::$conn);
 		
-		$this->insertResult($course, $this->area, Question::RESULT_CORRECT);
-		$this->insertResult($course, $this->area2, Question::RESULT_INVALID);
+		$this->insertResult($course, $this->area, $this->user, Question::RESULT_CORRECT);
+		$this->insertResult($course, $this->area2, $this->user2, Question::RESULT_INVALID);
 		
 		$this->fillRecord($this->area, 3, 2, 1);
 		$this->fillRecord($this->area2, 3, 2, 1);
@@ -224,10 +239,10 @@ class CourseTest extends DatabaseTestCase {
 		$course->setNotes('foo');
 	}
 	
-	private function insertResult(Course $course, Area $area, $result)
+	private function insertResult(Course $course, Area $area, User $user, $result)
 	{
 		self::$conn->insert(CourseTables::COURSE_RESULT_TBL, array(
-			'areaId' => $area->getId(),
+			'userId' => $user->getId(),
 			'courseId' => $course->getId(),
 			'trialNumber' => 1,
 			'startedAt' => time(),
@@ -236,6 +251,11 @@ class CourseTest extends DatabaseTestCase {
 			'totalQuestions' => 0,
 			'passedQuestions' => 0
 		));
+		self::$conn->insert(CourseTables::COURSE_AREA_RESULT_TBL, [
+			'areaId' => $area->getId(),
+			'userId' => $user->getId(),
+			'courseId' => $course->getId()
+		]);
 	}
 	
 	private function fillRecord(Area $area, $mandatory, $passed, $failed)

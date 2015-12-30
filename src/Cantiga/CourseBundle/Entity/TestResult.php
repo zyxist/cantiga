@@ -19,6 +19,7 @@
 namespace Cantiga\CourseBundle\Entity;
 
 use Cantiga\CoreBundle\Entity\Area;
+use Cantiga\CoreBundle\Entity\User;
 use Cantiga\CourseBundle\CourseTables;
 use Cantiga\CourseBundle\Exception\CourseTestException;
 use Cantiga\Metamodel\DataMappers;
@@ -31,32 +32,26 @@ use Exception;
  *
  * @author Tomasz Jędrzejewski
  */
-class TestResult {
+class TestResult extends AbstractTestResult {
 	const TIME_BETWEEN_TRIALS = 'P1D';
 	const TIME_BETWEEN_TRIALS_SEC = 86400;
 	
 	/**
-	 * @var Area
+	 * @var User
 	 */
-	private $area;
+	private $user;
 	/**
 	 * @var Course
 	 */
 	private $course;
-	private $trialNumber;
-	private $startedAt;
-	private $completedAt;
-	private $result;
-	private $totalQuestions;
-	private $passedQuestions;
 	
-	public static function fetchResult(Connection $conn, Area $area, Course $course)
+	public static function fetchResult(Connection $conn, User $user, Course $course)
 	{
-		$data = $conn->fetchAssoc('SELECT * FROM `'.CourseTables::COURSE_RESULT_TBL.'` WHERE `areaId` = :areaId AND `courseId` = :courseId', 
-			array(':areaId' => $area->getId(), ':courseId' => $course->getId())
+		$data = $conn->fetchAssoc('SELECT * FROM `'.CourseTables::COURSE_RESULT_TBL.'` WHERE `userId` = :userId AND `courseId` = :courseId', 
+			array(':userId' => $user->getId(), ':courseId' => $course->getId())
 		);
 		$result = new TestResult();
-		$result->area = $area;
+		$result->user = $user;
 		$result->course = $course;
 		$result->result = Question::RESULT_UNKNOWN;
 		if (false === $data) {
@@ -67,11 +62,11 @@ class TestResult {
 	}
 	
 	/**
-	 * @return Area
+	 * @return User
 	 */
-	public function getArea()
+	public function getUser()
 	{
-		return $this->area;
+		return $this->user;
 	}
 
 	/**
@@ -80,84 +75,6 @@ class TestResult {
 	public function getCourse()
 	{
 		return $this->course;
-	}
-
-	public function getTrialNumber()
-	{
-		return $this->trialNumber;
-	}
-	
-	public function getStartedAt()
-	{
-		return $this->startedAt;
-	}
-
-	public function getCompletedAt()
-	{
-		return $this->completedAt;
-	}
-
-	public function getResult()
-	{
-		return $this->result;
-	}
-
-	public function getTotalQuestions()
-	{
-		return $this->totalQuestions;
-	}
-
-	public function getPassedQuestions()
-	{
-		return $this->passedQuestions;
-	}
-	
-	public function setTrialNumber($trialNumber)
-	{
-		$this->trialNumber = $trialNumber;
-		return $this;
-	}
-
-	public function setStartedAt($startedAt)
-	{
-		DataMappers::noOverwritingField($this->startedAt);
-		$this->startedAt = $startedAt;
-		return $this;
-	}
-
-	public function setCompletedAt($completedAt)
-	{
-		DataMappers::noOverwritingField($this->completedAt);
-		$this->completedAt = $completedAt;
-		return $this;
-	}
-
-	public function setResult($result)
-	{
-		$this->result = $result;
-		return $this;
-	}
-
-	public function setTotalQuestions($totalQuestions)
-	{
-		$this->totalQuestions = $totalQuestions;
-		return $this;
-	}
-
-	public function setPassedQuestions($passedQuestions)
-	{
-		$this->passedQuestions = $passedQuestions;
-		return $this;
-	}
-
-	public function getPercentageResult()
-	{
-		return round($this->passedQuestions / $this->totalQuestions * 100.0);
-	}
-	
-	public function isSolved()
-	{
-		return $this->result != Question::RESULT_UNKNOWN;
 	}
 	
 	/**
@@ -184,6 +101,7 @@ class TestResult {
 	 * Starts a new trial for solving the test. It verifies the time limits and throws an exception,
 	 * if any of them is not matched.
 	 * 
+	 * @param $conn Database connection
 	 * @throws CourseTestException
 	 */
 	public function startNewTrial(Connection $conn)
@@ -201,13 +119,15 @@ class TestResult {
 	}
 	
 	/**
-	 * Completes solving the test and saves the results to the database.
+	 * Completes solving the test and saves the results to the database. If this is the first passed trial
+	 * among all of the members of the given area, it the result is saved as the result for the entire area, too.
 	 * 
 	 * @param Connection $conn
+	 * @param Area $area Area the user taking the trial is a member of
 	 * @param TestTrial $trial
 	 * @throws Exception
 	 */
-	public function completeTrial(Connection $conn, TestTrial $trial)
+	public function completeTrial(Connection $conn, Area $area, TestTrial $trial)
 	{
 		$this->refresh($conn);
 			
@@ -217,21 +137,19 @@ class TestResult {
 		if($limit < time()) {
 			throw new CourseTestException('TestTimeHasPassedMsg');
 		}
-		
-		$progress = CourseProgress::fetchByArea($conn, $this->area);
-		$progress->updateResults($conn, $this, $trial);
 			
 		$this->result = $trial->getResult();
 		$this->totalQuestions = $trial->getQuestionNumber();
 		$this->passedQuestions = $trial->countPassedQuestions();
 		$this->completedAt = time();
 		$this->save($conn);
+		$this->tryRecordingAreaResult($conn, $area, $trial);
 	}
 	
 	protected function refresh(Connection $conn)
 	{
-		$currentSet = $conn->fetchAssoc('SELECT `result`, `trialNumber`, `startedAt`, `completedAt`, `totalQuestions`, `passedQuestions` FROM `'.CourseTables::COURSE_RESULT_TBL.'` WHERE `areaId` = :areaId AND `courseId` = :courseId', array(
-			':areaId' => $this->area->getId(),
+		$currentSet = $conn->fetchAssoc('SELECT `result`, `trialNumber`, `startedAt`, `completedAt`, `totalQuestions`, `passedQuestions` FROM `'.CourseTables::COURSE_RESULT_TBL.'` WHERE `userId` = :userId AND `courseId` = :courseId', array(
+			':userId' => $this->user->getId(),
 			':courseId' => $this->course->getId()
 		));
 		if(empty($currentSet)) {
@@ -256,12 +174,12 @@ class TestResult {
 	protected function save(Connection $conn)
 	{		
 		$stmt = $conn->prepare('INSERT INTO `'.CourseTables::COURSE_RESULT_TBL.'` '
-			. '(`areaId`, `courseId`, `trialNumber`, `startedAt`, `completedAt`, `result`, `totalQuestions`, `passedQuestions`) '
-			. 'VALUES(:areaId, :courseId, :trialNum, :startedAt, :completedAt, :result, :totalQuestions, :passedQuestions) '
+			. '(`userId`, `courseId`, `trialNumber`, `startedAt`, `completedAt`, `result`, `totalQuestions`, `passedQuestions`) '
+			. 'VALUES(:userId, :courseId, :trialNum, :startedAt, :completedAt, :result, :totalQuestions, :passedQuestions) '
 			. 'ON DUPLICATE KEY UPDATE `trialNumber` = VALUES(`trialNumber`), `startedAt` = VALUES(`startedAt`), '
 			. '`completedAt` = VALUES(`completedAt`), `result` = VALUES(`result`), `totalQuestions` = VALUES(`totalQuestions`), '
 			. '`passedQuestions` = VALUES(`passedQuestions`)');
-		$stmt->bindValue(':areaId', $this->area->getId());
+		$stmt->bindValue(':userId', $this->user->getId());
 		$stmt->bindValue(':courseId', $this->course->getId());
 		$stmt->bindValue(':trialNum', $this->getTrialNumber());
 		$stmt->bindValue(':result', $this->getResult());
@@ -272,13 +190,38 @@ class TestResult {
 		$stmt->execute();
 	}
 	
-	public static function processResults(array &$array)
+	protected function tryRecordingAreaResult(Connection $conn, Area $area, TestTrial $trial)
 	{
-		if(!empty($array['totalQuestions'])) {
-			$array['score'] = round((int) $array['passedQuestions'] / (float) $array['totalQuestions'] * 100.0);
+		$areaResult = AreaCourseResult::fetchResult($conn, $area, $this->course);
+		if ($areaResult->result == Question::RESULT_UNKNOWN) {
+			$conn->insert(CourseTables::COURSE_AREA_RESULT_TBL, [
+				'areaId' => $area->getId(),
+				'userId' => $this->user->getId(),
+				'courseId' => $this->course->getId()
+			]);
+			$progress = CourseProgress::fetchByArea($conn, $area);
+			$progress->updateResults($conn, $areaResult, $trial);
+		} elseif ($areaResult->result == Question::RESULT_INVALID) {
+			$conn->update(CourseTables::COURSE_AREA_RESULT_TBL, [
+				'areaId' => $area->getId(),
+				'userId' => $this->user->getId(),
+				'courseId' => $this->course->getId()
+			], [
+				'areaId' => $area->getId(),
+				'courseId' => $this->course->getId()
+			]);
+			$progress = CourseProgress::fetchByArea($conn, $area);
+			$progress->updateResults($conn, $areaResult, $trial);
 		}
-		if(empty($array['result'])) { 
-			$array['result'] = Question::RESULT_UNKNOWN;
+	}
+	
+	public static function processResults(array &$array, $prefix = '')
+	{
+		if(!empty($array[$prefix.'totalQuestions'])) {
+			$array[$prefix.'score'] = round((int) $array[$prefix.'passedQuestions'] / (float) $array[$prefix.'totalQuestions'] * 100.0);
+		}
+		if(empty($array[$prefix.'result'])) { 
+			$array[$prefix.'result'] = Question::RESULT_UNKNOWN;
 		}
 		return $array;
 	}

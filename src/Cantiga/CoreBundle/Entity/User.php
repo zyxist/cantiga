@@ -85,6 +85,31 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 	 * @var Membership
 	 */
 	private $membership = null;
+	
+	/**
+	 * Creates the user for the purpose of the automatic tests.
+	 * 
+	 * @param string $login
+	 * @param string $name
+	 */
+	public static function newUser($login, $name, Language $lang)
+	{
+		$user = new User;
+		$user->login = $login;
+		$user->name = $name;
+		$user->email = '';
+		$user->password = '';
+		$user->salt = '';
+		$user->active = 1;
+		$user->admin = 0;
+		$user->registeredAt = time();
+		$user->areaNum = 0;
+		$user->groupNum = 0;
+		$user->projectNum = 0;
+		$user->settingsLanguage = $lang;
+		$user->settingsTimezone = 'UTC';
+		return $user;
+	}
 
 	public static function freshActive($password, $salt)
 	{

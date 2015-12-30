@@ -21,6 +21,7 @@ namespace Cantiga\CourseBundle\Repository;
 use Cantiga\CoreBundle\Entity\Area;
 use Cantiga\CoreBundle\Entity\User;
 use Cantiga\CourseBundle\CourseTables;
+use Cantiga\CourseBundle\Entity\AreaCourseResult;
 use Cantiga\CourseBundle\Entity\Course;
 use Cantiga\CourseBundle\Entity\TestResult;
 use Cantiga\CourseBundle\Entity\TestTrial;
@@ -59,14 +60,19 @@ class AreaCourseRepository
 		$this->area = $area;
 	}
 	
-	public function findAvailableCourses()
+	public function findAvailableCourses(User $user)
 	{
-		$items = $this->conn->fetchAll('SELECT c.`id`, c.`name`, c.`deadline`, r.`result`, r.`passedQuestions`, r.`totalQuestions`, r.`completedAt` '
+		$items = $this->conn->fetchAll('SELECT c.`id`, c.`name`, c.`deadline`, r.`result` AS `user_result`, r.`passedQuestions` AS `user_passedQuestions`, '
+			. 'r.`totalQuestions` AS `user_totalQuestions`, r.`completedAt` AS `user_completedAt`, arr.`result` AS `area_result`, arr.`passedQuestions` AS `area_passedQuestions`, '
+			. 'arr.`totalQuestions` AS `area_totalQuestions`, arr.`completedAt` AS `area_completedAt` '
 			. 'FROM `'.CourseTables::COURSE_TBL.'` c '
-			. 'LEFT JOIN `'.CourseTables::COURSE_RESULT_TBL.'` r ON (r.`courseId` = c.`id` AND r.`areaId` = :areaId) '
-			. 'WHERE c.`isPublished` = 1 AND c.`projectId` = :projectId ORDER BY c.`displayOrder`', [':areaId' => $this->area->getId(), ':projectId' => $this->area->getProject()->getId()]);
+			. 'LEFT JOIN `'.CourseTables::COURSE_AREA_RESULT_TBL.'` ar ON (ar.`courseId` = c.`id` AND ar.`areaId` = :areaId) '
+			. 'LEFT JOIN `'.CourseTables::COURSE_RESULT_TBL.'` arr ON (arr.`courseId` = ar.`courseId` AND arr.`userId` = ar.`userId`) '
+			. 'LEFT JOIN `'.CourseTables::COURSE_RESULT_TBL.'` r ON (r.`courseId` = c.`id` AND r.`userId` = :userId) '
+			. 'WHERE c.`isPublished` = 1 AND c.`projectId` = :projectId ORDER BY c.`displayOrder`', [':areaId' => $this->area->getId(), ':userId' => $user->getId(), ':projectId' => $this->area->getProject()->getId()]);
 		foreach ($items as &$item) {
-			TestResult::processResults($item);
+			TestResult::processResults($item, 'user_');
+			TestResult::processResults($item, 'area_');
 		}
 		return $items;
 	}
@@ -80,9 +86,14 @@ class AreaCourseRepository
 		return $item;
 	}
 
-	public function getTestResult(Area $area, Course $course)
+	public function getTestResult(User $user, Course $course)
 	{
-		return TestResult::fetchResult($this->conn, $area, $course);
+		return TestResult::fetchResult($this->conn, $user, $course);
+	}
+	
+	public function getAreaResult(Area $area, Course $course)
+	{
+		return AreaCourseResult::fetchResult($this->conn, $area, $course);
 	}
 	
 	public function startNewTrial(TestResult $result)
@@ -96,11 +107,11 @@ class AreaCourseRepository
 		}
 	}
 	
-	public function completeTrial(TestResult $result, TestTrial $trial)
+	public function completeTrial(TestResult $result, Area $area, TestTrial $trial)
 	{
 		$this->transaction->requestTransaction();
 		try {
-			$result->completeTrial($this->conn, $trial);
+			$result->completeTrial($this->conn, $area, $trial);
 		} catch (Exception $ex) {
 			$this->transaction->requestRollback();
 			throw $ex;

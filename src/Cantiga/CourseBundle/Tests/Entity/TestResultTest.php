@@ -21,8 +21,10 @@ namespace Cantiga\CourseBundle\Tests\Entity;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Area;
 use Cantiga\CoreBundle\Entity\AreaStatus;
+use Cantiga\CoreBundle\Entity\Language;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Entity\Territory;
+use Cantiga\CoreBundle\Entity\User;
 use Cantiga\CoreBundle\Tests\Utils\DatabaseTestCase;
 use Cantiga\CourseBundle\CourseTables;
 use Cantiga\CourseBundle\Entity\Course;
@@ -38,6 +40,8 @@ class TestResultTest extends DatabaseTestCase
 	private $status;
 	private $territory;
 	private $area;
+	private $user;
+	private $anotherUser;
 	
 	protected static function customSetup()
 	{
@@ -62,50 +66,63 @@ class TestResultTest extends DatabaseTestCase
 		$this->course->setIsPublished(true);
 		$this->course->insert(self::$conn);
 		
+		$lang = new Language();
+		$lang->setId(1);
+		
+		$this->user = User::newUser('login', 'Some user', $lang);
+		$this->user->insert(self::$conn);
+		
+		$this->anotherUser = User::newUser('login2', 'Another user', $lang);
+		$this->anotherUser->insert(self::$conn);
+		
 		$pp = new CourseProgress($this->area);
 		$pp->insert(self::$conn);
 	}
 	
 	public function tearDown()
 	{
+		self::$conn->executeUpdate('DELETE FROM `'.CourseTables::COURSE_AREA_RESULT_TBL.'`');
 		self::$conn->executeUpdate('DELETE FROM `'.CourseTables::COURSE_RESULT_TBL.'`');
 		self::$conn->executeUpdate('DELETE FROM `'.CoreTables::AREA_TBL.'`');
+		self::$conn->executeUpdate('DELETE FROM `'.CoreTables::USER_TBL.'`');
 		self::$conn->executeUpdate('DELETE FROM `'.CourseTables::COURSE_TBL.'`');
 	}
 	
 	public function testSuccessfulTestCompletion()
 	{
 		// Given
-		$testResult = TestResult::fetchResult(self::$conn, $this->area, $this->course);
+		$testResult = TestResult::fetchResult(self::$conn, $this->user, $this->course);
 		$testResult->setStartedAt(time());
 		$trial = $this->getTestTrial(Question::RESULT_CORRECT, 12, 11, 10);
 		$this->fillRecord($this->area, 1, 0, 0);
 		
 		// When
-		$testResult->completeTrial(self::$conn, $trial);
+		$testResult->completeTrial(self::$conn, $this->area, $trial);
 		
 		// Then
 		$this->assertEquals(Question::RESULT_CORRECT, $testResult->getResult());
 		$this->assertEquals(12, $testResult->getTotalQuestions());
 		$this->assertEquals(11, $testResult->getPassedQuestions());
+		$this->expectAreaResult($this->user);
 		$this->expectCourseProgress($this->area, 1, 1, 0);
 	}
 	
 	public function testFailingTestCompletion()
 	{
 		// Given
-		$testResult = TestResult::fetchResult(self::$conn, $this->area, $this->course);
+		$testResult = TestResult::fetchResult(self::$conn, $this->user, $this->course);
 		$testResult->setStartedAt(time());
 		$trial = $this->getTestTrial(Question::RESULT_INVALID, 12, 4, 10);
 		$this->fillRecord($this->area, 1, 0, 0);
 		
 		// When
-		$testResult->completeTrial(self::$conn, $trial);
+		$testResult->completeTrial(self::$conn, $this->area, $trial);
 		
 		// Then
 		$this->assertEquals(Question::RESULT_INVALID, $testResult->getResult());
 		$this->assertEquals(12, $testResult->getTotalQuestions());
 		$this->assertEquals(4, $testResult->getPassedQuestions());
+		$this->expectAreaResult($this->user);
 		$this->expectCourseProgress($this->area, 1, 0, 1);
 	}
 	
@@ -114,26 +131,92 @@ class TestResultTest extends DatabaseTestCase
 		// Given
 		$timeLimit = 5;
 		
-		$testResult = TestResult::fetchResult(self::$conn, $this->area, $this->course);
+		$testResult = TestResult::fetchResult(self::$conn, $this->user, $this->course);
 		$testResult->startNewTrial(self::$conn);
 		self::$conn->update(CourseTables::COURSE_RESULT_TBL,
 			['startedAt' => time() - 2 * $timeLimit * 60],
-			['areaId' => $this->area->getId(), 'courseId' => $this->course->getId()]
+			['userId' => $this->user->getId(), 'courseId' => $this->course->getId()]
 		);
 		$trial = $this->getTestTrial(Question::RESULT_INVALID, 12, 4, $timeLimit);
 		$this->fillRecord($this->area, 1, 0, 0);
 		
 		try {
 			// When
-			$testResult->completeTrial(self::$conn, $trial);
+			$testResult->completeTrial(self::$conn, $this->area, $trial);
 			$this->fail('Exception not thrown');
 		} catch (CourseTestException $exception) {
 			// Then
 			$this->assertEquals('TestTimeHasPassedMsg', $exception->getMessage());
 			$this->expectCourseProgress($this->area, 1, 0, 0);
-		}		
+		}
 	}
 	
+	public function testFailedTrialAfterPassingByAnotherUser()
+	{
+		// Given
+		$this->createResultForUserAndArea($this->user, $this->area, Question::RESULT_CORRECT, 12, 11);
+		$testResult = TestResult::fetchResult(self::$conn, $this->anotherUser, $this->course);
+		$testResult->setStartedAt(time());
+		$trial = $this->getTestTrial(Question::RESULT_INVALID, 12, 4, 5);
+		$this->fillRecord($this->area, 2, 1, 0);
+		
+		// When
+		$testResult->completeTrial(self::$conn, $this->area, $trial);
+		
+		// Then
+		$this->assertEquals(Question::RESULT_INVALID, $testResult->getResult());
+		$this->assertEquals(12, $testResult->getTotalQuestions());
+		$this->assertEquals(4, $testResult->getPassedQuestions());
+		$this->expectTestResult($this->user, Question::RESULT_CORRECT, 1, 12, 11);
+		$this->expectTestResult($this->anotherUser, Question::RESULT_INVALID, 1, 12, 4);
+		$this->expectAreaResult($this->user);
+		$this->expectCourseProgress($this->area, 2, 1, 0);
+	}
+	
+	public function testSecondPassedTrialByAnotherUser()
+	{
+		// Given
+		$this->createResultForUserAndArea($this->user, $this->area, Question::RESULT_CORRECT, 12, 11);
+		$testResult = TestResult::fetchResult(self::$conn, $this->anotherUser, $this->course);
+		$testResult->setStartedAt(time());
+		$trial = $this->getTestTrial(Question::RESULT_CORRECT, 12, 12, 10);
+		$this->fillRecord($this->area, 2, 1, 0);
+		
+		// When
+		$testResult->completeTrial(self::$conn, $this->area, $trial);
+		
+		// Then
+		$this->assertEquals(Question::RESULT_CORRECT, $testResult->getResult());
+		$this->assertEquals(12, $testResult->getTotalQuestions());
+		$this->assertEquals(12, $testResult->getPassedQuestions());
+		$this->expectTestResult($this->user, Question::RESULT_CORRECT, 1, 12, 11);
+		$this->expectTestResult($this->anotherUser, Question::RESULT_CORRECT, 1, 12, 12);
+		$this->expectAreaResult($this->user);
+		$this->expectCourseProgress($this->area, 2, 1, 0);
+	}
+	
+	public function testPassedTestAfterPreviousFails()
+	{
+		// Given
+		$this->createResultForUserAndArea($this->user, $this->area, Question::RESULT_INVALID, 12, 4);
+		$testResult = TestResult::fetchResult(self::$conn, $this->anotherUser, $this->course);
+		$testResult->setStartedAt(time());
+		$trial = $this->getTestTrial(Question::RESULT_CORRECT, 12, 12, 10);
+		$this->fillRecord($this->area, 2, 1, 1);
+		
+		// When
+		$testResult->completeTrial(self::$conn, $this->area, $trial);
+		
+		// Then
+		$this->assertEquals(Question::RESULT_CORRECT, $testResult->getResult());
+		$this->assertEquals(12, $testResult->getTotalQuestions());
+		$this->assertEquals(12, $testResult->getPassedQuestions());
+		$this->expectTestResult($this->user, Question::RESULT_INVALID, 1, 12, 4);
+		$this->expectTestResult($this->anotherUser, Question::RESULT_CORRECT, 1, 12, 12);
+		$this->expectAreaResult($this->anotherUser);
+		$this->expectCourseProgress($this->area, 2, 2, 0);
+	}
+
 	private function getTestTrial($result, $questionNum, $passedQuestions, $timeLimit) {
 		$item = $this->getMockBuilder(TestTrial::class)->getMock();
 		$item->method('getResult')->will($this->returnValue($result));
@@ -157,5 +240,45 @@ class TestResultTest extends DatabaseTestCase
 		$this->assertFieldEqualsEx(CourseTables::COURSE_PROGRESS_TBL, 'areaId', $area->getId(), 'mandatoryCourseNum', $mandatory);
 		$this->assertFieldEqualsEx(CourseTables::COURSE_PROGRESS_TBL, 'areaId', $area->getId(), 'passedCourseNum', $passed);
 		$this->assertFieldEqualsEx(CourseTables::COURSE_PROGRESS_TBL, 'areaId', $area->getId(), 'failedCourseNum', $failed);
+	}
+	
+	private function expectTestResult(User $user, $result, $trialNum, $totalQuestions, $passedQuestions)
+	{
+		$data = self::$conn->fetchAssoc('SELECT `result`, `trialNumber`, `totalQuestions`, `passedQuestions` FROM `'.CourseTables::COURSE_RESULT_TBL.'` WHERE `userId` = :userId AND `courseId` = :courseId', [
+			':userId' => $user->getId(),
+			':courseId' => $this->course->getId()
+		]);
+		$this->assertEquals($result, $data['result']);
+		$this->assertEquals($trialNum, $data['trialNumber']);
+		$this->assertEquals($totalQuestions, $data['totalQuestions']);
+		$this->assertEquals($passedQuestions, $data['passedQuestions']);
+	}
+	
+	private function expectAreaResult(User $user)
+	{
+		$result = self::$conn->fetchAssoc('SELECT * FROM `'.CourseTables::COURSE_AREA_RESULT_TBL.'` WHERE `areaId` = :areaId AND `courseId` = :courseId', [
+			':areaId' => $this->area->getId(),
+			':courseId' => $this->course->getId(),
+		]);
+		$this->assertEquals($user->getId(), $result['userId']);
+	}
+	
+	private function createResultForUserAndArea(User $user, Area $area, $result, $questionNum, $passedQuestions)
+	{
+		self::$conn->insert(CourseTables::COURSE_RESULT_TBL, [
+			'userId' => $user->getId(),
+			'courseId' => $this->course->getId(),
+			'trialNumber' => '1',
+			'result' => $result,
+			'startedAt' => time() - 100,
+			'completedAt' => time() - 50,
+			'totalQuestions' => $questionNum,
+			'passedQuestions' => $passedQuestions
+		]);
+		self::$conn->insert(CourseTables::COURSE_AREA_RESULT_TBL, [
+			'areaId' => $area->getId(),
+			'userId' => $user->getId(),
+			'courseId' => $this->course->getId()
+		]);
 	}
 }

@@ -20,11 +20,13 @@
 							<tr>
 								<th>{{ 'Name' | trans }}</th>
 								<th width="15%">{{ 'Deadline' | trans }}</th>
-								<th width="10%">{{ 'Status' | trans }}</th>
-								<th width="10%">{{ 'Area result' | trans }}</th>
-								<th width="10%">{{ 'Completed at' | trans }}</th>
-								<th width="10%">{{ 'Your result' | trans }}</th>
-								<th width="120">{{ 'Options' | trans }}</th>
+								<th width="10%">{{ 'Status' | trans([], 'course') }}</th>
+								<th width="10%">{{ 'Area result' | trans([], 'course') }}</th>
+								<th width="40"></th>
+								<th width="10%">{{ 'Your result' | trans([], 'course') }}</th>
+								<th width="40"></th>
+								<th width="10%">{{ 'Completed at' | trans([], 'course') }}</th>
+								<th width="120"></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -36,20 +38,54 @@
 								{% else %}
 								<td><em>{{ 'None' | trans([], 'general') }}</em></td>
 								{% endif %}
-								{% if item.result == 0 %}
+								{# area results #}
+								{% if item.area_result == 0 %}
 								<td>{{ 'Not started' | trans([], 'course') }}</td>
 								<td>---</td>
-								<td>---</td>
+								<td></td>
 								{% else %}
-								{% if item.result == 1 %}
+								{% if item.area_result == 1 %}
 								<td class="success">{{ 'Passed' | trans([], 'course') }}</td>
+								<td>
+									<div class="progress progress-xs">
+										<div class="progress-bar progress-bar-success" style="width: {{ item.area_score }}%"></div>
+									</div>
+								</td>
+								<td><span class="badge bg-green">{{ item.area_score }}%</span></td>
 								{% else %}
 								<td class="danger">{{ 'Failed' | trans([], 'course') }}</td>
+								<td>
+									<div class="progress progress-xs">
+										<div class="progress-bar progress-bar-danger" style="width: {{ item.area_score }}%"></div>
+									</div>
+								</td>
+								<td><span class="badge bg-red">{{ item.area_score }}%</span></td>
 								{% endif %}
-								<td>{{ item.score }} %</td>
-								<td>{{ ago(item.completedAt) }}</td>
 								{% endif %}
-								<td>--</td>
+								{# user results #}
+								{% if item.user_result == 0 %}
+								<td>{{ 'Not started' | trans([], 'course') }}</td>
+								<td></td>
+								<td>---</td>
+								{% else %}
+								{% if item.user_result == 1 %}
+								<td>
+									<div class="progress progress-xs">
+										<div class="progress-bar progress-bar-success" style="width: {{ item.user_score }}%"></div>
+									</div>
+								</td>
+								<td><span class="badge bg-green">{{ item.user_score }}%</span></td>
+								<td>{{ ago(item.user_completedAt) }}</td>
+								{% else %}
+								<td>
+									<div class="progress progress-xs">
+										<div class="progress-bar progress-bar-danger" style="width: {{ item.user_score }}%"></div>
+									</div>
+								</td>
+								<td><span class="badge bg-red">{{ item.user_score }}%</span></td>
+								<td>{{ ago(item.user_completedAt) }}</td>
+								{% endif %}
+								{% endif %}
 								<td>
 									<a class="btn btn-xs btn-primary" href="{{ spath(infoPage, {'id': item.id }) }}">{{ 'See the course' | trans }}</a>
 								</td>

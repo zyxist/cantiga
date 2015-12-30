@@ -71,7 +71,7 @@ class AreaCourseController extends AreaPageController
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'courseListText' => $text,
 			'infoPage' => $this->crudInfo->getInfoPage(),
-			'items' => $repository->findAvailableCourses()
+			'items' => $repository->findAvailableCourses($this->getUser())
 		));
 	}
 	
@@ -83,11 +83,13 @@ class AreaCourseController extends AreaPageController
 		try {
 			$repo = $this->get(self::REPOSITORY_NAME);
 			$item = $repo->getItem($id);
-			$result = $repo->getTestResult($this->getMembership()->getItem(), $item);
+			$result = $repo->getTestResult($this->getUser(), $item);
+			$areaResult = $repo->getAreaResult($this->getMembership()->getItem(), $item);
 			$this->breadcrumbs()->link($item->getName(), 'area_course_info', ['slug' => $this->getSlug(), 'id' => $item->getId()]);
 			return $this->render($this->crudInfo->getTemplateLocation().'info.html.twig', array(
 				'item' => $item,
 				'result' => $result,
+				'areaResult' => $areaResult,
 				'pageTitle' => $item->getName(),
 				'pageSubtitle' => 'Take the on-line course',
 			));
@@ -107,7 +109,7 @@ class AreaCourseController extends AreaPageController
 			if(!$item->hasTest()) {
 				return $this->showPageWithError($this->trans('TestQuestionsNotPublishedMsg'), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
 			}
-			$result = $repo->getTestResult($this->getMembership()->getItem(), $item);
+			$result = $repo->getTestResult($this->getUser(), $item);
 			
 			if($result->getResult() == Question::RESULT_CORRECT) {
 				return $this->showPageWithMessage($this->trans('CourseAlreadyCompletedMsg'), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
@@ -129,7 +131,7 @@ class AreaCourseController extends AreaPageController
 			if($form->isValid()) {
 				$this->get('session')->remove('trial');
 				$ok = $testTrial->validateTestTrial($form->getData());
-				$repo->completeTrial($result, $testTrial);
+				$repo->completeTrial($result, $this->getMembership()->getItem(), $testTrial);
 				if($ok) {
 					return $this->showPageWithMessage($this->trans('TestPassedMsg'), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
 				} else {

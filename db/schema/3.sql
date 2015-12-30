@@ -15,8 +15,16 @@ CREATE TABLE IF NOT EXISTS `cantiga_courses` (
   KEY `inProject` (`projectId`, `displayOrder`) 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `cantiga_course_results` (
+CREATE TABLE IF NOT EXISTS `cantiga_course_area_results` (
   `areaId` int(11) NOT NULL,
+  `courseId` int(11) NOT NULL,
+  `userId` int(11) NOT NULL,
+  PRIMARY KEY (`areaId`,`courseId`),
+  KEY `userId` (`userId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `cantiga_course_results` (
+  `userId` int(11) NOT NULL,
   `courseId` int(11) NOT NULL,
   `trialNumber` int(11) NOT NULL,
   `startedAt` int(11) NOT NULL,
@@ -24,8 +32,8 @@ CREATE TABLE IF NOT EXISTS `cantiga_course_results` (
   `result` tinyint(4) NOT NULL,
   `totalQuestions` int(11) NOT NULL,
   `passedQuestions` int(11) NOT NULL,
-  PRIMARY KEY (`areaId`,`courseId`),
-  KEY `areaId` (`areaId`),
+  PRIMARY KEY (`userId`,`courseId`),
+  KEY `userId` (`userId`),
   KEY `courseId` (`courseId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -44,9 +52,21 @@ CREATE TABLE IF NOT EXISTS `cantiga_course_progress` (
   KEY `passedCourseNum` (`passedCourseNum`)
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS `cantiga_stat_courses` (
+  `projectId` int(11) NOT NULL,
+  `datePoint` date NOT NULL,
+  `areasWithCompletedCourses` int(11) NOT NULL,
+  `avgCompletedCourses` double NOT NULL,
+  PRIMARY KEY (`projectId`,`datePoint`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 ALTER TABLE `cantiga_course_results`
-  ADD CONSTRAINT `cantiga_course_results_fk1` FOREIGN KEY (`areaId`) REFERENCES `cantiga_areas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `cantiga_course_results_fk1` FOREIGN KEY (`userId`) REFERENCES `cantiga_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `cantiga_course_results_fk2` FOREIGN KEY (`courseId`) REFERENCES `cantiga_courses` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `cantiga_course_area_results`
+  ADD CONSTRAINT `cantiga_course_area_results_fk1` FOREIGN KEY (`areaId`) REFERENCES `cantiga_areas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `cantiga_course_area_results_fk2` FOREIGN KEY (`userId`, `courseId`) REFERENCES `cantiga_course_results` (`userId`, `courseId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE  `cantiga_course_tests`
   ADD CONSTRAINT  `cantiga_course_tests_fk1` FOREIGN KEY (  `courseId` ) REFERENCES `cantiga_courses` (`id`) ON DELETE CASCADE ON UPDATE CASCADE ;
@@ -56,3 +76,6 @@ ALTER TABLE `cantiga_course_progress`
 
 ALTER TABLE `cantiga_courses`
   ADD CONSTRAINT `cantiga_courses_fk1` FOREIGN KEY (`projectId`) REFERENCES `cantiga_projects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `cantiga_stat_courses`
+  ADD CONSTRAINT `cantiga_stat_courses_fk_1` FOREIGN KEY (`projectId`) REFERENCES `cantiga_projects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;

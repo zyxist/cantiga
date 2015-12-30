@@ -24,11 +24,11 @@ use Cantiga\CoreBundle\Entity\AreaStatus;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Entity\Territory;
 use Cantiga\CoreBundle\Tests\Utils\DatabaseTestCase;
+use Cantiga\CourseBundle\CourseTables;
+use Cantiga\CourseBundle\Entity\CourseProgress;
 use Cantiga\CourseBundle\Entity\Question;
 use Cantiga\CourseBundle\Entity\TestResult;
 use Cantiga\CourseBundle\Entity\TestTrial;
-use Cantiga\CourseBundle\Entity\CourseProgress;
-use Cantiga\CourseBundle\CourseTables;
 
 class TestProgressTest extends DatabaseTestCase
 {

@@ -53,16 +53,6 @@ class CourseProgress implements InsertableEntityInterface
 	{
 		$this->area = $area;
 	}
-	/*
-	public static function fromArray(Area $area, array $data, $prefix = '') {
-		$record = new CourseRecord($area);
-		$record->mandatoryCourseNum = $data[$prefix.'mandatoryCourseNum'];
-		$record->passedCourseNum = $data[$prefix.'passedCourseNum'];
-		$record->failedCourseNum = $data[$prefix.'failedCourseNum'];
-		
-		return $record;
-	}
-	*/
 
 	public function insert(Connection $conn)
 	{
@@ -80,10 +70,10 @@ class CourseProgress implements InsertableEntityInterface
 	 * Updates the progress summary for the given area.
 	 * 
 	 * @param Connection $conn
-	 * @param TestResult $result
+	 * @param AbstractTestResult $result
 	 * @param TestTrial $trial
 	 */
-	public function updateResults(Connection $conn, TestResult $result, TestTrial $trial)
+	public function updateResults(Connection $conn, AbstractTestResult $result, TestTrial $trial)
 	{
 		$this->refresh($conn);
 		if($trial->getResult() == Question::RESULT_CORRECT) {

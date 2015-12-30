@@ -24,9 +24,11 @@ use Cantiga\CoreBundle\Api\Actions\InfoAction;
 use Cantiga\CoreBundle\Api\Actions\InsertAction;
 use Cantiga\CoreBundle\Api\Actions\RemoveAction;
 use Cantiga\CoreBundle\Api\Controller\ProjectPageController;
+use Cantiga\CourseBundle\CourseSettings;
 use Cantiga\CourseBundle\Entity\Course;
 use Cantiga\CourseBundle\Form\CourseForm;
 use Cantiga\CourseBundle\Form\CourseTestUploadForm;
+use Cantiga\CourseBundle\Entity\CourseTest;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Exception\ModelException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -168,6 +170,7 @@ class ProjectCourseController extends ProjectPageController
 				}
 				$content = file_get_contents($data['file']->getRealPath());
 				$item->createTest($content);
+				$this->verifyFileCorrectness($item->getTest());
 				$repository->saveTest($item);
 				return $this->showPageWithMessage($this->trans('The course test questions have been uploaded correctly.'), $this->crudInfo->getInfoPage(), array('id' => $id, 'slug' => $this->getSlug()));
 			}
@@ -185,5 +188,15 @@ class ProjectCourseController extends ProjectPageController
 		} catch(ModelException $exception) {
 			return $this->showPageWithError($this->trans($exception->getMessage()), $this->crudInfo->getIndexPage());
 		}
+	}
+	
+	private function verifyFileCorrectness(CourseTest $test)
+	{
+		return $test->constructTestTrial($this->getMinQuestionNum());
+	}
+	
+	private function getMinQuestionNum()
+	{
+		return (int) $this->getProjectSettings()->get(CourseSettings::MIN_QUESTION_NUM)->getValue();
 	}
 }

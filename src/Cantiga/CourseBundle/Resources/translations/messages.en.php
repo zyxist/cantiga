@@ -12,5 +12,4 @@ return array(
 	'TestTimeHasPassedMsg' => 'The time has passed, sorry.',
 	'CourseHasTestMsg' => 'This course has a test, please solve it.',
 	'CourseCompletedConfirmationMsg' => 'You have confirmed completing the course, thank you.',
-	
 );

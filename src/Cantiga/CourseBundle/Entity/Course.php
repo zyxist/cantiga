@@ -454,21 +454,29 @@ class Course implements InsertableEntityInterface, EditableEntityInterface, Remo
 	}
 	
 	private function cancelCourseFromAreaRecords(Connection $conn) {
-		$conn->executeUpdate('UPDATE `'.CourseTables::COURSE_PROGRESS_TBL.'` r INNER JOIN `'.CourseTables::COURSE_RESULT_TBL.'` tt ON tt.`areaId` = r.`areaId` '
-			. 'SET r.`passedCourseNum` = (`passedCourseNum` - 1)  WHERE tt.`result` = '.Question::RESULT_CORRECT.' AND tt.`courseId` = :courseId',
+		$conn->executeUpdate('UPDATE `'.CourseTables::COURSE_PROGRESS_TBL.'` r '
+			. 'INNER JOIN `'.CourseTables::COURSE_AREA_RESULT_TBL.'` at ON at.`areaId` = r.`areaId` '
+			. 'INNER JOIN `'.CourseTables::COURSE_RESULT_TBL.'` tt ON tt.`userId` = at.`userId` '
+			. 'SET r.`passedCourseNum` = (`passedCourseNum` - 1)  WHERE tt.`result` = '.Question::RESULT_CORRECT.' AND at.`courseId` = :courseId',
 			array(':courseId' => $this->getId()));
-		$conn->executeUpdate('UPDATE `'.CourseTables::COURSE_PROGRESS_TBL.'` r INNER JOIN `'.CourseTables::COURSE_RESULT_TBL.'` tt ON tt.`areaId` = r.`areaId` '
-			. 'SET r.`failedCourseNum` = (`failedCourseNum` - 1) WHERE tt.`result` = '.Question::RESULT_INVALID.' AND tt.`courseId` = :courseId',
+		$conn->executeUpdate('UPDATE `'.CourseTables::COURSE_PROGRESS_TBL.'` r '
+			. 'INNER JOIN `'.CourseTables::COURSE_AREA_RESULT_TBL.'` at ON at.`areaId` = r.`areaId` '
+			. 'INNER JOIN `'.CourseTables::COURSE_RESULT_TBL.'` tt ON tt.`userId` = at.`userId` '
+			. 'SET r.`failedCourseNum` = (`failedCourseNum` - 1)  WHERE tt.`result` = '.Question::RESULT_INVALID.' AND at.`courseId` = :courseId',
 			array(':courseId' => $this->getId()));
 	}
 	
 	private function revokeCourseFromAreaRecords(Connection $conn)
 	{
-		$conn->executeUpdate('UPDATE `'.CourseTables::COURSE_PROGRESS_TBL.'` r INNER JOIN `'.CourseTables::COURSE_RESULT_TBL.'` tt ON tt.`areaId` = r.`areaId` '
-			. 'SET r.`passedCourseNum` = (`passedCourseNum` + 1)  WHERE tt.`result` = '.Question::RESULT_CORRECT.' AND tt.`courseId` = :courseId',
+		$conn->executeUpdate('UPDATE `'.CourseTables::COURSE_PROGRESS_TBL.'` r '
+			. 'INNER JOIN `'.CourseTables::COURSE_AREA_RESULT_TBL.'` at ON at.`areaId` = r.`areaId` '
+			. 'INNER JOIN `'.CourseTables::COURSE_RESULT_TBL.'` tt ON tt.`userId` = at.`userId` '
+			. 'SET r.`passedCourseNum` = (`passedCourseNum` + 1)  WHERE tt.`result` = '.Question::RESULT_CORRECT.' AND at.`courseId` = :courseId',
 			array(':courseId' => $this->getId()));
-		$conn->executeUpdate('UPDATE `'.CourseTables::COURSE_PROGRESS_TBL.'` r INNER JOIN `'.CourseTables::COURSE_RESULT_TBL.'` tt ON tt.`areaId` = r.`areaId` '
-			. 'SET r.`failedCourseNum` = (`failedCourseNum` + 1) WHERE tt.`result` = '.Question::RESULT_INVALID.' AND tt.`courseId` = :courseId',
+		$conn->executeUpdate('UPDATE `'.CourseTables::COURSE_PROGRESS_TBL.'` r '
+			. 'INNER JOIN `'.CourseTables::COURSE_AREA_RESULT_TBL.'` at ON at.`areaId` = r.`areaId` '
+			. 'INNER JOIN `'.CourseTables::COURSE_RESULT_TBL.'` tt ON tt.`userId` = at.`userId` '
+			. 'SET r.`failedCourseNum` = (`failedCourseNum` + 1)  WHERE tt.`result` = '.Question::RESULT_INVALID.' AND at.`courseId` = :courseId',
 			array(':courseId' => $this->getId()));
 	}
 	
