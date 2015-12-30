@@ -182,9 +182,10 @@ class WorkspaceListener implements WorkspaceSourceInterface
 	{
 		$workspace = $event->getWorkspace();
 		$workspace->addWorkgroup(new Workgroup('community', 'Community', 'users', 1));
-		$workspace->addWorkgroup(new Workgroup('area', 'Area', 'flag-o', 2));
+		$workspace->addWorkgroup(new Workgroup('summary', 'Summary', 'table', 2));
+		$workspace->addWorkgroup(new Workgroup('area', 'Area', 'flag-o', 3));
 		if ($this->authChecker->isGranted('ROLE_AREA_MANAGER')) {
-			$workspace->addWorkgroup(new Workgroup('manage', 'Manage', 'wrench', 3));
+			$workspace->addWorkgroup(new Workgroup('manage', 'Manage', 'wrench', 4));
 		}
 		
 		$workspace->addWorkItem('community', new WorkItem('area_memberlist_index', 'Member list'));

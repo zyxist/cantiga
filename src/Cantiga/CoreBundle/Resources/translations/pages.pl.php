@@ -10,6 +10,7 @@ return array(
 	'Home' => 'Strona główna',
 	'Requests' => 'Zgłoszenia',
 	'Places' => 'Miejsca',
+	'Summary' => 'Zestawienia',
 	
 	// Help pages
 	'Help' => 'Pomoc',

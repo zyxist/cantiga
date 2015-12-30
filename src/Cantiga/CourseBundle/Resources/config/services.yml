@@ -8,6 +8,9 @@ services:
     cantiga.course.repo.area_course:
         class:     Cantiga\CourseBundle\Repository\AreaCourseRepository
         arguments: ["@database_connection", "@cantiga.transaction"]
+    cantiga.course.repo.summary:
+        class:     Cantiga\CourseBundle\Repository\SummaryRepository
+        arguments: ["@database_connection", "@cantiga.transaction"]
     cantiga.course.workspace_listener:
         class: Cantiga\CourseBundle\EventListener\WorkspaceListener
         tags:

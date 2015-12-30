@@ -1,6 +1,9 @@
 _area_course_controller:                                                                                                                                                   
     resource: "@CantigaCourseBundle/Controller/AreaCourseController.php"                                                                                                      
     type:     annotation
+_area_course_result_controller:                                                                                                                                                   
+    resource: "@CantigaCourseBundle/Controller/AreaCourseResultController.php"                                                                                                      
+    type:     annotation
 _project_course_controller:                                                                                                                                                   
     resource: "@CantigaCourseBundle/Controller/ProjectCourseController.php"                                                                                                      
     type:     annotation

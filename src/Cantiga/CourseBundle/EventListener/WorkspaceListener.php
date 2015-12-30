@@ -38,6 +38,7 @@ class WorkspaceListener
 	{
 		$workspace = $event->getWorkspace();
 		if ($workspace->getProject()->supportsModule('course')) {
+			$workspace->addWorkItem('summary', new WorkItem('area_course_results', 'Course results'));
 			$workspace->addWorkItem('area', new WorkItem('area_course_index', 'Courses'));
 		}
 	}

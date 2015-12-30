@@ -12,6 +12,9 @@ return array(
 	'Your score' => 'Twój wynik',
 	'Area score' => 'Wynik rejonu',
 	'Completion date' => 'Data ukończenia szkolenia',
-	'Completed at' => 'Ukończyłeś',
+	'Completed at' => 'Ukończony',
 	'Status' => 'Status',
+	'Course' => 'Szkolenie',
+	'Member result' => 'Wynik członka',
+	'Trial number' => 'Liczba prób',
 );

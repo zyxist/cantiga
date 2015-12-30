@@ -1,0 +1,66 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ pageTitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ pageSubtitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="box box-solid">
+				<div class="box-body">
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th width="30%">{{ 'Course' | trans([], 'course') }}</th>
+								<th>{{ 'Member' | trans }}</th>
+								<th width="10%">{{ 'Member result' | trans([], 'course') }}</th>
+								<th width="40"></th>
+								<th width="10%">{{ 'Trial number' | trans([], 'course') }}</th>
+								<th width="10%">{{ 'Completed at' | trans([], 'course') }}</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for item in items %}
+							<tr>
+								<td><a href="{{ spath(courseInfoPage, {'id': item.courseId }) }}">{{ item.courseName }}</a></td>
+								<td><img src="{{ asset(avatar(item, 32)) }}" alt="av" width="24" class="img-circle" /> <a href="{{ spath(userProfilePage, {'id': item.userId }) }}">{{ item.userName }}</a></td>
+								{% if item.result == 0 %}
+								<td>{{ 'Not started' | trans([], 'course') }}</td>
+								<td></td>
+								<td>0</td>
+								<td>---</td>
+								{% else %}
+								{% if item.result == 1 %}
+								<td>
+									<div class="progress progress-xs">
+										<div class="progress-bar progress-bar-success" style="width: {{ item.score }}%"></div>
+									</div>
+								</td>
+								<td><span class="badge bg-green">{{ item.score }}%</span></td>
+								<td>{{item.trialNumber}}</td>
+								<td>{{ ago(item.completedAt) }}</td>
+								{% else %}
+								<td>
+									<div class="progress progress-xs">
+										<div class="progress-bar progress-bar-danger" style="width: {{ item.score }}%"></div>
+									</div>
+								</td>
+								<td><span class="badge bg-red">{{ item.score }}%</span></td>
+								<td>{{item.trialNumber}}</td>
+								<td>{{ ago(item.completedAt) }}</td>
+								{% endif %}
+								{% endif %}
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
