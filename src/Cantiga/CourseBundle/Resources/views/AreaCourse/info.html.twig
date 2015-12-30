@@ -16,11 +16,15 @@
 			<div class="box-body">
 				<p>{{ item.description }}</p>
 				{{ item.generatePresentationCode() | raw }}
-				
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-4 col-md-12 col-xs-12">
+		<div class="box">
+			<div class="box-body">
 				{% if item.hasTest() %}
-				<h4>{{ 'Test' | trans([], 'course') }}</h4>
+				<h3>{{ 'Test' | trans([], 'course') }}</h3>
 				{% if result.isSolved() %}
-				<div class="col-md-4">
 					<table class="table">
 						<tbody>
 							<tr>
@@ -45,11 +49,10 @@
 							</tr>
 						</tbody>
 					</table>
-				</div>
 				{% else %}
 				<p>{{ 'CourseTestNeededText' | trans }}</p>
 				{% if item.deadline %}
-				<p class="lead">{{'Deadline for completing the test' | trans }}: {{ format_date(item.deadline) }}</p>
+				<p class="lead">{{'Deadline for completing the test' | trans }}: {{ format_time(TimeFormatter.FORMAT_DATE_LONG, item.deadline) }}</p>
 				{% endif %}
 				{% endif %}
 
@@ -59,24 +62,22 @@
 				{% else %}
 				<h4>Ukończenie</h4>
 				{% if result.isSolved() %}
-				<div class="col-md-4">
 					<table class="table">
 						<tbody>
 							<tr>
 								<td width="30%">Twój status</td>
 								{% if result.getResult() == 1 %}
-								<td class="success">Zdany</td>
+								<td class="success">{{ 'Passed' | trans([], 'course') }}</td>
 								{% else %}
-								<td class="danger">Niezdany</td>	
+								<td class="danger">{{ 'Failed' | trans([], 'course') }}</td>	
 								{% endif %}
 							</tr>
 							<tr>
 								<td>Data ukończenia</td>
-								<td>{{ timeService.format(TimeFormatter.FORMAT_SHORT, result.completedAt) }}</td>
+								<td>{{ format_time(TimeFormatter.FORMAT_SHORT, result.completedAt) }}</td>
 							</tr>
 						</tbody>
 					</table>
-				</div>
 				{% else %}
 				{% if item.deadline %}
 				<p>{{ 'CourseTestNotNeededText: 0' | trans([ format_time(TimeFormatter.FORMAT_DATE_LONG, item.deadline)]) }}</p>

@@ -23,6 +23,7 @@ use Cantiga\CoreBundle\Entity\User;
 use Cantiga\CourseBundle\CourseTables;
 use Cantiga\CourseBundle\Entity\Course;
 use Cantiga\CourseBundle\Entity\TestResult;
+use Cantiga\CourseBundle\Entity\TestTrial;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Transaction;
 use Doctrine\DBAL\Connection;
@@ -64,6 +65,9 @@ class AreaCourseRepository
 			. 'FROM `'.CourseTables::COURSE_TBL.'` c '
 			. 'LEFT JOIN `'.CourseTables::COURSE_RESULT_TBL.'` r ON (r.`courseId` = c.`id` AND r.`areaId` = :areaId) '
 			. 'WHERE c.`isPublished` = 1 AND c.`projectId` = :projectId ORDER BY c.`displayOrder`', [':areaId' => $this->area->getId(), ':projectId' => $this->area->getProject()->getId()]);
+		foreach ($items as &$item) {
+			TestResult::processResults($item);
+		}
 		return $items;
 	}
 	
@@ -71,7 +75,7 @@ class AreaCourseRepository
 	{
 		$item = Course::fetchPublished($this->conn, $id, $this->area->getProject());
 		if (false === $item) {
-			throw new ItemNotFoundException('The specified course has not been found.');
+			throw new ItemNotFoundException('CourseNotFoundMsg');
 		}
 		return $item;
 	}
@@ -79,5 +83,38 @@ class AreaCourseRepository
 	public function getTestResult(Area $area, Course $course)
 	{
 		return TestResult::fetchResult($this->conn, $area, $course);
+	}
+	
+	public function startNewTrial(TestResult $result)
+	{
+		$this->transaction->requestTransaction();
+		try {
+			$result->startNewTrial($this->conn);
+		} catch (Exception $ex) {
+			$this->transaction->requestRollback();
+			throw $ex;
+		}
+	}
+	
+	public function completeTrial(TestResult $result, TestTrial $trial)
+	{
+		$this->transaction->requestTransaction();
+		try {
+			$result->completeTrial($this->conn, $trial);
+		} catch (Exception $ex) {
+			$this->transaction->requestRollback();
+			throw $ex;
+		}
+	}
+	
+	public function confirmGoodFaithCompletion(Area $area, User $user, Course $course)
+	{
+		$this->transaction->requestTransaction();
+		try {
+			$course->confirmGoodFaithCompletion($this->conn, $area, $user);
+		} catch (Exception $ex) {
+			$this->transaction->requestRollback();
+			throw $ex;
+		}
 	}
 }

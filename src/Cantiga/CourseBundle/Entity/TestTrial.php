@@ -58,7 +58,22 @@ class TestTrial implements Serializable
 		}
 		$fbi->add('save', 'submit', array('label' => 'Ready'));
 		return $fbi->getForm();
-	}	
+	}
+	
+	/**
+	 * Produces an array with the names of the fields with questions, so that
+	 * the template could know what to render.
+	 * 
+	 * @return array
+	 */
+	public function generateFormFieldNames()
+	{
+		$results = [];
+		foreach($this->questions as $idx => $question) {
+			$results[] = $question->generateFieldName($idx);
+		}
+		return $results;
+	}
 	
 	/**
 	 * Verifies the solution sent by the user. The result is returned as a boolean, and stored

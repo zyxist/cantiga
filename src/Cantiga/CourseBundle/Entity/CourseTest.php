@@ -32,7 +32,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CourseTest
 {
-	const QUESTION_NUM_ATTR = 'question-num';
+	const QUESTION_NUM_ATTR = 'question-number';
 	const CONTENT_ATTR = 'content';
 	const CORRECT_ATTR = 'correct';
 	const YES_VAL = 'yes';

@@ -19,8 +19,8 @@
 namespace Cantiga\CourseBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
-use Cantiga\CoreBundle\Api\Actions\InfoAction;
 use Cantiga\CoreBundle\Api\Controller\AreaPageController;
+use Cantiga\CourseBundle\CourseSettings;
 use Cantiga\CourseBundle\CourseTexts;
 use Cantiga\CourseBundle\Entity\Question;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
@@ -92,7 +92,7 @@ class AreaCourseController extends AreaPageController
 				'pageSubtitle' => 'Take the on-line course',
 			));
 		} catch(ItemNotFoundException $exception) {
-			return $this->showPageWithError('The specified course has not been found.', $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
+			return $this->showPageWithError($this->trans('CourseNotFoundMsg'), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
 		}
 	}
 	
@@ -103,24 +103,24 @@ class AreaCourseController extends AreaPageController
 		try {
 			$repo = $this->get(self::REPOSITORY_NAME);
 			$item = $repo->getItem($id);
-			
+			$minQuestionNum = $this->getMinQuestionNum();
 			if(!$item->hasTest()) {
-				return $this->showPageWithError('The test questions have not been published for this course yet.', $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
+				return $this->showPageWithError($this->trans('TestQuestionsNotPublishedMsg'), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
 			}
-			$result = $repo->getTestResult($this->getUser(), $item);
+			$result = $repo->getTestResult($this->getMembership()->getItem(), $item);
 			
 			if($result->getResult() == Question::RESULT_CORRECT) {
-				return $this->showPageWithMessage('You have already completed this training with a positive result.', $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
+				return $this->showPageWithMessage($this->trans('CourseAlreadyCompletedMsg'), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
 			}
 			
 			if($this->get('session')->has('trial')) {
 				if(!$request->isMethod('POST')) {
-					return $this->showPageWithError('This test is already in progress.', $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
+					return $this->showPageWithError($this->trans('TestAlreadyInProgressMsg'), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
 				}
 				$testTrial = $this->get('session')->get('trial');
 			} else {
-				$result->startNewTrial();
-				$testTrial = $item->getTest()->constructTestTrial();
+				$repo->startNewTrial($result);
+				$testTrial = $item->getTest()->constructTestTrial($minQuestionNum);
 				$this->get('session')->set('trial', $testTrial);
 			}
 			$form = $testTrial->generateTestForm($this->createFormBuilder());
@@ -129,25 +129,28 @@ class AreaCourseController extends AreaPageController
 			if($form->isValid()) {
 				$this->get('session')->remove('trial');
 				$ok = $testTrial->validateTestTrial($form->getData());
-				$result->completeTrial($testTrial);
+				$repo->completeTrial($result, $testTrial);
 				if($ok) {
-					return $this->showPageWithMessage('You have passed the test!', $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
+					return $this->showPageWithMessage($this->trans('TestPassedMsg'), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
 				} else {
-					return $this->showPageWithError('You have failed the test!', $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
+					return $this->showPageWithError($this->trans('TestFailedMsg'), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
 				}
 			}
 			
+			$this->breadcrumbs()->link($this->trans('Test', [], 'course'), 'area_course_test', ['slug' => $this->getSlug(), 'id' => $item->getId()]);
 			return $this->render($this->crudInfo->getTemplateLocation().'test.html.twig', array(
 				'item' => $item,
 				'form' => $form->createView(),
-				'testTime' => $testTrial->getTimeLimitInMinutes()
+				'fieldNames' => $testTrial->generateFormFieldNames(),
+				'testTime' => $testTrial->getTimeLimitInMinutes(),
+				'pageSubtitle' => 'Take the on-line course',
 			));
 		} catch(ItemNotFoundException $exception) {
-			return $this->showPageWithError('The given course has not been found.', $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
+			return $this->showPageWithError($this->trans('CourseNotFoundMsg'), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
 		} catch(TrainingTestException $exception) {
-			return $this->showPageWithError($this->get('translator')->trans($exception->getMessage()), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
+			return $this->showPageWithError($this->trans($exception->getMessage()), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
 		} catch(ModelException $exception) {
-			return $this->showPageWithError('The test questions have not been published for this course yet.', $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
+			return $this->showPageWithError($this->trans($exception->getMessage()), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
 		}
 	}
 	
@@ -160,12 +163,17 @@ class AreaCourseController extends AreaPageController
 			$item = $repo->getItem($id);
 			
 			if($item->hasTest()) {
-				return $this->showPageWithError('This course has a test - please solve it.', $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
+				return $this->showPageWithError($this->trans('CourseHasTestMsg'), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
 			}
-			$item->confirmGoodFaithCompletion($this->getUser());
-			return $this->showPageWithMessage('Thank you for confirming the course completion.', $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
+			$repo->confirmGoodFaithCompletion($this->getMembership()->getItem(), $this->getUser(), $item);
+			return $this->showPageWithMessage($this->trans('CourseCompletedConfirmationMsg'), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
 		} catch(ModelException $exception) {
-			return $this->showPageWithError('An error has occurred during saving the course results.', $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
+			return $this->showPageWithError($this->trans($exception->getMessage()), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
 		}
+	}
+	
+	private function getMinQuestionNum()
+	{
+		return (int) $this->getProjectSettings()->get(CourseSettings::MIN_QUESTION_NUM)->getValue();
 	}
 }

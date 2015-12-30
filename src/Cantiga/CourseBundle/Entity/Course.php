@@ -86,9 +86,10 @@ class Course implements InsertableEntityInterface, EditableEntityInterface, Remo
 		if (empty($data)) {
 			return false;
 		}
-		$test = $conn->fetchAssoc('SELECT * FROM `'.CourseTables::COURSE_TEST_TBL.'` WHERE `courseId` = :id', [':id' => $id]);
+		
 		$item = self::fromArray($data);
 		$item->project = $project;
+		$test = $conn->fetchAssoc('SELECT * FROM `'.CourseTables::COURSE_TEST_TBL.'` WHERE `courseId` = :id', [':id' => $id]);
 		if (false !== $test) {
 			$item->test = new CourseTest($item, $test['testStructure']);
 		}
@@ -274,7 +275,7 @@ class Course implements InsertableEntityInterface, EditableEntityInterface, Remo
 		if($this->deadline === null) {
 			return true;
 		}
-		return ($this->deadline->getTimestamp() > time());
+		return ($this->deadline > time());
 	}
 	
 	/**
@@ -326,7 +327,7 @@ class Course implements InsertableEntityInterface, EditableEntityInterface, Remo
 		try {
 			$stmt = $conn->prepare('INSERT INTO `'.CourseTables::COURSE_RESULT_TBL.'` '
 				. '(`areaId`, `courseId`, `trialNumber`, `startedAt`, `completedAt`, `result`, `totalQuestions`, `passedQuestions`) '
-				. 'VALUES(:areaId, :courseId,, :userId, 1, :startedAt, :completedAt, :result, :totalQuestions, :passedQuestions)');
+				. 'VALUES(:areaId, :courseId, 1, :startedAt, :completedAt, :result, :totalQuestions, :passedQuestions)');
 			$stmt->bindValue(':areaId', $area->getId());
 			$stmt->bindValue(':courseId', $this->getId());
 			$stmt->bindValue(':result', Question::RESULT_CORRECT);
@@ -335,8 +336,9 @@ class Course implements InsertableEntityInterface, EditableEntityInterface, Remo
 			$stmt->bindValue(':totalQuestions', 1);
 			$stmt->bindValue(':passedQuestions', 1);
 			$stmt->execute();
-
-			$area->getCourseProgress()->updateGoodFaithCompletion();
+			
+			$progress = CourseProgress::fetchByArea($conn, $area);
+			$progress->updateGoodFaithCompletion($conn);
 		} catch(UniqueConstraintViolationException $exception) {
 			throw new ModelException('Cannot complete a completed test!');
 		}

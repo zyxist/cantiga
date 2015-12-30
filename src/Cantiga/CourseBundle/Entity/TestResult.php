@@ -111,6 +111,44 @@ class TestResult {
 	{
 		return $this->passedQuestions;
 	}
+	
+	public function setTrialNumber($trialNumber)
+	{
+		$this->trialNumber = $trialNumber;
+		return $this;
+	}
+
+	public function setStartedAt($startedAt)
+	{
+		DataMappers::noOverwritingField($this->startedAt);
+		$this->startedAt = $startedAt;
+		return $this;
+	}
+
+	public function setCompletedAt($completedAt)
+	{
+		DataMappers::noOverwritingField($this->completedAt);
+		$this->completedAt = $completedAt;
+		return $this;
+	}
+
+	public function setResult($result)
+	{
+		$this->result = $result;
+		return $this;
+	}
+
+	public function setTotalQuestions($totalQuestions)
+	{
+		$this->totalQuestions = $totalQuestions;
+		return $this;
+	}
+
+	public function setPassedQuestions($passedQuestions)
+	{
+		$this->passedQuestions = $passedQuestions;
+		return $this;
+	}
 
 	public function getPercentageResult()
 	{
@@ -173,14 +211,15 @@ class TestResult {
 	{
 		$this->refresh($conn);
 			
-		$limit = $this->startedAt->getTimestamp();
+		$limit = $this->startedAt;
 		$limit += ($trial->getTimeLimitInMinutes() * 60);
 		
 		if($limit < time()) {
-			throw new CourseTestException('The time to solve this test has passed, sorry.');
+			throw new CourseTestException('TestTimeHasPassedMsg');
 		}
-			
-		$this->area->getCourseProgress()->updateResults($this, $trial);
+		
+		$progress = CourseProgress::fetchByArea($conn, $this->area);
+		$progress->updateResults($conn, $this, $trial);
 			
 		$this->result = $trial->getResult();
 		$this->totalQuestions = $trial->getQuestionNumber();
@@ -226,10 +265,21 @@ class TestResult {
 		$stmt->bindValue(':courseId', $this->course->getId());
 		$stmt->bindValue(':trialNum', $this->getTrialNumber());
 		$stmt->bindValue(':result', $this->getResult());
-		$stmt->bindValue(':startedAt', $this->getStartedAt()->getTimestamp());
-		$stmt->bindValue(':completedAt', $this->getCompletedAt() === null ? null : $this->getCompletedAt()->getTimestamp());
+		$stmt->bindValue(':startedAt', $this->getStartedAt());
+		$stmt->bindValue(':completedAt', $this->getCompletedAt());
 		$stmt->bindValue(':totalQuestions', $this->getTotalQuestions());
 		$stmt->bindValue(':passedQuestions', $this->getPassedQuestions());
 		$stmt->execute();
+	}
+	
+	public static function processResults(array &$array)
+	{
+		if(!empty($array['totalQuestions'])) {
+			$array['score'] = round((int) $array['passedQuestions'] / (float) $array['totalQuestions'] * 100.0);
+		}
+		if(empty($array['result'])) { 
+			$array['result'] = Question::RESULT_UNKNOWN;
+		}
+		return $array;
 	}
 }

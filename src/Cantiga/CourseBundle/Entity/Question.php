@@ -63,12 +63,17 @@ class Question
 	 */
 	public function generateFormField(FormBuilderInterface $fbi, $idx)
 	{
-		$fbi->add('question_'.$idx, new ChoiceType, array(
+		$fbi->add($this->generateFieldName($idx), new ChoiceType, array(
 			'label' => $this->content,
 			'expanded' => true,
 			'multiple' => $this->correctAnswerNum != 1,
 			'choices' => $this->answersToArray()
 		));
+	}
+	
+	public function generateFieldName($idx)
+	{
+		return 'question_'.$idx;
 	}
 	
 	/**

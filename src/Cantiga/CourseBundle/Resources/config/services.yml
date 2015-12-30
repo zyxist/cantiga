@@ -13,3 +13,9 @@ services:
         tags:
             - { name: kernel.event_listener, event: cantiga.workspace.project, method: onProjectWorkspace }
             - { name: kernel.event_listener, event: cantiga.workspace.area, method: onAreaWorkspace }
+    cantiga.course.model_listener:
+        class: Cantiga\CourseBundle\EventListener\ModelListener
+        arguments: ["@database_connection"]
+        tags:
+            - { name: kernel.event_listener, event: cantiga.project.created, method: onProjectCreated }
+            - { name: kernel.event_listener, event: cantiga.area.created, method: onAreaCreated }

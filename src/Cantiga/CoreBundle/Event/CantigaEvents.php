@@ -136,6 +136,14 @@ class CantigaEvents
 	 */
 	const AREA_REQUEST_REVOKED = 'cantiga.area-request.revoked';
 	/**
+	 * Notification that a new area has been created.
+	 */
+	const AREA_CREATED = 'cantiga.area.created';
+	/**
+	 * Notification that an existing area has been updated.
+	 */
+	const AREA_UPDATED = 'cantiga.area.updated';
+	/**
 	 * Notification about a new invitation.
 	 */
 	const INVITATION_CREATED = 'cantiga.invitation.created';

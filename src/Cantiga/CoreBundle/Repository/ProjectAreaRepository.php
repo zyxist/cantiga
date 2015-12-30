@@ -23,6 +23,8 @@ use Cantiga\CoreBundle\Entity\Area;
 use Cantiga\CoreBundle\Entity\Group;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Entity\User;
+use Cantiga\CoreBundle\Event\AreaEvent;
+use Cantiga\CoreBundle\Event\CantigaEvents;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Form\EntityTransformerInterface;
@@ -31,6 +33,7 @@ use Cantiga\Metamodel\QueryClause;
 use Cantiga\Metamodel\Transaction;
 use Doctrine\DBAL\Connection;
 use PDO;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class ProjectAreaRepository implements EntityTransformerInterface
@@ -44,15 +47,20 @@ class ProjectAreaRepository implements EntityTransformerInterface
 	 */
 	private $transaction;
 	/**
+	 * @var EventDispatcherInterface
+	 */
+	private $eventDispatcher;
+	/**
 	 * Active project
 	 * @var Project
 	 */
 	private $project;
 	
-	public function __construct(Connection $conn, Transaction $transaction)
+	public function __construct(Connection $conn, Transaction $transaction, EventDispatcherInterface $eventDispatcher)
 	{
 		$this->conn = $conn;
 		$this->transaction = $transaction;
+		$this->eventDispatcher = $eventDispatcher;
 	}
 	
 	public function setActiveProject(Project $project)
@@ -150,7 +158,9 @@ class ProjectAreaRepository implements EntityTransformerInterface
 	{
 		$this->transaction->requestTransaction();
 		try {
-			return $item->insert($this->conn);
+			$id = $item->insert($this->conn);
+			$this->eventDispatcher->dispatch(CantigaEvents::AREA_CREATED, new AreaEvent($item));
+			return $id;
 		} catch(Exception $exception) {
 			$this->transaction->requestRollback();
 			throw $exception;
@@ -162,6 +172,7 @@ class ProjectAreaRepository implements EntityTransformerInterface
 		$this->transaction->requestTransaction();
 		try {
 			$item->update($this->conn);
+			$this->eventDispatcher->dispatch(CantigaEvents::AREA_UPDATED, new AreaEvent($item));
 		} catch(Exception $exception) {
 			$this->transaction->requestRollback();
 			throw $exception;
