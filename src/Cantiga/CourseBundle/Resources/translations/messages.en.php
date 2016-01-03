@@ -12,4 +12,7 @@ return array(
 	'TestTimeHasPassedMsg' => 'The time has passed, sorry.',
 	'CourseHasTestMsg' => 'This course has a test, please solve it.',
 	'CourseCompletedConfirmationMsg' => 'You have confirmed completing the course, thank you.',
+	'CourseTestNeededText' => 'After reading the presentation, you can start a test. The test is time-limited (1 minute per question), and your score must be at least 80% correct answers in order to pass. The questions may have one or more correct answers. If you fail to pass the test, the next trial will be available after 24 hours.',
+	'CourseTestNotNeededText: 0' => 'This course can be completed without passing a test. Click the button to confirm that you have read the presentation. The deadline to complete the course is 0.',
+	'CourseTestNotNeededText' => 'This course can be completed without passing a test. Click the button to confirm that you have read the presentation.',
 );
