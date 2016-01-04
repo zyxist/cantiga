@@ -84,8 +84,13 @@ return array(
 	'Places you are a member of' => 'Miejsca, których jesteś członkiem',
 	
 	// Supplementary texts for area
+	'Area page' => 'Strona rejonu',
 	'Edit the details of your area' => 'Edytuj informacje o swoim rejonie',
 	'Area member profile' => 'Profil członka rejonu',
+	
+	// Supplementary texts for group
+	'Group page' => 'Strona grupy',
+	'Group member profile' => 'Profil członka grupy',
 	
 	// Supplementary texts for project
 	'Project page' => 'Strona projektu',
