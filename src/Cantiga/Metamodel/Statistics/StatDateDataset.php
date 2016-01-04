@@ -142,6 +142,7 @@ class StatDateDataset
 			$datePoint[1]++;
 			if ($datePoint[1] == 13) {
 				$datePoint[0]++;
+				$datePoint[1] = 1;
 			}
 		} else {
 			$datePoint[2]++;
