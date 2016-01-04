@@ -18,15 +18,16 @@
  */
 namespace Cantiga\CourseBundle\Entity;
 
+use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Area;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Entity\User;
+use Cantiga\CourseBundle\CourseTables;
 use Cantiga\Metamodel\Capabilities\EditableEntityInterface;
 use Cantiga\Metamodel\Capabilities\InsertableEntityInterface;
 use Cantiga\Metamodel\Capabilities\RemovableEntityInterface;
 use Cantiga\Metamodel\DataMappers;
 use Cantiga\Metamodel\Exception\ModelException;
-use Cantiga\CourseBundle\CourseTables;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use LogicException;
@@ -453,12 +454,16 @@ class Course implements InsertableEntityInterface, EditableEntityInterface, Remo
 	
 	private function incrementMandatoryCourses(Connection $conn)
 	{
-		$conn->query('UPDATE `'.CourseTables::COURSE_PROGRESS_TBL.'` SET `mandatoryCourseNum` = (`mandatoryCourseNum` + 1)');
+		$conn->executeQuery('UPDATE `'.CourseTables::COURSE_PROGRESS_TBL.'` SET `mandatoryCourseNum` = (`mandatoryCourseNum` + 1) WHERE `areaId` IN (SELECT `id` FROM `'.CoreTables::AREA_TBL.'` WHERE `projectId` = :projectId)', [
+			':projectId' => $this->project->getId(),
+		]);
 	}
 	
 	private function decrementMandatoryCourses(Connection $conn)
 	{
-		$conn->query('UPDATE `'.CourseTables::COURSE_PROGRESS_TBL.'` SET `mandatoryCourseNum` = (`mandatoryCourseNum` - 1)');
+		$conn->executeQuery('UPDATE `'.CourseTables::COURSE_PROGRESS_TBL.'` SET `mandatoryCourseNum` = (`mandatoryCourseNum` - 1) WHERE `areaId` IN (SELECT `id` FROM `'.CoreTables::AREA_TBL.'` WHERE `projectId` = :projectId)', [
+			':projectId' => $this->project->getId(),
+		]);
 	}
 	
 	private function cancelCourseFromAreaRecords(Connection $conn) {
