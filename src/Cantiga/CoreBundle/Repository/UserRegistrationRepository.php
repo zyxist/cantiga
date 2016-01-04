@@ -124,7 +124,7 @@ class UserRegistrationRepository implements EntityTransformerInterface
 			. 'INNER JOIN `'.CoreTables::LANGUAGE_TBL.'` l ON l.`id` = r.`languageId` '
 			. 'WHERE r.`id` = :id', [':id' => $id]);
 		
-		if(null === $data) {
+		if(false === $data) {
 			$this->transaction->requestRollback();
 			throw new ItemNotFoundException('The specified item has not been found.', $id);
 		}
