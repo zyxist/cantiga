@@ -24,14 +24,22 @@
 							</button>
 							<ul class="dropdown-menu" role="menu">
 								<li><a href="{{ spath('project_group_membership_index', {'id': item.id }) }}">{{ 'Members' | trans({}, 'general') }}</a></li>
-								<li><a href="{{ spath('project_area_group_edit', {'id': item.id }) }}">{{ 'Edit' | trans({}, 'general') }}</a></li>
-								<li><a href="{{ spath('project_area_group_remove', {'id': item.id }) }}">{{ 'Remove' | trans({}, 'general') }}</a></li>
+								<li><a href="{{ spath(editPage, {'id': item.id }) }}">{{ 'Edit' | trans({}, 'general') }}</a></li>
+								<li><a href="{{ spath(removePage, {'id': item.id }) }}">{{ 'Remove' | trans({}, 'general') }}</a></li>
 							</ul>
 						</div>
-						<a href="{{ spath('project_area_group_index') }}" class="btn btn-default btn-sm">{{ 'Back' | trans([], 'general') }}</a>
+						<a href="{{ spath(indexPage) }}" class="btn btn-default btn-sm">{{ 'Back' | trans([], 'general') }}</a>
 					</div>
 				</div>
 				<div class="status-info">
+					<div class="info-item">
+						<h4><i class="fa fa-bookmark"></i> {{ 'Category' | trans }}</h4>
+						{% if item.category %}
+						<span class="value">{{ item.category.name }}</span>
+						{% else %}
+						<span class="value">--</span>
+						{% endif %}
+					</div>
 					<div class="info-item">
 						<h4><i class="fa fa-flag-o"></i> {{ 'Area number' | trans }}</h4>
 						<span class="value">{{ item.areaNum }}</span>
@@ -47,6 +55,7 @@
 			<ul class="nav nav-tabs">
 				<li class="active"><a href="#areas" aria-controls="areas" role="tab" data-toggle="tab">{{ 'Areas' | trans }}</a></li>
 				<li><a href="#members" aria-controls="members" role="tab" data-toggle="tab">{{ 'Members' | trans([], 'general') }}</a></li>
+				<li><a href="#notes" aria-controls="notes" role="tab" data-toggle="tab">{{ 'Notes' | trans }}</a></li>
 			</ul>
 			<div class="tab-content">
 				<div role="tabpanel" class="tab-pane active" id="areas">
@@ -86,6 +95,9 @@
 						<tbody>
 						</tbody>						
 					</table>
+				</div>
+				<div role="tabpanel" class="tab-pane" id="notes">
+					<p>{{ item.notes }}</p>
 				</div>
 			</div>
 		</div>

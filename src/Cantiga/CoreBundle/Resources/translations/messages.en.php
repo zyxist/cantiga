@@ -36,6 +36,9 @@ return array(
 	// Project area status
 	'AreaStatusDescriptionFormText' => 'You can translate the status name in the translation file <code>statuses.[language code].php</code>. It will be displayed in the language of the given user. The label is the CSS class name from the visual theme. It defines how the status looks like.',
 	
+	// Project groups and categories
+	'GroupCategoryDescriptionText' => 'Categories ease the group management. Create categories and assign the groups to them, and you will be able to filter the data through them on other pages.',
+	
 	// Invitation type forms
 	'ProjectNominative: 0' => 'Project "0"',
 	'GroupNominative: 0' => 'Group "0"',

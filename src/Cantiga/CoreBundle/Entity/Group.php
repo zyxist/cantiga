@@ -32,6 +32,9 @@ use Cantiga\Metamodel\MembershipRoleResolver;
 use Cantiga\Metamodel\QueryClause;
 use Doctrine\DBAL\Connection;
 use PDO;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 class Group implements IdentifiableInterface, InsertableEntityInterface, EditableEntityInterface, RemovableEntityInterface, MembershipEntityInterface
 {
@@ -39,6 +42,8 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 	private $name;
 	private $slug;
 	private $project;
+	private $category;
+	private $notes;
 	private $memberNum;
 	private $areaNum;
 	
@@ -50,6 +55,11 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 		}
 		$item = Group::fromArray($data);
 		$item->project = $project;
+		
+		if (!empty($data['categoryId'])) {
+			$item->category = GroupCategory::fetchByProject($conn, $data['categoryId'], $project);
+		}
+		
 		return $item;
 	}
 	
@@ -64,6 +74,11 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 		if (false === $item->project) {
 			return false;
 		}
+		
+		if (!empty($data['categoryId'])) {
+			$item->category = GroupCategory::fetchByProject($conn, $data['categoryId'], $item->project);
+		}
+		
 		return $item;
 	}
 	
@@ -86,6 +101,10 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 			return false;
 		}
 		
+		if (!empty($data['categoryId'])) {
+			$item->category = GroupCategory::fetchByProject($conn, $data['categoryId'], $item->project);
+		}
+		
 		$role = $resolver->getRole('Group', $data['membership_role']);
 		return new Membership($group, $role, $data['membership_note']);
 	}
@@ -99,7 +118,14 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 	
 	public static function getRelationships()
 	{
-		return ['project'];
+		return ['project', 'category'];
+	}
+	
+	public static function loadValidatorMetadata(ClassMetadata $metadata)
+	{
+		$metadata->addPropertyConstraint('name', new NotBlank());
+		$metadata->addPropertyConstraint('name', new Length(array('min' => 2, 'max' => 500)));
+		$metadata->addPropertyConstraint('notes', new Length(array('max' => 500)));
 	}
 	
 	public function getId()
@@ -147,6 +173,28 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 		return $this;
 	}
 	
+	public function getCategory()
+	{
+		return $this->category;
+	}
+
+	public function getNotes()
+	{
+		return $this->notes;
+	}
+
+	public function setCategory($category)
+	{
+		$this->category = $category;
+		return $this;
+	}
+
+	public function setNotes($notes)
+	{
+		$this->notes = $notes;
+		return $this;
+	}
+	
 	public function getMemberNum()
 	{
 		return $this->memberNum;
@@ -175,7 +223,7 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 		$this->slug = DataMappers::generateSlug($conn, CoreTables::GROUP_TBL);
 		$conn->insert(
 			CoreTables::GROUP_TBL,
-			DataMappers::pick($this, ['name', 'slug', 'project'])
+			DataMappers::pick($this, ['name', 'slug', 'project', 'category', 'notes'])
 		);
 		return $conn->lastInsertId();
 	}
@@ -188,7 +236,7 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 		]);
 		return $conn->update(
 			CoreTables::GROUP_TBL,
-			DataMappers::pick($this, ['name', 'slug', 'project']),
+			DataMappers::pick($this, ['name', 'category', 'notes']),
 			DataMappers::pick($this, ['id'])
 		);
 	}

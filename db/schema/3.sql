@@ -60,6 +60,18 @@ CREATE TABLE IF NOT EXISTS `cantiga_stat_courses` (
   PRIMARY KEY (`projectId`,`datePoint`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS `cantiga_group_categories` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `projectId` int(11) NOT NULL,
+  `name` VARCHAR(40) NOT NULL,
+  PRIMARY KEY(`id`),
+  KEY `projectId` (`projectId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE `cantiga_groups` ADD COLUMN `categoryId` INT(11) DEFAULT NULL AFTER `name`;
+ALTER TABLE `cantiga_groups` ADD COLUMN `notes` VARCHAR (500) DEFAULT '' AFTER `categoryId`;
+ALTER TABLE `cantiga_groups` ADD KEY `categoryId` (`categoryId`);
+
 ALTER TABLE `cantiga_course_results`
   ADD CONSTRAINT `cantiga_course_results_fk1` FOREIGN KEY (`userId`) REFERENCES `cantiga_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `cantiga_course_results_fk2` FOREIGN KEY (`courseId`) REFERENCES `cantiga_courses` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -79,3 +91,9 @@ ALTER TABLE `cantiga_courses`
 
 ALTER TABLE `cantiga_stat_courses`
   ADD CONSTRAINT `cantiga_stat_courses_fk_1` FOREIGN KEY (`projectId`) REFERENCES `cantiga_projects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE  `cantiga_group_categories`
+  ADD CONSTRAINT  `cantiga_group_categories_fk1` FOREIGN KEY (  `projectId` ) REFERENCES `cantiga_projects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE ;
+
+ALTER TABLE  `cantiga_groups`
+  ADD CONSTRAINT  `cantiga_groups_fk2` FOREIGN KEY (  `categoryId` ) REFERENCES `cantiga_group_categories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE ;

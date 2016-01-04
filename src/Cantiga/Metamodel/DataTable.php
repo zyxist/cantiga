@@ -163,8 +163,7 @@ class DataTable
 	public function buildCountingCondition(QueryElement $custom = null)
 	{
 		$op = QueryOperator::op(' AND ');
-		return $op->expr($custom)
-			->expr($this->buildSearchClause());
+		return $op->expr($custom);
 	}
 	
 	private function buildFilterClause()

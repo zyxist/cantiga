@@ -33,6 +33,7 @@ class CoreTables
 	const AREA_STATUS_TBL = 'cantiga_area_statuses';
 	const GROUP_TBL = 'cantiga_groups';
 	const GROUP_MEMBER_TBL = 'cantiga_group_members';
+	const GROUP_CATEGORY_TBL = 'cantiga_group_categories';
 	const MAIL_TBL = 'cantiga_mail';
 	const USER_TBL = 'cantiga_users';
 	const CREDENTIAL_CHANGE_TBL = 'cantiga_credential_changes';

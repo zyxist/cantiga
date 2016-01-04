@@ -160,6 +160,9 @@ services:
     cantiga.core.repo.project_area_status:
         class:     "%project_area_status.class%"
         arguments: ["@database_connection", "@cantiga.transaction"]
+    cantiga.core.repo.project_group_category:
+        class:     Cantiga\CoreBundle\Repository\ProjectGroupCategoryRepository
+        arguments: ["@database_connection", "@cantiga.transaction"]
     cantiga.core.repo.project_territory:
         class:     "%project_territory.class%"
         arguments: ["@database_connection", "@cantiga.transaction"]

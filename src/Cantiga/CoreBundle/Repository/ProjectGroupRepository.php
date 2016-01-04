@@ -66,6 +66,7 @@ class ProjectGroupRepository implements EntityTransformerInterface
 		$dt = new DataTable();
 		$dt->id('id', 'i.id')
 			->searchableColumn('name', 'i.name')
+			->searchableColumn('categoryName', 'c.name')
 			->column('memberNum', 'i.memberNum')
 			->column('areaNum', 'i.areaNum');
 		return $dt;
@@ -76,17 +77,23 @@ class ProjectGroupRepository implements EntityTransformerInterface
 		$qb = QueryBuilder::select()
 			->field('i.id', 'id')
 			->field('i.name', 'name')
+			->field('c.name', 'categoryName')
 			->field('i.memberNum', 'memberNum')
 			->field('i.areaNum', 'areaNum')
 			->from(CoreTables::GROUP_TBL, 'i')
+			->leftJoin(CoreTables::GROUP_CATEGORY_TBL, 'c', QueryClause::clause('c.id = i.categoryId'))
 			->where(QueryClause::clause('i.projectId = :projectId', ':projectId', $this->project->getId()));	
 		
-		$recordsTotal = QueryBuilder::copyWithoutFields($qb)
-			->field('COUNT(id)', 'cnt')
+		$countingQuery = QueryBuilder::select()
+			->from(CoreTables::GROUP_TBL, 'i')
+			->where(QueryClause::clause('i.projectId = :projectId', ':projectId', $this->project->getId()));	
+		
+		$recordsTotal = QueryBuilder::copyWithoutFields($countingQuery)
+			->field('COUNT(i.id)', 'cnt')
 			->where($dataTable->buildCountingCondition($qb->getWhere()))
 			->fetchCell($this->conn);
 		$recordsFiltered = QueryBuilder::copyWithoutFields($qb)
-			->field('COUNT(id)', 'cnt')
+			->field('COUNT(i.id)', 'cnt')
 			->where($dataTable->buildFetchingCondition($qb->getWhere()))
 			->fetchCell($this->conn);
 

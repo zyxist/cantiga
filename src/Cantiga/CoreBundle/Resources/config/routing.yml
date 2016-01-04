@@ -105,6 +105,9 @@ _project_area_controller:
 _project_area_membership_controller:
     resource: "@CantigaCoreBundle/Controller/ProjectAreaMembershipController.php"
     type:     annotation
+_project_group_category_controller:
+    resource: "@CantigaCoreBundle/Controller/ProjectGroupCategoryController.php"
+    type:     annotation
 _project_settings_controller:
     resource: "@CantigaCoreBundle/Controller/ProjectSettingsController.php"
     type:     annotation

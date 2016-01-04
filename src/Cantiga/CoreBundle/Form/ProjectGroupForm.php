@@ -18,20 +18,35 @@
  */
 namespace Cantiga\CoreBundle\Form;
 
+use Cantiga\Metamodel\Form\EntityTransformer;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class ProjectAreaGroupForm extends AbstractType
+class ProjectGroupForm extends AbstractType
 {
+	private $categoryRepository;
+	
+	public function __construct($repository)
+	{
+		$this->categoryRepository = $repository;
+	}
+	
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add('name', 'text', array('label' => 'Name'))
-			->add('save', 'submit', array('label' => 'Save'));
+			->add('name', new TextType, array('label' => 'Name'))
+			->add('category', new ChoiceType, ['label' => 'Category', 'choices' => $this->categoryRepository->getFormChoices(), 'required' => false])
+			->add('notes', new TextareaType, ['label' => 'Notes', 'required' => false])
+			->add('save', new SubmitType, array('label' => 'Save'));
+		$builder->get('category')->addModelTransformer(new EntityTransformer($this->categoryRepository));
 	}
 
 	public function getName()
 	{
-		return 'AreaGroup';
+		return 'Group';
 	}
 }

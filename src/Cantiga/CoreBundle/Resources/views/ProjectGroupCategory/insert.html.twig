@@ -1,0 +1,13 @@
+{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+
+{% block box_body %}
+	<p>{{ 'GroupCategoryDescriptionText' | trans | raw }}</p>
+	
+	{{ form_start(form) }}
+	{{ form_row(form.name) }}
+	{{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts_inline %}
+{{ use_icheck() }}
+{% endblock %}

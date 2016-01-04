@@ -54,6 +54,7 @@ return array(
 	'Description' => 'Opis',
 	'Locale' => 'Kod języka (locale)',
 	'Place' => 'Miejsce',
+	'Notes' => 'Notatki',
 	
 	'Location' => 'Lokalizacja',
 	'Telephone' => 'Telefon',
@@ -193,6 +194,14 @@ return array(
 	'Create a new area' => 'Utwórz nowy rejon',
 	'CreateAreaText' => 'Możesz tutaj utworzyć nowy rejon z pominięciem fazy zgłoszenia (jeśli projekt takową dopuszcza). Po utworzeniu, do rejonu nie będzie przypisany żaden użytkownik - należy go dodać oddzielnie, wybierając z menu opcję "Członkowie" w informacjach rejonu.',
 	'Edit area: 0' => 'Edytuj rejon: 0',
+	
+	// Project groups and categories
+	'GroupCategoryDescriptionText' => 'Kategorie ułatwiają zarządzanie grupami. Utwórz kategorie i przypisz do nich grupy, aby móc filtrować dane według tychże kategorii na innych podstronach.',
+	'Do you really want to remove the group category \'0\'?' => 'Czy naprawdę chcesz usunąć kategorię "0"?',
+	'The group category \'0\' has been created.' => 'Kategoria grup "0" została utworzona.',
+	'The group category \'0\' has been updated.' => 'Kategoria grup "0" została zmieniona.',
+	'The group category \'0\' has been removed.' => 'Kategoria grup "0" została usunięta.',
+	'Category' => 'Kategoria',
 	
 	// Project area status
 	'AreaStatusDescriptionFormText' => 'Możesz przetłumaczyć nazwę statusu w pliku językowym <code>statuses.[kod języka].php</code>. Będzie się ona wtedy wyświetlać w języku danego użytkownika. Etykieta to jedna z klas CSS stylu graficznego, określa ona wizualny wygląd statusu.',

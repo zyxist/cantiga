@@ -24,10 +24,8 @@ use Cantiga\CoreBundle\Api\Actions\InfoAction;
 use Cantiga\CoreBundle\Api\Actions\InsertAction;
 use Cantiga\CoreBundle\Api\Actions\RemoveAction;
 use Cantiga\CoreBundle\Api\Controller\ProjectPageController;
-use Cantiga\CoreBundle\CoreExtensions;
-use Cantiga\CoreBundle\Entity\Group;
-use Cantiga\CoreBundle\Form\ProjectGroupForm;
-use Cantiga\Metamodel\Exception\ItemNotFoundException;
+use Cantiga\CoreBundle\Entity\GroupCategory;
+use Cantiga\CoreBundle\Form\ProjectGroupCategoryForm;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -35,14 +33,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
- * @Route("/project/{slug}/group")
+ * @Route("/project/{slug}/group-category")
  * @Security("has_role('ROLE_PROJECT_MEMBER')")
  */
-class ProjectGroupController extends ProjectPageController
+class ProjectGroupCategoryController extends ProjectPageController
 {
-	use Traits\InformationTrait;
-
-	const REPOSITORY_NAME = 'cantiga.core.repo.project_group';
+	const REPOSITORY_NAME = 'cantiga.core.repo.project_group_category';
 	/**
 	 * @var CRUDInfo
 	 */
@@ -50,43 +46,46 @@ class ProjectGroupController extends ProjectPageController
 	
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
-		$this->crudInfo = $this->newCrudInfo(self::REPOSITORY_NAME)
-			->setTemplateLocation('CantigaCoreBundle:ProjectGroup:')
+		$repository = $this->get(self::REPOSITORY_NAME);
+		$repository->setProject($this->getActiveProject());
+		$this->crudInfo = $this->newCrudInfo($repository)
+			->setTemplateLocation('CantigaCoreBundle:ProjectGroupCategory:')
 			->setItemNameProperty('name')
-			->setPageTitle('Groups')
-			->setPageSubtitle('Organize the areas and users into groups to ease the management')
-			->setIndexPage('project_area_group_index')
-			->setInfoPage('project_area_group_info')
-			->setInsertPage('project_area_group_insert')
-			->setEditPage('project_area_group_edit')
-			->setRemovePage('project_area_group_remove')
-			->setRemoveQuestion('Do you really want to remove \'0\' item?');
+			->setPageTitle('Group categories')
+			->setPageSubtitle('Categorize your groups to ease the management and searching')
+			->setIndexPage('project_group_category_index')
+			->setInfoPage('project_group_category_info')
+			->setInsertPage('project_group_category_insert')
+			->setEditPage('project_group_category_edit')
+			->setRemovePage('project_group_category_remove')
+			->setItemCreatedMessage('The group category \'0\' has been created.')
+			->setItemUpdatedMessage('The group category \'0\' has been updated.')
+			->setItemRemovedMessage('The group category \'0\' has been removed.')
+			->setRemoveQuestion('Do you really want to remove the group category \'0\'?');
 		
 		$this->breadcrumbs()
 			->workgroup('data')
-			->entryLink($this->trans('Groups', [], 'pages'), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
-		$this->get(self::REPOSITORY_NAME)->setProject($this->getActiveProject());
+			->entryLink($this->trans('Group categories', [], 'pages'), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
 	}
 		
 	/**
-	 * @Route("/index", name="project_area_group_index")
+	 * @Route("/index", name="project_group_category_index")
 	 */
 	public function indexAction(Request $request)
 	{
-		$repository = $this->get(self::REPOSITORY_NAME);
-		$dataTable = $repository->createDataTable();
+		$dataTable = $this->crudInfo->getRepository()->createDataTable();
         return $this->render($this->crudInfo->getTemplateLocation().'index.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'dataTable' => $dataTable,
 			'locale' => $request->getLocale(),
 			'insertPage' => $this->crudInfo->getInsertPage(),
-			'ajaxListPage' => 'project_area_group_ajax_list',
+			'ajaxListPage' => 'project_group_category_ajax_list',
 		));
 	}
 	
 	/**
-	 * @Route("/ajax-list", name="project_area_group_ajax_list")
+	 * @Route("/ajax-list", name="project_group_category_ajax_list")
 	 */
 	public function ajaxListAction(Request $request)
 	{
@@ -95,79 +94,52 @@ class ProjectGroupController extends ProjectPageController
 			->link('edit_link', $this->crudInfo->getEditPage(), ['id' => '::id', 'slug' => $this->getSlug()])
 			->link('remove_link', $this->crudInfo->getRemovePage(), ['id' => '::id', 'slug' => $this->getSlug()]);
 
-		$repository = $this->get(self::REPOSITORY_NAME);
+		$repository = $this->crudInfo->getRepository();
 		$dataTable = $repository->createDataTable();
 		$dataTable->process($request);
         return new JsonResponse($routes->process($repository->listData($dataTable)));
 	}
 	
 	/**
-	 * @Route("/{id}/ajax-members", name="project_area_group_ajax_members")
+	 * @Route("/{id}/info", name="project_group_category_info")
 	 */
-	public function ajaxMembersAction($id, Request $request)
+	public function infoAction($id)
 	{
-		try {
-			$repository = $this->get(self::REPOSITORY_NAME);
-			$item = $repository->getItem($id);
-			return new JsonResponse(['status' => 1, 'data' => $repository->findMembers($item)]);
-		} catch(ItemNotFoundException $exception) {
-			return new JsonResponse(['status' => 0]);
-		}
-	}
-	
-	/**
-	 * @Route("/{id}/info", name="project_area_group_info")
-	 */
-	public function infoAction($id, Request $request)
-	{
-		$repository = $this->get(self::REPOSITORY_NAME);
 		$action = new InfoAction($this->crudInfo);
 		$action->slug($this->getSlug());
-		return $action->run($this, $id, function($group) use($repository, $request) {
-			$html = $this->renderInformationExtensions(CoreExtensions::PROJECT_GROUP_INFORMATION, $request, $group);	
-			return [
-				'areas' => $repository->findGroupAreas($group),
-				'extensions' => $html,				
-			];
-		});
+		return $action->run($this, $id);
 	}
 	 
 	/**
-	 * @Route("/insert", name="project_area_group_insert")
+	 * @Route("/insert", name="project_group_category_insert")
 	 */
 	public function insertAction(Request $request)
 	{
-		$item = new Group();
-		$item->setProject($this->getActiveProject());
-		$action = new InsertAction($this->crudInfo, $item, new ProjectGroupForm($this->getCategoryRepo()));
+		$entity = new GroupCategory();
+		$entity->setProject($this->getActiveProject());
+		
+		$action = new InsertAction($this->crudInfo, $entity, new ProjectGroupCategoryForm());
 		$action->slug($this->getSlug());
 		return $action->run($this, $request);
 	}
 	
 	/**
-	 * @Route("/{id}/edit", name="project_area_group_edit")
+	 * @Route("/{id}/edit", name="project_group_category_edit")
 	 */
 	public function editAction($id, Request $request)
 	{
-		$action = new EditAction($this->crudInfo, new ProjectGroupForm($this->getCategoryRepo()));
+		$action = new EditAction($this->crudInfo, new ProjectGroupCategoryForm());
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
 	}
 	
 	/**
-	 * @Route("/{id}/remove", name="project_area_group_remove")
+	 * @Route("/{id}/remove", name="project_group_category_remove")
 	 */
 	public function removeAction($id, Request $request)
 	{
 		$action = new RemoveAction($this->crudInfo);
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
-	}
-	
-	private function getCategoryRepo()
-	{
-		$categoryRepo = $this->get('cantiga.core.repo.project_group_category');
-		$categoryRepo->setProject($this->getActiveProject());
-		return $categoryRepo;
 	}
 }
