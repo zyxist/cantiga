@@ -22,6 +22,7 @@ use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\AreaRequest;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Entity\User;
+use Cantiga\CoreBundle\Event\AreaEvent;
 use Cantiga\CoreBundle\Event\AreaRequestApprovedEvent;
 use Cantiga\CoreBundle\Event\AreaRequestEvent;
 use Cantiga\CoreBundle\Event\CantigaEvents;
@@ -208,7 +209,8 @@ class ProjectAreaRequestRepository
 			if(false === $area) {
 				throw new ModelException('Cannot revoke this this request.');
 			}
-			$this->eventDispatcher->dispatch(CantigaEvents::AREA_REQUEST_REVOKED, new AreaRequestApprovedEvent($item, $area));
+			$this->eventDispatcher->dispatch(CantigaEvents::AREA_REQUEST_APPROVED, new AreaRequestApprovedEvent($item, $area));
+			$this->eventDispatcher->dispatch(CantigaEvents::AREA_CREATED, new AreaEvent($area));
 		} catch (Exception $ex) {
 			$this->transaction->requestRollback();
 			throw $ex;
