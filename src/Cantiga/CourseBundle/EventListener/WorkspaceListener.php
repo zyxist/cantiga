@@ -30,7 +30,16 @@ class WorkspaceListener
 	{
 		$workspace = $event->getWorkspace();
 		if ($workspace->getProject()->supportsModule('course')) {
+			$workspace->addWorkItem('summary', new WorkItem('project_course_summary_index', 'Course results'));
 			$workspace->addWorkItem('manage', new WorkItem('project_course_index', 'Courses'));
+		}
+	}
+	
+	public function onGroupWorkspace(WorkspaceEvent $event)
+	{
+		$workspace = $event->getWorkspace();
+		if ($workspace->getProject()->supportsModule('course')) {
+			$workspace->addWorkItem('summary', new WorkItem('group_course_summary_index', 'Course results'));
 		}
 	}
 	

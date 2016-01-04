@@ -93,7 +93,7 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 			. 'FROM `'.CoreTables::AREA_TBL.'` a '
 			. 'INNER JOIN `'.CoreTables::TERRITORY_TBL.'` t ON t.`id` = a.`territoryId` '
 			. 'WHERE a.`id` = :id AND a.`projectId` = :projectId', [':id' => $id, ':projectId' => $project->getId()]);
-		if(null === $data) {
+		if(false === $data) {
 			return false;
 		}
 		$item = Area::fromArray($data);
@@ -107,6 +107,28 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		if (!empty($data['groupId'])) {
 			$item->group = $item->oldGroup = Group::fetchByProject($conn, $data['groupId'], $item->project);
 		}
+		return $item;
+	}
+	
+	public static function fetchByGroup(Connection $conn, $id, Group $group)
+	{
+		$data = $conn->fetchAssoc('SELECT a.*, '
+			. 't.`id` AS `territory_id`, t.`name` AS `territory_name`, t.`areaNum` AS `territory_areaNum`, t.`requestNum` as `territory_requestNum` '
+			. 'FROM `'.CoreTables::AREA_TBL.'` a '
+			. 'INNER JOIN `'.CoreTables::TERRITORY_TBL.'` t ON t.`id` = a.`territoryId` '
+			. 'WHERE a.`id` = :id AND a.`groupId` = :groupId', [':id' => $id, ':groupId' => $group->getId()]);
+		if(false === $data) {
+			return false;
+		}
+		$item = Area::fromArray($data);
+		$item->group = $group;
+		$item->project = Project::fetchActive($conn, $data['projectId']);
+		if (false == $item->project) {
+			return false;
+		}
+		
+		$item->status = $item->oldStatus = AreaStatus::fetchByProject($conn, $data['statusId'], $item->project);
+		$item->setTerritory($item->oldTerritory = Territory::fromArray($data, 'territory'));
 		return $item;
 	}
 	

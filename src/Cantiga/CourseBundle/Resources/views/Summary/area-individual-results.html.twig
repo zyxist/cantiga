@@ -28,7 +28,7 @@
 							{% for item in items %}
 							<tr>
 								<td><a href="{{ spath(courseInfoPage, {'id': item.courseId }) }}">{{ item.courseName }}</a></td>
-								<td><img src="{{ asset(avatar(item, 32)) }}" alt="av" width="24" class="img-circle" /> <a href="{{ spath(userProfilePage, {'id': item.userId }) }}">{{ item.userName }}</a></td>
+								<td><img src="{{ asset(avatar(item, 32)) }}" alt="av" width="24" class="img-circle" /> {% if userProfilePage != null %}<a href="{{ spath(userProfilePage, {'id': item.userId }) }}">{{ item.userName }}</a>{%else%}{{item.userName}}{%endif%}</td>
 								{% if item.result == 0 %}
 								<td>{{ 'Not started' | trans([], 'course') }}</td>
 								<td></td>
@@ -59,6 +59,8 @@
 							{% endfor %}
 						</tbody>
 					</table>
+					{% block box_footer %}
+					{% endblock %}
 				</div>
 			</div>
 		</div>

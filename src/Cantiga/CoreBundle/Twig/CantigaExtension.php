@@ -96,6 +96,7 @@ class CantigaExtension extends Twig_Extension
 			new Twig_SimpleFunction('dt_col_label', [$this, 'dataTableLabel'], array('is_safe' => array('html'))),
 			new Twig_SimpleFunction('dt_col_rewrite', [$this, 'dataTableRewrite'], array('is_safe' => array('html'))),
 			new Twig_SimpleFunction('dt_col_boolean', [$this, 'dataTableBoolean'], array('is_safe' => array('html'))),
+			new Twig_SimpleFunction('dt_col_progress', [$this, 'dataTableProgress'], array('is_safe' => array('html'))),
 			new Twig_SimpleFunction('avatar', [$this, 'avatar']),
 			new Twig_SimpleFunction('format_time', [$this, 'formatTime']),
 			new Twig_SimpleFunction('format_date', [$this, 'formatDate']),
@@ -195,6 +196,18 @@ class CantigaExtension extends Twig_Extension
 		foreach ($dt->getColumnDefinitions() as $column) {
 			if ($column['name'] == $columnName) {
 				return '{ targets: '.$i.', render: function(data, type, row) { return (row[\''.$columnName.'\'] == 1) ? \'<span class="glyphicon glyphicon-ok"></span>\' : \'\'; }, createdCell: function(td, cellData, rowData, row, col) { $(td).addClass(\'text-center\'); } }, ';
+			}
+			$i++;
+		}
+		return '';
+	}
+	
+	public function dataTableProgress(DataTable $dt, $columnName, $color)
+	{
+		$i = 0;
+		foreach ($dt->getColumnDefinitions() as $column) {
+			if ($column['name'] == $columnName) {
+				return '{ targets: '.$i.', render: function(data, type, row) { return \'<div class="progress progress-xs"><div class="progress-bar progress-bar-'.$color.'" style="width: \'+row[\''.$columnName.'\']+\'%"></div></div>\'; } }, ';
 			}
 			$i++;
 		}

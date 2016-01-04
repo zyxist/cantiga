@@ -21,6 +21,7 @@ return array(
 	'The password must contain lowercase, uppercase letters and numbers.' => 'Hasło musi zawierać duże litery, małe litery oraz cyfry.',
 	'The specified login cannot be used.' => 'Podany login nie może zostać użyty.',
 	'Enter' => 'Wejdź',
+	'Filter' => 'Filtruj',
 	
 	'CookieUsageInfoText' => 'Ta aplikacja wykorzystuje ciasteczka wyłącznie do celów uwierzytelniania użytkownika oraz pamiętania informacji o wybranym języku.',
 	'UserRegistrationConfirmationText' => 'Twoje konto zostało utworzone, jednak musisz je wpierw aktywować. Sprawdź swoją skrzynkę e-mail, w przeciągu kilku minut powinieneś otrzymać wiadomość z linkiem aktywacyjnym.',

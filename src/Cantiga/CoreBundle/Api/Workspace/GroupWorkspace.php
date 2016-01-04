@@ -38,6 +38,10 @@ class GroupWorkspace extends Workspace
 	 */
 	private $groupMembershipLoader;
 	private $slug;
+	/**
+	 * @var Project
+	 */
+	private $project;
 	
 	public function __construct(GroupMembershipLoader $pml)
 	{
@@ -47,6 +51,14 @@ class GroupWorkspace extends Workspace
 	public function getKey()
 	{
 		return 'group';
+	}
+	
+	/**
+	 * @return Project
+	 */
+	public function getProject()
+	{
+		return $this->project;
 	}
 	
 	public function getMembershipLoader()
@@ -62,6 +74,7 @@ class GroupWorkspace extends Workspace
 	public function onWorkspaceLoaded(Membership $membership)
 	{
 		$this->slug = $membership->getItem()->getSlug();
+		$this->project = $membership->getItem()->getProject();
 	}
 	
 	public function getHelpPages(RouterInterface $router)

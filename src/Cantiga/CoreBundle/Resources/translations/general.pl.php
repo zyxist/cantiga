@@ -33,6 +33,8 @@ return array(
 	'Error' => 'Błąd',
 	'Prune' => 'Wyczyść stare',
 	'Find' => 'Znajdź',
+	'Filter results' => 'Filtruj wyniki',
+	'Details' => 'Szczegóły',
 
 	'Indeed, remove it' => 'Zaiste, usuń',
 	'Edit: 0' => 'Edytuj: 0',

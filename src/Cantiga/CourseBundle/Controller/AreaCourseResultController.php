@@ -32,7 +32,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class AreaCourseResultController extends AreaPageController
 {
-	const REPOSITORY_NAME = 'cantiga.course.repo.summary';
+	const REPOSITORY_NAME = 'cantiga.course.repo.area_summary';
 	/**
 	 * @var CRUDInfo
 	 */

@@ -64,7 +64,10 @@ class QueryOperator implements QueryElement
 		}
 		$subItems = array();
 		foreach($this->expressions as $expr) {
-			$subItems[] = $expr->build();
+			$result = $expr->build();
+			if (null !== $result) {
+				$subItems[] = $result;
+			}
 		}
 		return '('.implode(' '.$this->operator.' ', $subItems).')';
 	}

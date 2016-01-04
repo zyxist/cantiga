@@ -102,7 +102,7 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 		}
 		
 		if (!empty($data['categoryId'])) {
-			$item->category = GroupCategory::fetchByProject($conn, $data['categoryId'], $item->project);
+			$group->category = GroupCategory::fetchByProject($conn, $data['categoryId'], $group->project);
 		}
 		
 		$role = $resolver->getRole('Group', $data['membership_role']);

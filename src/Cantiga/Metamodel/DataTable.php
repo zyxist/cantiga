@@ -43,6 +43,7 @@ class DataTable
 	private $length;
 	private $searchString = null;
 	private $orders = array();
+	private $filter;
 	
 	/**
 	 * Defines the column with the row identifier.
@@ -82,6 +83,19 @@ class DataTable
 	public function searchableColumn($name, $dbColumn)
 	{
 		$this->columns[] = ['type' => self::TYPE_SEARCHABLE, 'name' => $name, 'db' => $dbColumn];
+		return $this;
+	}
+	
+	/**
+	 * Installs a filter. Usually the filter is a form that the user can customize. The filter allows
+	 * greater flexibility in choosing, what we want to see.
+	 * 
+	 * @param \Cantiga\Metamodel\DataFilterInterface $filter
+	 * @return Cantiga\Metamodel\DataTable
+	 */
+	public function filter(DataFilterInterface $filter)
+	{
+		$this->filter = $filter;
 		return $this;
 	}
 
@@ -168,6 +182,9 @@ class DataTable
 	
 	private function buildFilterClause()
 	{
+		if (null !== $this->filter) {
+			return $this->filter->createFilterClause();
+		}
 		return null;
 	}
 	

@@ -1,0 +1,26 @@
+{% extends 'CantigaCoreBundle:layout:list-layout.html.twig' %}
+
+{% block data_filter %}
+	{% include 'CantigaCoreBundle:Filter:area-filter.html.twig' with { 'filter': filter, 'filterForm': filterForm } only %}
+{% endblock %}
+
+{% block column_list %}
+<tr>
+	<th width="30">#</th>
+	<th>{{ 'Name' | trans }}</th>
+	<th width="140">{{ 'Passed courses' | trans([], 'course') }}</th>
+	<th width="140">{{ 'Failed courses' | trans([], 'course') }}</th>
+	<th width="100">{{ 'Progress' | trans([], 'course') }}</th>
+	<th width="60">{{ 'Actions' | trans({}, 'general') }}</th>
+</tr>
+{% endblock %}
+
+{% block custom_datatable_config %}
+	ajax: "{{ spath(ajaxListPage, filter.createParamArray()) | raw }}",
+	columnDefs: [
+		{{ dt_col_progress(dataTable, 'progress', 'success') }}
+		{{ dt_actions(dataTable, [
+			{ 'link': 'info_link', 'name': 'Details' | trans({}, 'general'), 'label': 'btn-primary' },
+		]) }}
+	]
+{% endblock %}

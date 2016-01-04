@@ -17,4 +17,7 @@ return array(
 	'Course' => 'Szkolenie',
 	'Member result' => 'Wynik członka',
 	'Trial number' => 'Liczba prób',
+	'Passed courses' => 'Zdanych szkoleń',
+	'Failed courses' => 'Niezdanych szkoleń',
+	'Progress' => 'Postęp',
 );

@@ -8,13 +8,20 @@ services:
     cantiga.course.repo.area_course:
         class:     Cantiga\CourseBundle\Repository\AreaCourseRepository
         arguments: ["@database_connection", "@cantiga.transaction"]
-    cantiga.course.repo.summary:
-        class:     Cantiga\CourseBundle\Repository\SummaryRepository
+    cantiga.course.repo.area_summary:
+        class:     Cantiga\CourseBundle\Repository\AreaCourseSummaryRepository
+        arguments: ["@database_connection", "@cantiga.transaction"]
+    cantiga.course.repo.group_summary:
+        class:     Cantiga\CourseBundle\Repository\GroupCourseSummaryRepository
+        arguments: ["@database_connection", "@cantiga.transaction"]
+    cantiga.course.repo.project_summary:
+        class:     Cantiga\CourseBundle\Repository\ProjectCourseSummaryRepository
         arguments: ["@database_connection", "@cantiga.transaction"]
     cantiga.course.workspace_listener:
         class: Cantiga\CourseBundle\EventListener\WorkspaceListener
         tags:
             - { name: kernel.event_listener, event: cantiga.workspace.project, method: onProjectWorkspace }
+            - { name: kernel.event_listener, event: cantiga.workspace.group, method: onGroupWorkspace }
             - { name: kernel.event_listener, event: cantiga.workspace.area, method: onAreaWorkspace }
     cantiga.course.model_listener:
         class: Cantiga\CourseBundle\EventListener\ModelListener

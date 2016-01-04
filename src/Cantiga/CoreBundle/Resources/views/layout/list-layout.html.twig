@@ -1,5 +1,9 @@
 {% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
 
+{% block box_header %}
+{{ block('data_filter') }}	
+{% endblock %}
+
 {% block box_body %}
 	<table id="data-grid" class="table table-striped table-bordered">
 		<thead>

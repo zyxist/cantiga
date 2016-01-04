@@ -141,12 +141,13 @@ class WorkspaceListener implements WorkspaceSourceInterface
 		
 		if ($this->authChecker->isGranted('ROLE_PROJECT_VISITOR')) {
 			$workspace->addWorkgroup(new Workgroup('statistics', 'Statistics', 'bar-chart', 1));
+			$workspace->addWorkgroup(new Workgroup('summary', 'Summary', 'table', 2));
 		}
 		if ($this->authChecker->isGranted('ROLE_PROJECT_MEMBER')) {
-			$workspace->addWorkgroup(new Workgroup('data', 'Data', 'database', 2));
+			$workspace->addWorkgroup(new Workgroup('data', 'Data', 'database', 3));
 		}
 		if ($this->authChecker->isGranted('ROLE_PROJECT_MANAGER')) {
-			$workspace->addWorkgroup(new Workgroup('manage', 'Manage', 'wrench', 3));
+			$workspace->addWorkgroup(new Workgroup('manage', 'Manage', 'wrench', 4));
 		}
 		
 		$workspace->addWorkItem('community', new WorkItem('project_memberlist_index', 'Member list'));
@@ -175,6 +176,7 @@ class WorkspaceListener implements WorkspaceSourceInterface
 	{
 		$workspace = $event->getWorkspace();
 		$workspace->addWorkgroup(new Workgroup('community', 'Community', 'users', 1));
+		$workspace->addWorkgroup(new Workgroup('summary', 'Summary', 'table', 2));
 		
 		$workspace->addWorkItem('community', new WorkItem('group_memberlist_index', 'Member list'));
 	}
