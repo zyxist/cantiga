@@ -71,7 +71,7 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 	{
 		$data = $conn->fetchAssoc('SELECT p.*, '
 			. self::createEntityFieldList()
-			. 'FROM `'.CoreTables::PROJECT_TBL.'` p'
+			. 'FROM `'.CoreTables::PROJECT_TBL.'` p '
 			. self::createEntityJoin('p')
 			. 'WHERE p.`id` = :id', [':id' => $id]);
 		if (false === $data) {

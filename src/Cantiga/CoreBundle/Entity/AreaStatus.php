@@ -18,13 +18,13 @@
  */
 namespace Cantiga\CoreBundle\Entity;
 
-use Doctrine\DBAL\Connection;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\Metamodel\Capabilities\EditableEntityInterface;
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
 use Cantiga\Metamodel\Capabilities\InsertableEntityInterface;
 use Cantiga\Metamodel\Capabilities\RemovableEntityInterface;
 use Cantiga\Metamodel\DataMappers;
+use Doctrine\DBAL\Connection;
 
 class AreaStatus implements IdentifiableInterface, InsertableEntityInterface, EditableEntityInterface, RemovableEntityInterface
 {

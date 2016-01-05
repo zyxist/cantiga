@@ -2,9 +2,7 @@ ALTER TABLE  `cantiga_areas` ADD  `entityId` INT NOT NULL;
 ALTER TABLE  `cantiga_groups` ADD  `entityId` INT NOT NULL;
 ALTER TABLE  `cantiga_projects` ADD  `entityId` INT NOT NULL;
 
-ALTER TABLE  `cantiga_entities` ADD  `removedAt` INT NULL ,
-  ADD  `removedById` INT NULL,
-  ADD INDEX (  `removedById` ) ;
+ALTER TABLE  `cantiga_entities` ADD  `removedAt` INT NULL;
 
 ALTER TABLE `cantiga_areas` ADD UNIQUE (`entityId`);
 ALTER TABLE `cantiga_groups` ADD UNIQUE (`entityId`);
