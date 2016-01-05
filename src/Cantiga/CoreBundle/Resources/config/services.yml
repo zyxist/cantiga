@@ -153,7 +153,7 @@ services:
         arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.time", "@event_dispatcher", "@cantiga.roles"]
     cantiga.core.repo.project_group:
         class:     "%project_group_repository.class%"
-        arguments: ["@database_connection", "@cantiga.transaction"]
+        arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher"]
     cantiga.core.repo.project_area:
         class:     "%project_area_repository.class%"
         arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher"]

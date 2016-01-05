@@ -1,0 +1,29 @@
+<div class="col-lg-12">
+	<div class="progress-box">
+		<div class="progress-box-initial">
+			<p>{{ 'Progress' | trans([], 'milestone') }}:</p>
+			<div class="progress-box-bar">
+				<div class="progress progress-xs">
+					{% if progress < 50 %}
+					<div class="progress-bar progress-bar-danger" style="width: {{ progress }}%"></div>
+					{% elseif progress < 80 %}
+					<div class="progress-bar progress-bar-warning" style="width: {{ progress }}%"></div>
+					{% else %}
+					<div class="progress-bar progress-bar-success" style="width: {{ progress }}%"></div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+		<div class="progress-box-summary">
+			<p class="title">{{ 'Incoming deadline' | trans([], 'milestone') }}:</p>
+			{% if incomingDeadline %}
+			<p class="value">{{ incomingDeadline.name }} <span class="date">({{ format_time(TimeFormatter.FORMAT_DATE_LONG, incomingDeadline.deadline) }})</span></p>
+			{% else %}
+			<p class="value"> --- </p>
+			{% endif %}
+		</div>
+		<div class="progress-box-link">
+			<a href="{{ spath(milestoneEditorPage) }}">{{ 'View all milestones and deadlines' | trans([], 'milestone') }}</a>
+		</div>
+	</div>
+</div>

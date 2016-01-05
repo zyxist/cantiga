@@ -42,6 +42,15 @@ class Entity implements IdentifiableInterface, InsertableEntityInterface, Editab
 	private $type;
 	private $removedAt;
 	
+	public static function fetchById(Connection $conn, $id)
+	{
+		$data = $conn->fetchAssoc('SELECT * FROM `'.CoreTables::ENTITY_TBL.'` WHERE `id` = :id', [':id' => $id]);
+		if (false === $data) {
+			return false;
+		}
+		return Entity::fromArray($data);
+	}
+	
 	public static function fromArray($array, $prefix = '')
 	{
 		$item = new Entity;

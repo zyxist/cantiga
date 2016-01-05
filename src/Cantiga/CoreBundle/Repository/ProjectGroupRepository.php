@@ -22,6 +22,8 @@ use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Group;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Entity\User;
+use Cantiga\CoreBundle\Event\CantigaEvents;
+use Cantiga\CoreBundle\Event\GroupEvent;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Form\EntityTransformerInterface;
@@ -30,6 +32,7 @@ use Cantiga\Metamodel\QueryClause;
 use Cantiga\Metamodel\Transaction;
 use Doctrine\DBAL\Connection;
 use PDO;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProjectGroupRepository implements EntityTransformerInterface
 {
@@ -42,15 +45,20 @@ class ProjectGroupRepository implements EntityTransformerInterface
 	 */
 	private $transaction;
 	/**
+	 * @var EventDispatcherInterface
+	 */
+	private $eventDispatcher;
+	/**
 	 * Active project
 	 * @var Project
 	 */
 	private $project;
 	
-	public function __construct(Connection $conn, Transaction $transaction)
+	public function __construct(Connection $conn, Transaction $transaction, EventDispatcherInterface $eventDispatcher)
 	{
 		$this->conn = $conn;
 		$this->transaction = $transaction;
+		$this->eventDispatcher = $eventDispatcher;
 	}
 	
 	public function setProject(Project $project)
@@ -158,7 +166,9 @@ class ProjectGroupRepository implements EntityTransformerInterface
 	{
 		$this->transaction->requestTransaction();
 		try {
-			return $item->insert($this->conn);
+			$result = $item->insert($this->conn);
+			$this->eventDispatcher->dispatch(CantigaEvents::GROUP_CREATED, new GroupEvent($item));
+			return $result;
 		} catch(Exception $exception) {
 			$this->transaction->requestRollback();
 			throw $exception;
@@ -170,6 +180,7 @@ class ProjectGroupRepository implements EntityTransformerInterface
 		$this->transaction->requestTransaction();
 		try {
 			$item->update($this->conn);
+			$this->eventDispatcher->dispatch(CantigaEvents::GROUP_UPDATED, new GroupEvent($item));
 		} catch(Exception $exception) {
 			$this->transaction->requestRollback();
 			throw $exception;
@@ -181,6 +192,7 @@ class ProjectGroupRepository implements EntityTransformerInterface
 		$this->transaction->requestTransaction();
 		try {
 			$item->remove($this->conn);
+			$this->eventDispatcher->dispatch(CantigaEvents::GROUP_REMOVED, new GroupEvent($item));
 		} catch(Exception $exception) {
 			$this->transaction->requestRollback();
 			throw $exception;

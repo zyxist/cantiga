@@ -16,20 +16,30 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-namespace Cantiga\MilestoneBundle;
+namespace Cantiga\CoreBundle\Event;
 
-use Cantiga\CoreBundle\Api\AppTexts;
-use Cantiga\CoreBundle\Api\Modules;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Cantiga\CoreBundle\Entity\Group;
+use Symfony\Component\EventDispatcher\Event;
 
-class CantigaMilestoneBundle extends Bundle
+/**
+ * Events related to the group management.
+ *
+ * @author Tomasz Jędrzejewski
+ */
+class GroupEvent extends Event
 {
-	public function boot()
+	private $group;
+	
+	public function __construct(Group $group)
 	{
-		Modules::registerModule('milestone', 'Milestone module');
-		
-		AppTexts::registerName(MilestoneTexts::AREA_MILESTONE_EDITOR_TEXT);
-		AppTexts::registerName(MilestoneTexts::GROUP_MILESTONE_EDITOR_TEXT);
-		AppTexts::registerName(MilestoneTexts::PROJECT_MILESTONE_EDITOR_TEXT);
+		$this->group = $group;
+	}
+	
+	/**
+	 * @return Group
+	 */
+	public function getGroup()
+	{
+		return $this->group;
 	}
 }

@@ -18,12 +18,15 @@
  */
 namespace Cantiga\MilestoneBundle\Entity;
 
+use Cantiga\CoreBundle\CoreTables;
+use Cantiga\CoreBundle\Entity\Entity;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\Metamodel\Capabilities\EditableEntityInterface;
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
 use Cantiga\Metamodel\Capabilities\InsertableEntityInterface;
 use Cantiga\Metamodel\Capabilities\RemovableEntityInterface;
 use Cantiga\Metamodel\DataMappers;
+use Cantiga\Metamodel\TimeFormatterInterface;
 use Cantiga\MilestoneBundle\MilestoneTables;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\Validator\Constraints\Length;
@@ -33,16 +36,15 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 class Milestone implements IdentifiableInterface, InsertableEntityInterface, EditableEntityInterface, RemovableEntityInterface
 {
-	const STATUS_NEW = 0;
-	const STATUS_ACTIVE = 1;
-	const STATUS_CLOSED = 2;
+	const TYPE_BINARY = 0;
+	const TYPE_PERCENT = 1;
 	
 	private $id;
 	private $project;
 	private $name;
 	private $description;
 	private $displayOrder;
-	private $status;
+	private $type;
 	private $entityType;
 	private $deadline;
 	
@@ -55,6 +57,43 @@ class Milestone implements IdentifiableInterface, InsertableEntityInterface, Edi
 		$item = self::fromArray($data);
 		$item->project = $project;
 		return $item;
+	}
+	
+	public static function fetchByProjectAndType(Connection $conn, $id, $type, Project $project)
+	{	
+		$data = $conn->fetchAssoc('SELECT * FROM `'.MilestoneTables::MILESTONE_TBL.'` WHERE `id` = :id AND `projectId` = :projectId AND `entityType` = :entityType', [':id' => $id, ':entityType' => $type, ':projectId' => $project->getId()]);
+		if (false === $data) {
+			return false;
+		}
+		$item = self::fromArray($data);
+		$item->project = $project;
+		return $item;
+	}
+	
+	public static function fetchClosestDeadline(Connection $conn, Entity $entity, Project $project)
+	{
+		$data = $conn->fetchAssoc('SELECT * FROM `'.MilestoneTables::MILESTONE_TBL.'` WHERE `deadline` > :currentTime AND `projectId` = :projectId AND `entityType` = :entityType ORDER BY `deadline`', [
+			':currentTime' => time(), ':projectId' => $project->getId(), ':entityType' => $entity->getType()]);
+		if (empty($data)) {
+			return false;
+		}
+		$item = self::fromArray($data);
+		$item->project = $project;
+		return $item;
+	}
+	
+	public static function populateEntities(Connection $conn, Entity $newEntity, Project $project)
+	{
+		$conn->insert(MilestoneTables::MILESTONE_PROGRESS_TBL, ['entityId' => $newEntity->getId(), 'completedNum' => 0]);
+		$milestones = $conn->fetchAll('SELECT `id` FROM `'.MilestoneTables::MILESTONE_TBL.'` WHERE `projectId` = :projectId AND `entityType` = :entityType', [':projectId' => $project->getId(), ':entityType' => $newEntity->getType()]);
+		if (sizeof($milestones) > 0) {
+			$stmt = $conn->prepare('INSERT INTO `'.MilestoneTables::MILESTONE_STATUS_TBL.'` (`entityId`, `milestoneId`, `progress`) VALUES(:entityId, :milestoneId, 0)');
+			foreach ($milestones as $milestone) {
+				$stmt->bindValue(':entityId', $newEntity->getId());
+				$stmt->bindValue(':milestoneId', $milestone['id']);
+				$stmt->execute();
+			}
+		}
 	}
 	
 	public static function fromArray($array, $prefix = '')
@@ -109,9 +148,9 @@ class Milestone implements IdentifiableInterface, InsertableEntityInterface, Edi
 		return $this->displayOrder;
 	}
 
-	public function getStatus()
+	public function getType()
 	{
-		return $this->status;
+		return $this->type;
 	}
 
 	public function getEntityType()
@@ -148,10 +187,10 @@ class Milestone implements IdentifiableInterface, InsertableEntityInterface, Edi
 		return $this;
 	}
 
-	public function setStatus($status)
+	public function setType($type)
 	{
-		DataMappers::noOverwritingField($this->status);
-		$this->status = $status;
+		DataMappers::noOverwritingField($this->type);
+		$this->type = $type;
 		return $this;
 	}
 
@@ -166,50 +205,116 @@ class Milestone implements IdentifiableInterface, InsertableEntityInterface, Edi
 		$this->deadline = $deadline;
 		return $this;
 	}
-	
-	public static function statusText($status)
+
+	public static function typeText($status)
 	{
 		switch($status) {
-			case self::STATUS_NEW:
-				return 'New';
-			case self::STATUS_ACTIVE:
-				return 'Active';
-			case self::STATUS_CLOSED:
-				return 'Closed';
+			case self::TYPE_BINARY:
+				return 'binary (yes-no)';
+			case self::TYPE_PERCENT:
+				return 'percent';
 		}
 	}
 	
-	public function getStatusText()
+	public function getTypeText()
 	{
-		return self::statusText($this->status);
+		return self::typeText($this->type);
 	}
 
 	public function insert(Connection $conn)
 	{
-		$this->status = self::STATUS_NEW;
 		$conn->insert(
 			MilestoneTables::MILESTONE_TBL,
-			DataMappers::pick($this, ['name', 'description', 'project', 'displayOrder', 'status', 'entityType', 'deadline'])
+			DataMappers::pick($this, ['name', 'description', 'project', 'displayOrder', 'type', 'entityType', 'deadline'])
 		);
-		return $conn->lastInsertId();
+		$this->id = $conn->lastInsertId();
+		
+		switch($this->entityType) {
+			case 'Project':
+				$stmt = $this->createStatusPopulator($conn);
+				$stmt->bindValue(':entityId', $this->project->getEntity()->getId());
+				$stmt->bindValue(':milestoneId', $this->id);
+				$stmt->execute();
+				break;
+			case 'Group':
+				$groupIds = $conn->fetchAll('SELECT `entityId` FROM `'.CoreTables::GROUP_TBL.'` WHERE `projectId` = :projectId', [':projectId' => $this->project->getId()]);
+				$stmt = $this->createStatusPopulator($conn);
+				foreach ($groupIds as $row) {
+					$stmt->bindValue(':entityId', $row['entityId']);
+					$stmt->bindValue(':milestoneId', $this->id);
+					$stmt->execute();
+				}
+			case 'Area':
+				$groupIds = $conn->fetchAll('SELECT `entityId` FROM `'.CoreTables::AREA_TBL.'` WHERE `projectId` = :projectId', [':projectId' => $this->project->getId()]);
+				$stmt = $this->createStatusPopulator($conn);
+				foreach ($groupIds as $row) {
+					$stmt->bindValue(':entityId', $row['entityId']);
+					$stmt->bindValue(':milestoneId', $this->id);
+					$stmt->execute();
+				}
+		}
+		
+		return $this->id;
 	}
 
 	public function update(Connection $conn)
-	{
+	{		
 		return $conn->update(
 			MilestoneTables::MILESTONE_TBL,
-			DataMappers::pick($this, ['name', 'description', 'displayOrder', 'status', 'deadline']),
+			DataMappers::pick($this, ['name', 'description', 'displayOrder', 'type', 'deadline']),
 			DataMappers::pick($this, ['id'])
 		);
 	}
 	
 	public function canRemove()
 	{
-		return $this->status == self::STATUS_NEW;
+		return true;
 	}
 	
 	public function remove(Connection $conn)
 	{
 		$conn->delete(MilestoneTables::MILESTONE_TBL, DataMappers::pick($this, ['id']));
+	}
+	
+	public function createStatusRow($progress, $completedAt, TimeFormatterInterface $timeFormatter, $editable = true)
+	{
+		return self::processStatus([
+			'id' => $this->id,
+			'name' => $this->name,
+			'description' => $this->description,
+			'deadline' => $this->deadline,
+			'type' => $this->type,
+			'progress' => $progress,
+			'completedAt' => $completedAt
+		], $timeFormatter, $editable);
+	}
+	
+	public static function processStatus(array $row, TimeFormatterInterface $timeFormatter, $editable)
+	{
+		if (!$editable) {
+			$row['actions'] = ['view']; 
+		} else {
+			if ($row['type'] == Milestone::TYPE_BINARY) {
+				$row['actions'] = [ $row['progress'] == 100 ? 'cancel' : 'complete', 'view'];
+			} else {
+				$row['actions'] = [ 'update', 'view'];
+			}
+		}
+		if (!empty($row['deadline'])) {
+			$row['deadline'] = $timeFormatter->format(TimeFormatterInterface::FORMAT_DATE_LONG, $row['deadline']);
+		} else {
+			$row['deadline'] = '---';
+		}
+		if (!empty($row['completedAt'])) {
+			$row['completedAt'] = $timeFormatter->format(TimeFormatterInterface::FORMAT_DATE_LONG, $row['completedAt']);
+		} else {
+			$row['completedAt'] = '---';
+		}
+		return $row;
+	}
+	
+	private function createStatusPopulator(Connection $conn)
+	{
+		return $conn->prepare('INSERT INTO `'.MilestoneTables::MILESTONE_STATUS_TBL.'` (`entityId`, `milestoneId`, `progress`) VALUES(:entityId, :milestoneId, 0)');
 	}
 }

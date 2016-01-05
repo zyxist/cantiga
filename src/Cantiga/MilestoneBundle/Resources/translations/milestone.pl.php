@@ -1,0 +1,20 @@
+<?php
+return [
+	'Overall progress' => 'Łączny postęp',
+	'Select:' => 'Wybierz:',
+	'Milestone' => 'Kamień milowy',
+	'Progress' => 'Postęp',
+	'Deadline' => 'Termin ukończenia',
+	'Completed at' => 'Ukończono',
+	'Complete' => 'Zakończ',
+	'Update' => 'Zaktualizuj',
+	'Cancel' => 'Cofnij',
+	'View' => 'Szczegóły',
+	'Incoming deadline' => 'Nadchodzący termin',
+	'View all milestones and deadlines' => 'Zobacz wszystkie kamienie milowe i terminy',
+	'Cancel milestone' => 'Wycofaj kamień milowy',
+	'CompleteMilestoneConfirmText' => 'Czy na pewno chcesz oznaczyć ten kamień milowy jako zakończony?',
+	'CancelMilestoneConfirmText' => 'Czy na pewno chcesz wycofać się i oznaczyć z powrotem ten kamień milowy jako nieukończony?',
+	'UpdateProgressText' => 'Zaktualizuj postęp prac nad tym kamieniem milowym.',
+	'Update progress' => 'Postęp (w procentach)',
+];

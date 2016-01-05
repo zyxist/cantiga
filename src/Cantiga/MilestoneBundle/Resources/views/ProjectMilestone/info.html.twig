@@ -20,8 +20,8 @@
 			<td>{{ item.getEntityType() | trans }}</td>
 		</tr>
 		<tr>
-			<td width="30%">{{ 'Status' | trans }}</td>
-			<td>{{ item.getStatusText() | trans }}</td>
+			<td width="30%">{{ 'How to count progress?' | trans }}</td>
+			<td>{{ item.getTypeText() | trans }}</td>
 		</tr>
 		<tr>
 			<td width="30%">{{ 'Order' | trans }}</td>
@@ -29,7 +29,7 @@
 		</tr>
 		<tr>
 			<td width="30%">{{ 'Deadline' | trans }}</td>
-			<td>{{ item.deadline }}</td>
+			<td>{{ format_time(TimeFormatter.FORMAT_DATE_LONG, item.deadline) }}</td>
 		</tr>
 	</tbody>
 </table>

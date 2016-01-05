@@ -64,8 +64,7 @@ class ProjectMilestoneRepository
 		$dt->id('id', 'i.id')
 			->searchableColumn('name', 'i.name')
 			->column('entityType', 'i.entityType')
-			->column('displayOrder', 'i.displayOrder')
-			->column('status', 'i.status');
+			->column('displayOrder', 'i.displayOrder');
 		return $dt;
 	}
 	
@@ -76,12 +75,10 @@ class ProjectMilestoneRepository
 			->field('i.name', 'name')
 			->field('i.entityType', 'entityType')
 			->field('i.displayOrder', 'displayOrder')
-			->field('i.status', 'status')
 			->from(MilestoneTables::MILESTONE_TBL, 'i')
 			->where(QueryClause::clause('i.`projectId` = :projectId', ':projectId', $this->project->getId()));
 
 		$qb->postprocess(function($row) use($translator) {
-			$row['statusText'] = $translator->trans(Milestone::statusText($row['status']));
 			$row['entityTypeText'] = $translator->trans($row['entityType']);
 			return $row;
 		});

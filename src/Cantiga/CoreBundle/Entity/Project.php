@@ -332,9 +332,15 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 	public function insert(Connection $conn)
 	{
 		$this->slug = DataMappers::generateSlug($conn, CoreTables::PROJECT_TBL);
+		
+		$this->entity = new Entity();
+		$this->entity->setType('Project');
+		$this->entity->setName($this->name);
+		$this->entity->insert($conn);
+		
 		$conn->insert(
 			CoreTables::PROJECT_TBL,
-			DataMappers::pick($this, ['name', 'slug', 'description', 'parentProject', 'areasAllowed', 'areaRegistrationAllowed'], [
+			DataMappers::pick($this, ['name', 'slug', 'description', 'parentProject', 'areasAllowed', 'areaRegistrationAllowed', 'entity'], [
 				'modules' => implode(',', $this->getModules()),
 				'archived' => false,
 				'createdAt' => time(),
@@ -346,6 +352,9 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 
 	public function update(Connection $conn)
 	{
+		$this->entity->setName($this->name);
+		$this->entity->update($conn);
+		
 		return $conn->update(
 			CoreTables::PROJECT_TBL,
 			DataMappers::pick($this, ['name', 'description', 'parentProject', 'areasAllowed', 'areaRegistrationAllowed', 'archived', 'archivedAt'], [

@@ -6,7 +6,6 @@
 	<th>{{ 'Name' | trans }}</th>
 	<th width="140">{{ 'Where shown?' | trans }}</th>
 	<th width="120">{{ 'Order' | trans }}</th>
-	<th width="120">{{ 'Status' | trans }}</th>
 	<th width="120">{{ 'Actions' | trans({}, 'general') }}</th>
 </tr>
 {% endblock %}
@@ -21,7 +20,6 @@
 	ajax: "{{ spath(ajaxListPage) }}",
 	columnDefs: [
 		{{ dt_col_rewrite(dataTable, 'entityType', 'entityTypeText') }}
-		{{ dt_col_rewrite(dataTable, 'status', 'statusText') }}
 		{{ dt_actions(dataTable, [
 			{ 'link': 'info_link', 'name': 'Info' | trans({}, 'general'), 'label': 'btn-primary' },
 			{ 'link': 'edit_link', 'name': 'Edit' | trans({}, 'general'), 'label': 'btn-warning' },

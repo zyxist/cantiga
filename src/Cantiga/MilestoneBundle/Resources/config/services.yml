@@ -5,7 +5,26 @@ services:
     cantiga.milestone.repo.milestone:
         class:     Cantiga\MilestoneBundle\Repository\ProjectMilestoneRepository
         arguments: ["@database_connection", "@cantiga.transaction"]
+    cantiga.milestone.repo.status:
+        class:     Cantiga\MilestoneBundle\Repository\MilestoneStatusRepository
+        arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.time", "@cantiga.project.settings"]
     cantiga.milestone.workspace_listener:
         class: Cantiga\MilestoneBundle\EventListener\WorkspaceListener
         tags:
             - { name: kernel.event_listener, event: cantiga.workspace.project, method: onProjectWorkspace }
+            - { name: kernel.event_listener, event: cantiga.workspace.group, method: onGroupWorkspace }
+            - { name: kernel.event_listener, event: cantiga.workspace.area, method: onAreaWorkspace }
+    cantiga.milestone.dashboard.progress:
+        class:     Cantiga\MilestoneBundle\Extension\DashboardMilestoneExtension
+        arguments: ["@cantiga.milestone.repo.status"]
+        tags:
+            - { name: cantiga.extension, point: core.dashboard.project.top, module: milestone }
+            - { name: cantiga.extension, point: core.dashboard.group.top, module: milestone }
+            - { name: cantiga.extension, point: core.dashboard.area.top, module: milestone }
+    cantiga.milestone.model_listener:
+        class: Cantiga\MilestoneBundle\EventListener\ModelListener
+        arguments: ["@database_connection"]
+        tags:
+            - { name: kernel.event_listener, event: cantiga.project.created, method: onProjectCreated }
+            - { name: kernel.event_listener, event: cantiga.group.created, method: onGroupCreated }
+            - { name: kernel.event_listener, event: cantiga.area.created, method: onAreaCreated }

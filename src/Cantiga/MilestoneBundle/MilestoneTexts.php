@@ -18,18 +18,12 @@
  */
 namespace Cantiga\MilestoneBundle;
 
-use Cantiga\CoreBundle\Api\AppTexts;
-use Cantiga\CoreBundle\Api\Modules;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
-
-class CantigaMilestoneBundle extends Bundle
+/**
+ * @author Tomasz Jędrzejewski
+ */
+class MilestoneTexts
 {
-	public function boot()
-	{
-		Modules::registerModule('milestone', 'Milestone module');
-		
-		AppTexts::registerName(MilestoneTexts::AREA_MILESTONE_EDITOR_TEXT);
-		AppTexts::registerName(MilestoneTexts::GROUP_MILESTONE_EDITOR_TEXT);
-		AppTexts::registerName(MilestoneTexts::PROJECT_MILESTONE_EDITOR_TEXT);
-	}
+	const AREA_MILESTONE_EDITOR_TEXT = 'milestone:editor:area';
+	const GROUP_MILESTONE_EDITOR_TEXT = 'milestone:editor:group';
+	const PROJECT_MILESTONE_EDITOR_TEXT = 'milestone:editor:project';
 }

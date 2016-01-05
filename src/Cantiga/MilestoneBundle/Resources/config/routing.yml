@@ -1,3 +1,13 @@
+_area_milestone_editor_controller:                                                                                                                                                   
+    resource: "@CantigaMilestoneBundle/Controller/AreaMilestoneEditorController.php"                                                                                                      
+    type:     annotation
+_group_milestone_editor_controller:                                                                                                                                                   
+    resource: "@CantigaMilestoneBundle/Controller/GroupMilestoneEditorController.php"                                                                                                      
+    type:     annotation
+_project_milestone_editor_controller:                                                                                                                                                   
+    resource: "@CantigaMilestoneBundle/Controller/ProjectMilestoneEditorController.php"                                                                                                      
+    type:     annotation
+
 _project_milestone_controller:                                                                                                                                                   
     resource: "@CantigaMilestoneBundle/Controller/ProjectMilestoneController.php"                                                                                                      
     type:     annotation

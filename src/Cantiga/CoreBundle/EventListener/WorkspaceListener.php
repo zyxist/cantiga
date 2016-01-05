@@ -177,6 +177,7 @@ class WorkspaceListener implements WorkspaceSourceInterface
 		$workspace = $event->getWorkspace();
 		$workspace->addWorkgroup(new Workgroup('community', 'Community', 'users', 1));
 		$workspace->addWorkgroup(new Workgroup('summary', 'Summary', 'table', 2));
+		$workspace->addWorkgroup(new Workgroup('data', 'Data', 'database', 3));
 		
 		$workspace->addWorkItem('community', new WorkItem('group_memberlist_index', 'Member list'));
 	}

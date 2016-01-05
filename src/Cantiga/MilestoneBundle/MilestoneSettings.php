@@ -18,18 +18,12 @@
  */
 namespace Cantiga\MilestoneBundle;
 
-use Cantiga\CoreBundle\Api\AppTexts;
-use Cantiga\CoreBundle\Api\Modules;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
-
-class CantigaMilestoneBundle extends Bundle
+/**
+ * @author Tomasz Jędrzejewski
+ */
+class MilestoneSettings
 {
-	public function boot()
-	{
-		Modules::registerModule('milestone', 'Milestone module');
-		
-		AppTexts::registerName(MilestoneTexts::AREA_MILESTONE_EDITOR_TEXT);
-		AppTexts::registerName(MilestoneTexts::GROUP_MILESTONE_EDITOR_TEXT);
-		AppTexts::registerName(MilestoneTexts::PROJECT_MILESTONE_EDITOR_TEXT);
-	}
+	const AREA_CAN_UPDATE_OWN_PROGRESS = 'milestone_area_can_update_own_progress';
+	const GROUP_CAN_UPDATE_OWN_PROGRESS = 'milestone_group_can_update_own_progress';
+	const GROUP_CAN_UPDATE_AREA_PROGRESS = 'milestone_group_can_update_area_progress';
 }

@@ -1,0 +1,164 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ pageTitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ pageSubtitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+	<div class="row" id="milestone-editor">
+		<div class="col-lg-12">
+			<div class="box">
+				<div class="box-body">
+					{% if selectorEnabled %}
+					<form class="form-inline">
+						<div class="form-group">
+							<label class="sr-only" for="selectItem">{{ 'Select:' | trans([], 'milestone') }}:</label>
+							<select name="selectItem" id="selectItem" class="form-control">
+							</select>
+						</div>
+					</form>
+					<hr/>
+					{% endif %}
+					{{ text | raw }}
+					<hr/>
+					<p>{{ 'Overall progress' | trans([], 'milestone') }}:</p>
+					<div class="progress progress-md">
+						<div class="progress-bar progress-bar-warning" style="width: 0%" id="progressBar"></div>
+                    </div>
+					
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>{{ 'Milestone' | trans([], 'milestone') }}</th>
+								<th width="200">{{ 'Progress' | trans([], 'milestone') }}</th>
+								<th width="40"></th>
+								<th width="140">{{ 'Deadline' | trans([], 'milestone') }}</th>
+								<th width="140">{{ 'Completed at' | trans([], 'milestone') }}</th>
+								<th width="180">{{ 'Actions' | trans([], 'general') }}</th>
+							</tr>
+						</thead>
+						<tbody id="milestones">
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="modal fade" id="view-modal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="{{ 'Close' | trans([], 'general') }}"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="milestone-name"></h4>
+					</div>
+					<div class="modal-body">
+						<p id="milestone-description"></p>
+						<table class="table table-condensed">
+							<tbody>
+								<tr>
+									<td width="30%">{{ 'Deadline' | trans([], 'milestone') }}</td>
+									<td><span id="milestone-deadline"></span></td>
+								</tr>
+								<tr>
+									<td width="30%">{{ 'Completed at' | trans([], 'milestone') }}</td>
+									<td><span id="milestone-completedAt"></span></td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="progress progress-md" id="milestone-progress">
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" id="view-modal-close">{{ 'Close' | trans({}, 'general') }}</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal fade" id="complete-modal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">{{ 'Complete milestone' | trans([], 'milestone') }}</h4>
+					</div>
+					<div class="modal-body">
+						<p>{{ 'CompleteMilestoneConfirmText' | trans([], 'milestone') }}</p>
+						<p id="complete-milestone-name"></p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal" id="complete-modal-cancel">{{ 'Not really' | trans({}, 'general') }}</button>
+						<button type="button" class="btn btn-primary" id="complete-modal-confirm">{{ 'Indeed' | trans({}, 'general') }}</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal fade" id="cancel-modal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">{{ 'Cancel milestone' | trans([], 'milestone') }}</h4>
+					</div>
+					<div class="modal-body">
+						<p>{{ 'CancelMilestoneConfirmText' | trans([], 'milestone') }}</p>
+						<p id="cancel-milestone-name"></p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal" id="cancel-modal-cancel">{{ 'Not really' | trans({}, 'general') }}</button>
+						<button type="button" class="btn btn-primary" id="cancel-modal-confirm">{{ 'Indeed' | trans({}, 'general') }}</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal fade" id="update-modal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="update-milestone-name"></h4>
+					</div>
+					<div class="modal-body">
+						<form role="form" class="form">
+							<p>{{ 'UpdateProgressText' | trans([], 'milestone') }}</p>
+							<div class="form-group">
+								<label class="control-label required" for="new-milestone-progress">{{ 'Update progress' | trans([], 'milestone') }}</label>
+								<input type="number" name="progress" id="new-milestone-progress" class="form-control" min="0" max="100"/>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" id="update-modal-save">{{ 'Save' | trans({}, 'general') }}</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script src="{{ asset('js/jquery-ui.min.js') }}"></script>
+	<script src="{{ asset('js/milestone-editor.js') }}"></script>
+{% endblock %}
+
+{% block javascripts_inline %}
+	<script type="text/javascript">
+	$(document).ready(function() {
+		$('#milestone-editor').milestones({
+			selector: {{ selectorEnabled }},
+			selectedEntity: {{ selectedEntity }},
+			reloadActionUrl: '{{ spath(reloadPage) }}',
+			completeActionUrl: '{{ spath(completePage) }}',
+			updateActionUrl: '{{ spath(updatePage) }}',
+			cancelActionUrl: '{{ spath(cancelPage) }}',
+			viewActionText: '{{ 'View' | trans([], 'milestone') }}',
+			completeActionText: '{{ 'Complete' | trans([], 'milestone') }}',
+			updateActionText: '{{ 'Update' | trans([], 'milestone') }}',
+			cancelActionText: '{{ 'Cancel' | trans([], 'milestone') }}',
+		});
+	});
+	</script>
+{% endblock %}

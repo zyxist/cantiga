@@ -18,6 +18,7 @@
  */
 namespace Cantiga\MilestoneBundle\Form;
 
+use Cantiga\MilestoneBundle\Entity\Milestone;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -29,6 +30,7 @@ class MilestoneForm extends AbstractType
 {
 	const TYPE_AREA = 'Area';
 	const TYPE_GROUP = 'Group';
+	const TYPE_PROJECT = 'Project';
 	
 	private $isNew;
 	
@@ -44,10 +46,11 @@ class MilestoneForm extends AbstractType
 			->add('description', new TextType, array('label' => 'Description'))
 			->add('displayOrder', new NumberType, array('label' => 'Display order'));
 		if ($this->isNew) {
-			$builder->add('entityType', new ChoiceType, array('label' => 'Where shown?', 'choices' => [self::TYPE_AREA => 'Area', self::TYPE_GROUP => 'Group']));
+			$builder->add('entityType', new ChoiceType, array('label' => 'Where shown?', 'choices' => [self::TYPE_AREA => 'Area', self::TYPE_GROUP => 'Group', self::TYPE_PROJECT => 'Project']));
+			$builder->add('type', new ChoiceType, array('label' => 'How to count progress?', 'choices' => [Milestone::TYPE_BINARY => 'binary (yes-no)', Milestone::TYPE_PERCENT => '0-100%']));
 		}
 		$builder
-			->add('deadline', new DateType, array('label' => 'Deadline', 'input' => 'string', 'empty_value' => '-- none --', 'required' => false))
+			->add('deadline', new DateType, array('label' => 'Deadline', 'input' => 'timestamp', 'empty_value' => '-- none --', 'required' => false))
 			->add('save', 'submit', array('label' => 'Save'));
 	}
 

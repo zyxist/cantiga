@@ -147,4 +147,16 @@ class CantigaEvents
 	 * Notification about a new invitation.
 	 */
 	const INVITATION_CREATED = 'cantiga.invitation.created';
+	/**
+	 * Notification that a new group has been created.
+	 */
+	const GROUP_CREATED = 'cantiga.group.created';
+	/**
+	 * Notification that an existing group has been updated.
+	 */
+	const GROUP_UPDATED = 'cantiga.group.updated';
+	/**
+	 * Notification that an existing group has been removed.
+	 */
+	const GROUP_REMOVED = 'cantiga.group.removed';
 }

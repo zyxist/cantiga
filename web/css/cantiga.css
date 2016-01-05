@@ -262,3 +262,97 @@ ul.list-summary li.list-summary-footer {
   padding: 7px 7px;
   text-align: center;
 }
+div.progress-box {
+  display: block;
+  width: 100%;
+  padding: 5px 8px;
+  margin: 0 0 8px 0;
+  background: #fff;
+  border-top: 3px solid #0073b7;
+  box-sizing: border-box;
+}
+div.progress-box div.progress-box-initial {
+  height: 20px;
+}
+div.progress-box div.progress-box-initial p {
+  float: left;
+  width: 25%;
+  margin: 0;
+  text-align: right;
+  font-weight: bold;
+  padding: 0 10px;
+}
+@media (max-width: 992px) {
+  div.progress-box div.progress-box-initial p {
+    width: 40%;
+  }
+}
+@media (max-width: 768px) {
+  div.progress-box div.progress-box-initial p {
+    width: 50%;
+  }
+}
+div.progress-box div.progress-box-initial div.progress-box-bar {
+  float: left;
+  width: 75%;
+  height: 20px;
+  margin: 0;
+  padding: 6px 0 0 0;
+}
+@media (max-width: 992px) {
+  div.progress-box div.progress-box-initial div.progress-box-bar {
+    width: 60%;
+  }
+}
+@media (max-width: 768px) {
+  div.progress-box div.progress-box-initial div.progress-box-bar {
+    width: 50%;
+  }
+}
+div.progress-box div.progress-box-summary {
+  height: 20px;
+  margin: 0 0 6px 0;
+}
+div.progress-box div.progress-box-summary p.title {
+  float: left;
+  width: 25%;
+  margin: 0;
+  text-align: right;
+  font-weight: bold;
+  padding: 0 10px;
+}
+@media (max-width: 992px) {
+  div.progress-box div.progress-box-summary p.title {
+    width: 40%;
+  }
+}
+@media (max-width: 768px) {
+  div.progress-box div.progress-box-summary p.title {
+    width: 50%;
+  }
+}
+div.progress-box div.progress-box-summary p.value {
+  float: left;
+  width: 75%;
+  margin: 0;
+  text-align: left;
+  padding: 0 10px;
+}
+@media (max-width: 992px) {
+  div.progress-box div.progress-box-summary p.value {
+    width: 60%;
+  }
+}
+@media (max-width: 768px) {
+  div.progress-box div.progress-box-summary p.value {
+    width: 50%;
+  }
+}
+div.progress-box div.progress-box-summary span.date {
+  color: #d2d6de;
+}
+div.progress-box div.progress-box-link {
+  padding: 3px 0 0 0;
+  border-top: 1px solid #eeeeee;
+  text-align: center;
+}
