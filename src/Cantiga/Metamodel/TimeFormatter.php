@@ -116,6 +116,9 @@ class TimeFormatter implements TimeFormatterInterface
 	
 	public function formatDate(array $date)
 	{
-		return $this->formatDateLong->format(new \DateTime($date['year'].'-'.$date['month'].'-'.$date['day']));
+		if (!empty($date['year']) && !empty($date['month']) && !empty($date['day'])) {
+			return $this->formatDateLong->format(new \DateTime($date['year'].'-'.$date['month'].'-'.$date['day']));
+		}
+		return '---';
 	}
 }
