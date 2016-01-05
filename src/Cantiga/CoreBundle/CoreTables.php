@@ -50,6 +50,5 @@ class CoreTables
 	
 	const STAT_ARQ_TIME_TBL = 'cantiga_stat_arq_time';
 	
-	const FORM_TBL = 'cantiga_forms';
-	const FORM_VERSION_TBL = 'cantiga_form_versions';
+	const ENTITY_TBL = 'cantiga_entities';
 }

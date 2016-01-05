@@ -35,7 +35,9 @@ use Doctrine\DBAL\Connection;
 use PDO;
 
 class Project implements IdentifiableInterface, InsertableEntityInterface, EditableEntityInterface, MembershipEntityInterface
-{	
+{
+	use Traits\EntityTrait;
+	
 	private $id;
 	private $name;
 	private $slug;
@@ -52,20 +54,32 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 	
 	public static function fetchActive(Connection $conn, $id)
 	{
-		$data = $conn->fetchAssoc('SELECT * FROM `'.CoreTables::PROJECT_TBL.'` WHERE `id` = :id AND `archived` = 0', [':id' => $id]);
-		if (empty($data)) {
+		$data = $conn->fetchAssoc('SELECT p.*, '
+			. self::createEntityFieldList()
+			. 'FROM `'.CoreTables::PROJECT_TBL.'` p '
+			. self::createEntityJoin('p')
+			. 'WHERE p.`id` = :id AND p.`archived` = 0', [':id' => $id]);
+		if (false === $data) {
 			return false;
 		}
-		return self::fromArray($data);
+		$item = self::fromArray($data);
+		$item->entity = Entity::fromArray($data, 'entity');
+		return $item;
 	}
 	
 	public static function fetch(Connection $conn, $id)
 	{
-		$data = $conn->fetchAssoc('SELECT * FROM `'.CoreTables::PROJECT_TBL.'` WHERE `id` = :id', [':id' => $id]);
-		if (empty($data)) {
+		$data = $conn->fetchAssoc('SELECT p.*, '
+			. self::createEntityFieldList()
+			. 'FROM `'.CoreTables::PROJECT_TBL.'` p'
+			. self::createEntityJoin('p')
+			. 'WHERE p.`id` = :id', [':id' => $id]);
+		if (false === $data) {
 			return false;
 		}
-		return self::fromArray($data);
+		$item = self::fromArray($data);
+		$item->entity = Entity::fromArray($data, 'entity');
+		return $item;
 	}
 
 	/**
@@ -76,12 +90,18 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 	 */
 	public static function fetchMembership(Connection $conn, MembershipRoleResolver $resolver, $slug, $userId)
 	{
-		$data = $conn->fetchAssoc('SELECT p.*, m.`role` AS `membership_role`, m.`note` AS `membership_note` FROM `'.CoreTables::PROJECT_TBL.'` p '
-			. 'INNER JOIN `'.CoreTables::PROJECT_MEMBER_TBL.'` m ON m.`projectId` = p.`id` WHERE m.`userId` = :userId AND p.`slug` = :slug', [':userId' => $userId, ':slug' => $slug]);
+		$data = $conn->fetchAssoc('SELECT p.*, '
+			. 'm.`role` AS `membership_role`, m.`note` AS `membership_note`, '
+			. self::createEntityFieldList()
+			. 'FROM `'.CoreTables::PROJECT_TBL.'` p '
+			. self::createEntityJoin('p')
+			. 'INNER JOIN `'.CoreTables::PROJECT_MEMBER_TBL.'` m ON m.`projectId` = p.`id` '
+			. 'WHERE m.`userId` = :userId AND p.`slug` = :slug', [':userId' => $userId, ':slug' => $slug]);
 		if(false === $data) {
 			return false;
 		}
 		$project = self::fromArray($data);
+		$project->entity = Entity::fromArray($data, 'entity');
 		$role = $resolver->getRole('Project', $data['membership_role']);
 		return new Membership($project, $role, $data['membership_note']);
 	}
@@ -96,11 +116,17 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 	 */
 	public static function fetchAvailableForRegistration(Connection $conn, $projectId)
 	{
-		$data = $conn->fetchAssoc('SELECT * FROM `'.CoreTables::PROJECT_TBL.'` WHERE `id` = :id AND `archived` = 0 AND `areasAllowed` = 1 AND `areaRegistrationAllowed` = 1', [':id' => $projectId]);
+		$data = $conn->fetchAssoc('SELECT p.*, '
+			. self::createEntityFieldList()
+			. 'FROM `'.CoreTables::PROJECT_TBL.'` p '
+			. self::createEntityJoin('p')
+			. 'WHERE p.`id` = :id AND p.`archived` = 0 AND p.`areasAllowed` = 1 AND p.`areaRegistrationAllowed` = 1', [':id' => $projectId]);
 		if (empty($data)) {
 			return false;
 		}
-		return self::fromArray($data);
+		$item = self::fromArray($data);
+		$item->entity = Entity::fromArray($data, 'entity');
+		return $item;
 	}
 
 	public static function fromArray($array, $prefix = '')

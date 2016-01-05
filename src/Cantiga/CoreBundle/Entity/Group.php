@@ -38,6 +38,8 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 class Group implements IdentifiableInterface, InsertableEntityInterface, EditableEntityInterface, RemovableEntityInterface, MembershipEntityInterface
 {
+	use Traits\EntityTrait;
+	
 	private $id;
 	private $name;
 	private $slug;
@@ -49,7 +51,11 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 	
 	public static function fetchByProject(Connection $conn, $id, Project $project)
 	{
-		$data = $conn->fetchAssoc('SELECT * FROM `'.CoreTables::GROUP_TBL.'` WHERE `id` = :id AND `projectId` = :projectId', [':id' => $id, ':projectId' => $project->getId()]);
+		$data = $conn->fetchAssoc('SELECT g.*, '
+			. self::createEntityFieldList()
+			. 'FROM `'.CoreTables::GROUP_TBL.'` g '
+			. self::createEntityJoin('g')
+			. 'WHERE g.`id` = :id AND g.`projectId` = :projectId', [':id' => $id, ':projectId' => $project->getId()]);
 		if(null === $data) {
 			return false;
 		}
@@ -59,13 +65,18 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 		if (!empty($data['categoryId'])) {
 			$item->category = GroupCategory::fetchByProject($conn, $data['categoryId'], $project);
 		}
+		$item->entity = Entity::fromArray($data, 'entity');
 		
 		return $item;
 	}
 	
 	public static function fetch(Connection $conn, $id)
 	{
-		$data = $conn->fetchAssoc('SELECT * FROM `'.CoreTables::GROUP_TBL.'` WHERE `id` = :id', [':id' => $id]);
+		$data = $conn->fetchAssoc('SELECT g.*, '
+			. self::createEntityFieldList()
+			. 'FROM `'.CoreTables::GROUP_TBL.'` '
+			. self::createEntityJoin('g')
+			. 'WHERE g.`id` = :id', [':id' => $id]);
 		if(null === $data) {
 			return false;
 		}
@@ -78,6 +89,7 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 		if (!empty($data['categoryId'])) {
 			$item->category = GroupCategory::fetchByProject($conn, $data['categoryId'], $item->project);
 		}
+		$item->entity = Entity::fromArray($data, 'entity');
 		
 		return $item;
 	}
@@ -90,8 +102,13 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 	 */
 	public static function fetchMembership(Connection $conn, MembershipRoleResolver $resolver, $slug, $userId)
 	{
-		$data = $conn->fetchAssoc('SELECT g.*, m.`role` AS `membership_role`, m.`note` AS `membership_note` FROM `'.CoreTables::GROUP_TBL.'` g '
-			. 'INNER JOIN `'.CoreTables::GROUP_MEMBER_TBL.'` m ON m.`groupId` = g.`id` WHERE m.`userId` = :userId AND g.`slug` = :slug', [':userId' => $userId, ':slug' => $slug]);
+		$data = $conn->fetchAssoc('SELECT g.*, '
+			. 'm.`role` AS `membership_role`, m.`note` AS `membership_note`, '
+			. self::createEntityFieldList()
+			. 'FROM `'.CoreTables::GROUP_TBL.'` g '
+			. self::createEntityJoin('g')
+			. 'INNER JOIN `'.CoreTables::GROUP_MEMBER_TBL.'` m ON m.`groupId` = g.`id` '
+			. 'WHERE m.`userId` = :userId AND g.`slug` = :slug', [':userId' => $userId, ':slug' => $slug]);
 		if(false === $data) {
 			return false;
 		}
@@ -104,6 +121,7 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 		if (!empty($data['categoryId'])) {
 			$group->category = GroupCategory::fetchByProject($conn, $data['categoryId'], $group->project);
 		}
+		$group->entity = Entity::fromArray($data, 'entity');
 		
 		$role = $resolver->getRole('Group', $data['membership_role']);
 		return new Membership($group, $role, $data['membership_note']);
@@ -118,7 +136,7 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 	
 	public static function getRelationships()
 	{
-		return ['project', 'category'];
+		return ['project', 'category', 'entity'];
 	}
 	
 	public static function loadValidatorMetadata(ClassMetadata $metadata)
@@ -216,14 +234,19 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 		$this->areaNum = $areaNum;
 		return $this;
 	}
-
 	
 	public function insert(Connection $conn)
 	{
 		$this->slug = DataMappers::generateSlug($conn, CoreTables::GROUP_TBL);
+		
+		$this->entity = new Entity();
+		$this->entity->setType('Group');
+		$this->entity->setName($this->name);
+		$this->entity->insert($conn);
+		
 		$conn->insert(
 			CoreTables::GROUP_TBL,
-			DataMappers::pick($this, ['name', 'slug', 'project', 'category', 'notes'])
+			DataMappers::pick($this, ['name', 'slug', 'project', 'category', 'notes', 'entity'])
 		);
 		return $conn->lastInsertId();
 	}
@@ -234,6 +257,9 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 			':groupName' => $this->name,
 			':id' => $this->id
 		]);
+		$this->entity->setName($this->name);
+		$this->entity->update($conn);
+		
 		return $conn->update(
 			CoreTables::GROUP_TBL,
 			DataMappers::pick($this, ['name', 'category', 'notes']),
@@ -249,6 +275,7 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 	public function remove(Connection $conn)
 	{
 		if ($this->canRemove()) {
+			$this->entity->remove($conn);
 			$conn->delete(CoreTables::GROUP_TBL, DataMappers::pick($this, ['id']));
 		}
 	}

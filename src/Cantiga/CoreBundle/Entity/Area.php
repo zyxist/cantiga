@@ -37,6 +37,8 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 class Area implements IdentifiableInterface, InsertableEntityInterface, EditableEntityInterface, MembershipEntityInterface
 {
+	use Traits\EntityTrait;
+	
 	private $id;
 	private $name;
 	private $slug;
@@ -65,9 +67,11 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 	public static function fetchActive(Connection $conn, $id)
 	{
 		$data = $conn->fetchAssoc('SELECT a.*, '
-			. 't.`id` AS `territory_id`, t.`name` AS `territory_name`, t.`areaNum` AS `territory_areaNum`, t.`requestNum` as `territory_requestNum` '
+			. 't.`id` AS `territory_id`, t.`name` AS `territory_name`, t.`areaNum` AS `territory_areaNum`, t.`requestNum` as `territory_requestNum`, '
+			. self::createEntityFieldList()
 			. 'FROM `'.CoreTables::AREA_TBL.'` a '
 			. 'INNER JOIN `'.CoreTables::TERRITORY_TBL.'` t ON t.`id` = a.`territoryId` '
+			. self::createEntityJoin('a')
 			. 'INNER JOIN `'.CoreTables::PROJECT_TBL.'` p ON p.`id` = a.`projectId` WHERE a.`id` = :id AND p.`archived` = 0', [':id' => $id]);
 		if(null === $data) {
 			return false;
@@ -83,14 +87,17 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		if (!empty($data['groupId'])) {
 			$item->group = $item->oldGroup = Group::fetchByProject($conn, $data['groupId'], $item->project);
 		}
+		$item->entity = Entity::fromArray($data, 'entity');
 		return $item;
 	}
 	
 	public static function fetchByProject(Connection $conn, $id, Project $project)
 	{
 		$data = $conn->fetchAssoc('SELECT a.*, '
-			. 't.`id` AS `territory_id`, t.`name` AS `territory_name`, t.`areaNum` AS `territory_areaNum`, t.`requestNum` as `territory_requestNum` '
+			. 't.`id` AS `territory_id`, t.`name` AS `territory_name`, t.`areaNum` AS `territory_areaNum`, t.`requestNum` as `territory_requestNum`, '
+			. self::createEntityFieldList()
 			. 'FROM `'.CoreTables::AREA_TBL.'` a '
+			. self::createEntityJoin('a')
 			. 'INNER JOIN `'.CoreTables::TERRITORY_TBL.'` t ON t.`id` = a.`territoryId` '
 			. 'WHERE a.`id` = :id AND a.`projectId` = :projectId', [':id' => $id, ':projectId' => $project->getId()]);
 		if(false === $data) {
@@ -107,14 +114,17 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		if (!empty($data['groupId'])) {
 			$item->group = $item->oldGroup = Group::fetchByProject($conn, $data['groupId'], $item->project);
 		}
+		$item->entity = Entity::fromArray($data, 'entity');
 		return $item;
 	}
 	
 	public static function fetchByGroup(Connection $conn, $id, Group $group)
 	{
 		$data = $conn->fetchAssoc('SELECT a.*, '
-			. 't.`id` AS `territory_id`, t.`name` AS `territory_name`, t.`areaNum` AS `territory_areaNum`, t.`requestNum` as `territory_requestNum` '
+			. 't.`id` AS `territory_id`, t.`name` AS `territory_name`, t.`areaNum` AS `territory_areaNum`, t.`requestNum` as `territory_requestNum`, '
+			. self::createEntityFieldList()
 			. 'FROM `'.CoreTables::AREA_TBL.'` a '
+			. self::createEntityJoin('a')
 			. 'INNER JOIN `'.CoreTables::TERRITORY_TBL.'` t ON t.`id` = a.`territoryId` '
 			. 'WHERE a.`id` = :id AND a.`groupId` = :groupId', [':id' => $id, ':groupId' => $group->getId()]);
 		if(false === $data) {
@@ -129,6 +139,7 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		
 		$item->status = $item->oldStatus = AreaStatus::fetchByProject($conn, $data['statusId'], $item->project);
 		$item->setTerritory($item->oldTerritory = Territory::fromArray($data, 'territory'));
+		$item->entity = Entity::fromArray($data, 'entity');
 		return $item;
 	}
 	
@@ -142,8 +153,10 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 	{
 		$data = $conn->fetchAssoc('SELECT a.*, '
 			. 't.`id` AS `territory_id`, t.`name` AS `territory_name`, t.`areaNum` AS `territory_areaNum`, t.`requestNum` as `territory_requestNum`, '
-			. 'm.`role` AS `membership_role`, m.`note` AS `membership_note` '
+			. 'm.`role` AS `membership_role`, m.`note` AS `membership_note`, '
+			. self::createEntityFieldList()
 			. 'FROM `'.CoreTables::AREA_TBL.'` a '
+			. self::createEntityJoin('a')
 			. 'INNER JOIN `'.CoreTables::TERRITORY_TBL.'` t ON t.`id` = a.`territoryId` '
 			. 'INNER JOIN `'.CoreTables::AREA_MEMBER_TBL.'` m ON m.`areaId` = a.`id` WHERE m.`userId` = :userId AND a.`slug` = :slug', [':userId' => $userId, ':slug' => $slug]);
 		if(false === $data) {
@@ -160,6 +173,7 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		}
 		$item->setTerritory($item->oldTerritory = Territory::fromArray($data, 'territory'));
 		$role = $resolver->getRole('Area', $data['membership_role']);
+		$item->entity = Entity::fromArray($data, 'entity');
 		return new Membership($item, $role, $data['membership_note']);
 	}
 
@@ -179,7 +193,7 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 	
 	public static function getRelationships()
 	{
-		return ['project', 'status', 'group', 'territory', 'reporter'];
+		return ['project', 'status', 'group', 'territory', 'reporter', 'entity'];
 	}
 	
 	public static function loadValidatorMetadata(ClassMetadata $metadata) {
@@ -300,7 +314,7 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		$this->reporter = $reporter;
 		return $this;
 	}
-	
+
 	/**
 	 * Fetches a value of a custom property. Null value is returned,
 	 * if the property is not set or it is empty.
@@ -330,10 +344,15 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		DataMappers::recount($conn, CoreTables::AREA_STATUS_TBL, null, $this->status, 'areaNum', 'id');
 		DataMappers::recount($conn, CoreTables::TERRITORY_TBL, null, $this->territory, 'areaNum', 'id');
 		
+		$this->entity = new Entity();
+		$this->entity->setType('Area');
+		$this->entity->setName($this->name);
+		$this->entity->insert($conn);
+		
 		$this->slug = DataMappers::generateSlug($conn, CoreTables::GROUP_TBL);
 		$conn->insert(
 			CoreTables::AREA_TBL,
-			DataMappers::pick($this, ['name', 'slug', 'project', 'group', 'territory', 'status', 'reporter'], ['customData' => json_encode($this->customData), 'groupName' => $groupName])
+			DataMappers::pick($this, ['name', 'slug', 'project', 'group', 'territory', 'status', 'reporter', 'entity'], ['customData' => json_encode($this->customData), 'groupName' => $groupName])
 		);
 		return $this->id = $conn->lastInsertId();
 	}
@@ -354,6 +373,9 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		if (!DataMappers::same($this->oldTerritory, $this->territory)) {
 			DataMappers::recount($conn, CoreTables::TERRITORY_TBL, $this->oldTerritory, $this->territory, 'areaNum', 'id');
 		}
+		
+		$this->entity->setName($this->name);
+		$this->entity->update($conn);
 		
 		return $conn->update(
 			CoreTables::AREA_TBL,
