@@ -1,0 +1,52 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ pageTitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ pageSubtitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+	<div class="row" id="milestone-editor">
+		<div class="col-lg-12">
+			<div class="box">
+				<div class="box-body">
+					{% if showTypeSelector %}
+						<div class="btn-group" role="group" aria-label="...">
+							{% if type == 0 %}
+							<a role="button" class="btn btn-primary active" href="{{ spath(viewPage, {'type': 0}) }}">{{ 'View areas' | trans([], 'milestone') }}</a>
+							<a role="button" class="btn btn-primary" href="{{ spath(viewPage, {'type': 1}) }}">{{ 'View groups' | trans([], 'milestone') }}</a>
+							{% else %}
+							<a role="button" class="btn btn-primary" href="{{ spath(viewPage, {'type': 0}) }}">{{ 'View areas' | trans([], 'milestone') }}</a>
+							<a role="button" class="btn btn-primary active" href="{{ spath(viewPage, {'type': 1}) }}">{{ 'View groups' | trans([], 'milestone') }}</a>
+							{% endif %}
+						</div>
+						<hr>
+					{% endif %}					
+					<table class="table table-hover">
+						<thead>
+							<tr>
+								<th>{{ 'Place' | trans([], 'milestone') }}</th>
+								<th width="200">{{ 'Progress' | trans([], 'milestone') }}</th>
+								<th width="40"></th>
+								<th width="200" class="text-center">{{ 'Completed milestones' | trans([], 'milestone') }}</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for item in items %}
+							<tr>
+								<td><a href="{{ spath(editPage, {'i': item.entityId })}}">{{ item.name }}</a></td>
+								<td><div class="progress progress-xs"><div class="progress-bar progress-bar-{{ item.progressColor }}" style="width: {{item.progress}}%"></div></div></td>
+								<td><span class="badge bg-{{item.badgeColor}}">{{item.progress}}%</span></td>
+								<td class="text-center">{{item.completedNum}}</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock page_content %}

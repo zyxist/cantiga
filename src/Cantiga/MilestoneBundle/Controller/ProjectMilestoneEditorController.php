@@ -45,10 +45,14 @@ class ProjectMilestoneEditorController extends ProjectPageController
 	}
 	
 	/**
-	 * @Route("/editor", name="project_milestone_editor")
+	 * @Route("/editor/{i}", name="project_milestone_editor", defaults={"i" = "current"})
 	 */
-	public function indexAction(Request $request)
+	public function indexAction($i, Request $request)
 	{
+		if ($i === 'current' || !ctype_digit($i)) {
+			$i = $this->getMembership()->getItem()->getEntity()->getId();
+		}
+		
 		$text = $this->getTextRepository()->getText(MilestoneTexts::PROJECT_MILESTONE_EDITOR_TEXT, $request, $this->getActiveProject());
         return $this->render(self::MILESTONE_TEMPLATE, array(
 			'pageTitle' => 'Milestones',
@@ -58,7 +62,7 @@ class ProjectMilestoneEditorController extends ProjectPageController
 			'updatePage' => 'project_milestone_ajax_update',
 			'cancelPage' => 'project_milestone_ajax_cancel',
 			'selectorEnabled' => true,
-			'selectedEntity' => $this->getMembership()->getItem()->getEntity()->getId(),
+			'selectedEntity' => $i,
 			'text' => $text->getContent(),
 		));
 	}

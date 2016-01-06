@@ -15,7 +15,7 @@
 				data: { i: item },
 				dataType: "json",
 				success: function (result) {
-					updateState(result);
+					updateState(result, item);
 				}
 			});
 		}
@@ -43,7 +43,7 @@
 					dataType: "json",
 					success: function (result) {
 						modal.modal('hide');
-						updateState(result);
+						updateState(result, getSelectedItem());
 					}
 				});
 			});
@@ -60,7 +60,7 @@
 					dataType: "json",
 					success: function (result) {
 						modal.modal('hide');
-						updateState(result);
+						updateState(result, getSelectedItem());
 					}
 				});
 			});
@@ -78,7 +78,7 @@
 					dataType: "json",
 					success: function (result) {
 						modal.modal('hide');
-						updateState(result);
+						updateState(result, getSelectedItem());
 					}
 				});
 			});
@@ -109,10 +109,10 @@
 			}).text(opts['updateActionText']);
 		}
 		
-		function updateState(data) {
+		function updateState(data, selectedItem) {
 			if (data.success === 1) {
 				if (data.selection) {
-					updateSelection(data.selection);
+					updateSelection(data.selection, selectedItem);
 				}
 				if (typeof data.progressBar !== 'undefined') {
 					updateProgressBar(data.progressBar);
@@ -126,12 +126,11 @@
 			}
 		}
 		
-		function updateSelection(selection) {
+		function updateSelection(selection, selectedItem) {
 			var selectorElement = root.find('#selectItem');
-			var currentlySelected = selectorElement.val();
 			var content = '';
 			for (i in selection) {
-				if (currentlySelected == selection[i].id) {
+				if (selectedItem == selection[i].id) {
 					content += '<option value="'+selection[i]['id']+'" selected>'+selection[i]['name']+'</option>';
 				} else {
 					content += '<option value="'+selection[i]['id']+'">'+selection[i]['name']+'</option>';

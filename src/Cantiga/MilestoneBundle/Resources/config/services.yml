@@ -8,6 +8,9 @@ services:
     cantiga.milestone.repo.status:
         class:     Cantiga\MilestoneBundle\Repository\MilestoneStatusRepository
         arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.time", "@cantiga.project.settings"]
+    cantiga.milestone.repo.summary:
+        class:     Cantiga\MilestoneBundle\Repository\MilestoneSummaryRepository
+        arguments: ["@database_connection", "@cantiga.transaction"]
     cantiga.milestone.workspace_listener:
         class: Cantiga\MilestoneBundle\EventListener\WorkspaceListener
         tags:

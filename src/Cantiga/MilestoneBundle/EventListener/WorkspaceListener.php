@@ -30,6 +30,7 @@ class WorkspaceListener
 	{
 		$workspace = $event->getWorkspace();
 		if ($workspace->getProject()->supportsModule('milestone')) {
+			$workspace->addWorkItem('summary', new WorkItem('project_milestone_summary', 'Milestones'));
 			$workspace->addWorkItem('data', new WorkItem('project_milestone_editor', 'Milestones'));
 			$workspace->addWorkItem('manage', new WorkItem('project_milestone_index', 'Milestones'));
 		}
@@ -39,6 +40,7 @@ class WorkspaceListener
 	{
 		$workspace = $event->getWorkspace();
 		if ($workspace->getProject()->supportsModule('milestone')) {
+			$workspace->addWorkItem('summary', new WorkItem('group_milestone_summary', 'Milestones'));
 			$workspace->addWorkItem('data', new WorkItem('group_milestone_editor', 'Milestones'));
 		}
 	}

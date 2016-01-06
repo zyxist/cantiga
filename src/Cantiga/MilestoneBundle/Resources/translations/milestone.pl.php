@@ -17,4 +17,8 @@ return [
 	'CancelMilestoneConfirmText' => 'Czy na pewno chcesz wycofać się i oznaczyć z powrotem ten kamień milowy jako nieukończony?',
 	'UpdateProgressText' => 'Zaktualizuj postęp prac nad tym kamieniem milowym.',
 	'Update progress' => 'Postęp (w procentach)',
+	'Place' => 'Miejsce',
+	'Completed milestones' => 'Ukończonych',
+	'View areas' => 'Zobacz rejony',
+	'View groups' => 'Zobacz grupy',
 ];
