@@ -14,9 +14,9 @@
 	{% for module, settings in projectSettings %}
 	<fieldset>
 		{% if module == 'core' %}
-		<legend>{{ 'Core settings' | trans }}</legend>
+		<legend>{{ 'Core settings' | trans([], 'settings') }}</legend>
 		{% else %}
-		<legend>{{ modules[module].name | trans }}</legend>
+		<legend>{{ modules[module].name | trans([], 'settings') }}</legend>
 		{% endif %}
 		{% for row in settings | batch(2) %}
 		<div class="row">
