@@ -24,6 +24,3 @@ ALTER TABLE  `cantiga_groups`
 
 ALTER TABLE  `cantiga_projects`
   ADD CONSTRAINT  `cantiga_projects_fk1` FOREIGN KEY (  `entityId` ) REFERENCES `cantiga_entities` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE ;
-
-ALTER TABLE  `cantiga_entities`
-  ADD CONSTRAINT  `cantiga_entities_fk1` FOREIGN KEY (  `removedById` ) REFERENCES `cantiga_users` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE ;
