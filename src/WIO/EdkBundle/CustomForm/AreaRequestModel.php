@@ -27,6 +27,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Constraints\Count;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Range;
@@ -87,6 +88,9 @@ class AreaRequestModel implements CustomFormModelInterface
 			new NotNull,
 			new Length(['min' => 10, 'max' => 400])
 		]));
+		$builder->add('stationaryCourse', new ChoiceType, ['label' => 'StationaryCoursePreferenceLabel', 'choices' => $this->stationaryCourseTypes(), 'multiple' => true, 'expanded' => true, 'constraints' => new Count(
+				['min' => 1, 'minMessage' => 'Please select at least one option']
+			)]);
 	}
 	
 	public function validateForm($data, ExecutionContextInterface $context)
@@ -117,6 +121,8 @@ class AreaRequestModel implements CustomFormModelInterface
 		$r->fields('routeLength', 'routeAscent');
 		$r->group('About you', 'AboutYouEwcText');
 		$r->fields('whyCreatingArea', 'intersectionPoint', 'leaderGoals', 'particiaptionDetails', 'projectMgmtExperiences', 'threeBiggestSuccesses');
+		$r->group('Stationary course');
+		$r->fields('stationaryCourse');
 		return $r;
 	}
 	
@@ -138,11 +144,34 @@ class AreaRequestModel implements CustomFormModelInterface
 		$s->present('particiaptionDetails', 'ParticipationDetailsFormLabel', 'string');
 		$s->present('projectMgmtExperiences', 'ProjectMgmtExperienceFormLabel', 'string');
 		$s->present('threeBiggestSuccesses', 'ThreeBiggestSuccessesFormLabel', 'string');
+		$s->present('stationaryCourse', 'StationaryCoursePreferenceLabel', 'callback', function($options) {
+			if (!is_array($options)) {
+				return '---';
+			}
+			$code = '<ul>';
+			$mapping = $this->stationaryCourseTypes();
+			foreach ($options as $option) {
+				$code .= '<li>'.$this->translator->trans($mapping[$option]).'</li>';
+			}
+			$code .= '</ul>';
+			return $code;			
+		});
 		return $s;
 	}
 	
 	public function ewcTypes()
 	{
 		return ['full' => 'Extreme Way of the Cross', 'inspired' => 'Inspired by Extreme Way of the Cross'];
+	}
+	
+	public function stationaryCourseTypes()
+	{
+		return [
+			1 => '2016-01-23',
+			2 => '2016-01-30',
+			3 => '2016-01-31',
+			4 => '2016-02-06',
+			5 => 'None of the above'
+		];
 	}
 }

@@ -58,6 +58,9 @@ return array(
 	'ParticipationDetailsFormLabel' => 'Czy organizowałeś lub brałeś udział w EDK? Jeśli tak, napisz na czym polegało Twoje zaangażowanie.',
 	'ProjectMgmtExperienceFormLabel' => 'Czy posiadasz doświadczenie w zarządzaniu projektem, zarządzaniu ludźmi bądź organizowaniu wydarzeń? Jeśli tak, opisz je krótko.',
 	'ThreeBiggestSuccessesFormLabel' => 'Przedstaw trzy Twoje największe sukcesy związane z Twoją pracą/hobby/działalnością społeczną, w tym jeden który wymagał od Ciebie dodatkowej determinacji i pokonywania wielu trudności.',	
+	'StationaryCoursePreferenceLabel' => 'Jestem zainteresowany terminem jednodniowego szkolenia EDK w dniu:',
 	'ProjectMgmtExperiencesHelp' => 'Popatrz na to szeroko, jako na doświadczenie z pracy, uczelni, szkoły, wolontariatu (max. 400 znaków)',
 	'Max400Chars' => 'Max. 400 znaków',
+	'None of the above' => 'Żaden z powyższych',
+	'Stationary course' => 'Szkolenie stacjonarne',
 );
