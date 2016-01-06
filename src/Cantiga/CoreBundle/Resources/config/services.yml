@@ -208,6 +208,16 @@ services:
             - { name: cantiga.extension, point: core.dashboard.project.right }
             - { name: cantiga.extension, point: core.dashboard.group.right }
             - { name: cantiga.extension, point: core.dashboard.area.right }
+    cantiga.core.dashboard.recent_comments:
+        class:     Cantiga\CoreBundle\Extension\DashboardChatExtension
+        arguments: ["@cantiga.core.repo.project_area_request"]
+        tags:
+            - { name: cantiga.extension, point: core.dashboard.project.central }
+    cantiga.core.dashboard.recent_requests:
+        class:     Cantiga\CoreBundle\Extension\DashboardRequestExtension
+        arguments: ["@cantiga.core.repo.project_area_request"]
+        tags:
+            - { name: cantiga.extension, point: core.dashboard.project.central }
     cantiga.core.dashboard.project_summary:
         class: Cantiga\CoreBundle\Extension\ProjectSummaryExtension
         arguments: ["@cantiga.core.repo.statistics"]

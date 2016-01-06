@@ -168,6 +168,54 @@ class ProjectAreaRequestRepository
 		}
 	}
 	
+	public function getRecentFeedbackActivity($count)
+	{
+		$this->transaction->requestTransaction();
+		try {
+			$items = $this->conn->fetchAll('SELECT r.`id` AS `requestId`, r.name AS `requestName`, u.`name` AS `username`, u.`avatar`, c.`createdAt`, c.`message` '
+				. 'FROM `'.CoreTables::AREA_REQUEST_COMMENT_TBL.'` c '
+				. 'INNER JOIN `'.CoreTables::AREA_REQUEST_TBL.'` r ON r.`id` = c.`requestId` '
+				. 'INNER JOIN `'.CoreTables::USER_TBL.'` u ON u.`id` = c.`userId` '
+				. 'WHERE r.`projectId` = :projectId '
+				. 'ORDER BY c.`createdAt` DESC LIMIT '.$count, [':projectId' => $this->project->getId()]);
+			foreach ($items as &$item) {
+				if (strlen($item['message']) > 60) {
+					$item['truncatedContent'] = substr($item['message'], 0, 60);
+					if (ord($item['truncatedContent']{59}) > 127) {
+						$item['truncatedContent'] = substr($item['message'], 0, 59);
+					}
+					$item['truncatedContent'] .= '...';
+				} else {
+					$item['truncatedContent'] = $item['message'];
+				}
+			}
+			return $items;
+		} catch (Exception $ex) {
+			$this->transaction->requestRollback();
+			throw $ex;
+		}
+	}
+	
+	public function getRecentRequests($count)
+	{
+		$this->transaction->requestTransaction();
+		try {
+			$items = $this->conn->fetchAll('SELECT r.`id`, r.`name`, u.`name` AS `username`, u.`avatar`, r.`status`, r.`createdAt` '
+				. 'FROM `'.CoreTables::AREA_REQUEST_TBL.'` r '
+				. 'INNER JOIN `'.CoreTables::USER_TBL.'` u ON u.`id` = r.`requestorId` '
+				. 'WHERE r.`projectId` = :projectId '
+				. 'ORDER BY r.`createdAt` DESC LIMIT '.$count, [':projectId' => $this->project->getId()]);
+			foreach ($items as &$item) {
+				$item['statusText'] = AreaRequest::statusText($item['status']);
+				$item['statusLabel'] = AreaRequest::statusLabel($item['status']);
+			}
+			return $items;
+		} catch (Exception $ex) {
+			$this->transaction->requestRollback();
+			throw $ex;
+		}
+	}
+	
 	public function update(AreaRequest $item)
 	{
 		$this->transaction->requestTransaction();

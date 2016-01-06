@@ -166,6 +166,10 @@ return array(
 	'Member since' => 'Data rejestracji',
 	'Last visit' => 'Ostatnia wizyta',
 	
+	// Project dashboard
+	'Recent chat activity in requests' => 'Najnowsze rozmowy w zgłoszeniach rejonów',
+	'Recent area requests' => 'Najnowsze zgłoszenia rejonów',
+	
 	// Project area groups
 	'Create a new group' => 'Utwórz nową grupę',
 	'Edit group: 0' => 'Edytuj grupę: 0',

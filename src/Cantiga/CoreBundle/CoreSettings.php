@@ -29,4 +29,6 @@ class CoreSettings
 	const AREA_REQUEST_INFO_TEXT = 'core_area_request_info_text';
 	const AREA_REQUEST_FORM = 'core_area_request_form';
 	const AREA_FORM = 'core_area_form';
+	const DASHBOARD_SHOW_CHAT = 'core_dashboard_show_chat';
+	const DASHOBARD_SHOW_REQUESTS = 'core_dashboard_show_requests';
 }
