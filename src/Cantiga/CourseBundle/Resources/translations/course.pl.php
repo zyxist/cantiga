@@ -20,4 +20,5 @@ return array(
 	'Passed courses' => 'Zdanych szkoleń',
 	'Failed courses' => 'Niezdanych szkoleń',
 	'Progress' => 'Postęp',
+	'Upload the test' => 'Załaduj pytania testowe',
 );

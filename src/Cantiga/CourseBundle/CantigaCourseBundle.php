@@ -18,6 +18,7 @@
  */
 namespace Cantiga\CourseBundle;
 
+use Cantiga\CoreBundle\Api\AppTexts;
 use Cantiga\CoreBundle\Api\Modules;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
