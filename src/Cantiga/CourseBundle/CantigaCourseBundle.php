@@ -26,5 +26,8 @@ class CantigaCourseBundle extends Bundle
 	public function boot()
 	{
 		Modules::registerModule('course', 'Course module');
+		
+		AppTexts::registerName(CourseTexts::AREA_COURSE_LIST_TEXT);
+		AppTexts::registerName(CourseTexts::GROUP_COURSE_LIST_TEXT);
 	}
 }
