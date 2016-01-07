@@ -639,6 +639,38 @@ class EdkRoute implements IdentifiableInterface, InsertableEntityInterface, Edit
 		$conn->delete(EdkTables::ROUTE_TBL, DataMappers::pick($this, ['id']));
 	}
 	
+	public function approve(Connection $conn)
+	{
+		$this->approved = (boolean) $conn->fetchColumn('SELECT `approved` FROM `'.EdkTables::ROUTE_TBL.'` WHERE `id` = :id', [':id' => $this->id]);
+		if (!$this->approved) {
+			$this->updatedAt = time();
+			$this->approved = true;
+
+			$conn->update(EdkTables::ROUTE_TBL,
+				['updatedAt' => $this->updatedAt, 'approved' => $this->approved],
+				['id' => $this->getId()]
+			);
+			return true;
+		}
+		return false;
+	}
+	
+	public function revoke(Connection $conn)
+	{
+		$this->approved = (boolean) $conn->fetchColumn('SELECT `approved` FROM `'.EdkTables::ROUTE_TBL.'` WHERE `id` = :id', [':id' => $this->id]);
+		if ($this->approved) {
+			$this->updatedAt = time();
+			$this->approved = false;
+
+			$conn->update(EdkTables::ROUTE_TBL,
+				['updatedAt' => $this->updatedAt, 'approved' => $this->approved],
+				['id' => $this->getId()]
+			);
+			return true;
+		}
+		return false;
+	}
+	
 	public function getComments(Connection $conn, TimeFormatterInterface $timeFormatter)
 	{
 		$stmt = $conn->prepare('SELECT m.`createdAt`, m.`message`, u.`id` AS `user_id`, u.`name`, u.`avatar` FROM `'.EdkTables::ROUTE_COMMENT_TBL.'` m '

@@ -39,6 +39,8 @@ class GroupRouteController extends GroupPageController
 	const AJAX_UPDATE_PAGE = 'group_route_ajax_update';
 	const AJAX_FEED_PAGE = 'group_route_ajax_feed';
 	const AJAX_POST_PAGE = 'group_route_ajax_post';
+	const APPROVE_PAGE = 'group_route_approve';
+	const REVOKE_PAGE = 'group_route_revoke';
 	
 	/**
 	 * @var CRUDInfo
@@ -147,5 +149,21 @@ class GroupRouteController extends GroupPageController
 	public function ajaxPostAction($id, Request $request)
 	{
 		return $this->performAjaxPost($id, $request);
+	}
+	
+	/**
+	 * @Route("/{id}/approve", name="group_route_approve")
+	 */
+	public function approveAction($id, Request $request)
+	{
+		return $this->performApprove($id, $request);
+	}
+	
+	/**
+	 * @Route("/{id}/revoke", name="group_route_revoke")
+	 */
+	public function revokeAction($id, Request $request)
+	{
+		return $this->performRevoke($id, $request);
 	}
 }

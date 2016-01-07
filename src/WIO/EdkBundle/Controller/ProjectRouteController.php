@@ -39,6 +39,8 @@ class ProjectRouteController extends ProjectPageController
 	const AJAX_UPDATE_PAGE = 'project_route_ajax_update';
 	const AJAX_FEED_PAGE = 'project_route_ajax_feed';
 	const AJAX_POST_PAGE = 'project_route_ajax_post';
+	const APPROVE_PAGE = 'project_route_approve';
+	const REVOKE_PAGE = 'project_route_revoke';
 	
 	/**
 	 * @var CRUDInfo
@@ -147,5 +149,21 @@ class ProjectRouteController extends ProjectPageController
 	public function ajaxPostAction($id, Request $request)
 	{
 		return $this->performAjaxPost($id, $request);
+	}
+	
+	/**
+	 * @Route("/{id}/approve", name="project_route_approve")
+	 */
+	public function approveAction($id, Request $request)
+	{
+		return $this->performApprove($id, $request);
+	}
+	
+	/**
+	 * @Route("/{id}/revoke", name="project_route_revoke")
+	 */
+	public function revokeAction($id, Request $request)
+	{
+		return $this->performRevoke($id, $request);
 	}
 }

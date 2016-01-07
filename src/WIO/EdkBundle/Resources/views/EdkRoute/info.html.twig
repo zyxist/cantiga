@@ -21,6 +21,17 @@
 					<div class="status-item status-danger">{{ 'Unapproved' | trans({}, 'edk') }}</div>
 					{% endif %}
 					<div class="status-actions">
+						{% if not isArea %}
+						{% if item.approved %}
+						<div class="btn-group">
+							<a class="btn btn-default btn-sm" href="{{ spath(revokePage, {'id': item.id}) }}">{{ 'Revoke' | trans([], 'general') }}</a>
+						</div>
+						{% else %}
+						<div class="btn-group">
+							<a class="btn btn-primary btn-sm" href="{{ spath(approvePage, {'id': item.id}) }}">{{ 'Approve' | trans([], 'general') }}</a>
+						</div>
+						{% endif %}
+						{% endif %}
 						<div class="btn-group">
 							<button type="button" class="btn btn-default btn-sm">{{ 'Manage' | trans([], 'general') }}</button>
 							<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">

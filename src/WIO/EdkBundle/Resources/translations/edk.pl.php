@@ -7,6 +7,7 @@ return [
 	'RouteSecurityNote' => 'Bezpieczeństwo',
 	'Click to edit' => 'Kliknij aby edytować',
 	
+	'EdkRoute: 0' => 'Trasa: 0',
 	'Route details: 0' => 'Szczegóły trasy: 0',
 	'Route information' => 'Informacje o trasie',
 	'Additional notes' => 'Dodatkowe uwagi',
@@ -59,4 +60,7 @@ return [
 	'Recent comments in routes' => 'Ostatnie komentarze do tras',
 	'Recently changed routes' => 'Ostatnio zmienione trasy',
 	'Routes' => 'Trasy',
+	
+	'Do you want to approve the route \'0\'?' => 'Czy chcesz zatwierdzić trasę "0"?',
+	'Do you want to revoke the route \'0\'?' => 'Czy chcesz wycofać zatwierdzenie dla trasy "0"?',
 ];

@@ -6,6 +6,7 @@ return [
 	'RouteSecurityNote' => 'Security',
 	'RouteAdditionalNoteInfoText' => 'Additional notes displayed in the route preview on the EDK.org.pl website.',
 	
+	'EdkRoute: 0' => 'Route: 0',
 	'FullRoute' => 'Extreme Way of the Cross route',
 	'RouteInspiredByEWC' => 'Route inspired by Extreme Way of the Cross',
 	

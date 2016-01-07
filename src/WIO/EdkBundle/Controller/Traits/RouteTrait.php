@@ -21,9 +21,11 @@ namespace WIO\EdkBundle\Controller\Traits;
 use Cantiga\CoreBundle\Api\Actions\EditAction;
 use Cantiga\CoreBundle\Api\Actions\InfoAction;
 use Cantiga\CoreBundle\Api\Actions\InsertAction;
+use Cantiga\CoreBundle\Api\Actions\QuestionHelper;
 use Cantiga\CoreBundle\Api\Actions\RemoveAction;
 use Cantiga\CoreBundle\Entity\Area;
 use Cantiga\CoreBundle\Entity\Message;
+use Cantiga\Metamodel\Exception\ModelException;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -73,6 +75,9 @@ trait RouteTrait
 			->set('ajaxChatFeedPage', self::AJAX_FEED_PAGE)
 			->set('ajaxChatPostPage', self::AJAX_POST_PAGE)
 			->set('isArea', $this->isArea());
+		if(!$this->isArea()) {
+			$action->set('approvePage', self::APPROVE_PAGE)->set('revokePage', self::REVOKE_PAGE);
+		}
 		return $action->run($this, $id);
 	}
 	 
@@ -149,6 +154,46 @@ trait RouteTrait
 			return new JsonResponse($repository->getComments($item));
 		} catch (Exception $ex) {
 			return new JsonResponse(['status' => 0]);
+		}
+	}
+
+	public function performApprove($id, Request $request)
+	{
+		try {
+			$repository = $this->get(self::REPOSITORY_NAME);
+			$item = $repository->getItem($id);
+			
+			$question = new QuestionHelper($this->trans('Do you want to approve the route \'0\'?', [$item->getName()], 'edk'));
+			$question->onSuccess(function() use($repository, $item) {
+				$repository->approve($item);
+			});
+			$question->respond(self::APPROVE_PAGE, ['id' => $item->getId(), 'slug' => $this->getSlug()]);
+			$question->path($this->crudInfo->getInfoPage(), ['id' => $item->getId(), 'slug' => $this->getSlug()]);
+			$question->title($this->trans('EdkRoute: 0', [$item->getName()]), $this->crudInfo->getPageSubtitle());
+			$this->breadcrumbs()->link($item->getName(), $this->crudInfo->getInfoPage(), ['id' => $item->getId(), 'slug' => $this->getSlug()]);
+			return $question->handleRequest($this, $request);
+		} catch(ModelException $exception) {
+			return $this->showPageWithError($exception->getMessage(), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
+		}
+	}
+	
+	public function performRevoke($id, Request $request)
+	{
+		try {
+			$repository = $this->get(self::REPOSITORY_NAME);
+			$item = $repository->getItem($id);
+			
+			$question = new QuestionHelper($this->trans('Do you want to revoke the route \'0\'?', [$item->getName()], 'edk'));
+			$question->onSuccess(function() use($repository, $item) {
+				$repository->revoke($item);
+			});
+			$question->respond(self::REVOKE_PAGE, ['id' => $item->getId(), 'slug' => $this->getSlug()]);
+			$question->path($this->crudInfo->getInfoPage(), ['id' => $item->getId(), 'slug' => $this->getSlug()]);
+			$question->title($this->trans('EdkRoute: 0', [$item->getName()]), $this->crudInfo->getPageSubtitle());
+			$this->breadcrumbs()->link($item->getName(), $this->crudInfo->getInfoPage(), ['id' => $item->getId(), 'slug' => $this->getSlug()]);
+			return $question->handleRequest($this, $request);
+		} catch(ModelException $exception) {
+			return $this->showPageWithError($exception->getMessage(), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
 		}
 	}
 	

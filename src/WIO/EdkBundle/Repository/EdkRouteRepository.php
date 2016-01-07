@@ -302,6 +302,32 @@ class EdkRouteRepository
 		}
 	}
 	
+	public function approve(EdkRoute $item)
+	{
+		$this->transaction->requestTransaction();
+		try {
+			if(!$item->approve($this->conn)) {
+				throw new ModelException('Cannot approve this this route.');
+			}
+		} catch (Exception $ex) {
+			$this->transaction->requestRollback();
+			throw $ex;
+		}
+	}
+	
+	public function revoke(EdkRoute $item)
+	{
+		$this->transaction->requestTransaction();
+		try {
+			if(!$item->revoke($this->conn)) {
+				throw new ModelException('Cannot revoke this this route.');
+			}
+		} catch (Exception $ex) {
+			$this->transaction->requestRollback();
+			throw $ex;
+		}
+	}
+	
 	private function createWhereClause()
 	{
 		if ($this->root instanceof Area) {
