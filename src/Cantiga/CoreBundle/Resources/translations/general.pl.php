@@ -24,6 +24,7 @@ return array(
 	'Cancel' => 'Anuluj',
 	'No' => 'Nie',
 	'Yes' => 'Tak',
+	'Download' => 'Ściągnij',
 	'Manage' => 'Zarządzaj',
 	'Members' => 'Członkowie',
 	'Not specified' => 'Nie ustawiono',

@@ -1,23 +1,47 @@
 imports:
     - { resource: ../../../../../app/config/parameters.yml }
 
-parameters:
-    edk_area_request_form.class: WIO\EdkBundle\CustomForm\AreaRequestModel
-    edk_area_form.class: WIO\EdkBundle\CustomForm\AreaModel
-    
 services:
+    wio.edk.repo.route:
+        class:     WIO\EdkBundle\Repository\EdkRouteRepository
+        arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.time", "@cantiga.files"]
     wio.edk.extension.area_information_map:
         class:     WIO\EdkBundle\Extension\AreaInformationMapExtension
         arguments: ["@translator"]
         tags:
             - { name: cantiga.extension, point: core.page.area.info, module: edk }
     wio.edk.form.area_request:
-        class:     "%edk_area_request_form.class%"
+        class:     WIO\EdkBundle\CustomForm\AreaRequestModel
         arguments: ["@translator"]
         tags:
             - { name: cantiga.extension, point: core.form.area-request, module: edk, description: "EDK area request form" }
     wio.edk.form.area:
-        class:     "%edk_area_form.class%"
+        class:     WIO\EdkBundle\CustomForm\AreaModel
         arguments: ["@translator"]
         tags:
             - { name: cantiga.extension, point: core.form.area, module: edk, description: "EDK area form" }
+    wio.edk.workspace_listener:
+        class: WIO\EdkBundle\EventListener\WorkspaceListener
+        tags:
+            - { name: kernel.event_listener, event: cantiga.workspace.project, method: onProjectWorkspace }
+            - { name: kernel.event_listener, event: cantiga.workspace.group, method: onGroupWorkspace }
+            - { name: kernel.event_listener, event: cantiga.workspace.area, method: onAreaWorkspace }
+    wio.edk.dashboard.recent_comments:
+        class:     WIO\EdkBundle\Extension\DashboardChatExtension
+        arguments: ["@wio.edk.repo.route"]
+        tags:
+            - { name: cantiga.extension, point: core.dashboard.area.central, module: edk }
+            - { name: cantiga.extension, point: core.dashboard.group.central, module: edk }
+    wio.edk.dashboard.recent_routes:
+        class:     WIO\EdkBundle\Extension\DashboardRouteExtension
+        arguments: ["@wio.edk.repo.route"]
+        tags:
+            - { name: cantiga.extension, point: core.dashboard.area.central, module: edk }
+            - { name: cantiga.extension, point: core.dashboard.group.central, module: edk }
+    wio.edk.dashboard.route_summary:
+        class: WIO\EdkBundle\Extension\DashboardRouteSummaryExtension
+        arguments: ["@wio.edk.repo.route"]
+        tags:
+            - { name: cantiga.extension, point: core.dashboard.project.top, module: edk }
+            - { name: cantiga.extension, point: core.dashboard.group.top, module: edk }
+            - { name: cantiga.extension, point: core.dashboard.area.top, module: edk }

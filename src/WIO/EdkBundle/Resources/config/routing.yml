@@ -1,0 +1,12 @@
+public_route_data_controller:                                                                                                                                                   
+    resource: "@WioEdkBundle/Controller/PublicRouteDataController.php"                                                                                                      
+    type:     annotation
+area_route_controller:                                                                                                                                                   
+    resource: "@WioEdkBundle/Controller/AreaRouteController.php"                                                                                                      
+    type:     annotation
+group_route_controller:                                                                                                                                                   
+    resource: "@WioEdkBundle/Controller/GroupRouteController.php"                                                                                                      
+    type:     annotation
+project_route_controller:                                                                                                                                                   
+    resource: "@WioEdkBundle/Controller/ProjectRouteController.php"                                                                                                      
+    type:     annotation

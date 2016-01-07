@@ -1,0 +1,16 @@
+<h4>{{ 'Recently changed routes' | trans([], 'edk') }}</h4>
+<div class="box">
+	<div class="box-body no-padding">
+		<table class="table table-hover">
+			<tbody>
+				{% for rr in routes %}
+				<tr>
+					<td><a href="{{ spath(routeInfoPath, {'id': rr.id} ) }}">{{ rr.name }}</a></td>
+					<td width="25%">{{ rr.areaName }}</td>
+					<td width="25%">{{ rr.updatedAt }}</td>
+				</tr>
+				{% endfor %}
+			</tbody>	
+		</table>
+	</div>	
+</div>

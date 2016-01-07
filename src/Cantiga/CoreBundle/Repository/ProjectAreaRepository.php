@@ -27,7 +27,6 @@ use Cantiga\CoreBundle\Event\AreaEvent;
 use Cantiga\CoreBundle\Event\CantigaEvents;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
-use Cantiga\Metamodel\Form\EntityTransformerInterface;
 use Cantiga\Metamodel\QueryBuilder;
 use Cantiga\Metamodel\QueryClause;
 use Cantiga\Metamodel\Transaction;
@@ -36,7 +35,7 @@ use PDO;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class ProjectAreaRepository implements EntityTransformerInterface
+class ProjectAreaRepository implements AreaRepositoryInterface
 {
 	/**
 	 * @var Connection 
@@ -193,7 +192,9 @@ class ProjectAreaRepository implements EntityTransformerInterface
 	public function getFormChoices()
 	{
 		$this->transaction->requestTransaction();
-		$stmt = $this->conn->query('SELECT `id`, `name` FROM `'.CoreTables::AREA_TBL.'` ORDER BY `name`');
+		$stmt = $this->conn->prepare('SELECT `id`, `name` FROM `'.CoreTables::AREA_TBL.'` WHERE `projectId` = :projectId ORDER BY `name`');
+		$stmt->bindValue(':projectId', $this->project->getId());
+		$stmt->execute();
 		$result = array();
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 			$result[$row['id']] = $row['name'];

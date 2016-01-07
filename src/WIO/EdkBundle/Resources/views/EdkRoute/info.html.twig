@@ -1,0 +1,229 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ pageTitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ pageSubtitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+<div class="row" id="ppp">
+	<div class="col-md-7 col-sm-6 col-xs-12">
+		<h4>{{ 'Route details: 0' | trans([item.name], 'edk') }}</h4>
+		<div class="box">
+			<div class="box-body box-status">
+				<div class="status-line">
+					{% if item.approved %}
+					<div class="status-item status-success">{{ 'Approved' | trans({}, 'edk') }}</div>
+					{% else %}
+					<div class="status-item status-danger">{{ 'Unapproved' | trans({}, 'edk') }}</div>
+					{% endif %}
+					<div class="status-actions">
+						<div class="btn-group">
+							<button type="button" class="btn btn-default btn-sm">{{ 'Manage' | trans([], 'general') }}</button>
+							<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+								<span class="caret"></span>
+								<span class="sr-only">{{ 'Toggle dropdown' | trans([], 'general') }}</span>
+							</button>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="{{ spath(editPage, {'id': item.id }) }}">{{ 'Edit' | trans({}, 'general') }}</a></li>
+								{% if item.canRemove() %}
+								<li><a href="{{ spath(removePage, {'id': item.id }) }}">{{ 'Remove' | trans({}, 'general') }}</a></li>
+								{% endif %}
+							</ul>
+						</div>
+						<a href="{{ spath(indexPage) }}" class="btn btn-default btn-sm">{{ 'Back' | trans([], 'general') }}</a>
+					</div>
+				</div>
+				<div class="status-info">
+					{% if not isArea %}
+					<div class="info-item">
+						<h4><i class="fa fa-flag-o"></i> {{ 'Area' | trans({}, 'edk') }}</h4>
+						<span class="value"><a href="#">{{ item.area.name }}</a></span>
+					</div>
+					{% endif %}
+					<div class="info-item">
+						<h4><i class="fa fa-adjust"></i> {{ 'Route type' | trans({}, 'edk') }}</h4>
+						{% if item.routeType == 0 %}
+						<span class="value">{{ 'FullRoute' | trans({}, 'edk') }}</span>
+						{% else %}
+						<span class="value">{{ 'RouteInspiredByEWC' | trans({}, 'edk') }}</span>	
+						{% endif %}
+					</div>
+					<div class="info-item">
+						<h4><i class="fa fa-clock-o"></i> {{ 'Created at' | trans({}, 'edk') }}</h4>
+						<span class="value">{{ format_time(TimeFormatter.FORMAT_DATE_LONG, item.createdAt) }} ({{ ago(item.createdAt) }})</span>
+					</div>
+					<div class="info-item">
+						<h4><i class="fa fa-wrench"></i> {{ 'Last update' | trans }}</h4>
+						<span class="value">{{ format_time(TimeFormatter.FORMAT_LONG, item.updatedAt) }} ({{ ago(item.updatedAt) }})</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="nav-tabs-custom">
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#route-info" aria-controls="route-info" role="tab" data-toggle="tab">{{ 'Route information' | trans({}, 'edk') }}</a></li>
+				<li><a href="#notes" aria-controls="notes" role="tab" data-toggle="tab">{{ 'Additional notes' | trans([], 'edk') }}</a></li>
+				<li><a href="#files" aria-controls="files" role="tab" data-toggle="tab">{{ 'Files' | trans([], 'edk') }}</a></li>
+				<li><a href="#map" aria-controls="map" role="tab" data-toggle="tab">{{ 'Map' | trans([], 'edk') }}</a></li>
+			</ul>
+			<div class="tab-content">
+				<div role="tabpanel" class="tab-pane active" id="route-info">
+					<table class="table table-hover">
+						<tbody>
+							<tr>
+								<td width="30%">{{ 'Route beginning' | trans({}, 'edk') }}</td>
+								<td>{{item.routeFrom}}</td>
+							</tr>
+							<tr>
+								<td width="30%">{{ 'Route end' | trans({}, 'edk') }}</td>
+								<td>{{item.routeTo}}</td>
+							</tr>
+							<tr>
+								<td width="30%">{{ 'Route length' | trans({}, 'edk') }}</td>
+								<td>{{item.routeLength}} km</td>
+							</tr>
+							<tr>
+								<td width="30%">{{ 'Route ascent' | trans({}, 'edk') }}</td>
+								<td>{{item.routeAscent}} m</td>
+							</tr>
+							<tr>
+								<td width="30%">{{ 'Route course' | trans({}, 'edk') }}</td>
+								<td>{{item.routeCourse}}</td>
+							</tr>
+							<tr>
+								<td width="30%">{{ 'Additional obstacles' | trans({}, 'edk') }}</td>
+								<td>{{item.routeObstacles}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div role="tabpanel" class="tab-pane" id="notes">
+					<p class="lead">{{ 'RouteAdditionalNoteInfoText' | trans([], 'edk') }}</p>
+					<div id="note-location"></div>
+					<div class="modal fade" id="note-modal">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal" aria-label="{{ 'Close' | trans([], 'general') }}"><span aria-hidden="true">&times;</span></button>
+									<h4 class="modal-title" id="note-name"></h4>
+								</div>
+								<div class="modal-body">
+									<form class="form">
+										<div class="form-group" id="note-content-editor"></div>
+									</form>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary" id="note-modal-save">{{ 'Save' | trans({}, 'general') }}</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div role="tabpanel" class="tab-pane" id="files">
+					<table class="table table-hover">
+						<tr>
+							<td>{{ 'RouteDescriptionFileUpload' | trans([], 'edk') }}</td>
+							{% if item.descriptionFile %}
+							<td><a href="{{ url('public_edk_download_description', {'slug': item.publicAccessSlug }) }}" class="btn btn-success">{{ 'Download' | trans([], 'general') }}</a></td>
+							{% else %}
+							<td>{{ 'Not uploaded' | trans([], 'edk') }}</td>
+							{% endif %}
+						</tr>
+						<tr>
+							<td>{{ 'RouteMapFileUpload' | trans([], 'edk') }}</td>
+							{% if item.mapFile %}
+							<td><a href="{{ url('public_edk_download_map', {'slug': item.publicAccessSlug }) }}" class="btn btn-success">{{ 'Download' | trans([], 'general') }}</a></td>
+							{% else %}
+							<td>{{ 'Not uploaded' | trans([], 'edk') }}</td>
+							{% endif %}
+						</tr>
+						<tr>
+							<td>{{ 'RouteGPSTraceFileUpload' | trans([], 'edk') }}</td>
+							{% if item.gpsTrackFile %}
+							<td><a href="{{ url('public_edk_download_gps', {'slug': item.publicAccessSlug }) }}" class="btn btn-success">{{ 'Download' | trans([], 'general') }}</a></td>
+							{% else %}
+							<td>{{ 'Not uploaded' | trans([], 'edk') }}</td>
+							{% endif %}
+						</tr>
+					</table>
+				</div>
+				<div role="tabpanel" class="tab-pane" id="map">
+					<div id="map-canvas" style="width: 500px; height: 400px" data-what="{{ url('public_edk_download_gps', {'slug': item.publicAccessSlug }) }}" data-where="{{ item.routeFrom }}"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-5 col-sm-6 col-xs-12">
+		{{ macro.chat_box('Comments' | trans, 'route-comments') }}
+	</div>
+</div>
+{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" href="{{ asset('css/bootstrap3-wysihtml5.min.css') }}" />
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script src="{{ asset('js/bootstrap3-wysihtml5.all.min.js') }}"></script>
+	<script src="{{ asset('js/description-editor.js') }}"></script>
+	<script src="{{ asset('js/chatbox.js') }}"></script>
+{% endblock %}
+
+{% block javascripts_inline %}
+	<script>
+		$('#notes').descriptions({
+			'tabActivator': 'a[data-toggle="tab"]',
+			'noteTab': 'notes',
+			'reloadActionUrl': '{{ spath(ajaxReloadPage, {'id': item.id }) }}',
+			'updateActionUrl': '{{ spath(ajaxUpdatePage, {'id': item.id }) }}',
+			'clickToEditText': '{{ 'Click to edit' | trans([], 'edk') }}'
+		});
+		$('#ppp').chatbox({
+			chatboxSummary: '#route-comments-summary',
+			chatboxBody: '#route-comments-body',
+			chatboxForm: '#route-comments-form',
+			chatboxFeedUrl: '{{ spath(ajaxChatFeedPage, {'id': item.id} ) }}',
+			chatboxPostUrl: '{{ spath(ajaxChatPostPage, {'id': item.id} ) }}',
+			avatars: '{{ asset('ph') }}'
+		});
+	</script>
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+	<script>
+	{% raw %}	
+    var geocoder;
+	var map;
+	function initialize() {
+		var myCenter = new google.maps.LatLng(50.06561980,19.946850);
+		var element = document.getElementById('map-canvas');
+		var map = new google.maps.Map(element, { zoom :11, center: myCenter });
+		var ctaLayer = new google.maps.KmlLayer({
+			url: element.getAttribute('data-what')
+		});
+		ctaLayer.setMap(map);
+	}
+	
+	function codeAddress() {
+		var address = document.getElementById('address').value;
+		geocoder.geocode({'address': $('map-canvas').data('where')}, function (results, status) {
+			if (status == google.maps.GeocoderStatus.OK) {
+				map.setCenter(results[0].geometry.location);
+				var marker = new google.maps.Marker({
+					map: map,
+					position: results[0].geometry.location
+				});
+			} else {
+				alert('Geocode was not successful for the following reason: ' + status);
+			}
+		});
+	}
+	
+	google.maps.event.addDomListener(window, 'load', initialize);
+	{% endraw %}
+	</script>
+{% endblock %}

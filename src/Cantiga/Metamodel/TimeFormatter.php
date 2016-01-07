@@ -86,7 +86,7 @@ class TimeFormatter implements TimeFormatterInterface
 			return $this->translator->trans('Just now', [], 'general');
 		}
 		
-		for($j = 0; $diff > self::$LENGTHS[$j] && $j < sizeof(self::$LENGTHS); $j++) {
+		for($j = 0; $j < sizeof(self::$LENGTHS) && $diff > self::$LENGTHS[$j]; $j++) {
 			$diff /= self::$LENGTHS[$j];
 		}
 		$diff = round($diff);

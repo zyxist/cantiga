@@ -1,0 +1,66 @@
+{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+
+{% block box_header %}
+	<h4>{{ 'Edit: 0' | trans([item.name], 'general') }}</h4>
+{% endblock %}
+
+{% block box_body %}
+
+	{{ form_start(form) }}
+	<fieldset>
+		<legend>{{ 'Basic information' | trans([], 'edk') }}</legend>
+		<div class="row">
+			<div class="col-md-6">
+				{{ form_row(form.name) }}
+			</div>
+			<div class="col-md-6">
+				{{ form_row(form.routeType) }}
+			</div>
+			<div class="col-md-6">
+				{{ form_row(form.routeFrom) }}
+			</div>
+			<div class="col-md-6">
+				{{ form_row(form.routeTo) }}
+			</div>
+		</div>
+	</fieldset>
+	<fieldset>
+		<legend>{{ 'Course and properties' | trans([], 'edk') }}</legend>
+		<div class="row">
+			<div class="col-md-6">
+				{{ form_row(form.routeCourse) }}
+			</div>
+			<div class="col-md-6">
+				{{ form_row(form.routeLength) }}
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-6">
+				{{ form_row(form.routeAscent) }}
+			</div>
+			<div class="col-md-6">
+				{{ form_row(form.routeObstacles) }}
+			</div>
+		</div>
+	</fieldset>
+	<fieldset>
+		<legend>{{ 'Files' | trans([], 'edk') }}</legend>
+		<p>{{ 'FileChangeInfoText' | trans([], 'edk') }}</p>
+		<div class="row">
+			<div class="col-md-4">
+				{{ form_row(form.descriptionFileUpload) }}
+			</div>
+			<div class="col-md-4">
+				{{ form_row(form.mapFileUpload) }}
+			</div>
+			<div class="col-md-4">
+				{{ form_row(form.gpsTrackFileUpload) }}
+			</div>
+		</div>
+	</fieldset>
+	{{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts_inline %}
+{{ use_icheck() }}
+{% endblock %}

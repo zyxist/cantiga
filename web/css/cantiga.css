@@ -356,3 +356,6 @@ div.progress-box div.progress-box-link {
   border-top: 1px solid #eeeeee;
   text-align: center;
 }
+.editable-content:hover {
+  background: #eeeeee;
+}

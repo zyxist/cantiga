@@ -41,6 +41,7 @@ parameters:
     cantiga.controller.exception.class: Cantiga\CoreBundle\Controller\ExceptionController
     area_per_status_stats.class: Cantiga\CoreBundle\Statistics\AreasPerStatusStats
     db_files: %kernel.root_dir%/../db/
+    targetFileDirectory: %kernel.root_dir%/../uploads/
     
 services:
     cantiga.extensions:
@@ -61,6 +62,9 @@ services:
     cantiga.time:
         class:     "%time_formatter.class%"
         arguments: ["%defaultTimezone%"]
+    cantiga.files:
+        class:     Cantiga\Metamodel\FileRepository
+        arguments: ["%targetFileDirectory%"]
     cantiga.roles:
         class:     "%role_resolver.class%"
     cantiga.project.settings.database_storage:

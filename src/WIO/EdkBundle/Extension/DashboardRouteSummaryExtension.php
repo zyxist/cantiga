@@ -16,38 +16,40 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-namespace Cantiga\CoreBundle\Extension;
+namespace WIO\EdkBundle\Extension;
 
 use Cantiga\CoreBundle\Api\Controller\CantigaController;
 use Cantiga\CoreBundle\Api\Workspace;
 use Cantiga\CoreBundle\Entity\Project;
-use Cantiga\CoreBundle\Repository\CoreStatisticsRepository;
+use Cantiga\CoreBundle\Extension\DashboardExtensionInterface;
 use Symfony\Component\HttpFoundation\Request;
+use WIO\EdkBundle\Repository\EdkRouteRepository;
 
 /**
- * Displays a short numerical summary of the project on the dashboard.
+ * Shows the number of routes in the given item.
  *
  * @author Tomasz Jędrzejewski
  */
-class ProjectSummaryExtension implements DashboardExtensionInterface
+class DashboardRouteSummaryExtension implements DashboardExtensionInterface
 {
 	/**
-	 * @var CoreStatisticsRepository 
+	 * @var EdkRouteRepository
 	 */
 	private $repository;
 	
-	public function __construct(CoreStatisticsRepository $repository)
+	public function __construct(EdkRouteRepository $repository)
 	{
 		$this->repository = $repository;
 	}
 	
 	public function getPriority()
 	{
-		return self::PRIORITY_HIGH + 3;
+		return self::PRIORITY_HIGH + 5;
 	}
 
 	public function render(CantigaController $controller, Request $request, Workspace $workspace, Project $project = null)
 	{
-		return $controller->renderView('CantigaCoreBundle:Project:project-summary.html.twig', ['data' => $this->repository->fetchProjectSummary($project)]);
+		$this->repository->setRootEntity($controller->getMembership()->getItem());
+		return $controller->renderView('WioEdkBundle:Extension:route-summary.html.twig', ['routeNum' => $this->repository->countRoutes()]);
 	}
 }

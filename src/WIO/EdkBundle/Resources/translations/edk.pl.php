@@ -1,0 +1,62 @@
+<?php
+return [
+	'Create a new route' => 'Utwórz nową trasę',
+	'RouteDescriptionNote' => 'Opis trasy',
+	'RouteRecommendationNote' => 'Rekomendacja',
+	'RouteArrivalNote' => 'Dojazd i powrót',
+	'RouteSecurityNote' => 'Bezpieczeństwo',
+	'Click to edit' => 'Kliknij aby edytować',
+	
+	'Route details: 0' => 'Szczegóły trasy: 0',
+	'Route information' => 'Informacje o trasie',
+	'Additional notes' => 'Dodatkowe uwagi',
+	'Map' => 'Mapa',
+	'RouteAdditionalNoteInfoText' => 'Dodatkowe uwagi wyświetlane w podglądzie trasy na stronie EDK.org.pl',
+	
+	'Basic information' => 'Podstawowe informacje',
+	'Course and properties' => 'Przebieg i parametry',
+	'Files' => 'Pliki',
+	
+	'Ascent' => 'Suma podejść',
+	'Length' => 'Długość',
+	'Beginning' => 'Początek',
+	'Ending' => 'Koniec',
+	'Name' => 'Nazwa',
+	'Route name' => 'Nazwa trasy',
+	'Route type' => 'Rodzaj trasy',
+	'Comments' => 'Komentarzy',
+	'Area' => 'Rejon',
+	'Created at' => 'Data dodania',
+	'Updated at' => 'Ostatnia zmiana',
+	'Approved' => 'Zatwierdzona',
+	'Unapproved' => 'Niezatwierdzona',
+	'Route beginning' => 'Początek trasy',
+	'Route end' => 'Koniec trasy',
+	'Route course' => 'Przebieg trasy',
+	'(settlement)' => 'Miejscowość',
+	'Route length (km)' => 'Długość trasy (km)',
+	'Route length' => 'Długość trasy',
+	'Route ascent' => 'Suma podejść',
+	'Route ascent (m)' => 'Suma podejść (m)',
+	'Additional obstacles' => 'Dodatkowe utrudnienia',
+	
+	'FullRoute' => 'Trasa EDK',
+	'RouteInspiredByEWC' => 'Droga na wzór EDK',
+	
+	'RouteCourseInfoText' => 'Wymień po kolei nazwy miejscowości i miejsc, przez które przebiega trasa.',
+	'RouteAscentInfoText' => 'Min. 500 metrów dla tras od 30 do 40 km długości.',
+	
+	'NewRouteFileInfoText' => 'Obowiązkowy jest ślad GPS trasy. Pozostałe pliki możesz dodać później, ale muszą się one pojawić przed początkiem EDK.',
+	'FileChangeInfoText' => 'Nie wybieraj nic, jeśli nie chcesz załadować nowszej wersji danego pliku.',
+	'RouteDescriptionFileUpload' => 'Plik z opisem trasy (PDF)',
+	'RouteMapFileUpload' => 'Plik z mapą trasy (PDF, JPG)',
+	'RouteGPSTraceFileUpload' => 'Plik ze śladem GPS trasy (KML)',
+	'RouteMapCopyrightInformationText' => 'Zabronione jest publikowanie map objętych prawami autorskimi!',
+	'Save' => 'Zapisz trasę',
+	
+	'Not uploaded' => 'Niewgrany',
+	
+	'Recent comments in routes' => 'Ostatnie komentarze do tras',
+	'Recently changed routes' => 'Ostatnio zmienione trasy',
+	'Routes' => 'Trasy',
+];

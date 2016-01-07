@@ -63,4 +63,9 @@ return array(
 	'Max400Chars' => 'Max. 400 znaków',
 	'None of the above' => 'Żaden z powyższych',
 	'Stationary course' => 'Szkolenie stacjonarne',
+	
+	'The route \'0\' has been created.' => 'Trasa "0" została utworzona.',
+	'The route \'0\' has been updated.' => 'Trasa "0" została zmieniona.',
+	'The route \'0\' has been removed.' => 'Trasa "0" została usunięta.',
+	'Do you really want to remove the route \'0\'?' => 'Czy naprawdę chcesz usunąć trasę "0"?',
 );
