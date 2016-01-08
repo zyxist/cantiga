@@ -83,7 +83,7 @@ class AreaModel implements CustomFormModelInterface
 		$builder->add('areaWebsite', new UrlType, array('label' => 'Area website', 'required' => false, 'constraints' => [
 			new Url(array('message' => $this->translator->trans('AreaWebsiteUrlInvalidText')))
 		]));
-		$builder->add('facebookProfile', new UrlType, array('label' => 'Facebook profile', 'required' => false, 'attr' => ['help_text' => 'FacebookProfileHintText'], 'constraints' => [
+		$builder->add('facebookProfile', new TextType, array('label' => 'Facebook profile', 'required' => false, 'attr' => ['help_text' => 'FacebookProfileHintText'], 'constraints' => [
 			new Regex(array('pattern' => '/^[A-Za-z0-9\\.\\-]+$/', 'htmlPattern' => '^[A-Za-z0-9\\.\\-]+$', 'message' => $this->translator->trans('AreaFacebookProfileInvalidText')))
 		]));
 	}
