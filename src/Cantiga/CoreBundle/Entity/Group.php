@@ -74,7 +74,7 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 	{
 		$data = $conn->fetchAssoc('SELECT g.*, '
 			. self::createEntityFieldList()
-			. 'FROM `'.CoreTables::GROUP_TBL.'` '
+			. 'FROM `'.CoreTables::GROUP_TBL.'` g '
 			. self::createEntityJoin('g')
 			. 'WHERE g.`id` = :id', [':id' => $id]);
 		if(null === $data) {
