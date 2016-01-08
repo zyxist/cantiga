@@ -442,7 +442,7 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		if (false === $ifExists) {
 			$conn->insert(CoreTables::AREA_MEMBER_TBL, ['areaId' => $this->getId(), 'userId' => $user->getId(), 'role' => $role->getId(), 'note' => $note]);
 			$conn->executeQuery('UPDATE `'.CoreTables::USER_TBL.'` SET `areaNum` = (`areaNum` + 1) WHERE `id` = :id', [':id' => $user->getId()]);
-			$conn->executeQuery('UPDATE `'.CoreTables::AREA_TBL.'` SET `memberNum` = (`memberNum` + 1) WHERE `id` = :id', [':id' => $this->getId()]);
+			$conn->executeQuery('UPDATE `'.CoreTables::AREA_TBL.'` SET `memberNum` = (SELECT COUNT(`userId`) FROM `'.CoreTables::AREA_MEMBER_TBL.'` WHERE `areaId` = :id) WHERE `id` = :id2', [':id' => $this->getId(), ':id2' => $this->getId()]);
 			return true;
 		}
 		return false;
@@ -457,7 +457,7 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 	{
 		if (1 == $conn->delete(CoreTables::AREA_MEMBER_TBL, ['areaId' => $this->getId(), 'userId' => $user->getId()])) {
 			$conn->executeQuery('UPDATE `'.CoreTables::USER_TBL.'` SET `areaNum` = (`areaNum` - 1) WHERE `id` = :id', [':id' => $user->getId()]);
-			$conn->executeQuery('UPDATE `'.CoreTables::AREA_TBL.'` SET `memberNum` = (`memberNum` - 1) WHERE `id` = :id', [':id' => $this->getId()]);
+			$conn->executeQuery('UPDATE `'.CoreTables::AREA_TBL.'` SET `memberNum` = (SELECT COUNT(`userId`) FROM `'.CoreTables::AREA_MEMBER_TBL.'` WHERE `areaId` = :id) WHERE `id` = :id2', [':id' => $this->getId(), ':id2' => $this->getId()]);
 			return true;
 		}
 		return false;
