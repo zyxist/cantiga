@@ -15,7 +15,9 @@
 		<div class="box">
 			<div class="box-body">
 				<p>{{ item.description }}</p>
-				{{ item.generatePresentationCode() | raw }}
+				<div class="embed-responsive embed-responsive-16by9">
+					{{ item.generatePresentationCode() | raw }}
+				</div>
 			</div>
 		</div>
 	</div>
