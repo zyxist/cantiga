@@ -75,7 +75,6 @@ class GroupAreaRepository implements AreaRepositoryInterface
 		$dt->id('id', 'i.id')
 			->searchableColumn('name', 'i.name')
 			->column('territory', 't.name')
-			->searchableColumn('groupName', 'i.groupName')
 			->searchableColumn('status', 's.id')
 			->column('memberNum', 'i.memberNum');
 		return $dt;
@@ -86,7 +85,6 @@ class GroupAreaRepository implements AreaRepositoryInterface
 		$qb = QueryBuilder::select()
 			->field('i.id', 'id')
 			->field('i.name', 'name')
-			->field('i.groupName', 'groupName')
 			->field('s.id', 'status')
 			->field('s.name', 'statusName')
 			->field('s.label', 'statusLabel')
@@ -146,8 +144,8 @@ class GroupAreaRepository implements AreaRepositoryInterface
 			. 'WHERE m.`areaId` = :areaId ORDER BY m.`role` DESC, u.`name`', [':areaId' => $area->getId()]);
 		
 		foreach ($items as &$item) {
-			$item['publicMail'] = (User::evaluateUserPrivacy($item['privShowPublicMail'], $this->project) ? $item['publicMail'] : '');
-			$item['telephone'] = (User::evaluateUserPrivacy($item['privShowTelephone'], $this->project) ? $item['telephone'] : '');
+			$item['publicMail'] = (User::evaluateUserPrivacy($item['privShowPublicMail'], $this->group) ? $item['publicMail'] : '');
+			$item['telephone'] = (User::evaluateUserPrivacy($item['privShowTelephone'], $this->group) ? $item['telephone'] : '');
 		}
 		return $items;
 	}

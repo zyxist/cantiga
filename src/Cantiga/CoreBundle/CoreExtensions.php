@@ -30,7 +30,7 @@ class CoreExtensions
 	const AREA_FORM = 'core.form.area';
 	const AREA_STATS = 'core.stats.area';
 	
-	const PROJECT_AREA_INFORMATION = 'core.page.area.info';
+	const AREA_INFORMATION = 'core.page.area.info';
 	const PROJECT_GROUP_INFORMATION = 'core.page.group.info';
 	
 	const USER_DASHBOARD_RIGHT = 'core.dashboard.user.right';

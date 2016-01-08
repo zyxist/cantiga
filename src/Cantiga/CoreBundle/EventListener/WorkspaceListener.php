@@ -175,11 +175,16 @@ class WorkspaceListener implements WorkspaceSourceInterface
 	public function onGroupWorkspace(WorkspaceEvent $event)
 	{
 		$workspace = $event->getWorkspace();
+		$project = $workspace->getProject();
+		
 		$workspace->addWorkgroup(new Workgroup('community', 'Community', 'users', 1));
 		$workspace->addWorkgroup(new Workgroup('summary', 'Summary', 'table', 2));
 		$workspace->addWorkgroup(new Workgroup('data', 'Data', 'database', 3));
 		
 		$workspace->addWorkItem('community', new WorkItem('group_memberlist_index', 'Member list'));
+		if ($project->getAreasAllowed()) {
+			$workspace->addWorkItem('data', new WorkItem('group_area_index', 'Areas'));
+		}
 	}
 	
 	public function onAreaWorkspace(WorkspaceEvent $event)

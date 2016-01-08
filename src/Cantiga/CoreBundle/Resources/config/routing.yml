@@ -80,6 +80,9 @@ _group_dashboard_controller:
 _group_memberlist_controller:
     resource: "@CantigaCoreBundle/Controller/GroupMemberListController.php"
     type:     annotation
+_group_area_controller:
+    resource: "@CantigaCoreBundle/Controller/GroupAreaController.php"
+    type:     annotation
     
 _project_dashboard_controller:
     resource: "@CantigaCoreBundle/Controller/ProjectDashboardController.php"

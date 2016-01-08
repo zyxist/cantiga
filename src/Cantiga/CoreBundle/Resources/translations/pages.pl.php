@@ -92,6 +92,7 @@ return array(
 	// Supplementary texts for group
 	'Group page' => 'Strona grupy',
 	'Group member profile' => 'Profil członka grupy',
+	'Manage the areas in this group' => 'Zarządzaj rejonami w tej grupie',
 	
 	// Supplementary texts for project
 	'Project page' => 'Strona projektu',

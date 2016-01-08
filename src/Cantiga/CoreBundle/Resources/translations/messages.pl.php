@@ -176,6 +176,7 @@ return array(
 	'Group details: 0' => 'Szczegóły grupy: 0',
 	
 	// Area profile editor
+	'The area profile \'0\' has been updated.' => 'Profil rejonu "0" został zmieniony.',
 	'AreaProfileSaved' => 'Profil Twojego rejonu został zapisany.',
 	
 	// Project settings
