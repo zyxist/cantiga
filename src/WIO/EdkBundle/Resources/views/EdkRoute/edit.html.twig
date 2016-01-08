@@ -22,6 +22,11 @@
 			<div class="col-md-6">
 				{{ form_row(form.routeTo) }}
 			</div>
+			{% if not isArea %}
+			<div class="col-md-6">
+				{{ form_row(form.area) }}
+			</div>
+			{% endif %}
 		</div>
 	</fieldset>
 	<fieldset>

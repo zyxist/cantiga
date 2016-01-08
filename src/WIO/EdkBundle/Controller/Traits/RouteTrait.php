@@ -24,7 +24,9 @@ use Cantiga\CoreBundle\Api\Actions\InsertAction;
 use Cantiga\CoreBundle\Api\Actions\QuestionHelper;
 use Cantiga\CoreBundle\Api\Actions\RemoveAction;
 use Cantiga\CoreBundle\Entity\Area;
+use Cantiga\CoreBundle\Entity\Group;
 use Cantiga\CoreBundle\Entity\Message;
+use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\Metamodel\Exception\ModelException;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -84,15 +86,17 @@ trait RouteTrait
 	protected function performInsert(Request $request)
 	{
 		$entity = new EdkRoute();		
-		$action = new InsertAction($this->crudInfo, $entity, new EdkRouteForm(EdkRouteForm::ADD));
+		$action = new InsertAction($this->crudInfo, $entity, new EdkRouteForm(EdkRouteForm::ADD, $this->findAreaRepository()));
 		$action->slug($this->getSlug());
+		$action->set('isArea', $this->isArea());
 		return $action->run($this, $request);
 	}
 
 	protected function performEdit($id, Request $request)
 	{
-		$action = new EditAction($this->crudInfo, new EdkRouteForm(EdkRouteForm::EDIT));
+		$action = new EditAction($this->crudInfo, new EdkRouteForm(EdkRouteForm::EDIT, $this->findAreaRepository()));
 		$action->slug($this->getSlug());
+		$action->set('isArea', $this->isArea());
 		return $action->run($this, $id, $request);
 	}
 	
@@ -200,5 +204,20 @@ trait RouteTrait
 	private function isArea()
 	{
 		return ($this->getMembership()->getItem() instanceof Area);
+	}
+	
+	private function findAreaRepository()
+	{
+		$item = $this->getMembership()->getItem();
+		if ($item instanceof Group) {
+			$repository = $this->get('cantiga.core.repo.group_area');
+			$repository->setGroup($item);
+			return $repository;
+		} elseif ($item instanceof Project) {
+			$repository = $this->get('cantiga.core.repo.project_area');
+			$repository->setActiveProject($item);
+			return $repository;
+		}
+		return null;
 	}
 }

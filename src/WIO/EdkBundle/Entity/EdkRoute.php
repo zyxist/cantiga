@@ -114,13 +114,18 @@ class EdkRoute implements IdentifiableInterface, InsertableEntityInterface, Edit
 				. 'INNER JOIN `'.CoreTables::AREA_TBL.'` a ON a.`id` = r.`areaId` '
 				. 'WHERE a.`projectId` = :projectId AND r.`id` = :id', [':id' => $id, ':projectId' => $root->getId()]);
 		}
-		
 		if (false === $data) {
 			return false;
 		}
 		$item = self::fromArray($data);
-		$item->area = $root;
-		
+		if ($root instanceof Area) {
+			$item->area = $root;
+		} elseif ($root instanceof Group) {
+			$item->area = Area::fetchByGroup($conn, $data['areaId'], $root);
+		} elseif ($root instanceof Project) {
+			$item->area = Area::fetchByProject($conn, $data['areaId'], $root);
+		}
+
 		$notes = $conn->fetchAll('SELECT * FROM `'.EdkTables::ROUTE_NOTE_TBL.'` WHERE `routeId` = :routeId', [':routeId' => $item->getId()]);
 		foreach ($notes as $note) {
 			$item->notes[$note['noteType']] = $note['content'];
