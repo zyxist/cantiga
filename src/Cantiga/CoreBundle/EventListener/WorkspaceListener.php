@@ -198,6 +198,7 @@ class WorkspaceListener implements WorkspaceSourceInterface
 		}
 		
 		$workspace->addWorkItem('community', new WorkItem('area_memberlist_index', 'Member list'));
+		$workspace->addWorkItem('community', new WorkItem('area_my_group', 'My group'));
 		$workspace->addWorkItem('area', new WorkItem('area_profile_editor', 'Profile editor'));
 		
 		$workspace->addWorkItem('manage', new WorkItem('area_membership_index', 'Area members'));

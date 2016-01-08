@@ -64,6 +64,9 @@ _user_place_controller:
 _area_dashboard_controller:
     resource: "@CantigaCoreBundle/Controller/AreaDashboardController.php"
     type:     annotation
+_area_group_controller:
+    resource: "@CantigaCoreBundle/Controller/AreaGroupController.php"
+    type:     annotation
 _area_memberlist_controller:
     resource: "@CantigaCoreBundle/Controller/AreaMemberListController.php"
     type:     annotation

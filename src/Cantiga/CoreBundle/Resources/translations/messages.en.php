@@ -26,6 +26,9 @@ return array(
 	'ConfirmationLinkChangePasswordSentText' => 'The confirmation link to change the password has been sent to your e-mail address. Please open the message and click on it without logging out from the application.',
 	'ConfirmationLinkChangeEmailSentText' => 'The confirmation link to change the e-mail has been sent to your old e-mail address. Please open the message and click on it without logging out from the application.',
 	
+	// Area group information
+	'AreaNotAssignedToGroupMsg' => 'This area is not assigned to any group yet. Once the assignment is done, you will find here the information about the group you are a member of.',
+	
 	// Area profile editor
 	'AreaProfileSaved' => 'The profile of your area has been saved.',
 	

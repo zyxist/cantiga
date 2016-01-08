@@ -1,0 +1,58 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ 'My group: 0' | trans([group.name], 'pages') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ 'Meet your group' | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+	<h4>{{ 'Members' | trans }}</h4>
+	<div class="row">
+	{% for member in members %}
+	<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+		<div class="box box-widget widget-user-2">
+            <!-- Add the bg color to the header using any of the bg-* classes -->
+            <div class="widget-user-header bg-primary">
+				<div class="widget-user-image">
+					<img class="img-circle" src="{{ asset(avatar(member)) }}" alt="av">
+				</div>
+				<!-- /.widget-user-image -->
+				<h3 class="widget-user-username">{{ member.name }}</h3>
+				<h5 class="widget-user-desc">{% if member.note %}{{ member.note }}{% else %}&nbsp;{% endif %}</h5>
+            </div>
+            <div class="box-footer no-padding">
+				<ul class="list-summary">
+					<li class="list-summary-item">{{ 'Location' | trans }} <span class="pull-right">{{ member.location }}</span></li>
+					{% if member.privShowPublicMail %}
+					<li class="list-summary-item">{{ 'E-mail' | trans }} <span class="pull-right"><a href="mailto:{{member.publicMail}}">{{member.publicMail}}</a></span></li>
+					{% endif %}
+					{% if member.privShowTelephone %}
+					<li class="list-summary-item">{{ 'Telephone' | trans }} <span class="pull-right">{{member.telephone}}</span></li>
+					{% endif %}
+					<li class="list-summary-item">{{ 'Last visit' | trans }} <span class="pull-right">{{ ago(member.lastVisit) }}</span></li>
+				</ul>
+            </div>
+		</div>
+	</div>
+	{% endfor %}
+	</div>
+	<h4>{{ 'Areas' | trans }}</h4>
+	<div class="row">
+	{% for area in areas %}
+		<div class="col-lg-2 col-md-4 col-xs-6">
+			<div class="small-box bg-purple">
+				<div class="inner">
+					<h3>{{ area.name }}</h3>
+					<p>{{ area.statusText | trans([], 'statuses') }}</p>
+				</div>
+				<div class="icon">
+					<i class="fa fa-flag"></i>
+				</div>
+			</div>
+		</div>
+	{% endfor %}
+	</div>
+{% endblock %}

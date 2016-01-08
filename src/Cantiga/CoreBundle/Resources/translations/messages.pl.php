@@ -175,6 +175,9 @@ return array(
 	'Edit group: 0' => 'Edytuj grupę: 0',
 	'Group details: 0' => 'Szczegóły grupy: 0',
 	
+	// Area group information
+	'AreaNotAssignedToGroupMsg' => 'Ten rejon nie jest jeszcze przydzielony do żadnej grupy. Kiedy zostanie przydzielony, znajdziesz tutaj wszystkie informacje o swojej grupie.',
+	
 	// Area profile editor
 	'The area profile \'0\' has been updated.' => 'Profil rejonu "0" został zmieniony.',
 	'AreaProfileSaved' => 'Profil Twojego rejonu został zapisany.',

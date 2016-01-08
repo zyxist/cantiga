@@ -39,6 +39,8 @@ return array(
 	
 	// Area workspace menu items
 	'Area' => 'Rejon',
+	'My group' => 'Moja grupa',
+	'My group: 0' => 'Moja grupa: 0',
 	'Profile editor' => 'Edytor profilu',
 	
 	// Project workspace menu items
@@ -86,6 +88,7 @@ return array(
 	
 	// Supplementary texts for area
 	'Area page' => 'Strona rejonu',
+	'Meet your group' => 'Poznaj swoją grupę',
 	'Edit the details of your area' => 'Edytuj informacje o swoim rejonie',
 	'Area member profile' => 'Profil członka rejonu',
 	

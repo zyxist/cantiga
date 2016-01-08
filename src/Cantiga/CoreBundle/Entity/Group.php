@@ -306,6 +306,51 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 		return array();
 	}
 	
+	/**
+	 * Displays the information about the group members for members of the given other entity.
+	 * 
+	 * @param Connection $conn
+	 * @param MembershipEntityInterface $entity Another entity that views the information about members.
+	 * @return array
+	 */
+	public function findMemberInformationForEntity(Connection $conn, MembershipEntityInterface $entity)
+	{
+		$stmt = $conn->prepare('SELECT u.id, u.name, u.avatar, u.lastVisit, p.location, p.telephone, p.publicMail, p.privShowTelephone, p.privShowPublicMail, m.note '
+			. 'FROM `'.CoreTables::USER_TBL.'` u '
+			. 'INNER JOIN `'.CoreTables::USER_PROFILE_TBL.'` p ON p.`userId` = u.`id` '
+			. 'INNER JOIN `'.CoreTables::GROUP_MEMBER_TBL.'` m ON m.`userId` = u.`id` '
+			. 'WHERE m.`groupId` = :groupId ORDER BY m.role DESC, u.name');
+		$stmt->bindValue(':groupId', $this->getId());
+		$stmt->execute();
+		$result = array();
+		
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			$row['privShowTelephone'] = User::evaluateUserPrivacy($row['privShowTelephone'], $entity);
+			$row['privShowPublicMail'] = User::evaluateUserPrivacy($row['privShowPublicMail'], $entity);
+			
+			$result[] = $row;
+		}
+		$stmt->closeCursor();
+		return $result;
+	}
+	
+	public function findAreaSummary(Connection $conn)
+	{
+		$stmt = $conn->prepare('SELECT a.id, a.name, s.name AS `statusText` '
+			. 'FROM `'.CoreTables::AREA_TBL.'` a '
+			. 'INNER JOIN `'.CoreTables::AREA_STATUS_TBL.'` s ON s.`id` = a.`statusId` '
+			. 'WHERE a.`groupId` = :groupId ORDER BY a.name');
+		$stmt->bindValue(':groupId', $this->getId());
+		$stmt->execute();
+		$result = array();
+		
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			$result[] = $row;
+		}
+		$stmt->closeCursor();
+		return $result;
+	}
+	
 	public function findMembers(Connection $conn, MembershipRoleResolver $roleResolver)
 	{
 		$stmt = $conn->prepare('SELECT u.id, u.name, p.role, p.note FROM `'.CoreTables::USER_TBL.'` u '
