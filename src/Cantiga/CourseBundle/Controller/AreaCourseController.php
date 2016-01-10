@@ -125,7 +125,7 @@ class AreaCourseController extends AreaPageController
 				$testTrial = $item->getTest()->constructTestTrial($minQuestionNum);
 				$this->get('session')->set('trial', $testTrial);
 			}
-			$form = $testTrial->generateTestForm($this->createFormBuilder());
+			$form = $testTrial->generateTestForm($this->createFormBuilder(), $this->getTranslator());
 			$form->handleRequest($request);
 			
 			if($form->isValid()) {

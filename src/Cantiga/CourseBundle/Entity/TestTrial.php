@@ -49,14 +49,15 @@ class TestTrial implements Serializable
 	 * Generates a form with test questions.
 	 * 
 	 * @param FormBuilderInterface $fbi Controller-provided form builder
+	 * @param TranslatorInterface $translator Translator for static labels
 	 * @return The form
 	 */
-	public function generateTestForm(FormBuilderInterface $fbi)
+	public function generateTestForm(FormBuilderInterface $fbi, \Symfony\Component\Translation\TranslatorInterface $translator)
 	{
 		foreach($this->questions as $idx => $question) {
 			$question->generateFormField($fbi, $idx);
 		}
-		$fbi->add('save', 'submit', array('label' => 'Ready'));
+		$fbi->add('save', 'submit', array('label' => $translator->trans('Ready', [], 'course')));
 		return $fbi->getForm();
 	}
 	

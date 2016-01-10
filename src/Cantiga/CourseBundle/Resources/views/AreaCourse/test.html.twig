@@ -9,23 +9,27 @@
 	{{ pageSubtitle | trans({}, 'pages') }}
 {% endblock %}
 
-{% block page_content %}	
-	<h4>Test: {{ item.name }}</h4>
-	
-	<p class="text-danger">Nie zamykaj, ani nie odświeżaj tej strony bez kliknięcia "Gotowe"! Uniemożliwi to ukończenie testu i zablokuje kolejne próby na 24 godziny!</p>
-	
-	{{ form_start(form) }}
-	<div class="row">
-		<div class="col-lg-12">
-			<p class="lead">Pozostały czas: <span id="test-timer" data-time-min="{{testTime}}">wartość</span></p>
+{% block page_content %}
+	<div class="box">
+		<div class="box-body">
+			<h4>{{ 'Test: 0' | trans([ item.name ], 'course') }}</h4>
+
+			<p class="text-danger">{{ 'CloseRefreshWarningText' | trans([], 'course') }}</p>
+
+			{{ form_start(form) }}
+			<div class="row">
+				<div class="col-lg-12">
+					<p class="lead">{{'Remaining time' | trans([], 'course') }}: <span id="test-timer" data-time-min="{{testTime}}">value</span></p>
+				</div>
+				{% for fieldName in fieldNames %}
+				<div class="col-md-6 col-sm-12">
+					{{ form_row(form.offsetGet(fieldName)) }}
+				</div>
+				{% endfor %}
+			</div>
+			{{ form_end(form) }}
 		</div>
-		{% for fieldName in fieldNames %}
-		<div class="col-md-6 col-sm-12">
-			{{ form_row(form.offsetGet(fieldName)) }}
-		</div>
-		{% endfor %}
 	</div>
-	{{ form_end(form) }}
 {% endblock %}
 
 {% block javascripts %}

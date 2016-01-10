@@ -4,6 +4,7 @@ return array(
 	'Failed' => 'Niezdany',	
 	'Not started' => 'Niezaczęty',
 	'Test' => 'Test',
+	'Test: 0' => 'Test: 0',
 	'NobodyHasStartedTheTestText' => 'Nikt z Twojego rejonu nie podjął jeszcze próby ukończenia szkolenia. Uznajemy, że rejon ukończył szkolenie, gdy przynajmniej jeden członek rejonu zakończył je z pozytywnym wynikiem.',
 	'AreaResultInfoText' => 'Uznajemy, że rejon ukończył szkolenie, gdy przynajmniej jeden członek rejonu zakończył je z pozytywnym wynikiem.',
 	'Course status' => 'Status szkolenia',
@@ -21,4 +22,8 @@ return array(
 	'Failed courses' => 'Niezdanych szkoleń',
 	'Progress' => 'Postęp',
 	'Upload the test' => 'Załaduj pytania testowe',
+	
+	'Ready' => 'Gotowe',
+	'CloseRefreshWarningText' => 'Nie zamykaj, ani nie odświeżaj tej strony bez kliknięcia "Gotowe"! Uniemożliwi to ukończenie testu i zablokuje kolejne próby na 24 godziny!',
+	'Remaining time' => 'Pozostały czas',
 );
