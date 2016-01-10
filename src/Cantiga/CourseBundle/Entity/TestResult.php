@@ -125,6 +125,7 @@ class TestResult extends AbstractTestResult {
 	 * @param Connection $conn
 	 * @param Area $area Area the user taking the trial is a member of
 	 * @param TestTrial $trial
+	 * @return CourseProgress|boolean
 	 * @throws Exception
 	 */
 	public function completeTrial(Connection $conn, Area $area, TestTrial $trial)
@@ -143,7 +144,7 @@ class TestResult extends AbstractTestResult {
 		$this->passedQuestions = $trial->countPassedQuestions();
 		$this->completedAt = time();
 		$this->save($conn);
-		$this->tryRecordingAreaResult($conn, $area, $trial);
+		return $this->tryRecordingAreaResult($conn, $area, $trial);
 	}
 	
 	protected function refresh(Connection $conn)
@@ -201,6 +202,7 @@ class TestResult extends AbstractTestResult {
 			]);
 			$progress = CourseProgress::fetchByArea($conn, $area);
 			$progress->updateResults($conn, $areaResult, $trial);
+			return $progress;
 		} elseif ($areaResult->result == Question::RESULT_INVALID) {
 			$conn->update(CourseTables::COURSE_AREA_RESULT_TBL, [
 				'areaId' => $area->getId(),
@@ -212,7 +214,9 @@ class TestResult extends AbstractTestResult {
 			]);
 			$progress = CourseProgress::fetchByArea($conn, $area);
 			$progress->updateResults($conn, $areaResult, $trial);
+			return $progress;
 		}
+		return true;
 	}
 	
 	public static function processResults(array &$array, $prefix = '')

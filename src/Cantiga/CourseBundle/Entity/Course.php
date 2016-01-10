@@ -319,6 +319,7 @@ class Course implements InsertableEntityInterface, EditableEntityInterface, Remo
 	 * @param Connection $conn Database connection
 	 * @param Area $area The area which finishes the course.
 	 * @param User $user The user who completes the course.
+	 * @return CourseProgress|boolean
 	 */
 	public function confirmGoodFaithCompletion(Connection $conn, Area $area, User $user)
 	{
@@ -347,7 +348,9 @@ class Course implements InsertableEntityInterface, EditableEntityInterface, Remo
 				]);
 				$progress = CourseProgress::fetchByArea($conn, $area);
 				$progress->updateGoodFaithCompletion($conn);
+				return $progress;
 			}
+			return true;
 		} catch(UniqueConstraintViolationException $exception) {
 			throw new ModelException('Cannot complete a completed test!');
 		}

@@ -7,7 +7,7 @@ services:
         arguments: ["@database_connection", "@cantiga.transaction"]
     cantiga.course.repo.area_course:
         class:     Cantiga\CourseBundle\Repository\AreaCourseRepository
-        arguments: ["@database_connection", "@cantiga.transaction"]
+        arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher"]
     cantiga.course.repo.area_summary:
         class:     Cantiga\CourseBundle\Repository\AreaCourseSummaryRepository
         arguments: ["@database_connection", "@cantiga.transaction"]

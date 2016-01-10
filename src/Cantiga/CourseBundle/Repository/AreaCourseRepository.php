@@ -28,7 +28,11 @@ use Cantiga\CourseBundle\Entity\TestResult;
 use Cantiga\CourseBundle\Entity\TestTrial;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Transaction;
+use Cantiga\MilestoneBundle\Entity\NewMilestoneStatus;
+use Cantiga\MilestoneBundle\Event\ActivationEvent;
+use Cantiga\MilestoneBundle\MilestoneEvents;
 use Doctrine\DBAL\Connection;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Manages the area-related activities around courses, especially completing them.
@@ -46,14 +50,19 @@ class AreaCourseRepository
 	 */
 	private $transaction;
 	/**
+	 * @var EventDispatcherInterface
+	 */
+	private $eventDispatcher;
+	/**
 	 * @var Area
 	 */
 	private $area;
 	
-	public function __construct(Connection $conn, Transaction $transaction)
+	public function __construct(Connection $conn, Transaction $transaction, EventDispatcherInterface $eventDispatcher)
 	{
 		$this->conn = $conn;
 		$this->transaction = $transaction;
+		$this->eventDispatcher = $eventDispatcher;
 	}
 	
 	public function setArea(Area $area)
@@ -112,7 +121,8 @@ class AreaCourseRepository
 	{
 		$this->transaction->requestTransaction();
 		try {
-			$result->completeTrial($this->conn, $area, $trial);
+			$output = $result->completeTrial($this->conn, $area, $trial);
+			$this->spawnActivationEvent($area, $output);
 		} catch (Exception $ex) {
 			$this->transaction->requestRollback();
 			throw $ex;
@@ -123,7 +133,8 @@ class AreaCourseRepository
 	{
 		$this->transaction->requestTransaction();
 		try {
-			$course->confirmGoodFaithCompletion($this->conn, $area, $user);
+			$output = $course->confirmGoodFaithCompletion($this->conn, $area, $user);
+			$this->spawnActivationEvent($area, $output);
 		} catch (Exception $ex) {
 			$this->transaction->requestRollback();
 			throw $ex;
@@ -133,5 +144,18 @@ class AreaCourseRepository
 	public function findProgress()
 	{
 		return CourseProgress::fetchByArea($this->conn, $this->area);
+	}
+	
+	private function spawnActivationEvent(Area $area, $output)
+	{
+		if ($output instanceof CourseProgress) {
+			$this->eventDispatcher->dispatch(MilestoneEvents::ACTIVATION_EVENT, new ActivationEvent($area->getProject(), $area->getEntity(), 'course.completed', function() use($output) {
+				if ($output->getMandatoryCourseNum() == 0) {
+					return NewMilestoneStatus::create(100);
+				} else {
+					return NewMilestoneStatus::create((int)($output->getPassedCourseNum() / $output->getMandatoryCourseNum() * 100));
+				}
+			}));
+		}
 	}
 }

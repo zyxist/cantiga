@@ -20,6 +20,7 @@ namespace Cantiga\CourseBundle;
 
 use Cantiga\CoreBundle\Api\AppTexts;
 use Cantiga\CoreBundle\Api\Modules;
+use Cantiga\MilestoneBundle\Api\Activators;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class CantigaCourseBundle extends Bundle
@@ -30,5 +31,7 @@ class CantigaCourseBundle extends Bundle
 		
 		AppTexts::registerName(CourseTexts::AREA_COURSE_LIST_TEXT);
 		AppTexts::registerName(CourseTexts::GROUP_COURSE_LIST_TEXT);
+		
+		Activators::registerActivator('course.completed');
 	}
 }
