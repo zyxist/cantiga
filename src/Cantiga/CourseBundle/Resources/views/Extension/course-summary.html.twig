@@ -1,0 +1,14 @@
+			{% if progress %}
+			<div class="col-lg-2 col-md-4 col-xs-6">
+				<div class="small-box bg-green">
+					<div class="inner">
+						<h3>{{ progress.passedCourseNum }}/{{ progress.mandatoryCourseNum }}</h3>
+
+						<p>{{ 'Completed courses' | trans([], 'course') }}</p>
+					</div>
+					<div class="icon">
+						<i class="fa fa-book"></i>
+					</div>
+				</div>
+			</div>
+			{% endif %}

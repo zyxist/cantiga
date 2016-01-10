@@ -53,6 +53,21 @@ class CourseProgress implements InsertableEntityInterface
 	{
 		$this->area = $area;
 	}
+	
+	public function getMandatoryCourseNum()
+	{
+		return $this->mandatoryCourseNum;
+	}
+
+	public function getPassedCourseNum()
+	{
+		return $this->passedCourseNum;
+	}
+
+	public function getFailedCourseNum()
+	{
+		return $this->failedCourseNum;
+	}
 
 	public function insert(Connection $conn)
 	{

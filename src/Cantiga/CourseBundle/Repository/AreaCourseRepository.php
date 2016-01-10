@@ -23,6 +23,7 @@ use Cantiga\CoreBundle\Entity\User;
 use Cantiga\CourseBundle\CourseTables;
 use Cantiga\CourseBundle\Entity\AreaCourseResult;
 use Cantiga\CourseBundle\Entity\Course;
+use Cantiga\CourseBundle\Entity\CourseProgress;
 use Cantiga\CourseBundle\Entity\TestResult;
 use Cantiga\CourseBundle\Entity\TestTrial;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
@@ -127,5 +128,10 @@ class AreaCourseRepository
 			$this->transaction->requestRollback();
 			throw $ex;
 		}
+	}
+	
+	public function findProgress()
+	{
+		return CourseProgress::fetchByArea($this->conn, $this->area);
 	}
 }
