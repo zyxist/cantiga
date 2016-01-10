@@ -25,13 +25,18 @@ use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\Metamodel\Capabilities\MembershipEntityInterface;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
+use Cantiga\Metamodel\Exception\ModelException;
 use Cantiga\Metamodel\FileRepositoryInterface;
 use Cantiga\Metamodel\QueryBuilder;
 use Cantiga\Metamodel\QueryClause;
 use Cantiga\Metamodel\TimeFormatterInterface;
 use Cantiga\Metamodel\Transaction;
+use Cantiga\MilestoneBundle\Entity\NewMilestoneStatus;
+use Cantiga\MilestoneBundle\Event\ActivationEvent;
+use Cantiga\MilestoneBundle\MilestoneEvents;
 use Doctrine\DBAL\Connection;
 use Exception;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use WIO\EdkBundle\EdkTables;
 use WIO\EdkBundle\Entity\EdkRoute;
 
@@ -49,6 +54,10 @@ class EdkRouteRepository
 	 */
 	private $transaction;
 	/**
+	 * @var EventDispatcherInterface
+	 */
+	private $eventDispatcher;
+	/**
 	 * @var TimeFormatterInterface
 	 */
 	private $timeFormatter;
@@ -61,10 +70,11 @@ class EdkRouteRepository
 	 */
 	private $root;
 	
-	public function __construct(Connection $conn, Transaction $transaction, TimeFormatterInterface $timeFormatter, FileRepositoryInterface $fileRepository)
+	public function __construct(Connection $conn, Transaction $transaction, EventDispatcherInterface $eventDispatcher, TimeFormatterInterface $timeFormatter, FileRepositoryInterface $fileRepository)
 	{
 		$this->conn = $conn;
 		$this->transaction = $transaction;
+		$this->eventDispatcher = $eventDispatcher;
 		$this->timeFormatter = $timeFormatter;
 		$this->fileRepository = $fileRepository;
 	}
@@ -309,6 +319,12 @@ class EdkRouteRepository
 			if(!$item->approve($this->conn)) {
 				throw new ModelException('Cannot approve this this route.');
 			}
+			$this->eventDispatcher->dispatch(MilestoneEvents::ACTIVATION_EVENT, new ActivationEvent(
+				$item->getArea()->getProject(),
+				$item->getArea()->getEntity(),
+				'route.approved',
+				$this->getActivationFunc($item)
+			));
 		} catch (Exception $ex) {
 			$this->transaction->requestRollback();
 			throw $ex;
@@ -322,10 +338,25 @@ class EdkRouteRepository
 			if(!$item->revoke($this->conn)) {
 				throw new ModelException('Cannot revoke this this route.');
 			}
+			$this->eventDispatcher->dispatch(MilestoneEvents::ACTIVATION_EVENT, new ActivationEvent(
+				$item->getArea()->getProject(),
+				$item->getArea()->getEntity(),
+				'route.approved',
+				$this->getActivationFunc($item)
+			));
 		} catch (Exception $ex) {
 			$this->transaction->requestRollback();
 			throw $ex;
 		}
+	}
+	
+	private function getActivationFunc(EdkRoute $route)
+	{
+		$conn = $this->conn;
+		return function() use($conn, $route) {
+			$count = $conn->fetchColumn('SELECT COUNT(`id`) FROM `'.EdkTables::ROUTE_TBL.'` WHERE `approved` = 1 AND `routeType` = '.EdkRoute::TYPE_FULL.' AND `areaId` = :areaId', [':areaId' => $route->getArea()->getId()]);
+			return NewMilestoneStatus::create($count > 0);
+		};
 	}
 	
 	private function createWhereClause()

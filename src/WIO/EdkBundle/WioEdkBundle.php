@@ -17,10 +17,11 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 namespace WIO\EdkBundle;
+
 use Cantiga\CoreBundle\Api\CustomForms;
 use Cantiga\CoreBundle\Api\Modules;
+use Cantiga\MilestoneBundle\Api\Activators;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
-
 
 class WioEdkBundle extends Bundle
 {
@@ -29,5 +30,7 @@ class WioEdkBundle extends Bundle
 		Modules::registerModule('edk', 'EDK module');
 		CustomForms::registerService('edk:area-request-form', 'wio.edk.form.area_request');
 		CustomForms::registerService('edk:area-form', 'wio.edk.form.area');
+		
+		Activators::registerActivator('route.approved');
 	}
 }

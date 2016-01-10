@@ -4,7 +4,7 @@ imports:
 services:
     wio.edk.repo.route:
         class:     WIO\EdkBundle\Repository\EdkRouteRepository
-        arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.time", "@cantiga.files"]
+        arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher", "@cantiga.time", "@cantiga.files"]
     wio.edk.extension.area_information_map:
         class:     WIO\EdkBundle\Extension\AreaInformationMapExtension
         arguments: ["@translator"]
