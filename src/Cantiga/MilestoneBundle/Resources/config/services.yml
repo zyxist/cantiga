@@ -31,3 +31,4 @@ services:
             - { name: kernel.event_listener, event: cantiga.project.created, method: onProjectCreated }
             - { name: kernel.event_listener, event: cantiga.group.created, method: onGroupCreated }
             - { name: kernel.event_listener, event: cantiga.area.created, method: onAreaCreated }
+            - { name: kernel.event_listener, event: cantiga.milestone.activation, method: onActivated }

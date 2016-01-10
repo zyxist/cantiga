@@ -18,10 +18,10 @@
  */
 namespace Cantiga\MilestoneBundle;
 
-class MilestoneTables
+/**
+ * @author Tomasz Jędrzejewski
+ */
+class MilestoneEvents
 {
-	const MILESTONE_TBL = 'cantiga_milestones';
-	const MILESTONE_PROGRESS_TBL = 'cantiga_milestone_progress';
-	const MILESTONE_STATUS_TBL = 'cantiga_milestone_status';
-	const MILESTONE_RULE_TBL = 'cantiga_milestone_rules';
+	const ACTIVATION_EVENT = 'cantiga.milestone.activation';
 }

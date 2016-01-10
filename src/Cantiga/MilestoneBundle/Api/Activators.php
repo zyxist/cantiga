@@ -16,12 +16,26 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-namespace Cantiga\MilestoneBundle;
+namespace Cantiga\MilestoneBundle\Api;
 
-class MilestoneTables
+/**
+ * Allows different bundles to register activators for milestones, so that the user
+ * can create the rules for automatic change of the milestone status, when certain
+ * events happen in the system.
+ *
+ * @author Tomasz Jędrzejewski
+ */
+class Activators
 {
-	const MILESTONE_TBL = 'cantiga_milestones';
-	const MILESTONE_PROGRESS_TBL = 'cantiga_milestone_progress';
-	const MILESTONE_STATUS_TBL = 'cantiga_milestone_status';
-	const MILESTONE_RULE_TBL = 'cantiga_milestone_rules';
+	private static $names = array();
+	
+	public static function registerActivator($name)
+	{
+		self::$names[$name] = $name;
+	}
+	
+	public static function getActivators()
+	{
+		return self::$names;
+	}
 }

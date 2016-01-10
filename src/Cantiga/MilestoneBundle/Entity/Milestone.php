@@ -26,6 +26,8 @@ use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
 use Cantiga\Metamodel\Capabilities\InsertableEntityInterface;
 use Cantiga\Metamodel\Capabilities\RemovableEntityInterface;
 use Cantiga\Metamodel\DataMappers;
+use Cantiga\Metamodel\Exception\ItemNotFoundException;
+use Cantiga\Metamodel\Exception\ModelException;
 use Cantiga\Metamodel\TimeFormatterInterface;
 use Cantiga\MilestoneBundle\MilestoneTables;
 use Doctrine\DBAL\Connection;
@@ -38,6 +40,9 @@ class Milestone implements IdentifiableInterface, InsertableEntityInterface, Edi
 {
 	const TYPE_BINARY = 0;
 	const TYPE_PERCENT = 1;
+	
+	const RETURN_SUMMARY = true;
+	const RETURN_BOOLEAN = false;
 	
 	private $id;
 	private $project;
@@ -205,6 +210,20 @@ class Milestone implements IdentifiableInterface, InsertableEntityInterface, Edi
 		$this->deadline = $deadline;
 		return $this;
 	}
+	
+	/**
+	 * Checks whether the deadline has passed. If the deadline is not set, the method
+	 * always returns <tt>true</tt>.
+	 * 
+	 * @return boolean
+	 */
+	public function isBeforeDeadline()
+	{
+		if (null !== $this->deadline) {
+			return time() < $this->deadline;
+		}
+		return true;
+	}
 
 	public static function typeText($status)
 	{
@@ -274,6 +293,141 @@ class Milestone implements IdentifiableInterface, InsertableEntityInterface, Edi
 	public function remove(Connection $conn)
 	{
 		$conn->delete(MilestoneTables::MILESTONE_TBL, DataMappers::pick($this, ['id']));
+	}
+	
+	/**
+	 * Completes this milestone for the given entity. If <tt>$retVal</tt> is set to
+	 * <tt>RETURN_BOOLEAN</tt>, the method returns just true or false to indicate
+	 * the success or failure. If <tt>RETURN_SUMMARY</tt> is set, it returns an array that
+	 * describes the new status of the milestone for this entity. In this case, you have
+	 * to provide <tt>$timeFormatter</tt> instance, too.
+	 * 
+	 * @param Connection $conn
+	 * @param Entity $entity
+	 * @param boolean $retVal Either Milestone::RETURN_BOOLEAN (default) or Milestone::RETURN_SUMMARY
+	 * @param TimeFormatterInterface $timeFormatter Provide only if $retVal is set to Milestone::RETURN_SUMMARY
+	 * @return mixed
+	 * @throws ModelException
+	 * @throws ItemNotFoundException
+	 */
+	public function complete(Connection $conn, Entity $entity, $retVal = self::RETURN_BOOLEAN, TimeFormatterInterface $timeFormatter = null)
+	{
+		if ($this->getType() != Milestone::TYPE_BINARY) {
+			throw new ModelException('Cannot change the state of the milestone!');
+		}
+
+		$currentProgress = $conn->fetchColumn('SELECT `progress` FROM `'.MilestoneTables::MILESTONE_STATUS_TBL.'` WHERE `entityId` = :entityId AND `milestoneId` = :milestoneId', [
+			':entityId' => $entity->getId(),
+			':milestoneId' => $this->getId()
+		]);
+
+		if (false === $currentProgress) {
+			throw new ItemNotFoundException('Unknown milestone status.');
+		}
+
+		if ($currentProgress == 0) {
+			$completedAt = time();
+			$conn->update(MilestoneTables::MILESTONE_STATUS_TBL, ['progress' => 100, 'completedAt' => $completedAt], ['entityId' => $entity->getId(), 'milestoneId' => $this->getId()]);
+			$conn->executeUpdate('UPDATE `'.MilestoneTables::MILESTONE_PROGRESS_TBL.'` SET `completedNum` = (`completedNum` + 1) WHERE `entityId` = :entityId', [':entityId' => $entity->getId()]);
+			if ($retVal == self::RETURN_BOOLEAN) {
+				return true;
+			} else {
+				return $this->createStatusRow(100, $completedAt, $timeFormatter);
+			}
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Sets a new progress of this milestone for the given entity. If <tt>$retVal</tt> is set to
+	 * <tt>RETURN_BOOLEAN</tt>, the method returns just true or false to indicate
+	 * the success or failure. If <tt>RETURN_SUMMARY</tt> is set, it returns an array that
+	 * describes the new status of the milestone for this entity. In this case, you have
+	 * to provide <tt>$timeFormatter</tt> instance, too.
+	 * 
+	 * @param Connection $conn
+	 * @param Entity $entity
+	 * @param int $progress Progress as percentage (0-100)
+	 * @param boolean $retVal Either Milestone::RETURN_BOOLEAN (default) or Milestone::RETURN_SUMMARY
+	 * @param TimeFormatterInterface $timeFormatter Provide only if $retVal is set to Milestone::RETURN_SUMMARY
+	 * @return mixed
+	 * @throws ModelException
+	 * @throws ItemNotFoundException
+	 */
+	public function updateProgress(Connection $conn, Entity $entity, $progress, $retVal = self::RETURN_BOOLEAN, TimeFormatterInterface $timeFormatter = null)
+	{
+		if ($this->getType() != Milestone::TYPE_PERCENT) {
+			throw new ModelException('Cannot change the state of the milestone!');
+		}
+
+		if ($progress < 0 || $progress > 100) {
+			throw new ModelException('Invalid progress value!');
+		}
+
+		$change = $conn->fetchAssoc('SELECT `progress`, `completedAt` FROM `'.MilestoneTables::MILESTONE_STATUS_TBL.'` WHERE `entityId` = :entityId AND `milestoneId` = :milestoneId', [
+			':entityId' => $entity->getId(),
+			':milestoneId' => $this->getId()
+		]);
+		$currentProgress = $change['progress'];
+		$change['progress'] = $progress;
+
+		if ($currentProgress == 100 && $progress < 100) {
+			$conn->executeUpdate('UPDATE `'.MilestoneTables::MILESTONE_PROGRESS_TBL.'` SET `completedNum` = (`completedNum` - 1) WHERE `entityId` = :entityId', [':entityId' => $entity->getId()]);
+			$change['completedAt'] = null;
+		} elseif ($currentProgress < 100 && $progress == 100) {
+			$conn->executeUpdate('UPDATE `'.MilestoneTables::MILESTONE_PROGRESS_TBL.'` SET `completedNum` = (`completedNum` + 1) WHERE `entityId` = :entityId', [':entityId' => $entity->getId()]);
+			$change['completedAt'] = time();
+		}
+		$conn->update(MilestoneTables::MILESTONE_STATUS_TBL, $change, ['entityId' => $entity->getId(), 'milestoneId' => $this->getId()]);
+		if ($retVal == self::RETURN_BOOLEAN) {
+			return true;
+		} else {
+			return $this->createStatusRow($change['progress'], $change['completedAt'], $timeFormatter);
+		}
+	}
+	
+	/**
+	 * Cancels the completion of this milestone for the given entity. If <tt>$retVal</tt> is set to
+	 * <tt>RETURN_BOOLEAN</tt>, the method returns just true or false to indicate
+	 * the success or failure. If <tt>RETURN_SUMMARY</tt> is set, it returns an array that
+	 * describes the new status of the milestone for this entity. In this case, you have
+	 * to provide <tt>$timeFormatter</tt> instance, too.
+	 * 
+	 * @param Connection $conn
+	 * @param Entity $entity
+	 * @param boolean $retVal Either Milestone::RETURN_BOOLEAN (default) or Milestone::RETURN_SUMMARY
+	 * @param TimeFormatterInterface $timeFormatter Provide only if $retVal is set to Milestone::RETURN_SUMMARY
+	 * @return mixed
+	 * @throws ModelException
+	 * @throws ItemNotFoundException
+	 */
+	public function cancel(Connection $conn, Entity $entity, $retVal = self::RETURN_BOOLEAN, TimeFormatterInterface $timeFormatter = null)
+	{
+		if ($this->getType() != Milestone::TYPE_BINARY) {
+			throw new ModelException('Cannot change the state of the milestone!');
+		}
+
+		$currentProgress = $conn->fetchColumn('SELECT `progress` FROM `'.MilestoneTables::MILESTONE_STATUS_TBL.'` WHERE `entityId` = :entityId AND `milestoneId` = :milestoneId', [
+			':entityId' => $entity->getId(),
+			':milestoneId' => $this->getId()
+		]);
+
+		if (false === $currentProgress) {
+			throw new ItemNotFoundException('Unknown milestone status.');
+		}
+
+		if ($currentProgress == 100) {
+			$conn->update(MilestoneTables::MILESTONE_STATUS_TBL, ['progress' => 0, 'completedAt' => null], ['entityId' => $entity->getId(), 'milestoneId' => $this->getId()]);
+			$conn->executeUpdate('UPDATE `'.MilestoneTables::MILESTONE_PROGRESS_TBL.'` SET `completedNum` = (`completedNum` - 1) WHERE `entityId` = :entityId', [':entityId' => $entity->getId()]);
+			if ($retVal == self::RETURN_BOOLEAN) {
+				return true;
+			} else {
+				return $this->createStatusRow(0, null, $timeFormatter);
+			}
+		} else {
+			return false;
+		}
 	}
 	
 	public function createStatusRow($progress, $completedAt, TimeFormatterInterface $timeFormatter, $editable = true)

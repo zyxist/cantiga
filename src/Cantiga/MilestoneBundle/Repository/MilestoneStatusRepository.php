@@ -103,27 +103,11 @@ class MilestoneStatusRepository
 	{
 		$this->transaction->requestTransaction();
 		try {
-			if ($milestone->getType() != Milestone::TYPE_BINARY) {
-				throw new ModelException('Cannot change the state of the milestone!');
-			}
-
-			$currentProgress = $this->conn->fetchColumn('SELECT `progress` FROM `'.MilestoneTables::MILESTONE_STATUS_TBL.'` WHERE `entityId` = :entityId AND `milestoneId` = :milestoneId', [
-				':entityId' => $entity->getId(),
-				':milestoneId' => $milestone->getId()
-			]);
-
-			if (false === $currentProgress) {
-				throw new ItemNotFoundException('Unknown milestone status.');
-			}
-
-			if ($currentProgress == 0) {
-				$completedAt = time();	
-				$this->conn->update(MilestoneTables::MILESTONE_STATUS_TBL, ['progress' => 100, 'completedAt' => $completedAt], ['entityId' => $entity->getId(), 'milestoneId' => $milestone->getId()]);
-				$this->conn->executeUpdate('UPDATE `'.MilestoneTables::MILESTONE_PROGRESS_TBL.'` SET `completedNum` = (`completedNum` + 1) WHERE `entityId` = :entityId', [':entityId' => $entity->getId()]);
-				return $milestone->createStatusRow(100, $completedAt, $this->timeFormatter);
-			} else {
+			$result = $milestone->complete($this->conn, $entity, Milestone::RETURN_SUMMARY, $this->timeFormatter);
+			if (false === $result) {
 				throw new ModelException('This milestone is already completed!');
 			}
+			return $result;
 		} catch(Exception $exception) {
 			$this->transaction->requestRollback();
 			throw $exception;
@@ -134,31 +118,11 @@ class MilestoneStatusRepository
 	{
 		$this->transaction->requestTransaction();
 		try {
-			if ($milestone->getType() != Milestone::TYPE_PERCENT) {
-				throw new ModelException('Cannot change the state of the milestone!');
+			$result = $milestone->updateProgress($this->conn, $entity, $progress, Milestone::RETURN_SUMMARY, $this->timeFormatter);
+			if (false === $result) {
+				throw new ModelException('Milestone progress update has failed!');
 			}
-
-			if ($progress < 0 || $progress > 100) {
-				throw new ModelException('Invalid progress value!');
-			}
-
-			$change = $this->conn->fetchAssoc('SELECT `progress`, `completedAt` FROM `'.MilestoneTables::MILESTONE_STATUS_TBL.'` WHERE `entityId` = :entityId AND `milestoneId` = :milestoneId', [
-				':entityId' => $entity->getId(),
-				':milestoneId' => $milestone->getId()
-			]);
-			$currentProgress = $change['progress'];
-			$change['progress'] = $progress;
-
-			if ($currentProgress == 100 && $progress < 100) {
-				$this->conn->executeUpdate('UPDATE `'.MilestoneTables::MILESTONE_PROGRESS_TBL.'` SET `completedNum` = (`completedNum` - 1) WHERE `entityId` = :entityId', [':entityId' => $entity->getId()]);
-				$change['completedAt'] = null;
-			} elseif ($currentProgress < 100 && $progress == 100) {
-				$this->conn->executeUpdate('UPDATE `'.MilestoneTables::MILESTONE_PROGRESS_TBL.'` SET `completedNum` = (`completedNum` + 1) WHERE `entityId` = :entityId', [':entityId' => $entity->getId()]);
-				$change['completedAt'] = time();
-			}
-			$this->conn->update(MilestoneTables::MILESTONE_STATUS_TBL, $change, ['entityId' => $entity->getId(), 'milestoneId' => $milestone->getId()]);
-
-			return $milestone->createStatusRow($change['progress'], $change['completedAt'], $this->timeFormatter);
+			return $result;
 		} catch(Exception $exception) {
 			$this->transaction->requestRollback();
 			throw $exception;
@@ -169,26 +133,11 @@ class MilestoneStatusRepository
 	{
 		$this->transaction->requestTransaction();
 		try {
-			if ($milestone->getType() != Milestone::TYPE_BINARY) {
-				throw new ModelException('Cannot change the state of the milestone!');
-			}
-
-			$currentProgress = $this->conn->fetchColumn('SELECT `progress` FROM `'.MilestoneTables::MILESTONE_STATUS_TBL.'` WHERE `entityId` = :entityId AND `milestoneId` = :milestoneId', [
-				':entityId' => $entity->getId(),
-				':milestoneId' => $milestone->getId()
-			]);
-
-			if (false === $currentProgress) {
-				throw new ItemNotFoundException('Unknown milestone status.');
-			}
-
-			if ($currentProgress == 100) {
-				$this->conn->update(MilestoneTables::MILESTONE_STATUS_TBL, ['progress' => 0, 'completedAt' => null], ['entityId' => $entity->getId(), 'milestoneId' => $milestone->getId()]);
-				$this->conn->executeUpdate('UPDATE `'.MilestoneTables::MILESTONE_PROGRESS_TBL.'` SET `completedNum` = (`completedNum` - 1) WHERE `entityId` = :entityId', [':entityId' => $entity->getId()]);
-				return $milestone->createStatusRow(0, null, $this->timeFormatter);
-			} else {
+			$result = $milestone->cancel($this->conn, $entity, Milestone::RETURN_SUMMARY, $this->timeFormatter);
+			if (false === $result) {
 				throw new ModelException('This milestone is not completed yet!');
 			}
+			return $result;
 		} catch(Exception $exception) {
 			$this->transaction->requestRollback();
 			throw $exception;

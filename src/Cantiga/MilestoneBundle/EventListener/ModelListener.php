@@ -23,6 +23,8 @@ use Cantiga\CoreBundle\Event\GroupEvent;
 use Cantiga\CoreBundle\Event\ProjectCreatedEvent;
 use Cantiga\CoreBundle\Settings\Setting;
 use Cantiga\MilestoneBundle\Entity\Milestone;
+use Cantiga\MilestoneBundle\Entity\MilestoneRule;
+use Cantiga\MilestoneBundle\Event\ActivationEvent;
 use Cantiga\MilestoneBundle\MilestoneSettings;
 use Doctrine\DBAL\Connection;
 
@@ -60,6 +62,23 @@ class ModelListener
 	public function onAreaCreated(AreaEvent $event)
 	{
 		Milestone::populateEntities($this->conn, $event->getArea()->getEntity(), $event->getArea()->getProject());
+	}
+	
+	/**
+	 * Handles the activations of the milestone rules, which trigger automatic change of the milestone
+	 * status.
+	 * 
+	 * @param \Cantiga\MilestoneBundle\EventListener\ActivationEvent $event
+	 */
+	public function onActivated(ActivationEvent $event)
+	{
+		
+		if ($event->getProject()->supportsModule('milestone')) {
+			$rule = MilestoneRule::fetchByActivator($this->conn, $event->getProject(), $event->getActivator(), $event->getEntity());
+			if (false !== $rule) {
+				$rule->fireRule($this->conn, $event->getEntity(), $event->getCallback());
+			}
+		}
 	}
 }
 
