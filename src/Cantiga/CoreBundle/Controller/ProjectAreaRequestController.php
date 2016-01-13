@@ -42,6 +42,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class ProjectAreaRequestController extends ProjectPageController
 {
 	const REPOSITORY_NAME = 'cantiga.core.repo.project_area_request';
+	const FILTER_NAME = 'cantiga.core.filter.area_request';
 	/**
 	 * @var CRUDInfo
 	 */
@@ -70,13 +71,22 @@ class ProjectAreaRequestController extends ProjectPageController
 	 */
     public function indexAction(Request $request)
     {
+		$filter = $this->get(self::FILTER_NAME);
+		$filter->setTargetProject($this->getActiveProject());
+		$filterForm = $filter->createForm($this->createFormBuilder($filter));
+		$filterForm->handleRequest($request);
+		
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$dataTable = $repository->createDataTable();
+		$dataTable->filter($filter);
         return $this->render($this->crudInfo->getTemplateLocation().'index.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'dataTable' => $dataTable,
-			'locale' => $request->getLocale()
+			'locale' => $request->getLocale(),
+			'ajaxListPage' => 'project_area_request_ajax_list',
+			'filterForm' => $filterForm->createView(),
+			'filter' => $filter
 		));
 	}
 	
@@ -85,12 +95,18 @@ class ProjectAreaRequestController extends ProjectPageController
 	 */
 	public function ajaxListAction(Request $request)
 	{
+		$filter = $this->get(self::FILTER_NAME);
+		$filter->setTargetProject($this->getActiveProject());
+		$filterForm = $filter->createForm($this->createFormBuilder($filter));
+		$filterForm->handleRequest($request);
+		
 		$routes = $this->dataRoutes()
 			->link('info_link', 'project_area_request_info', ['id' => '::id', 'slug' => $this->getSlug()])
 			->link('remove_link', 'project_area_request_remove', ['id' => '::id', 'slug' => $this->getSlug()]);
 
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$dataTable = $repository->createDataTable();
+		$dataTable->filter($filter);
 		$dataTable->process($request);
         return new JsonResponse($routes->process($repository->listData($this->getTranslator(), $dataTable)));
 	}
@@ -99,7 +115,7 @@ class ProjectAreaRequestController extends ProjectPageController
 	 * @Route("/{id}/info", name="project_area_request_info")
 	 */
 	public function infoAction($id)
-	{
+	{		
 		$action = new InfoAction($this->crudInfo);
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, function(AreaRequest $item) {

@@ -94,6 +94,7 @@ class ProjectAreaRequestRepository
 		$dt = new DataTable();
 		$dt->id('id', 'i.id')
 			->searchableColumn('name', 'i.name')
+			->column('territory', 't.name')
 			->column('reportedBy', 'u.name')
 			->column('status', 'i.status')
 			->column('commentNum', 'i.commentNum');
@@ -105,11 +106,13 @@ class ProjectAreaRequestRepository
 		$qb = QueryBuilder::select()
 			->field('i.id', 'id')
 			->field('i.name', 'name')
+			->field('t.name', 'territory')
 			->field('u.name', 'reportedBy')
 			->field('i.status', 'status')
 			->field('i.commentNum', 'commentNum')
 			->from(CoreTables::AREA_REQUEST_TBL, 'i')
 			->join(CoreTables::USER_TBL, 'u', QueryClause::clause('u.`id` = i.`requestorId`'))
+			->join(CoreTables::TERRITORY_TBL, 't', QueryClause::clause('t.`id` = i.`territoryId`'))
 			->where(QueryClause::clause('i.projectId = :projectId', ':projectId', $this->project->getId()));	
 		
 		$countingQuery = QueryBuilder::select()

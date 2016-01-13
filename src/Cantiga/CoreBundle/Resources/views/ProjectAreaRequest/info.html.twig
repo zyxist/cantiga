@@ -54,6 +54,10 @@
 						<span class="value"><a href="{{ spath('project_memberlist_profile', {'id': item.verifier.id }) }}">{{ item.verifier.name }}</a></span>
 					</div>
 					{% endif %}
+					<div class="info-item">
+						<h4><i class="fa fa-globe"></i> {{ 'Territory' | trans }}</h4>
+						<span class="value">{{ item.territory.name }}</span>
+					</div>
 				</div>
 			</div>
 		</div>

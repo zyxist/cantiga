@@ -251,6 +251,16 @@ class AreaRequest implements IdentifiableInterface, InsertableEntityInterface, E
 		}
 	}
 	
+	public static function statusList()
+	{
+		return [
+			self::STATUS_NEW => self::statusText(self::STATUS_NEW),
+			self::STATUS_VERIFICATION => self::statusText(self::STATUS_VERIFICATION),
+			self::STATUS_APPROVED => self::statusText(self::STATUS_APPROVED),
+			self::STATUS_REVOKED => self::statusText(self::STATUS_REVOKED),
+		];
+	}
+	
 	public function getStatusLabel()
 	{
 		return self::statusLabel($this->status);
