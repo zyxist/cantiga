@@ -89,6 +89,7 @@ return array(
 	'Nobody has sent you invitations.' => 'Nikt nie przysłał Ci żadnych zaproszeń.',
 	'Find invitation' => 'Znajdź zaproszenie',
 	'FindInvitationPlaceholder' => 'Podaj klucz zaproszenia, aby podłączyć je pod Twój profil...',
+	'PersonAlreadyInvitedErr' => 'Ta osoba jest już tutaj zaproszona.',
 	
 	// Invitation mail forms
 	'ProjectNominative: 0' => 'Projekt "0"',

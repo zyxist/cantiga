@@ -25,9 +25,11 @@ use Cantiga\CoreBundle\Event\CantigaEvents;
 use Cantiga\CoreBundle\Event\InvitationEvent;
 use Cantiga\CoreBundle\Event\UserEvent;
 use Cantiga\Metamodel\Capabilities\MembershipRepositoryInterface;
+use Cantiga\Metamodel\Exception\DuplicateItemException;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Transaction;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Exception;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -81,6 +83,9 @@ class InvitationRepository
 			$id = $invitation->insert($this->conn);
 			$this->eventDispatcher->dispatch(CantigaEvents::INVITATION_CREATED, new InvitationEvent($invitation));
 			return $id;
+		} catch (UniqueConstraintViolationException $exception) {
+			$this->transaction->requestRollback();
+			throw new DuplicateItemException('PersonAlreadyInvitedErr');
 		} catch (Exception $ex) {
 			$this->transaction->requestRollback();
 			throw $ex;

@@ -25,6 +25,7 @@ use Cantiga\Metamodel\Capabilities\RemovableEntityInterface;
 use Cantiga\Metamodel\DataMappers;
 use Cantiga\Metamodel\QueryClause;
 use Doctrine\DBAL\Connection;
+use PDOException;
 
 /**
  * Invitations are a way to join to the existing project, group or area. The manager of the place can
@@ -245,6 +246,7 @@ class Invitation implements IdentifiableInterface, InsertableEntityInterface, Re
 				'assignmentKey' => $this->assignmentKey				
 			]);
 		}
+		return $this->id;
 	}
 	
 	public function join(Connection $conn, User $user)

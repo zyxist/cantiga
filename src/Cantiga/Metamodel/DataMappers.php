@@ -19,6 +19,7 @@
 namespace Cantiga\Metamodel;
 
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
+use Cantiga\Metamodel\Exception\SlugException;
 use Doctrine\DBAL\Connection;
 use LogicException;
 
@@ -29,7 +30,6 @@ use LogicException;
  */
 final class DataMappers
 {
-
 	/**
 	 * Automatic array-to-object mapper, through setter. We assume that the database
 	 * fields follow the camel case naming convention to simplify this. The method can

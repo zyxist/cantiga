@@ -48,6 +48,7 @@ return array(
 	'AreaNominative: 0' => 'Area "0"',
 	'FindInvitationPlaceholder' => 'Enter the invitation key to join it to your profile...',
 	'AreaRequest: 0' => 'Request for area: 0',
+	'PersonAlreadyInvitedErr' => 'The specified person is already invited here.',
 	
 	// Admin user management
 	'UserRemovalQuestionText' => 'Do you really want to remove the user \'0\'? This will clear out all his personal information and membership, but the produced content will be kept intact. You will be able to restore the user at any time later, but the personal information and the membership would have to be configured again.',
