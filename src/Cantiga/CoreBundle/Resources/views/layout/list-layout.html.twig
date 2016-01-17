@@ -5,31 +5,36 @@
 {% endblock %}
 
 {% block box_body %}
-	<table id="data-grid" class="table table-striped table-bordered">
-		<thead>
-			{% block column_list %}
-			<tr>
-				<th width="30">#</th>
-				<th>{{ 'Name' | trans }}</th>
-				<th>{{ 'Locale' | trans }}</th>
-				<th width="200">{{ 'Actions' | trans({}, 'general') }}</th>
-			</tr>
-			{% endblock %}
-		</thead>
-		<tfoot>
-			{{ block('column_list') }}
-		</tfoot>
-	</table>
+	<div class="table-responsive">
+		<table id="data-grid" class="table table-striped table-bordered">
+			<thead>
+				{% block column_list %}
+				<tr>
+					<th width="30">#</th>
+					<th data-priority="1">{{ 'Name' | trans }}</th>
+					<th>{{ 'Locale' | trans }}</th>
+					<th width="200" data-priority="1">{{ 'Actions' | trans({}, 'general') }}</th>
+				</tr>
+				{% endblock %}
+			</thead>
+			<tfoot>
+				{{ block('column_list') }}
+			</tfoot>
+		</table>
+	</div>
 {% endblock %}
 
 {% block stylesheets %}
 	{{ parent() }}
 	<link rel="stylesheet" href="{{ asset('css/dataTables.bootstrap.css') }}" />
+	<link rel="stylesheet" href="{{ asset('css/dataTables.responsive.css') }}" />
 {% endblock %}
 
 {% block javascripts %}
 	{{ parent() }}
-	<script src="{{ asset('js/datatables.js') }}"></script>
+	<script src="{{ asset('js/dataTables.min.js') }}"></script>
+	<script src="{{ asset('js/dataTables.bootstrap.min.js') }}"></script>
+	<script src="{{ asset('js/dataTables.responsive.min.js') }}"></script>
 {% endblock %}
 
 {% block javascripts_inline %}
@@ -38,6 +43,7 @@
 		$('#data-grid').DataTable({
 			processing: true,
 			serverSide: true,
+			responsive: true,
 			columns: {{ dt_columns(dataTable, true) }},
 			{% if locale != 'en' %}
 			language: {url: '{{asset('js/datatables.'~locale~'.js') }}' },	

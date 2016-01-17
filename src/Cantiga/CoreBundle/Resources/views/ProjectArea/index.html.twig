@@ -6,13 +6,13 @@
 
 {% block column_list %}
 <tr>
-	<th width="30">#</th>
-	<th>{{ 'Name' | trans }}</th>
-	<th width="120">{{ 'Territory' | trans }}</th>
-	<th width="120">{{ 'Group' | trans }}</th>
-	<th width="120">{{ 'Status' | trans }}</th>
-	<th width="120">{{ 'Member number' | trans }}</th>
-	<th width="120">{{ 'Actions' | trans({}, 'general') }}</th>
+	<th width="30" data-priority="1">#</th>
+	<th data-priority="0">{{ 'Name' | trans }}</th>
+	<th width="120" data-priority="3">{{ 'Territory' | trans }}</th>
+	<th width="120" data-priority="3">{{ 'Group' | trans }}</th>
+	<th width="120" data-priority="2">{{ 'Status' | trans }}</th>
+	<th width="120" data-priority="4">{{ 'Member number' | trans }}</th>
+	<th width="120" data-priority="0">{{ 'Actions' | trans({}, 'general') }}</th>
 </tr>
 {% endblock %}
 
