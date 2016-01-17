@@ -43,6 +43,7 @@ class ProjectAreaController extends ProjectPageController
 	use Traits\InformationTrait;
 	
 	const REPOSITORY_NAME = 'cantiga.core.repo.project_area';
+	const FILTER_NAME = 'cantiga.core.filter.area';
 	/**
 	 * @var CRUDInfo
 	 */
@@ -73,12 +74,21 @@ class ProjectAreaController extends ProjectPageController
 	public function indexAction(Request $request)
 	{
 		$repository = $this->get(self::REPOSITORY_NAME);
+		$filter = $this->get(self::FILTER_NAME);
+		$filter->setTargetProject($this->getActiveProject());
+		$filterForm = $filter->createForm($this->createFormBuilder($filter));
+		$filterForm->handleRequest($request);
+		
 		$dataTable = $repository->createDataTable();
+		$dataTable->filter($filter);
         return $this->render($this->crudInfo->getTemplateLocation().'index.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'dataTable' => $dataTable,
-			'locale' => $request->getLocale()
+			'locale' => $request->getLocale(),
+			'ajaxListPage' => 'project_area_ajax_list',
+			'filterForm' => $filterForm->createView(),
+			'filter' => $filter
 		));
 	}
 	
@@ -87,12 +97,18 @@ class ProjectAreaController extends ProjectPageController
 	 */
 	public function ajaxListAction(Request $request)
 	{
+		$filter = $this->get(self::FILTER_NAME);
+		$filter->setTargetProject($this->getActiveProject());
+		$filterForm = $filter->createForm($this->createFormBuilder($filter));
+		$filterForm->handleRequest($request);
+		
 		$routes = $this->dataRoutes()
-			->link('info_link', 'project_area_info', ['id' => '::id', 'slug' => $this->getSlug()])
-			->link('edit_link', 'project_area_edit', ['id' => '::id', 'slug' => $this->getSlug()]);
+			->link('info_link', $this->crudInfo->getInfoPage(), ['id' => '::id', 'slug' => $this->getSlug()])
+			->link('edit_link', $this->crudInfo->getEditPage(), ['id' => '::id', 'slug' => $this->getSlug()]);
 
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$dataTable = $repository->createDataTable();
+		$dataTable->filter($filter);
 		$dataTable->process($request);
         return new JsonResponse($routes->process($repository->listData($dataTable, $this->getTranslator())));
 	}

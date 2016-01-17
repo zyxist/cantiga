@@ -1,5 +1,9 @@
 {% extends 'CantigaCoreBundle:layout:list-layout.html.twig' %}
 
+{% block data_filter %}
+	{% include 'CantigaCoreBundle:Filter:area-filter.html.twig' with { 'filter': filter, 'filterForm': filterForm } only %}
+{% endblock %}
+
 {% block column_list %}
 <tr>
 	<th width="30">#</th>
@@ -19,7 +23,7 @@
 {% endblock %}
 
 {% block custom_datatable_config %}
-	ajax: "{{ spath('project_area_ajax_list') }}",
+	ajax: "{{ spath(ajaxListPage, filter.createParamArray()) | raw }}",
 	columnDefs: [
 		{{ dt_col_label(dataTable, 'status', 'statusName', 'statusLabel') }}
 		{{ dt_actions(dataTable, [

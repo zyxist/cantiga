@@ -98,6 +98,31 @@ class DataTable
 		$this->filter = $filter;
 		return $this;
 	}
+	
+	/**
+	 * Checks if any filter is installed in this data table.
+	 * 
+	 * @param string $filterType Checks that the filter is also an implementation of the specified class/interface
+	 * @return boolean
+	 */
+	public function hasFilter($filterType = null)
+	{
+		if (null === $this->filter) {
+			return false;
+		}
+		if (null !== $filterType) {
+			return is_a($this->filter, $filterType);
+		}
+		return true;
+	}
+	
+	/**
+	 * @return DataFilterInterface
+	 */
+	public function getFilter()
+	{
+		return $this->filter;
+	}
 
 	/**
 	 * Processes the request and parses the variables produced by JS front-end for data tables.

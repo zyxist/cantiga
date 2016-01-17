@@ -132,6 +132,11 @@ class AreaFilter implements DataFilterInterface
 		return $this;
 	}
 	
+	public function isCategorySelected()
+	{
+		return null !== $this->category;
+	}
+	
 	public function createForm(FormBuilderInterface $formBuilder)
 	{
 		$formBuilder->setMethod('GET');

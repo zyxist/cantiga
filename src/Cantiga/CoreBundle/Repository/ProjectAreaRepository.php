@@ -25,6 +25,7 @@ use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Entity\User;
 use Cantiga\CoreBundle\Event\AreaEvent;
 use Cantiga\CoreBundle\Event\CantigaEvents;
+use Cantiga\CoreBundle\Filter\AreaFilter;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\QueryBuilder;
@@ -96,7 +97,11 @@ class ProjectAreaRepository implements AreaRepositoryInterface
 			->from(CoreTables::AREA_TBL, 'i')
 			->join(CoreTables::TERRITORY_TBL, 't', QueryClause::clause('i.territoryId = t.id'))
 			->join(CoreTables::AREA_STATUS_TBL, 's', QueryClause::clause('i.statusId = s.id'))
-			->where(QueryClause::clause('i.projectId = :projectId', ':projectId', $this->project->getId()));	
+			->where(QueryClause::clause('i.projectId = :projectId', ':projectId', $this->project->getId()));
+		
+		if ($dataTable->hasFilter(AreaFilter::class) && $dataTable->getFilter()->isCategorySelected()) {
+			$qb->join(CoreTables::GROUP_TBL, 'g', QueryClause::clause('g.id = i.groupId'));
+		}
 		
 		$recordsTotal = QueryBuilder::copyWithoutFields($qb)
 			->field('COUNT(i.id)', 'cnt')
