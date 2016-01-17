@@ -30,6 +30,7 @@ class WorkspaceListener
 	{
 		$workspace = $event->getWorkspace();
 		if ($workspace->getProject()->supportsModule('edk')) {
+			$workspace->addWorkItem('statistics', new WorkItem('project_stats_route_index', 'Route statistics'));
 			$workspace->addWorkItem('data', new WorkItem('project_route_index', 'Routes'));
 		}
 	}

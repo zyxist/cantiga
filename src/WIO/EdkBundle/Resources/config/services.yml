@@ -45,3 +45,13 @@ services:
             - { name: cantiga.extension, point: core.dashboard.project.top, module: edk }
             - { name: cantiga.extension, point: core.dashboard.group.top, module: edk }
             - { name: cantiga.extension, point: core.dashboard.area.top, module: edk }
+    wio.edk.stats.route_length:
+        class: WIO\EdkBundle\Statistics\RouteLengthHistogram
+        arguments: ["@database_connection"]
+        tags:
+            - { name: cantiga.extension, point: edk.stats.route, module: edk }
+    wio.edk.stats.route_ascent:
+        class: WIO\EdkBundle\Statistics\RouteAscentHistogram
+        arguments: ["@database_connection"]
+        tags:
+            - { name: cantiga.extension, point: edk.stats.route, module: edk }

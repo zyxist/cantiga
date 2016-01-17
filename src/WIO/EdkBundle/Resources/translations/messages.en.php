@@ -22,4 +22,7 @@ return array(
 	'ThreeBiggestSuccessesFormLabel' => 'Describe your three biggest successes related to work/hobby/volunteering, including one that was exceptionally hard to you.',	
 	'ProjectMgmtExperiencesHelp' => 'Take a broad perspective: experiences from your studies, school, work, etc. (max. 400 characters)',
 	'Max400Chars' => 'Max. 400 characters',
+	
+	'RouteLengthHistogram' => 'Route length histogram',
+	'RouteAscentHistogram' => 'Route ascent histogram',
 );

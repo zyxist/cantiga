@@ -68,4 +68,7 @@ return array(
 	'The route \'0\' has been updated.' => 'Trasa "0" została zmieniona.',
 	'The route \'0\' has been removed.' => 'Trasa "0" została usunięta.',
 	'Do you really want to remove the route \'0\'?' => 'Czy naprawdę chcesz usunąć trasę "0"?',
+	
+	'RouteLengthHistogram' => 'Histogram długości tras',
+	'RouteAscentHistogram' => 'Histogram sumy przewyższeń',
 );

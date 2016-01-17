@@ -10,3 +10,6 @@ group_route_controller:
 project_route_controller:                                                                                                                                                   
     resource: "@WioEdkBundle/Controller/ProjectRouteController.php"                                                                                                      
     type:     annotation
+project_stats_route_controller:                                                                                                                                                   
+    resource: "@WioEdkBundle/Controller/ProjectStatsRouteController.php"                                                                                                      
+    type:     annotation
