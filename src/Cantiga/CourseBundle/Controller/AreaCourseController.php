@@ -65,7 +65,7 @@ class AreaCourseController extends AreaPageController
 	public function indexAction(Request $request)
 	{
 		$repository = $this->get(self::REPOSITORY_NAME);
-		$text = $this->getTextRepository()->getText(CourseTexts::AREA_COURSE_LIST_TEXT, $request);
+		$text = $this->getTextRepository()->getText(CourseTexts::AREA_COURSE_LIST_TEXT, $request, $this->getActiveProject());
         return $this->render($this->crudInfo->getTemplateLocation().'index.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
