@@ -38,6 +38,10 @@ class CantigaCoreBundle extends Bundle
 		Workspaces::registerWorkspace('admin', 'Admin workspace', 'admin_dashboard', 'ROLE_ADMIN', 'red');
 		
 		AppTexts::registerName(CoreTexts::AREA_REQUEST_CREATION_STEP1_TEXT);
+		AppTexts::registerName(CoreTexts::AREA_REQUEST_NEW_INFO_TEXT);
+		AppTexts::registerName(CoreTexts::AREA_REQUEST_VERIFICATION_INFO_TEXT);
+		AppTexts::registerName(CoreTexts::AREA_REQUEST_APPROVED_INFO_TEXT);
+		AppTexts::registerName(CoreTexts::AREA_REQUEST_REVOKED_INFO_TEXT);
 		AppTexts::registerName(CoreTexts::AREA_REQUEST_CREATION_STEP2_TEXT);
 		AppTexts::registerName(CoreTexts::TERMS_OF_USE_TEXT);
 		AppTexts::registerName(CoreTexts::LOGIN_TEXT);

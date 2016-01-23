@@ -25,6 +25,7 @@ use Cantiga\CoreBundle\Api\Actions\RemoveAction;
 use Cantiga\CoreBundle\Api\Controller\ProjectPageController;
 use Cantiga\CoreBundle\CoreExtensions;
 use Cantiga\CoreBundle\CoreSettings;
+use Cantiga\CoreBundle\CoreTexts;
 use Cantiga\CoreBundle\Entity\AreaRequest;
 use Cantiga\CoreBundle\Entity\Message;
 use Cantiga\Metamodel\Exception\ModelException;
@@ -114,14 +115,15 @@ class ProjectAreaRequestController extends ProjectPageController
 	/**
 	 * @Route("/{id}/info", name="project_area_request_info")
 	 */
-	public function infoAction($id)
+	public function infoAction($id, Request $request)
 	{		
 		$action = new InfoAction($this->crudInfo);
 		$action->slug($this->getSlug());
-		return $action->run($this, $id, function(AreaRequest $item) {
+		return $action->run($this, $id, function(AreaRequest $item) use ($request) {
 			$formModel = $this->extensionPointFromSettings(CoreExtensions::AREA_REQUEST_FORM, CoreSettings::AREA_REQUEST_FORM);
 			return [
 				'summary' => $formModel->createSummary(),
+				'text' => $this->chooseText($item, $request),
 				'actions' => $this->chooseActionsForState($item),
 			];
 		});
@@ -247,5 +249,24 @@ class ProjectAreaRequestController extends ProjectPageController
 			case AreaRequest::STATUS_REVOKED:
 				return [];
 		}
+	}
+	
+	private function chooseText(AreaRequest $ar, Request $request)
+	{
+		switch($ar->getStatus()) {
+			case AreaRequest::STATUS_NEW:
+				$textType = CoreTexts::AREA_REQUEST_NEW_INFO_TEXT;
+				break;
+			case AreaRequest::STATUS_VERIFICATION:
+				$textType = CoreTexts::AREA_REQUEST_VERIFICATION_INFO_TEXT;
+				break;
+			case AreaRequest::STATUS_APPROVED:
+				$textType = CoreTexts::AREA_REQUEST_APPROVED_INFO_TEXT;
+				break;
+			case AreaRequest::STATUS_REVOKED:
+				$textType = CoreTexts::AREA_REQUEST_REVOKED_INFO_TEXT;
+				break;
+		}
+		return $this->getTextRepository()->getTextOrFalse($textType, $request, $this->getActiveProject());
 	}
 }

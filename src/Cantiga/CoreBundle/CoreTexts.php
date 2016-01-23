@@ -25,6 +25,10 @@ class CoreTexts
 {
 	const AREA_REQUEST_CREATION_STEP1_TEXT = 'cantiga:area-request:step1';
 	const AREA_REQUEST_CREATION_STEP2_TEXT = 'cantiga:area-request-step2';
+	const AREA_REQUEST_NEW_INFO_TEXT = 'cantiga:area-request:new';
+	const AREA_REQUEST_VERIFICATION_INFO_TEXT = 'cantiga:area-request:verification';
+	const AREA_REQUEST_APPROVED_INFO_TEXT = 'cantiga:area-request:approved';
+	const AREA_REQUEST_REVOKED_INFO_TEXT = 'cantiga:area-request:revoked';
 	const TERMS_OF_USE_TEXT = 'cantiga:terms-of-use';
 	const LOGIN_TEXT = 'cantiga:login';
 	const DASHBOARD_USER_TEXT = 'cantiga:dashboard:user';

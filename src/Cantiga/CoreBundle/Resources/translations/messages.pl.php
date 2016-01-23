@@ -194,6 +194,7 @@ return array(
 	'The verification has been started.' => 'Weryfikacja została rozpoczęta.',
 	'Cannot start the verification for this request.' => 'Nie można zacząć weryfikacji dla tego zgłoszenia.',
 	'Verifier' => 'Weryfikujący',
+	'CustomTextDisplayedToThisRequest' => 'Tekst wyświetlany pod oknem rozmowy w zgłoszeniach z tym statusem:',
 	
 	// Project area
 	'GroupUnassigned' => 'Nieprzypisana',

@@ -32,6 +32,9 @@ return array(
 	// Area profile editor
 	'AreaProfileSaved' => 'The profile of your area has been saved.',
 	
+	// Project area request
+	'CustomTextDisplayedToThisRequest' => 'Text displayed under the feedback box in the requests with this status:',
+	
 	// Project area
 	'GroupUnassigned' => 'Unassigned',
 	'CreateAreaText' => 'You can create a new area here, bypassing the area request process (if such a process is enabled in the project settings). No user will be assigned to the area after its creation. You have to do it manually, by choosing the menu option "Membership" in the area information page.',

@@ -110,6 +110,16 @@
 	<div class="col-lg-5 col-xs-12">
 		{{ macro.chat_box('Feedback' | trans, 'feedback') }}
 	</div>
+	{% if custom.text %}
+	<div class="col-lg-5 col-xs-12">
+		<div class="box">
+			<div class="box-body">
+				<p class="lead">{{'CustomTextDisplayedToThisRequest' | trans }}
+				{{ custom.text.content | raw }}
+			</div>
+		</div>
+	</div>
+	{% endif %}
 </div>
 {% endblock %}
 

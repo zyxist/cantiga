@@ -90,17 +90,17 @@ class UserAreaRequestController extends UserPageController
 	/**
 	 * @Route("/{id}/info", name="user_area_request_info")
 	 */
-	public function infoAction($id)
+	public function infoAction($id, Request $request)
 	{
 		$action = new InfoAction($this->crudInfo);
-		return $action->run($this, $id, function(AreaRequest $item) {
+		return $action->run($this, $id, function(AreaRequest $item) use ($request) {
 			$settings = $this->getProjectSettings();
 			$settings->setProject($item->getProject());
 			$formModel = $this->getExtensionPoints()
 				->getImplementation(CoreExtensions::AREA_REQUEST_FORM, 
 					$item->getProject()->createExtensionPointFilter()->fromSettings($settings, CoreSettings::AREA_REQUEST_FORM)
 				);
-			return ['summary' => $formModel->createSummary()];
+			return ['summary' => $formModel->createSummary(), 'text' => $this->chooseText($item, $request)];
 		});
 	}
 	
@@ -248,5 +248,24 @@ class UserAreaRequestController extends UserPageController
 	{
 		$action = new RemoveAction($this->crudInfo);
 		return $action->run($this, $id, $request);
+	}
+	
+	private function chooseText(AreaRequest $ar, Request $request)
+	{
+		switch($ar->getStatus()) {
+			case AreaRequest::STATUS_NEW:
+				$textType = CoreTexts::AREA_REQUEST_NEW_INFO_TEXT;
+				break;
+			case AreaRequest::STATUS_VERIFICATION:
+				$textType = CoreTexts::AREA_REQUEST_VERIFICATION_INFO_TEXT;
+				break;
+			case AreaRequest::STATUS_APPROVED:
+				$textType = CoreTexts::AREA_REQUEST_APPROVED_INFO_TEXT;
+				break;
+			case AreaRequest::STATUS_REVOKED:
+				$textType = CoreTexts::AREA_REQUEST_REVOKED_INFO_TEXT;
+				break;
+		}
+		return $this->getTextRepository()->getTextOrFalse($textType, $request, $ar->getProject());
 	}
 }
