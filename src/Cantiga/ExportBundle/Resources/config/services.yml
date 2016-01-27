@@ -1,0 +1,11 @@
+imports:
+    - { resource: ../../../../../app/config/parameters.yml }
+
+services:
+    cantiga.export.repo.export:
+        class:     Cantiga\ExportBundle\Repository\ExportRepository
+        arguments: ["@database_connection", "@cantiga.transaction"]
+    cantiga.export.workspace_listener:
+        class: Cantiga\ExportBundle\EventListener\WorkspaceListener
+        tags:
+            - { name: kernel.event_listener, event: cantiga.workspace.admin, method: onAdminWorkspace }

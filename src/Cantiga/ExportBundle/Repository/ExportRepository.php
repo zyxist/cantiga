@@ -16,21 +16,21 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-namespace Cantiga\CoreBundle\Repository;
+namespace Cantiga\ExportBundle\Repository;
 
 use Cantiga\CoreBundle\CoreTables;
-use Cantiga\CoreBundle\Entity\AreaStatus;
-use Cantiga\CoreBundle\Entity\Project;
+use Cantiga\ExportBundle\ExportTables;
+use Cantiga\ExportBundle\Entity\DataExport;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
-use Cantiga\Metamodel\Form\EntityTransformerInterface;
 use Cantiga\Metamodel\QueryBuilder;
 use Cantiga\Metamodel\QueryClause;
 use Cantiga\Metamodel\Transaction;
 use Doctrine\DBAL\Connection;
-use PDO;
+use Exception;
+use Symfony\Component\Translation\TranslatorInterface;
 
-class ProjectAreaStatusRepository implements EntityTransformerInterface
+class ExportRepository
 {
 	/**
 	 * @var Connection 
@@ -40,20 +40,11 @@ class ProjectAreaStatusRepository implements EntityTransformerInterface
 	 * @var Transaction
 	 */
 	private $transaction;
-	/**
-	 * @var Project
-	 */
-	private $project;
 	
 	public function __construct(Connection $conn, Transaction $transaction)
 	{
 		$this->conn = $conn;
 		$this->transaction = $transaction;
-	}
-	
-	public function setProject(Project $project)
-	{
-		$this->project = $project;
 	}
 	
 	/**
@@ -64,9 +55,8 @@ class ProjectAreaStatusRepository implements EntityTransformerInterface
 		$dt = new DataTable();
 		$dt->id('id', 'i.id')
 			->searchableColumn('name', 'i.name')
-			->column('label', 'i.label')
-			->column('isDefault', 'i.isDefault')
-			->column('areaNum', 'i.areaNum');
+			->column('project', 'p.name')
+			->column('active', 'i.active');
 		return $dt;
 	}
 	
@@ -75,36 +65,34 @@ class ProjectAreaStatusRepository implements EntityTransformerInterface
 		$qb = QueryBuilder::select()
 			->field('i.id', 'id')
 			->field('i.name', 'name')
-			->field('i.label', 'label')
-			->field('i.isDefault', 'isDefault')
-			->field('i.areaNum', 'areaNum')
-			->from(CoreTables::AREA_STATUS_TBL, 'i');
-		$where = QueryClause::clause('i.`projectId` = :projectId', ':projectId', $this->project->getId());
+			->field('p.name', 'project')
+			->field('i.active', 'active')
+			->from(ExportTables::DATA_EXPORT_TBL, 'i')
+			->join(CoreTables::PROJECT_TBL, 'p', QueryClause::clause('i.projectId = p.id'));
 		
 		$recordsTotal = QueryBuilder::copyWithoutFields($qb)
-			->field('COUNT(id)', 'cnt')
-			->where($dataTable->buildCountingCondition($where))
+			->field('COUNT(i.id)', 'cnt')
+			->where($dataTable->buildCountingCondition($qb->getWhere()))
 			->fetchCell($this->conn);
 		$recordsFiltered = QueryBuilder::copyWithoutFields($qb)
-			->field('COUNT(id)', 'cnt')
-			->where($dataTable->buildFetchingCondition($where))
+			->field('COUNT(i.id)', 'cnt')
+			->where($dataTable->buildFetchingCondition($qb->getWhere()))
 			->fetchCell($this->conn);
-
 		$dataTable->processQuery($qb);
 		return $dataTable->createAnswer(
 			$recordsTotal,
 			$recordsFiltered,
-			$qb->where($dataTable->buildFetchingCondition($where))->fetchAll($this->conn)
+			$qb->where($dataTable->buildFetchingCondition($qb->getWhere()))->fetchAll($this->conn)
 		);
 	}
 	
 	/**
-	 * @return AreaStatus
+	 * @return DataExport
 	 */
 	public function getItem($id)
 	{
 		$this->transaction->requestTransaction();
-		$item = AreaStatus::fetchByProject($this->conn, $id, $this->project);
+		$item = DataExport::fetchById($this->conn, $id);
 		
 		if(false === $item) {
 			$this->transaction->requestRollback();
@@ -113,7 +101,7 @@ class ProjectAreaStatusRepository implements EntityTransformerInterface
 		return $item;
 	}
 	
-	public function insert(AreaStatus $item)
+	public function insert(DataExport $item)
 	{
 		$this->transaction->requestTransaction();
 		try {
@@ -124,7 +112,7 @@ class ProjectAreaStatusRepository implements EntityTransformerInterface
 		}
 	}
 	
-	public function update(AreaStatus $item)
+	public function update(DataExport $item)
 	{
 		$this->transaction->requestTransaction();
 		try {
@@ -135,7 +123,7 @@ class ProjectAreaStatusRepository implements EntityTransformerInterface
 		}
 	}
 	
-	public function remove(AreaStatus $item)
+	public function remove(DataExport $item)
 	{
 		$this->transaction->requestTransaction();
 		try {
@@ -144,33 +132,5 @@ class ProjectAreaStatusRepository implements EntityTransformerInterface
 			$this->transaction->requestRollback();
 			throw $ex;
 		}
-	}
-
-	public function getFormChoices(Project $project = null)
-	{
-		if (null === $project) {
-			$project = $this->project;
-		}
-		
-		$this->transaction->requestTransaction();
-		$stmt = $this->conn->prepare('SELECT `id`, `name` FROM `'.CoreTables::AREA_STATUS_TBL.'` WHERE `projectId` = :projectId ORDER BY `name`');
-		$stmt->bindValue(':projectId', $project->getId());
-		$stmt->execute();
-		$result = array();
-		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$result[$row['id']] = $row['name'];
-		}
-		$stmt->closeCursor();
-		return $result;
-	}
-
-	public function transformToEntity($key)
-	{
-		return $this->getItem($key);
-	}
-
-	public function transformToKey($entity)
-	{
-		return $entity->getId();
 	}
 }

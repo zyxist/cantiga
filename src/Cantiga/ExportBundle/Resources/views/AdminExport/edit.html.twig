@@ -1,0 +1,55 @@
+{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+
+{% block box_header %}
+	<h4>{{ 'Edit: 0' | trans([item.name], 'general') }}</h4>
+{% endblock %}
+
+{% block box_body %}
+	{{ form_start(form) }}
+	<div class="row">
+		<div class="col-lg-12">
+			{{ form_row(form.name) }}
+		</div>
+		<div class="col-md-6 col-xs-12">
+			{{ form_row(form.project) }}
+		</div>
+		<div class="col-md-6 col-xs-12">
+			{{ form_row(form.areaStatus) }}
+		</div>
+		<div class="col-md-6 col-xs-12">
+			{{ form_row(form.url) }}
+		</div>
+		<div class="col-md-6 col-xs-12">
+			{{ form_row(form.encryptionKey) }}
+		</div>
+		<div class="col-md-6 col-xs-12">
+			{{ form_row(form.active) }}
+		</div>
+		<div class="col-md-6 col-xs-12">
+			{{ form_row(form.notes) }}
+		</div>
+	</div>
+	{{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts_inline %}
+{{ use_icheck() }}
+<script>
+var $project = $('#DataExport_project');
+$project.change(function() {
+  var $form = $(this).closest('form');
+  $.ajax({
+    url : '{{ path('admin_export_ajax_status') }}',
+    type: 'GET',
+    data : { p: $project.val() },
+    success: function(json) {
+		code = '';
+		for (i in json) {
+			code += '<option value="'+i+'">'+json[i]+'</option>';
+		}
+		$('#DataExport_areaStatus').empty().append(code);
+    }
+  });
+});
+</script>
+{% endblock %}

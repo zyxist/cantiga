@@ -10,6 +10,9 @@ cantiga_milestone_bundle:
 cantiga_course_bundle:
     resource: "@CantigaCourseBundle/Resources/config/routing.yml"
     prefix:   /
+cantiga_export_bundle:
+    resource: "@CantigaExportBundle/Resources/config/routing.yml"
+    prefix:   /
 wio_edk_bundle:
     resource: "@WioEdkBundle/Resources/config/routing.yml"
     prefix:   /

@@ -1,0 +1,3 @@
+_admin_export_controller:
+    resource: "@CantigaExportBundle/Controller/AdminExportController.php"
+    type:     annotation
