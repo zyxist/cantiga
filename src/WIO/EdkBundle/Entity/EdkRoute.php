@@ -572,7 +572,7 @@ class EdkRoute implements IdentifiableInterface, InsertableEntityInterface, Edit
 			if(null === $this->mapFile) {
 				$this->mapFile = $fileRepository->storeFile($this->getMapFileUpload());
 			} else {
-				$fileRepository->replaceFile($this->mapFile, $this->getMapFileUpload());
+				$this->mapFile = $fileRepository->replaceFile($this->mapFile, $this->getMapFileUpload());
 			}
 		}
 		if (null !== $this->getGpsTrackFileUpload()) {

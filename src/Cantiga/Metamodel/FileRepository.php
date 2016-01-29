@@ -18,6 +18,7 @@
  */
 namespace Cantiga\Metamodel;
 
+use Cantiga\Metamodel\Exception\DiskAssetException;
 use LogicException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Response;
@@ -53,7 +54,7 @@ class FileRepository implements FileRepositoryInterface
 	public function storeFile(UploadedFile $file)
 	{
 		$hashedName = sha1($file->getBasename().filemtime($file->getPath()));
-		$extension = $file->getClientOriginalExtension();
+		$extension = strtolower($file->getClientOriginalExtension());
 		
 		$finalName = $hashedName.'.'.$extension;
 		while(file_exists($this->targetDirectory.DIRECTORY_SEPARATOR.$this->hashToLocation($finalName))) {
@@ -79,6 +80,15 @@ class FileRepository implements FileRepositoryInterface
 			throw new DiskAssetException('Cannot replace a file that does not exist.');
 		}
 		$directory = dirname($fullPath);
+		
+		$extension = strtolower($file->getClientOriginalExtension());
+		// extension changed, remove the old file and update the name accordingly
+		if (strpos($name, '.'.$extension) === false) {
+			unlink($fullPath);
+			$extStart = strrpos($name, '.');
+			$name = substr($name, 0, $extStart).'.'.$extension;
+		}
+		
 		$file->move($directory, $name);
 		return $name;
 	}
