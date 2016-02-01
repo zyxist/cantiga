@@ -1,8 +1,8 @@
 {
     "name": "Cantiga Project",
-    "license": "MIT",
+    "license": "GPL-3.0",
     "type": "project",
-    "description": "The \"Symfony Standard Edition\" distribution",
+    "description": "Web-based collaboration tool for social campaigns",
     "autoload": {
         "psr-4": { "": "src/" },
 		"files": [ "app/Branding.php" ]
