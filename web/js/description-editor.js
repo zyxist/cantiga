@@ -3,18 +3,26 @@
 		var opts = $.extend( {}, $.fn.descriptions.defaults, options );
 		var root = $(this);
 		
-		$(opts['tabActivator']).on('shown.bs.tab', function (e) {
-			if ($(e.target).attr('aria-controls') === opts['noteTab']) {
-				$.ajax({
-					url: opts['reloadActionUrl'],
-					data: { id: opts['id'] },
-					dataType: "json",
-					success: function (result) {
-						updateState(result);
-					}
-				});
-			}
-		});
+		if (opts['tabActivator']) {
+			$(opts['tabActivator']).on('shown.bs.tab', function (e) {
+				if ($(e.target).attr('aria-controls') === opts['noteTab']) {
+					loadNotes();
+				}
+			});
+		} else {
+			loadNotes();
+		}
+		
+		function loadNotes() {
+			$.ajax({
+				url: opts['reloadActionUrl'],
+				data: { id: opts['id'] },
+				dataType: "json",
+				success: function (result) {
+					updateState(result);
+				}
+			});
+		}
 
 		function updateState(data) {
 			if (data.success === 1) {

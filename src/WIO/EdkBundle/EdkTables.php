@@ -26,4 +26,6 @@ class EdkTables
 	const ROUTE_TBL = 'cantiga_edk_routes';
 	const ROUTE_NOTE_TBL = 'cantiga_edk_route_notes';
 	const ROUTE_COMMENT_TBL = 'cantiga_edk_route_comments';
+	
+	const AREA_NOTE_TBL = 'cantiga_edk_area_notes';
 }

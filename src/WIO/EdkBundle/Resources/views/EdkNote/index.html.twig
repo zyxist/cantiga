@@ -1,0 +1,59 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ pageTitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ pageSubtitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+	<div class="box">
+		<div class="box-body" id="notes">
+			<p class="lead">{{ 'AreaAdditionalNoteInfoText' | trans([], 'edk') }}</p>
+			<div id="note-location"></div>
+			<div class="modal fade" id="note-modal">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="{{ 'Close' | trans([], 'general') }}"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title" id="note-name"></h4>
+						</div>
+						<div class="modal-body">
+							<form class="form">
+								<div class="form-group" id="note-content-editor"></div>
+							</form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" id="note-modal-save">{{ 'Save' | trans({}, 'general') }}</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>	
+{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" href="{{ asset('css/bootstrap3-wysihtml5.min.css') }}" />
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script src="{{ asset('js/bootstrap3-wysihtml5.all.min.js') }}"></script>
+	<script src="{{ asset('js/description-editor.js') }}"></script>
+	<script src="{{ asset('js/chatbox.js') }}"></script>
+{% endblock %}
+
+{% block javascripts_inline %}
+	<script>
+		$('#notes').descriptions({
+			'noteTab': 'notes',
+			'reloadActionUrl': '{{ spath(ajaxReloadPage) }}',
+			'updateActionUrl': '{{ spath(ajaxUpdatePage) }}',
+			'clickToEditText': '{{ 'Click to edit' | trans([], 'edk') }}'
+		});
+	</script>
+{% endblock %}

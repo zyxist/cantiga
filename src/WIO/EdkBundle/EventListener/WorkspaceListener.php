@@ -47,6 +47,7 @@ class WorkspaceListener
 	{
 		$workspace = $event->getWorkspace();
 		if ($workspace->getProject()->supportsModule('edk')) {
+			$workspace->addWorkItem('area', new WorkItem('area_note_index', 'WWW: area information'));
 			$workspace->addWorkItem('area', new WorkItem('area_route_index', 'Routes'));
 		}
 	}

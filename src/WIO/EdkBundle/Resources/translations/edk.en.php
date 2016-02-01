@@ -19,4 +19,9 @@ return [
 	'RouteMapFileUpload' => 'File with the map for the route (PDF, JPG)',
 	'RouteGPSTraceFileUpload' => 'File with the GPS trace (KML)',
 	'RouteMapCopyrightInformationText' => 'It is strictly forbidden to upload maps protected by the copyrights!',
+	
+	'AreaAdditionalNoteInfoText' => 'Below you can edit additional sections about your area that will be shown on the website.',
+	'EwcBeginningNote' => 'Beginning',
+	'EwcRegistrationNote' => 'Registration',
+	'EwcAdditionalNote' => 'Additional information',
 ];

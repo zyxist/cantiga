@@ -63,4 +63,9 @@ return [
 	
 	'Do you want to approve the route \'0\'?' => 'Czy chcesz zatwierdzić trasę "0"?',
 	'Do you want to revoke the route \'0\'?' => 'Czy chcesz wycofać zatwierdzenie dla trasy "0"?',
+	
+	'AreaAdditionalNoteInfoText' => 'Poniżej możesz edytować dodatkowe sekcje informacyjne o Twoim rejonie, które pojawią się na stronie EDK.',
+	'EwcBeginningNote' => 'Rozpoczęcie',
+	'EwcRegistrationNote' => 'Informacje o zapisach',
+	'EwcAdditionalNote' => 'Dodatkowe informacje',
 ];
