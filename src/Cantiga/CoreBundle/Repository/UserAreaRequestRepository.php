@@ -25,6 +25,7 @@ use Cantiga\CoreBundle\Event\AreaRequestEvent;
 use Cantiga\CoreBundle\Event\CantigaEvents;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
+use Cantiga\Metamodel\Exception\ModelException;
 use Cantiga\Metamodel\Form\EntityTransformerInterface;
 use Cantiga\Metamodel\QueryBuilder;
 use Cantiga\Metamodel\TimeFormatterInterface;
