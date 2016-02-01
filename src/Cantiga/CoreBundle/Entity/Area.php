@@ -275,7 +275,7 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		return $this;
 	}
 
-	public function setGroup(Group $group)
+	public function setGroup(Group $group = null)
 	{
 		$this->group = $group;
 		return $this;
