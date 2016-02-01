@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS `cantiga_data_export` (
   `encryptionKey` VARCHAR(128) NOT NULL,
   `active` tinyint(1) NOT NULL,
   `notes` TEXT NULL,
+  `lastExportedAt` INT(11) NULL,
   PRIMARY KEY (`id`),
   KEY `projectId` (`projectId`),
   KEY `areaStatusId` (`areaStatusId`)

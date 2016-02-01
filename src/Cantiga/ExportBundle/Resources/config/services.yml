@@ -5,6 +5,9 @@ services:
     cantiga.export.repo.export:
         class:     Cantiga\ExportBundle\Repository\ExportRepository
         arguments: ["@database_connection", "@cantiga.transaction"]
+    cantiga.export.repo.engine:
+        class:     Cantiga\ExportBundle\Repository\ExportEngine
+        arguments: ["@database_connection", "@event_dispatcher"]
     cantiga.export.workspace_listener:
         class: Cantiga\ExportBundle\EventListener\WorkspaceListener
         tags:

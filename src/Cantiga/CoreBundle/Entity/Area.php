@@ -49,6 +49,8 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 	private $reporter;
 	private $memberNum;
 	private $customData;
+	private $createdAt;
+	private $lastUpdatedAt;
 	
 	private $oldGroup;
 	private $oldStatus;
@@ -314,6 +316,30 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		$this->reporter = $reporter;
 		return $this;
 	}
+	
+	public function getCreatedAt()
+	{
+		return $this->createdAt;
+	}
+
+	public function getLastUpdatedAt()
+	{
+		return $this->lastUpdatedAt;
+	}
+
+	public function setCreatedAt($createdAt)
+	{
+		DataMappers::noOverwritingField($this->createdAt);
+		$this->createdAt = $createdAt;
+		return $this;
+	}
+
+	public function setLastUpdatedAt($lastUpdatedAt)
+	{
+		DataMappers::noOverwritingField($this->lastUpdatedAt);
+		$this->lastUpdatedAt = $lastUpdatedAt;
+		return $this;
+	}
 
 	/**
 	 * Fetches a value of a custom property. Null value is returned,
@@ -349,10 +375,12 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		$this->entity->setName($this->name);
 		$this->entity->insert($conn);
 		
+		$this->createdAt = $this->lastUpdatedAt = time();
+		
 		$this->slug = DataMappers::generateSlug($conn, CoreTables::GROUP_TBL);
 		$conn->insert(
 			CoreTables::AREA_TBL,
-			DataMappers::pick($this, ['name', 'slug', 'project', 'group', 'territory', 'status', 'reporter', 'entity'], ['customData' => json_encode($this->customData), 'groupName' => $groupName])
+			DataMappers::pick($this, ['name', 'slug', 'project', 'group', 'territory', 'status', 'reporter', 'entity', 'createdAt', 'lastUpdatedAt'], ['customData' => json_encode($this->customData), 'groupName' => $groupName])
 		);
 		return $this->id = $conn->lastInsertId();
 	}
@@ -376,10 +404,11 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		
 		$this->entity->setName($this->name);
 		$this->entity->update($conn);
+		$this->lastUpdatedAt = time();
 		
 		return $conn->update(
 			CoreTables::AREA_TBL,
-			DataMappers::pick($this, ['name', 'group', 'territory', 'status'], ['customData' => json_encode($this->customData), 'groupName' => $groupName]),
+			DataMappers::pick($this, ['name', 'group', 'territory', 'status', 'lastUpdatedAt'], ['customData' => json_encode($this->customData), 'groupName' => $groupName]),
 			DataMappers::pick($this, ['id'])
 		);
 	}
