@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\EventListener;
 
 use Cantiga\CoreBundle\Api\Controller\CantigaController;
@@ -37,28 +39,33 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class UiListener
 {
+
 	/**
 	 * @var TokenStorageInterface
 	 */
 	private $tokenStorage;
+
 	/**
 	 * @var AuthorizationCheckerInterface
 	 */
 	private $authChecker;
+
 	/**
 	 * @var RouterInterface
 	 */
 	private $router;
+
 	/**
 	 * Main controller, if detected.
 	 * @var CantigaController
 	 */
 	private $controller;
+
 	/**
 	 * @var WorkspaceSourceInterface 
 	 */
 	private $workspaceSource;
-	
+
 	public function __construct(TokenStorageInterface $tokenStorage, AuthorizationCheckerInterface $authChecker, RouterInterface $router, WorkspaceSourceInterface $workspaceSource)
 	{
 		$this->tokenStorage = $tokenStorage;
@@ -66,44 +73,45 @@ class UiListener
 		$this->authChecker = $authChecker;
 		$this->router = $router;
 	}
-	
+
 	public function onKernelController(FilterControllerEvent $event)
 	{
 		$controller = $event->getController();
 
-		if(!is_array($controller)) {
+		if (!is_array($controller)) {
 			return;
 		}
 
 		$controllerObject = $controller[0];
-		if($controllerObject instanceof CantigaController) {
+		if ($controllerObject instanceof CantigaController) {
 			$this->controller = $controllerObject;
 		}
 	}
 
-    public function showUser(ShowUserEvent $event)
+	public function showUser(ShowUserEvent $event)
 	{
 		if ($this->tokenStorage->getToken()->isAuthenticated()) {
 			$user = $this->tokenStorage->getToken()->getUser();
 			$event->setUser($user);
 		}
-    }
-	
+	}
+
 	public function showTasks(ShowTasksEvent $event)
 	{
+		
 	}
-	
+
 	public function showHelpPages(ShowHelpEvent $event)
 	{
 		$event->setPages($this->workspaceSource->getWorkspace()->getHelpPages($this->router));
 	}
-	
+
 	public function showWorkspaces(ShowWorkspacesEvent $event)
 	{
 		$event->setWorkspaces(Workspaces::fetchByRole($this->authChecker));
 		$event->setActive(Workspaces::get($this->workspaceSource->getWorkspace()->getKey()));
 	}
-	
+
 	public function showMenu(WorkspaceEvent $event)
 	{
 		if (null !== $this->controller) {
@@ -111,11 +119,12 @@ class UiListener
 			$event->setCurrentPage($this->controller->breadcrumbs()->getEntryPage());
 		}
 	}
-	
+
 	public function showBreadcrumbs(ShowBreadcrumbsEvent $event)
 	{
 		if (null !== $this->controller) {
 			$event->setBreadcrumbs($this->controller->breadcrumbs()->fetch($this->workspaceSource->getWorkspace()));
 		}
 	}
+
 }

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Controller\AdminPageController;
@@ -31,21 +33,22 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class AdminDashboardController extends AdminPageController
 {
+
 	use Traits\DashboardTrait;
-	
+
 	/**
 	 * @Route("/index", name="admin_dashboard")
 	 */
-    public function indexAction(Request $request)
-    {
-        return $this->render('CantigaCoreBundle:Admin:dashboard.html.twig', array(
+	public function indexAction(Request $request)
+	{
+		return $this->render('CantigaCoreBundle:Admin:dashboard.html.twig', array(
 			'user' => $this->getUser(),
 			'topExtensions' => $this->renderExtensions($request, $this->findDashboardExtensions(CoreExtensions::ADMIN_DASHBOARD_TOP)),
 			'rightExtensions' => $this->renderExtensions($request, $this->findDashboardExtensions(CoreExtensions::ADMIN_DASHBOARD_RIGHT)),
 			'centralExtensions' => $this->renderExtensions($request, $this->findDashboardExtensions(CoreExtensions::ADMIN_DASHBOARD_CENTRAL)),
 		));
-    }
-	
+	}
+
 	/**
 	 * @Route("/help/introduction", name="admin_help_managing")
 	 */
@@ -53,4 +56,5 @@ class AdminDashboardController extends AdminPageController
 	{
 		return $this->renderHelpPage($request, 'admin_help_managing', CoreTexts::HELP_ADMIN_MANAGING);
 	}
+
 }

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
@@ -39,14 +41,16 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class GroupAreaController extends GroupPageController
 {
+
 	use Traits\InformationTrait;
-	
+
 	const REPOSITORY_NAME = 'cantiga.core.repo.group_area';
+
 	/**
 	 * @var CRUDInfo
 	 */
 	private $crudInfo;
-	
+
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 		$this->crudInfo = $this->newCrudInfo(self::REPOSITORY_NAME)
@@ -58,13 +62,13 @@ class GroupAreaController extends GroupPageController
 			->setInfoPage('group_area_info')
 			->setEditPage('group_area_edit')
 			->setItemUpdatedMessage('The area profile \'0\' has been updated.');
-		
+
 		$this->breadcrumbs()
 			->workgroup('data')
 			->entryLink($this->trans('Areas', [], 'pages'), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
 		$this->get(self::REPOSITORY_NAME)->setGroup($this->getMembership()->getItem());
 	}
-		
+
 	/**
 	 * @Route("/index", name="group_area_index")
 	 */
@@ -72,7 +76,7 @@ class GroupAreaController extends GroupPageController
 	{
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$dataTable = $repository->createDataTable();
-        return $this->render($this->crudInfo->getTemplateLocation().'index.html.twig', array(
+		return $this->render($this->crudInfo->getTemplateLocation() . 'index.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'dataTable' => $dataTable,
@@ -80,7 +84,7 @@ class GroupAreaController extends GroupPageController
 			'ajaxListPage' => 'group_area_ajax_list'
 		));
 	}
-	
+
 	/**
 	 * @Route("/ajax-list", name="group_area_ajax_list")
 	 */
@@ -93,9 +97,9 @@ class GroupAreaController extends GroupPageController
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$dataTable = $repository->createDataTable();
 		$dataTable->process($request);
-        return new JsonResponse($routes->process($repository->listData($dataTable, $this->getTranslator())));
+		return new JsonResponse($routes->process($repository->listData($dataTable, $this->getTranslator())));
 	}
-	
+
 	/**
 	 * @Route("/{id}/ajax-members", name="group_area_ajax_members")
 	 */
@@ -105,11 +109,11 @@ class GroupAreaController extends GroupPageController
 			$repository = $this->get(self::REPOSITORY_NAME);
 			$item = $repository->getItem($id);
 			return new JsonResponse(['status' => 1, 'data' => $repository->findMembers($item)]);
-		} catch(ItemNotFoundException $exception) {
+		} catch (ItemNotFoundException $exception) {
 			return new JsonResponse(['status' => 0]);
 		}
 	}
-	
+
 	/**
 	 * @Route("/{id}/info", name="group_area_info")
 	 */
@@ -119,15 +123,15 @@ class GroupAreaController extends GroupPageController
 		$action->slug($this->getSlug());
 		$action->set('ajaxMembersPage', 'group_area_ajax_members');
 		return $action->run($this, $id, function(Area $item) use($request) {
-			$html = $this->renderInformationExtensions(CoreExtensions::AREA_INFORMATION, $request, $item);			
-			$formModel = $this->extensionPointFromSettings(CoreExtensions::AREA_FORM, CoreSettings::AREA_FORM);
-			return [
-				'summary' => $formModel->createSummary(),
-				'extensions' => $html,
-			];
-		});
+				$html = $this->renderInformationExtensions(CoreExtensions::AREA_INFORMATION, $request, $item);
+				$formModel = $this->extensionPointFromSettings(CoreExtensions::AREA_FORM, CoreSettings::AREA_FORM);
+				return [
+					'summary' => $formModel->createSummary(),
+					'extensions' => $html,
+				];
+			});
 	}
-	
+
 	/**
 	 * @Route("/{id}/edit", name="group_area_edit")
 	 */
@@ -137,11 +141,12 @@ class GroupAreaController extends GroupPageController
 		$statusRepo = $this->get('cantiga.core.repo.project_area_status');
 		$territoryRepo->setProject($this->getActiveProject());
 		$statusRepo->setProject($this->getActiveProject());
-		
+
 		$formModel = $this->extensionPointFromSettings(CoreExtensions::AREA_FORM, CoreSettings::AREA_FORM);
 		$action = new EditAction($this->crudInfo, new GroupAreaForm($formModel, $territoryRepo, $statusRepo));
 		$action->slug($this->getSlug());
 		$action->customForm($formModel);
 		return $action->run($this, $id, $request);
 	}
+
 }

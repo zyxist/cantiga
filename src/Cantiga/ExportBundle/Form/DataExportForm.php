@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\ExportBundle\Form;
 
 use Cantiga\CoreBundle\Entity\Project;
@@ -35,15 +37,16 @@ use Symfony\Component\Form\FormInterface;
 
 class DataExportForm extends AbstractType
 {
+
 	private $projectRepository;
 	private $areaStatusRepository;
-	
+
 	public function __construct(ProjectRepository $projectRepository, ProjectAreaStatusRepository $areaStatusRepository)
 	{
 		$this->projectRepository = $projectRepository;
 		$this->areaStatusRepository = $areaStatusRepository;
 	}
-	
+
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
@@ -54,47 +57,45 @@ class DataExportForm extends AbstractType
 			->add('active', new BooleanType, ['label' => 'Active'])
 			->add('notes', new TextareaType, ['label' => 'Notes'])
 			->add('save', 'submit', array('label' => 'Save'));
-		
+
 		$builder->get('project')->addModelTransformer(new EntityTransformer($this->projectRepository));
-		
+
 		$formModifier = function (FormInterface $form, Project $project = null) {
 			$statuses = (null === $project ? [] : $this->areaStatusRepository->getFormChoices($project));
 			$form->add('areaStatus', new ChoiceType, ['label' => 'Area status', 'choices' => $statuses]);
 		};
-		
-        $builder->addEventListener(
-            FormEvents::PRE_SET_DATA,
-            function (FormEvent $event) use ($formModifier) {
-                $data = $event->getData();
-                $formModifier($event->getForm(), $data->getProject());
-				
+
+		$builder->addEventListener(
+			FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($formModifier) {
+				$data = $event->getData();
+				$formModifier($event->getForm(), $data->getProject());
+
 				if (!empty($data->getAreaStatus())) {
 					$data->setAreaStatus($data->getAreaStatus()->getId());
 				}
-            }
-        );
-        $builder->addEventListener(
-            FormEvents::SUBMIT,
-            function (FormEvent $event) {
-                $data = $event->getData();
+			}
+		);
+		$builder->addEventListener(
+			FormEvents::SUBMIT, function (FormEvent $event) {
+				$data = $event->getData();
 				if (!empty($data->getAreaStatus()) && null !== $data->getProject()) {
 					$this->areaStatusRepository->setProject($data->getProject());
 					$data->setAreaStatus($this->areaStatusRepository->getItem($data->getAreaStatus()));
 				}
-            }
-        );
+			}
+		);
 
-        $builder->get('project')->addEventListener(
-            FormEvents::POST_SUBMIT,
-            function (FormEvent $event) use ($formModifier) {
-                $project = $event->getForm()->getData();
-                $formModifier($event->getForm()->getParent(), $project);
-            }
-        );
+		$builder->get('project')->addEventListener(
+			FormEvents::POST_SUBMIT, function (FormEvent $event) use ($formModifier) {
+				$project = $event->getForm()->getData();
+				$formModifier($event->getForm()->getParent(), $project);
+			}
+		);
 	}
 
 	public function getName()
 	{
 		return 'DataExport';
 	}
+
 }

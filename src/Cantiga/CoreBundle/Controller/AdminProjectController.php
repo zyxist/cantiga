@@ -70,7 +70,7 @@ class AdminProjectController extends AdminPageController
 	{
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$dataTable = $repository->createDataTable();
-        return $this->render('CantigaCoreBundle:AdminProject:index.html.twig', array(
+		return $this->render('CantigaCoreBundle:AdminProject:index.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'dataTable' => $dataTable,
@@ -91,7 +91,7 @@ class AdminProjectController extends AdminPageController
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$dataTable = $repository->createDataTable();
 		$dataTable->process($request);
-        return new JsonResponse($routes->process($repository->listData($dataTable)));
+		return new JsonResponse($routes->process($repository->listData($dataTable)));
 	}
 	
 	/**

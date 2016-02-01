@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\LinksBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
@@ -38,12 +40,14 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class AdminLinksController extends AdminPageController
 {
+
 	const REPOSITORY_NAME = 'cantiga.links.repo.links';
+
 	/**
 	 * @var CRUDInfo
 	 */
 	private $crudInfo;
-	
+
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 		$repository = $this->get(self::REPOSITORY_NAME);
@@ -61,19 +65,19 @@ class AdminLinksController extends AdminPageController
 			->setItemUpdatedMessage('The link \'0\' has been updated.')
 			->setItemRemovedMessage('The link \'0\' has been removed.')
 			->setRemoveQuestion('Do you really want to remove the link \'0\'?');
-		
+
 		$this->breadcrumbs()
 			->workgroup('settings')
 			->entryLink($this->trans('Important links', [], 'pages'), $this->crudInfo->getIndexPage());
 	}
-		
+
 	/**
 	 * @Route("/index", name="admin_links_index")
 	 */
 	public function indexAction(Request $request)
 	{
 		$dataTable = $this->crudInfo->getRepository()->createDataTable();
-        return $this->render($this->crudInfo->getTemplateLocation().'index.html.twig', array(
+		return $this->render($this->crudInfo->getTemplateLocation() . 'index.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'dataTable' => $dataTable,
@@ -82,7 +86,7 @@ class AdminLinksController extends AdminPageController
 			'insertPage' => $this->crudInfo->getInsertPage()
 		));
 	}
-	
+
 	/**
 	 * @Route("/ajax-list", name="admin_links_ajax_list")
 	 */
@@ -96,9 +100,9 @@ class AdminLinksController extends AdminPageController
 		$repository = $this->crudInfo->getRepository();
 		$dataTable = $repository->createDataTable();
 		$dataTable->process($request);
-        return new JsonResponse($routes->process($repository->listData($dataTable, $this->getTranslator())));
+		return new JsonResponse($routes->process($repository->listData($dataTable, $this->getTranslator())));
 	}
-	
+
 	/**
 	 * @Route("/{id}/info", name="admin_links_info")
 	 */
@@ -107,17 +111,17 @@ class AdminLinksController extends AdminPageController
 		$action = new InfoAction($this->crudInfo);
 		return $action->run($this, $id);
 	}
-	 
+
 	/**
 	 * @Route("/insert", name="admin_links_insert")
 	 */
 	public function insertAction(Request $request)
 	{
-		$entity = new Link();	
+		$entity = new Link();
 		$action = new InsertAction($this->crudInfo, $entity, new LinkForm(LinkForm::GENERAL));
 		return $action->run($this, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/edit", name="admin_links_edit")
 	 */
@@ -126,7 +130,7 @@ class AdminLinksController extends AdminPageController
 		$action = new EditAction($this->crudInfo, new LinkForm(LinkForm::GENERAL));
 		return $action->run($this, $id, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/remove", name="admin_links_remove")
 	 */
@@ -135,4 +139,5 @@ class AdminLinksController extends AdminPageController
 		$action = new RemoveAction($this->crudInfo);
 		return $action->run($this, $id, $request);
 	}
+
 }

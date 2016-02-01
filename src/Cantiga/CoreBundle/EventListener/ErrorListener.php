@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\EventListener;
 
 use Cantiga\CoreBundle\Exception\AreasNotSupportedException;
@@ -28,18 +30,20 @@ use Symfony\Component\Security\Http\HttpUtils;
  */
 class ErrorListener
 {
+
 	private $httpUtils;
-	
+
 	public function __construct(HttpUtils $httpUtils)
 	{
 		$this->httpUtils = $httpUtils;
 	}
-	
-    public function onKernelException(GetResponseForExceptionEvent $event)
-    {
+
+	public function onKernelException(GetResponseForExceptionEvent $event)
+	{
 		if ($event->getException() instanceof AreasNotSupportedException) {
-            $subRequest = $this->httpUtils->createRequest($event->getRequest(), 'cantiga_error_areas_not_supported');
-            $event->setResponse($event->getKernel()->handle($subRequest, HttpKernelInterface::SUB_REQUEST, true));
+			$subRequest = $this->httpUtils->createRequest($event->getRequest(), 'cantiga_error_areas_not_supported');
+			$event->setResponse($event->getKernel()->handle($subRequest, HttpKernelInterface::SUB_REQUEST, true));
 		}
 	}
+
 }

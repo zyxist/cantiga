@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
@@ -40,14 +42,16 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class ProjectGroupController extends ProjectPageController
 {
+
 	use Traits\InformationTrait;
 
 	const REPOSITORY_NAME = 'cantiga.core.repo.project_group';
+
 	/**
 	 * @var CRUDInfo
 	 */
 	private $crudInfo;
-	
+
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 		$this->crudInfo = $this->newCrudInfo(self::REPOSITORY_NAME)
@@ -61,13 +65,13 @@ class ProjectGroupController extends ProjectPageController
 			->setEditPage('project_area_group_edit')
 			->setRemovePage('project_area_group_remove')
 			->setRemoveQuestion('Do you really want to remove \'0\' item?');
-		
+
 		$this->breadcrumbs()
 			->workgroup('data')
 			->entryLink($this->trans('Groups', [], 'pages'), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
 		$this->get(self::REPOSITORY_NAME)->setProject($this->getActiveProject());
 	}
-		
+
 	/**
 	 * @Route("/index", name="project_area_group_index")
 	 */
@@ -75,7 +79,7 @@ class ProjectGroupController extends ProjectPageController
 	{
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$dataTable = $repository->createDataTable();
-        return $this->render($this->crudInfo->getTemplateLocation().'index.html.twig', array(
+		return $this->render($this->crudInfo->getTemplateLocation() . 'index.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'dataTable' => $dataTable,
@@ -84,7 +88,7 @@ class ProjectGroupController extends ProjectPageController
 			'ajaxListPage' => 'project_area_group_ajax_list',
 		));
 	}
-	
+
 	/**
 	 * @Route("/ajax-list", name="project_area_group_ajax_list")
 	 */
@@ -98,9 +102,9 @@ class ProjectGroupController extends ProjectPageController
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$dataTable = $repository->createDataTable();
 		$dataTable->process($request);
-        return new JsonResponse($routes->process($repository->listData($dataTable)));
+		return new JsonResponse($routes->process($repository->listData($dataTable)));
 	}
-	
+
 	/**
 	 * @Route("/{id}/ajax-members", name="project_area_group_ajax_members")
 	 */
@@ -110,11 +114,11 @@ class ProjectGroupController extends ProjectPageController
 			$repository = $this->get(self::REPOSITORY_NAME);
 			$item = $repository->getItem($id);
 			return new JsonResponse(['status' => 1, 'data' => $repository->findMembers($item)]);
-		} catch(ItemNotFoundException $exception) {
+		} catch (ItemNotFoundException $exception) {
 			return new JsonResponse(['status' => 0]);
 		}
 	}
-	
+
 	/**
 	 * @Route("/{id}/info", name="project_area_group_info")
 	 */
@@ -124,14 +128,14 @@ class ProjectGroupController extends ProjectPageController
 		$action = new InfoAction($this->crudInfo);
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, function($group) use($repository, $request) {
-			$html = $this->renderInformationExtensions(CoreExtensions::PROJECT_GROUP_INFORMATION, $request, $group);	
-			return [
-				'areas' => $repository->findGroupAreas($group),
-				'extensions' => $html,				
-			];
-		});
+				$html = $this->renderInformationExtensions(CoreExtensions::PROJECT_GROUP_INFORMATION, $request, $group);
+				return [
+					'areas' => $repository->findGroupAreas($group),
+					'extensions' => $html,
+				];
+			});
 	}
-	 
+
 	/**
 	 * @Route("/insert", name="project_area_group_insert")
 	 */
@@ -143,7 +147,7 @@ class ProjectGroupController extends ProjectPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/edit", name="project_area_group_edit")
 	 */
@@ -153,7 +157,7 @@ class ProjectGroupController extends ProjectPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/remove", name="project_area_group_remove")
 	 */
@@ -163,11 +167,12 @@ class ProjectGroupController extends ProjectPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
 	}
-	
+
 	private function getCategoryRepo()
 	{
 		$categoryRepo = $this->get('cantiga.core.repo.project_group_category');
 		$categoryRepo->setProject($this->getActiveProject());
 		return $categoryRepo;
 	}
+
 }

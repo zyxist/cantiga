@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Auth;
 
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
@@ -32,14 +34,15 @@ use Symfony\Component\Security\Http\Firewall\ListenerInterface;
  */
 class MembershipAuthListener implements ListenerInterface
 {
-    protected $tokenStorage;
-    protected $authenticationManager;
 
-    public function __construct(TokenStorageInterface $tokenStorage, AuthenticationManagerInterface $authenticationManager)
-    {
-        $this->tokenStorage = $tokenStorage;
-        $this->authenticationManager = $authenticationManager;
-    }
+	protected $tokenStorage;
+	protected $authenticationManager;
+
+	public function __construct(TokenStorageInterface $tokenStorage, AuthenticationManagerInterface $authenticationManager)
+	{
+		$this->tokenStorage = $tokenStorage;
+		$this->authenticationManager = $authenticationManager;
+	}
 
 	public function handle(GetResponseEvent $event)
 	{
@@ -48,4 +51,5 @@ class MembershipAuthListener implements ListenerInterface
 			return;
 		}
 	}
+
 }

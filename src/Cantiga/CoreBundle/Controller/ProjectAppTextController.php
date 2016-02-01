@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
@@ -38,17 +40,19 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class ProjectAppTextController extends ProjectPageController
 {
+
 	const REPOSITORY_NAME = 'cantiga.core.repo.text';
+
 	/**
 	 * @var CRUDInfo
 	 */
 	private $crudInfo;
-	
+
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$repository->setProject($this->getActiveProject());
-		
+
 		$this->crudInfo = $this->newCrudInfo(self::REPOSITORY_NAME)
 			->setTemplateLocation('CantigaCoreBundle:AppText:')
 			->setItemNameProperty('title')
@@ -63,12 +67,12 @@ class ProjectAppTextController extends ProjectPageController
 			->setItemUpdatedMessage('The text \'0\' has been updated.')
 			->setItemRemovedMessage('The text \'0\' has been removed.')
 			->setRemoveQuestion('Do you really want to remove \'0\' text?');
-		
+
 		$this->breadcrumbs()
 			->workgroup('manage')
 			->entryLink($this->trans('Application texts', [], 'pages'), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
 	}
-		
+
 	/**
 	 * @Route("/index", name="project_app_text_index")
 	 */
@@ -77,7 +81,7 @@ class ProjectAppTextController extends ProjectPageController
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$repository->setProject($this->getActiveProject());
 		$dataTable = $repository->createDataTable();
-        return $this->render($this->crudInfo->getTemplateLocation().'index.html.twig', array(
+		return $this->render($this->crudInfo->getTemplateLocation() . 'index.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'dataTable' => $dataTable,
@@ -86,7 +90,7 @@ class ProjectAppTextController extends ProjectPageController
 			'ajaxListPage' => 'project_app_text_ajax_list'
 		));
 	}
-	
+
 	/**
 	 * @Route("/ajax-list", name="project_app_text_ajax_list")
 	 */
@@ -101,9 +105,9 @@ class ProjectAppTextController extends ProjectPageController
 		$repository->setProject($this->getActiveProject());
 		$dataTable = $repository->createDataTable();
 		$dataTable->process($request);
-        return new JsonResponse($routes->process($repository->listData($dataTable)));
+		return new JsonResponse($routes->process($repository->listData($dataTable)));
 	}
-	
+
 	/**
 	 * @Route("/{id}/info", name="project_app_text_info")
 	 */
@@ -113,7 +117,7 @@ class ProjectAppTextController extends ProjectPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $id);
 	}
-	 
+
 	/**
 	 * @Route("/insert", name="project_app_text_insert")
 	 */
@@ -123,7 +127,7 @@ class ProjectAppTextController extends ProjectPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/edit", name="project_app_text_edit")
 	 */
@@ -133,7 +137,7 @@ class ProjectAppTextController extends ProjectPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/remove", name="project_app_text_remove")
 	 */
@@ -143,4 +147,5 @@ class ProjectAppTextController extends ProjectPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
 	}
+
 }

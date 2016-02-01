@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -38,12 +40,14 @@ use Cantiga\CoreBundle\Form\AdminAppMailForm;
  */
 class AdminAppMailController extends AdminPageController
 {
+
 	const REPOSITORY_NAME = 'cantiga.core.repo.mail';
+
 	/**
 	 * @var CRUDInfo
 	 */
 	private $crudInfo;
-	
+
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 		$this->crudInfo = $this->newCrudInfo(self::REPOSITORY_NAME)
@@ -57,12 +61,12 @@ class AdminAppMailController extends AdminPageController
 			->setEditPage('admin_app_mail_edit')
 			->setRemovePage('admin_app_mail_remove')
 			->setRemoveQuestion('Do you really want to remove \'0\' item?');
-		
+
 		$this->breadcrumbs()
 			->workgroup('settings')
 			->entryLink($this->trans('Mail templates', [], 'pages'), $this->crudInfo->getIndexPage());
 	}
-		
+
 	/**
 	 * @Route("/index", name="admin_app_mail_index")
 	 */
@@ -70,14 +74,14 @@ class AdminAppMailController extends AdminPageController
 	{
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$dataTable = $repository->createDataTable();
-        return $this->render('CantigaCoreBundle:AdminAppMail:index.html.twig', array(
+		return $this->render('CantigaCoreBundle:AdminAppMail:index.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'dataTable' => $dataTable,
 			'locale' => $request->getLocale()
 		));
 	}
-	
+
 	/**
 	 * @Route("/ajax-list", name="admin_app_mail_ajax_list")
 	 */
@@ -91,9 +95,9 @@ class AdminAppMailController extends AdminPageController
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$dataTable = $repository->createDataTable();
 		$dataTable->process($request);
-        return new JsonResponse($routes->process($repository->listData($dataTable)));
+		return new JsonResponse($routes->process($repository->listData($dataTable)));
 	}
-	
+
 	/**
 	 * @Route("/{id}/info", name="admin_app_mail_info")
 	 */
@@ -102,7 +106,7 @@ class AdminAppMailController extends AdminPageController
 		$action = new InfoAction($this->crudInfo);
 		return $action->run($this, $id);
 	}
-	 
+
 	/**
 	 * @Route("/insert", name="admin_app_mail_insert")
 	 */
@@ -111,7 +115,7 @@ class AdminAppMailController extends AdminPageController
 		$action = new InsertAction($this->crudInfo, new AppMail(), new AdminAppMailForm());
 		return $action->run($this, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/edit", name="admin_app_mail_edit")
 	 */
@@ -120,7 +124,7 @@ class AdminAppMailController extends AdminPageController
 		$action = new EditAction($this->crudInfo, new AdminAppMailForm());
 		return $action->run($this, $id, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/remove", name="admin_app_mail_remove")
 	 */
@@ -129,4 +133,5 @@ class AdminAppMailController extends AdminPageController
 		$action = new RemoveAction($this->crudInfo);
 		return $action->run($this, $id, $request);
 	}
+
 }

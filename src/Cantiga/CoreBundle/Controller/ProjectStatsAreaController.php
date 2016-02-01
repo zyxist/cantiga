@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Controller\ProjectPageController;
@@ -31,13 +33,14 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class ProjectStatsAreaController extends ProjectPageController
 {
+
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 		$this->breadcrumbs()
 			->workgroup('statistics')
 			->entryLink($this->trans('Area statistics', [], 'pages'), 'project_stats_area_index', ['slug' => $this->getSlug()]);
 	}
-	
+
 	/**
 	 * @Route("/index", name="project_stats_area_index")
 	 */
@@ -56,6 +59,7 @@ class ProjectStatsAreaController extends ProjectPageController
 				];
 			}
 		}
-        return $this->render('CantigaCoreBundle:ProjectStatsArea:index.html.twig', array('output' => $output));
+		return $this->render('CantigaCoreBundle:ProjectStatsArea:index.html.twig', array('output' => $output));
 	}
+
 }

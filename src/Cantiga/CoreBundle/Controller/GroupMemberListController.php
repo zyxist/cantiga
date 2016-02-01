@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
@@ -31,13 +33,16 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class GroupMemberListController extends GroupPageController
 {
+
 	use Traits\MemberListTrait;
+
 	const REPOSITORY_NAME = 'cantiga.core.repo.group_memberlist';
+
 	/**
 	 * @var CRUDInfo
 	 */
 	private $crudInfo;
-	
+
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 		$this->crudInfo = $this->newCrudInfo(self::REPOSITORY_NAME)
@@ -52,19 +57,19 @@ class GroupMemberListController extends GroupPageController
 			->workgroup('community')
 			->entryLink($this->trans('Member list', [], 'pages'), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
 	}
-	
+
 	protected function profilePageSubtitle()
 	{
 		return 'Group member profile';
 	}
-	
+
 	/**
 	 * @Route("/index", name="group_memberlist_index")
 	 */
-    public function indexAction(Request $request)
-    {
+	public function indexAction(Request $request)
+	{
 		return $this->onIndex($request);
-    }
+	}
 
 	/**
 	 * @Route("/{id}/profile", name="group_memberlist_profile")
@@ -73,4 +78,5 @@ class GroupMemberListController extends GroupPageController
 	{
 		return $this->onProfile($id, $request);
 	}
+
 }

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Controller\ProjectPageController;
@@ -29,22 +31,23 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ProjectDashboardController extends ProjectPageController
 {
+
 	use Traits\DashboardTrait;
-	
+
 	/**
 	 * @Route("/index", name="project_dashboard")
 	 */
-    public function indexAction(Request $request)
-    {
-        return $this->render('CantigaCoreBundle:Project:dashboard.html.twig', array(
+	public function indexAction(Request $request)
+	{
+		return $this->render('CantigaCoreBundle:Project:dashboard.html.twig', array(
 			'user' => $this->getUser(),
 			'project' => $this->getActiveProject(),
 			'topExtensions' => $this->renderExtensions($request, $this->findDashboardExtensions(CoreExtensions::PROJECT_DASHBOARD_TOP)),
 			'rightExtensions' => $this->renderExtensions($request, $this->findDashboardExtensions(CoreExtensions::PROJECT_DASHBOARD_RIGHT)),
 			'centralExtensions' => $this->renderExtensions($request, $this->findDashboardExtensions(CoreExtensions::PROJECT_DASHBOARD_CENTRAL)),
 		));
-    }
-	
+	}
+
 	/**
 	 * @Route("/help/introduction", name="project_help_introduction")
 	 */
@@ -52,7 +55,7 @@ class ProjectDashboardController extends ProjectPageController
 	{
 		return $this->renderHelpPage($request, 'project_help_introduction', CoreTexts::HELP_PROJECT_INTRODUCTION);
 	}
-	
+
 	/**
 	 * @Route("/help/members", name="project_help_members")
 	 */
@@ -60,4 +63,5 @@ class ProjectDashboardController extends ProjectPageController
 	{
 		return $this->renderHelpPage($request, 'project_help_members', CoreTexts::HELP_PROJECT_MEMBERS);
 	}
+
 }

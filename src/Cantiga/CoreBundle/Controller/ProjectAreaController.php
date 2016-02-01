@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
@@ -40,15 +42,17 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class ProjectAreaController extends ProjectPageController
 {
+
 	use Traits\InformationTrait;
-	
+
 	const REPOSITORY_NAME = 'cantiga.core.repo.project_area';
 	const FILTER_NAME = 'cantiga.core.filter.area';
+
 	/**
 	 * @var CRUDInfo
 	 */
 	private $crudInfo;
-	
+
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 		$this->crudInfo = $this->newCrudInfo(self::REPOSITORY_NAME)
@@ -61,13 +65,13 @@ class ProjectAreaController extends ProjectPageController
 			->setInsertPage('project_area_insert')
 			->setEditPage('project_area_edit')
 			->setItemUpdatedMessage('The area profile \'0\' has been updated.');
-		
+
 		$this->breadcrumbs()
 			->workgroup('data')
 			->entryLink($this->trans('Areas', [], 'pages'), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
 		$this->get(self::REPOSITORY_NAME)->setActiveProject($this->getActiveProject());
 	}
-		
+
 	/**
 	 * @Route("/index", name="project_area_index")
 	 */
@@ -78,10 +82,10 @@ class ProjectAreaController extends ProjectPageController
 		$filter->setTargetProject($this->getActiveProject());
 		$filterForm = $filter->createForm($this->createFormBuilder($filter));
 		$filterForm->handleRequest($request);
-		
+
 		$dataTable = $repository->createDataTable();
 		$dataTable->filter($filter);
-        return $this->render($this->crudInfo->getTemplateLocation().'index.html.twig', array(
+		return $this->render($this->crudInfo->getTemplateLocation() . 'index.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'dataTable' => $dataTable,
@@ -91,7 +95,7 @@ class ProjectAreaController extends ProjectPageController
 			'filter' => $filter
 		));
 	}
-	
+
 	/**
 	 * @Route("/ajax-list", name="project_area_ajax_list")
 	 */
@@ -101,7 +105,7 @@ class ProjectAreaController extends ProjectPageController
 		$filter->setTargetProject($this->getActiveProject());
 		$filterForm = $filter->createForm($this->createFormBuilder($filter));
 		$filterForm->handleRequest($request);
-		
+
 		$routes = $this->dataRoutes()
 			->link('info_link', $this->crudInfo->getInfoPage(), ['id' => '::id', 'slug' => $this->getSlug()])
 			->link('edit_link', $this->crudInfo->getEditPage(), ['id' => '::id', 'slug' => $this->getSlug()]);
@@ -110,9 +114,9 @@ class ProjectAreaController extends ProjectPageController
 		$dataTable = $repository->createDataTable();
 		$dataTable->filter($filter);
 		$dataTable->process($request);
-        return new JsonResponse($routes->process($repository->listData($dataTable, $this->getTranslator())));
+		return new JsonResponse($routes->process($repository->listData($dataTable, $this->getTranslator())));
 	}
-	
+
 	/**
 	 * @Route("/{id}/ajax-members", name="project_area_ajax_members")
 	 */
@@ -122,11 +126,11 @@ class ProjectAreaController extends ProjectPageController
 			$repository = $this->get(self::REPOSITORY_NAME);
 			$item = $repository->getItem($id);
 			return new JsonResponse(['status' => 1, 'data' => $repository->findMembers($item)]);
-		} catch(ItemNotFoundException $exception) {
+		} catch (ItemNotFoundException $exception) {
 			return new JsonResponse(['status' => 0]);
 		}
 	}
-	
+
 	/**
 	 * @Route("/{id}/info", name="project_area_info")
 	 */
@@ -136,15 +140,15 @@ class ProjectAreaController extends ProjectPageController
 		$action->slug($this->getSlug());
 		$action->set('ajaxMembersPage', 'project_area_ajax_members');
 		return $action->run($this, $id, function(Area $item) use($request) {
-			$html = $this->renderInformationExtensions(CoreExtensions::AREA_INFORMATION, $request, $item);			
-			$formModel = $this->extensionPointFromSettings(CoreExtensions::AREA_FORM, CoreSettings::AREA_FORM);
-			return [
-				'summary' => $formModel->createSummary(),
-				'extensions' => $html,
-			];
-		});
+				$html = $this->renderInformationExtensions(CoreExtensions::AREA_INFORMATION, $request, $item);
+				$formModel = $this->extensionPointFromSettings(CoreExtensions::AREA_FORM, CoreSettings::AREA_FORM);
+				return [
+					'summary' => $formModel->createSummary(),
+					'extensions' => $html,
+				];
+			});
 	}
-	 
+
 	/**
 	 * @Route("/insert", name="project_area_insert")
 	 */
@@ -156,7 +160,7 @@ class ProjectAreaController extends ProjectPageController
 		$territoryRepo->setProject($this->getActiveProject());
 		$statusRepo->setProject($this->getActiveProject());
 		$groupRepo->setProject($this->getActiveProject());
-		
+
 		$formModel = $this->extensionPointFromSettings(CoreExtensions::AREA_FORM, CoreSettings::AREA_FORM);
 		$item = new Area();
 		$item->setReporter($this->getUser());
@@ -166,7 +170,7 @@ class ProjectAreaController extends ProjectPageController
 		$action->customForm($formModel);
 		return $action->run($this, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/edit", name="project_area_edit")
 	 */
@@ -178,11 +182,12 @@ class ProjectAreaController extends ProjectPageController
 		$territoryRepo->setProject($this->getActiveProject());
 		$statusRepo->setProject($this->getActiveProject());
 		$groupRepo->setProject($this->getActiveProject());
-		
+
 		$formModel = $this->extensionPointFromSettings(CoreExtensions::AREA_FORM, CoreSettings::AREA_FORM);
 		$action = new EditAction($this->crudInfo, new ProjectAreaForm($formModel, $territoryRepo, $groupRepo, $statusRepo));
 		$action->slug($this->getSlug());
 		$action->customForm($formModel);
 		return $action->run($this, $id, $request);
 	}
+
 }

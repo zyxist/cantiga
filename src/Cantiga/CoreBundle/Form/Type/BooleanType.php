@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
@@ -30,25 +32,27 @@ use Cantiga\Metamodel\Form\BooleanTransformer;
  */
 class BooleanType extends AbstractType
 {
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults(array(
-            'compound' => false,
-        ));
-    }
-	
+
+	public function configureOptions(OptionsResolver $resolver)
+	{
+		$resolver->setDefaults(array(
+			'compound' => false,
+		));
+	}
+
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder->addViewTransformer(new BooleanTransformer());
 	}
-	
+
 	public function getBlockPrefix()
 	{
 		return 'boolean';
 	}
 
-    public function getName()
-    {
-        return 'boolean';
-    }
+	public function getName()
+	{
+		return 'boolean';
+	}
+
 }

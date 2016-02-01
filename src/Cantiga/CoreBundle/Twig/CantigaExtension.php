@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Twig;
 
 use Cantiga\Branding;
@@ -34,7 +36,6 @@ use Symfony\Component\Serializer\Exception\LogicException;
 use Twig_Extension;
 use Twig_SimpleFunction;
 
-
 /**
  * Exposes cantiga-specific helpers to Twig
  *
@@ -42,27 +43,32 @@ use Twig_SimpleFunction;
  */
 class CantigaExtension extends Twig_Extension
 {
+
 	/**
 	 * @var WorkspaceSourceInterface 
 	 */
 	private $workspaceSource;
+
 	/**
 	 * @var TimeFormatterInterface 
 	 */
 	private $timeFormatter;
+
 	/**
 	 * @var TokenStorageInterface
 	 */
 	private $tokenStorage;
+
 	/**
 	 * @var RouterInterface
 	 */
 	private $router;
+
 	/**
 	 * @var BlockLauncherInterface
 	 */
 	private $blockLauncher;
-	
+
 	public function __construct(WorkspaceSourceInterface $workspaceSource, TimeFormatterInterface $timeFormatter, TokenStorageInterface $tokenStorage, RouterInterface $router, BlockLauncherInterface $blockLauncher)
 	{
 		$this->workspaceSource = $workspaceSource;
@@ -71,22 +77,22 @@ class CantigaExtension extends Twig_Extension
 		$this->router = $router;
 		$this->blockLauncher = $blockLauncher;
 	}
-	
+
 	public function getName()
 	{
 		return 'cantiga';
 	}
-	
+
 	public function getGlobals()
 	{
-        $tf = new ReflectionClass(TimeFormatterInterface::class);
+		$tf = new ReflectionClass(TimeFormatterInterface::class);
 		$br = new ReflectionClass(Branding::class);
 		$tfConstants = $tf->getConstants();
 		$brConstants = $br->getConstants();
 
 		return array('TimeFormatter' => $tfConstants, 'Branding' => $brConstants);
 	}
-	
+
 	public function getFunctions()
 	{
 		return array(
@@ -114,7 +120,7 @@ class CantigaExtension extends Twig_Extension
 			}),
 		);
 	}
-	
+
 	public function dataTableColumns(DataTable $dt, $useActionColumn = true)
 	{
 		$data = [];
@@ -130,11 +136,11 @@ class CantigaExtension extends Twig_Extension
 		}
 		return json_encode($data);
 	}
-	
+
 	public function dataTableActions(DataTable $dt, array $actions)
 	{
-		$code = '{ targets: '.$dt->columnCount().', render: function(data, type, row) { '."\n".'return ';
-		
+		$code = '{ targets: ' . $dt->columnCount() . ', render: function(data, type, row) { ' . "\n" . 'return ';
+
 		$first = true;
 		foreach ($actions as $action) {
 			if (!isset($action['link']) || !isset($action['name']) || !isset($action['label'])) {
@@ -145,75 +151,75 @@ class CantigaExtension extends Twig_Extension
 			}
 			$first = false;
 			if (isset($action['when'])) {
-				$code .= '(row[\''.$action['when'].'\'] ? \'<a href="\' + row[\''.$action['link'].'\'] + \'" class="btn btn-xs '.$action['label'].'" role="button">'.$action['name'].'</a> \' : \'\') ';
+				$code .= '(row[\'' . $action['when'] . '\'] ? \'<a href="\' + row[\'' . $action['link'] . '\'] + \'" class="btn btn-xs ' . $action['label'] . '" role="button">' . $action['name'] . '</a> \' : \'\') ';
 			} else {
-				$code .= '\'<a href="\' + row[\''.$action['link'].'\'] + \'" class="btn btn-xs '.$action['label'].'" role="button">'.$action['name'].'</a> \' ';
+				$code .= '\'<a href="\' + row[\'' . $action['link'] . '\'] + \'" class="btn btn-xs ' . $action['label'] . '" role="button">' . $action['name'] . '</a> \' ';
 			}
 		}
 		$code .= ";\n } }";
 		return $code;
 	}
-	
+
 	public function dataTableLink(DataTable $dt, $columnName, $linkName)
 	{
 		$i = 0;
 		foreach ($dt->getColumnDefinitions() as $column) {
 			if ($column['name'] == $columnName) {
-				return '{ targets: '.$i.', render: function(data, type, row) { return \'<a href="\'+row[\''.$linkName.'\']+\'">\'+row[\''.$columnName.'\']+\'</a>\'; } }, ';
+				return '{ targets: ' . $i . ', render: function(data, type, row) { return \'<a href="\'+row[\'' . $linkName . '\']+\'">\'+row[\'' . $columnName . '\']+\'</a>\'; } }, ';
 			}
 			$i++;
 		}
 		return '';
 	}
-	
+
 	public function dataTableRewrite(DataTable $dt, $columnName, $takeFrom)
 	{
 		$i = 0;
 		foreach ($dt->getColumnDefinitions() as $column) {
 			if ($column['name'] == $columnName) {
-				return '{ targets: '.$i.', render: function(data, type, row) { return row[\''.$takeFrom.'\']; } }, ';
+				return '{ targets: ' . $i . ', render: function(data, type, row) { return row[\'' . $takeFrom . '\']; } }, ';
 			}
 			$i++;
 		}
 		return '';
 	}
-	
+
 	public function dataTableLabel(DataTable $dt, $columnName, $takeText, $takeLabel)
 	{
 		$i = 0;
 		foreach ($dt->getColumnDefinitions() as $column) {
 			if ($column['name'] == $columnName) {
-				return '{ targets: '.$i.', render: function(data, type, row) { return \'<span class="label label-\'+row[\''.$takeLabel.'\']+\'">\'+row[\''.$takeText.'\']+\'</span>\'; } }, ';
+				return '{ targets: ' . $i . ', render: function(data, type, row) { return \'<span class="label label-\'+row[\'' . $takeLabel . '\']+\'">\'+row[\'' . $takeText . '\']+\'</span>\'; } }, ';
 			}
 			$i++;
 		}
 		return '';
 	}
-	
+
 	public function dataTableBoolean(DataTable $dt, $columnName)
 	{
 		$i = 0;
 		foreach ($dt->getColumnDefinitions() as $column) {
 			if ($column['name'] == $columnName) {
-				return '{ targets: '.$i.', render: function(data, type, row) { return (row[\''.$columnName.'\'] == 1) ? \'<span class="glyphicon glyphicon-ok"></span>\' : \'\'; }, createdCell: function(td, cellData, rowData, row, col) { $(td).addClass(\'text-center\'); } }, ';
+				return '{ targets: ' . $i . ', render: function(data, type, row) { return (row[\'' . $columnName . '\'] == 1) ? \'<span class="glyphicon glyphicon-ok"></span>\' : \'\'; }, createdCell: function(td, cellData, rowData, row, col) { $(td).addClass(\'text-center\'); } }, ';
 			}
 			$i++;
 		}
 		return '';
 	}
-	
+
 	public function dataTableProgress(DataTable $dt, $columnName, $color)
 	{
 		$i = 0;
 		foreach ($dt->getColumnDefinitions() as $column) {
 			if ($column['name'] == $columnName) {
-				return '{ targets: '.$i.', render: function(data, type, row) { return \'<div class="progress progress-xs"><div class="progress-bar progress-bar-'.$color.'" style="width: \'+row[\''.$columnName.'\']+\'%"></div></div>\'; } }, ';
+				return '{ targets: ' . $i . ', render: function(data, type, row) { return \'<div class="progress progress-xs"><div class="progress-bar progress-bar-' . $color . '" style="width: \'+row[\'' . $columnName . '\']+\'%"></div></div>\'; } }, ';
 			}
 			$i++;
 		}
 		return '';
 	}
-	
+
 	public function workspaceSkin()
 	{
 		$workspace = $this->workspaceSource->getWorkspace();
@@ -224,7 +230,7 @@ class CantigaExtension extends Twig_Extension
 		}
 		return 'blue';
 	}
-	
+
 	public function spath($route, $args = [], $referenceType = null)
 	{
 		$token = $this->tokenStorage->getToken();
@@ -233,27 +239,27 @@ class CantigaExtension extends Twig_Extension
 		}
 		return $this->router->generate($route, $args, $referenceType);
 	}
-	
+
 	public function launch($blockName, $args = [])
 	{
 		return $this->blockLauncher->launchBlock($blockName, $args);
 	}
-	
+
 	public function formatTime($format, $utcTimestamp)
 	{
 		return $this->timeFormatter->format($format, $utcTimestamp);
 	}
-	
+
 	public function formatDate(array $date)
 	{
 		return $this->timeFormatter->formatDate($date);
 	}
-	
+
 	public function ago($utcTimestamp)
 	{
 		return $this->timeFormatter->ago($utcTimestamp);
 	}
-	
+
 	public function useICheck()
 	{
 		return '	<script>
@@ -265,7 +271,7 @@ class CantigaExtension extends Twig_Extension
 	  });
 	</script>';
 	}
-	
+
 	public function booleanMark($value)
 	{
 		if ($value) {
@@ -274,20 +280,20 @@ class CantigaExtension extends Twig_Extension
 			return '<span class="glyphicon glyphicon-remove"></span>';
 		}
 	}
-	
+
 	public function emptyBooleanMark($value)
 	{
 		if ($value) {
 			return '<p class="text-center"><span class="glyphicon glyphicon-ok"></span></p>';
-		} 
+		}
 		return '';
 	}
-	
+
 	public function callbackTransform($value, $callback)
 	{
 		return $callback($value);
 	}
-	
+
 	public function avatar($user, $size = 128)
 	{
 		if (is_array($user)) {
@@ -298,9 +304,10 @@ class CantigaExtension extends Twig_Extension
 		if (!empty($avatar)) {
 			$firstTwo = substr($avatar, 0, 2);
 			$secondTwo = substr($avatar, 2, 2);
-			return '/ph/'.$size.'/'.$firstTwo.'/'.$secondTwo.'/'.$avatar;
+			return '/ph/' . $size . '/' . $firstTwo . '/' . $secondTwo . '/' . $avatar;
 		} else {
 			return '/ph/default.gif';
 		}
 	}
+
 }

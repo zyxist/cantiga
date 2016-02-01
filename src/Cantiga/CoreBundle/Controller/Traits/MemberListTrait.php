@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Controller\Traits;
 
 use Cantiga\CoreBundle\Api\Actions\InfoAction;
@@ -28,15 +30,16 @@ use Symfony\Component\HttpFoundation\Request;
  */
 trait MemberListTrait
 {
+
 	protected function profilePageSubtitle()
 	{
 		return 'Member profile';
 	}
-	
+
 	protected function onIndex(Request $request)
 	{
 		$repository = $this->get(self::REPOSITORY_NAME);
-        return $this->render($this->crudInfo->getTemplateLocation().'index.html.twig', array(
+		return $this->render($this->crudInfo->getTemplateLocation() . 'index.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'members' => $repository->findMembers($this->getMembership()->getItem()),
@@ -44,17 +47,18 @@ trait MemberListTrait
 			'profilePage' => $this->crudInfo->getInfoPage(),
 		));
 	}
-	
+
 	protected function onProfile($id, Request $request)
 	{
 		$action = new InfoAction($this->crudInfo);
 		$action->slug($this->getSlug());
 		$entity = $this->getMembership()->getItem();
 		return $action
-			->set('profilePageSubtitle', $this->profilePageSubtitle())
-			->fetch(function($repository, $id) use($entity) {
-				return $repository->getItem($entity, $id);
-			})
-			->run($this, $id);
+				->set('profilePageSubtitle', $this->profilePageSubtitle())
+				->fetch(function($repository, $id) use($entity) {
+					return $repository->getItem($entity, $id);
+				})
+				->run($this, $id);
 	}
+
 }

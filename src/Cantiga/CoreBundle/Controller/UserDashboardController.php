@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Controller\UserPageController;
@@ -31,18 +33,19 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class UserDashboardController extends UserPageController
 {
+
 	use Traits\DashboardTrait;
-	
-    public function indexAction(Request $request)
-    {
-        return $this->render('CantigaCoreBundle:User:dashboard.html.twig', array(
+
+	public function indexAction(Request $request)
+	{
+		return $this->render('CantigaCoreBundle:User:dashboard.html.twig', array(
 			'user' => $this->getUser(),
 			'invitationNum' => $this->get('cantiga.core.repo.invitation')->countInvitations($this->getUser()),
 			'rightExtensions' => $this->renderExtensions($request, $this->findDashboardExtensions(CoreExtensions::USER_DASHBOARD_RIGHT)),
 			'centralExtensions' => $this->renderExtensions($request, $this->findDashboardExtensions(CoreExtensions::USER_DASHBOARD_CENTRAL)),
 		));
-    }
-	
+	}
+
 	/**
 	 * @Route("/help/introduction", name="user_help_introduction")
 	 */
@@ -50,7 +53,7 @@ class UserDashboardController extends UserPageController
 	{
 		return $this->renderHelpPage($request, 'user_help_introduction', CoreTexts::HELP_INTRODUCTION);
 	}
-	
+
 	/**
 	 * @Route("/help/profile", name="user_help_profile")
 	 */
@@ -58,7 +61,7 @@ class UserDashboardController extends UserPageController
 	{
 		return $this->renderHelpPage($request, 'user_help_profile', CoreTexts::HELP_PROFILE);
 	}
-	
+
 	/**
 	 * @Route("/help/requesting-areas", name="user_help_requesting_areas")
 	 */
@@ -66,7 +69,7 @@ class UserDashboardController extends UserPageController
 	{
 		return $this->renderHelpPage($request, 'user_help_requesting_areas', CoreTexts::HELP_REQUEST_AREAS);
 	}
-	
+
 	/**
 	 * @Route("/help/invitations", name="user_help_invitations")
 	 */
@@ -74,4 +77,5 @@ class UserDashboardController extends UserPageController
 	{
 		return $this->renderHelpPage($request, 'user_help_invitations', CoreTexts::HELP_INVITATIONS);
 	}
+
 }

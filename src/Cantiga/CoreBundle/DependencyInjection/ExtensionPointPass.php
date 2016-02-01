@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -28,11 +30,12 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class ExtensionPointPass implements CompilerPassInterface
 {
+
 	public function process(ContainerBuilder $container)
 	{
 		if (!$container->has('cantiga.extensions')) {
-            return;
-        }
+			return;
+		}
 		$definition = $container->findDefinition('cantiga.extensions');
 		$taggedServices = $container->findTaggedServiceIds('cantiga.extension');
 		foreach ($taggedServices as $id => $tags) {
@@ -53,4 +56,5 @@ class ExtensionPointPass implements CompilerPassInterface
 			}
 		}
 	}
+
 }

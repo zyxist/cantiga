@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CourseBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
@@ -32,7 +34,9 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class AreaCourseResultController extends AreaPageController
 {
+
 	const REPOSITORY_NAME = 'cantiga.course.repo.area_summary';
+
 	/**
 	 * @var CRUDInfo
 	 */
@@ -53,7 +57,7 @@ class AreaCourseResultController extends AreaPageController
 			->workgroup('summary')
 			->entryLink($this->trans('Course results', [], 'pages'), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
 	}
-	
+
 	/**
 	 * @Route("/index", name="area_course_results")
 	 */
@@ -61,7 +65,7 @@ class AreaCourseResultController extends AreaPageController
 	{
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$text = $this->getTextRepository()->getText(CourseTexts::AREA_COURSE_LIST_TEXT, $request);
-        return $this->render($this->crudInfo->getTemplateLocation().'area-individual-results.html.twig', array(
+		return $this->render($this->crudInfo->getTemplateLocation() . 'area-individual-results.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'courseInfoPage' => 'area_course_info',
@@ -69,4 +73,5 @@ class AreaCourseResultController extends AreaPageController
 			'items' => $repository->findTotalIndividualResultsForArea($this->getMembership()->getItem()),
 		));
 	}
+
 }

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Twig;
 
 use Cantiga\Metamodel\TimeFormatterInterface;
@@ -35,26 +37,29 @@ use Twig_SimpleFunction;
  */
 class CantigaMailExtension extends Twig_Extension
 {
+
 	/**
 	 * @var RouterInterface
 	 */
 	private $router;
+
 	/**
 	 * @var TimeFormatterInterface
 	 */
 	private $timeFormatter;
+
 	/**
 	 * @var TranslatorInterface
 	 */
 	private $translator;
-	
+
 	public function __construct(RouterInterface $router, TimeFormatterInterface $timeFormatter, TranslatorInterface $translator)
 	{
 		$this->router = $router;
 		$this->timeFormatter = $timeFormatter;
 		$this->translator = $translator;
 	}
-	
+
 	public function getName()
 	{
 		return 'mail';
@@ -62,12 +67,12 @@ class CantigaMailExtension extends Twig_Extension
 
 	public function getGlobals()
 	{
-        $class = new ReflectionClass('Cantiga\Metamodel\TimeFormatterInterface');
+		$class = new ReflectionClass('Cantiga\Metamodel\TimeFormatterInterface');
 		$constants = $class->getConstants();
 
 		return array('TimeFormatter' => $constants);
 	}
-	
+
 	public function getFunctions()
 	{
 		return array(
@@ -76,14 +81,14 @@ class CantigaMailExtension extends Twig_Extension
 			new Twig_SimpleFunction('ago', [$this, 'ago']),
 		);
 	}
-	
+
 	public function getFilters()
 	{
 		return array(
 			new Twig_SimpleFilter('trans', [$this, 'trans']),
 		);
 	}
-	
+
 	/**
 	 * Generates a URL with the Symfony router, but optimized for e-mails. The URL
 	 * contains the full domain name.
@@ -96,19 +101,20 @@ class CantigaMailExtension extends Twig_Extension
 	{
 		return $this->router->generate($routeName, $args, RouterInterface::ABSOLUTE_URL);
 	}
-	
+
 	public function formatTime($format, $utcTimestamp)
 	{
 		return $this->timeFormatter->format($format, $utcTimestamp);
 	}
-	
+
 	public function ago($utcTimestamp)
 	{
 		return $this->timeFormatter->ago($utcTimestamp);
 	}
-	
+
 	public function trans($string, array $args = [], $domain = null)
 	{
 		return $this->translator->trans($string, $args, $domain);
 	}
+
 }

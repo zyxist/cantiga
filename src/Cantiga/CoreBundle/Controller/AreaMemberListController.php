@@ -16,11 +16,11 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
@@ -32,13 +32,16 @@ use Cantiga\CoreBundle\Api\Controller\AreaPageController;
  */
 class AreaMemberListController extends AreaPageController
 {
+
 	use Traits\MemberListTrait;
+
 	const REPOSITORY_NAME = 'cantiga.core.repo.area_memberlist';
+
 	/**
 	 * @var CRUDInfo
 	 */
 	private $crudInfo;
-	
+
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 		$this->crudInfo = $this->newCrudInfo(self::REPOSITORY_NAME)
@@ -53,19 +56,19 @@ class AreaMemberListController extends AreaPageController
 			->workgroup('community')
 			->entryLink($this->trans('Member list', [], 'pages'), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
 	}
-	
+
 	protected function profilePageSubtitle()
 	{
 		return 'Area member profile';
 	}
-	
+
 	/**
 	 * @Route("/index", name="area_memberlist_index")
 	 */
-    public function indexAction(Request $request)
-    {
+	public function indexAction(Request $request)
+	{
 		return $this->onIndex($request);
-    }
+	}
 
 	/**
 	 * @Route("/{id}/profile", name="area_memberlist_profile")
@@ -74,4 +77,5 @@ class AreaMemberListController extends AreaPageController
 	{
 		return $this->onProfile($id, $request);
 	}
+
 }

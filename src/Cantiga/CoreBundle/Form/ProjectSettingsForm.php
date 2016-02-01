@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Form;
 
 use Cantiga\CoreBundle\Api\ExtensionPoints\ExtensionPointFilter;
@@ -33,32 +35,35 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ProjectSettingsForm extends AbstractType
 {
+
 	/**
 	 * @var ProjectSettings
 	 */
 	private $settings;
+
 	/**
 	 * @var ExtensionPointsInterface 
 	 */
 	private $extensionPoints;
+
 	/**
 	 * @var ExtensionPointFilter
 	 */
 	private $filter;
-	
+
 	public function __construct(ProjectSettings $settings, ExtensionPointsInterface $extensionPoints, ExtensionPointFilter $filter)
 	{
 		$this->settings = $settings;
 		$this->extensionPoints = $extensionPoints;
 		$this->filter = $filter;
 	}
-	
+
 	public function configureOptions(OptionsResolver $resolver)
-    {
+	{
 		$resolver->setDefaults(array(
 			'translation_domain' => 'settings'
 		));
-    }
+	}
 
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
@@ -72,4 +77,5 @@ class ProjectSettingsForm extends AbstractType
 	{
 		return 'ProjectSettings';
 	}
+
 }

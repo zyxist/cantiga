@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\MilestoneBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Controller\GroupPageController;
@@ -31,11 +33,12 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class GroupMilestoneEditorController extends GroupPageController
 {
+
 	use Traits\MilestoneEditorTrait;
-	
+
 	const REPOSITORY_NAME = 'cantiga.milestone.repo.status';
 	const MILESTONE_TEMPLATE = 'CantigaMilestoneBundle:MilestoneEditor:milestone-editor.html.twig';
-	
+
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 		$this->repository = $this->get(self::REPOSITORY_NAME);
@@ -43,14 +46,14 @@ class GroupMilestoneEditorController extends GroupPageController
 			->workgroup('data')
 			->entryLink($this->trans('Milestones', [], 'pages'), 'group_milestone_editor', ['slug' => $this->getSlug()]);
 	}
-	
+
 	/**
 	 * @Route("/editor", name="group_milestone_editor")
 	 */
 	public function indexAction(Request $request)
 	{
 		$text = $this->getTextRepository()->getText(MilestoneTexts::GROUP_MILESTONE_EDITOR_TEXT, $request, $this->getActiveProject());
-        return $this->render(self::MILESTONE_TEMPLATE, array(
+		return $this->render(self::MILESTONE_TEMPLATE, array(
 			'pageTitle' => 'Milestones',
 			'pageSubtitle' => 'View and manage the progress',
 			'reloadPage' => 'group_milestone_ajax_reload',
@@ -62,7 +65,7 @@ class GroupMilestoneEditorController extends GroupPageController
 			'text' => $text->getContent(),
 		));
 	}
-	
+
 	/**
 	 * @Route("/ajax-reload", name="group_milestone_ajax_reload")
 	 */
@@ -70,7 +73,7 @@ class GroupMilestoneEditorController extends GroupPageController
 	{
 		return $this->performReload($request);
 	}
-	
+
 	/**
 	 * @Route("/ajax-complete", name="group_milestone_ajax_complete")
 	 */
@@ -78,7 +81,7 @@ class GroupMilestoneEditorController extends GroupPageController
 	{
 		return $this->performComplete($request);
 	}
-	
+
 	/**
 	 * @Route("/ajax-cancel", name="group_milestone_ajax_cancel")
 	 */
@@ -86,7 +89,7 @@ class GroupMilestoneEditorController extends GroupPageController
 	{
 		return $this->performCancel($request);
 	}
-	
+
 	/**
 	 * @Route("/ajax-update", name="group_milestone_ajax_update")
 	 */
@@ -94,4 +97,5 @@ class GroupMilestoneEditorController extends GroupPageController
 	{
 		return $this->performUpdate($request);
 	}
+
 }

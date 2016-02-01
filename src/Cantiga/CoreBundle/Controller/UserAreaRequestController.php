@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
@@ -41,16 +43,19 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class UserAreaRequestController extends UserPageController
 {
+
 	const REPOSITORY_NAME = 'cantiga.core.repo.user_area_request';
+
 	/**
 	 * @var CRUDInfo
 	 */
 	private $crudInfo;
+
 	/**
 	 * @var ProjectTerritoryRepository
 	 */
 	private $territoryRepository;
-	
+
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 		$this->crudInfo = $this->newCrudInfo(self::REPOSITORY_NAME)
@@ -65,11 +70,11 @@ class UserAreaRequestController extends UserPageController
 			->setRemovePage('user_area_request_remove')
 			->setCannotRemoveMessage('Cannot remove an approved or declined request \'0\'.')
 			->setRemoveQuestion('Do you really want to remove \'0\' item?');
-		
+
 		$this->breadcrumbs()
 			->workgroup('areas')
 			->entryLink($this->trans('Area requests', [], 'pages'), $this->crudInfo->getIndexPage());
-		
+
 		$this->territoryRepository = $this->get('cantiga.core.repo.project_territory');
 	}
 
@@ -79,14 +84,14 @@ class UserAreaRequestController extends UserPageController
 	public function indexAction(Request $request)
 	{
 		$repository = $this->get(self::REPOSITORY_NAME);
-        return $this->render('CantigaCoreBundle:UserAreaRequest:index.html.twig', array(
+		return $this->render('CantigaCoreBundle:UserAreaRequest:index.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'requests' => $repository->findUserRequests(),
 			'locale' => $request->getLocale()
 		));
 	}
-	
+
 	/**
 	 * @Route("/{id}/info", name="user_area_request_info")
 	 */
@@ -94,16 +99,15 @@ class UserAreaRequestController extends UserPageController
 	{
 		$action = new InfoAction($this->crudInfo);
 		return $action->run($this, $id, function(AreaRequest $item) use ($request) {
-			$settings = $this->getProjectSettings();
-			$settings->setProject($item->getProject());
-			$formModel = $this->getExtensionPoints()
-				->getImplementation(CoreExtensions::AREA_REQUEST_FORM, 
-					$item->getProject()->createExtensionPointFilter()->fromSettings($settings, CoreSettings::AREA_REQUEST_FORM)
+				$settings = $this->getProjectSettings();
+				$settings->setProject($item->getProject());
+				$formModel = $this->getExtensionPoints()
+					->getImplementation(CoreExtensions::AREA_REQUEST_FORM, $item->getProject()->createExtensionPointFilter()->fromSettings($settings, CoreSettings::AREA_REQUEST_FORM)
 				);
-			return ['summary' => $formModel->createSummary(), 'text' => $this->chooseText($item, $request)];
-		});
+				return ['summary' => $formModel->createSummary(), 'text' => $this->chooseText($item, $request)];
+			});
 	}
-	
+
 	/**
 	 * @Route("/{id}/ajax-feed", name="user_area_request_ajax_feed")
 	 */
@@ -117,7 +121,7 @@ class UserAreaRequestController extends UserPageController
 			return new JsonResponse(['status' => 0]);
 		}
 	}
-	
+
 	/**
 	 * @Route("/{id}/ajax-post", name="user_area_request_ajax_post")
 	 */
@@ -136,7 +140,7 @@ class UserAreaRequestController extends UserPageController
 			return new JsonResponse(['status' => 0]);
 		}
 	}
-	
+
 	/**
 	 * @Route("/insert", name="user_area_request_insert")
 	 */
@@ -145,12 +149,12 @@ class UserAreaRequestController extends UserPageController
 		$this->breadcrumbs()->entryLink($this->trans('Request a new area', [], 'pages'), $this->crudInfo->getInsertPage());
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$text = $this->getTextRepository()->getText(CoreTexts::AREA_REQUEST_CREATION_STEP1_TEXT, $request);
-        return $this->render('CantigaCoreBundle:UserAreaRequest:insert-step1.html.twig', array(
-			'text' => $text,
-			'availableProjects' => $repository->getAvailableProjects(),
+		return $this->render('CantigaCoreBundle:UserAreaRequest:insert-step1.html.twig', array(
+				'text' => $text,
+				'availableProjects' => $repository->getAvailableProjects(),
 		));
 	}
-	
+
 	/**
 	 * @Route("/insert-cont/{projectId}", name="user_area_request_insert_cont")
 	 */
@@ -162,42 +166,39 @@ class UserAreaRequestController extends UserPageController
 			$project = $repository->getAvailableProject($projectId);
 			$settings->setProject($project);
 			$formModel = $this->getExtensionPoints()
-				->getImplementation(CoreExtensions::AREA_REQUEST_FORM, 
-					$project->createExtensionPointFilter()->fromSettings($settings, CoreSettings::AREA_REQUEST_FORM)
-				);
-			
+				->getImplementation(CoreExtensions::AREA_REQUEST_FORM, $project->createExtensionPointFilter()->fromSettings($settings, CoreSettings::AREA_REQUEST_FORM)
+			);
+
 			$item = new AreaRequest();
 			$item->setProject($project);
 			$this->territoryRepository->setProject($project);
-			
+
 			$form = $this->createForm(
-				new UserAreaRequestForm($settings, $formModel, $this->territoryRepository),
-				$item,
-				array('action' => $this->generateUrl('user_area_request_insert_cont', ['projectId' => $projectId]))
+				new UserAreaRequestForm($settings, $formModel, $this->territoryRepository), $item, array('action' => $this->generateUrl('user_area_request_insert_cont', ['projectId' => $projectId]))
 			);
-			
+
 			$form->handleRequest($request);
-			
+
 			if ($form->isValid()) {
 				$id = $repository->insert($item);
 				return $this->showPageWithMessage($this->trans('The area request has been created.'), 'user_area_request_info', ['id' => $id]);
 			}
-			
+
 			$text = $this->getTextRepository()->getText(CoreTexts::AREA_REQUEST_CREATION_STEP2_TEXT, $request, $project);
 			$projectSpecificText = $settings->get(CoreSettings::AREA_REQUEST_INFO_TEXT)->getValue();
 			$this->breadcrumbs()->entryLink($this->trans('Request a new area', [], 'pages'), $this->crudInfo->getInsertPage());
 			return $this->render('CantigaCoreBundle:UserAreaRequest:insert-step2.html.twig', array(
-				'text' => $text,
-				'projectSpecificText' => $projectSpecificText,
-				'form' => $form->createView(),
-				'formRenderer' => $formModel->createFormRenderer(),
-				'project' => $project,
+					'text' => $text,
+					'projectSpecificText' => $projectSpecificText,
+					'form' => $form->createView(),
+					'formRenderer' => $formModel->createFormRenderer(),
+					'project' => $project,
 			));
 		} catch (ModelException $ex) {
 			return $this->showPageWithError($this->trans($ex->getMessage()), $this->crudInfo->getIndexPage());
 		}
 	}
-	
+
 	/**
 	 * @Route("/{id}/edit", name="user_area_request_edit")
 	 */
@@ -209,19 +210,16 @@ class UserAreaRequestController extends UserPageController
 			$settings = $this->getProjectSettings();
 			$settings->setProject($item->getProject());
 			$formModel = $this->getExtensionPoints()
-				->getImplementation(CoreExtensions::AREA_REQUEST_FORM, 
-					$item->getProject()->createExtensionPointFilter()->fromSettings($settings, CoreSettings::AREA_REQUEST_FORM)
-				);
-			$this->territoryRepository->setProject($item->getProject());
-			
-			$form = $this->createForm(
-				new UserAreaRequestForm($settings, $formModel, $this->territoryRepository),
-				$item,
-				array('action' => $this->generateUrl($this->crudInfo->getEditPage(), ['id' => $id]))
+				->getImplementation(CoreExtensions::AREA_REQUEST_FORM, $item->getProject()->createExtensionPointFilter()->fromSettings($settings, CoreSettings::AREA_REQUEST_FORM)
 			);
-			
+			$this->territoryRepository->setProject($item->getProject());
+
+			$form = $this->createForm(
+				new UserAreaRequestForm($settings, $formModel, $this->territoryRepository), $item, array('action' => $this->generateUrl($this->crudInfo->getEditPage(), ['id' => $id]))
+			);
+
 			$form->handleRequest($request);
-			
+
 			if ($form->isValid()) {
 				$repository->update($item);
 				return $this->showPageWithMessage($this->trans('The area request has been updated.'), $this->crudInfo->getInfoPage(), ['id' => $item->getId()]);
@@ -229,18 +227,18 @@ class UserAreaRequestController extends UserPageController
 			$this->breadcrumbs()->link($item->getName(), $this->crudInfo->getInfoPage(), ['id' => $id]);
 			$this->breadcrumbs()->link($this->trans('Edit', [], 'pages'), $this->crudInfo->getEditPage(), ['id' => $id]);
 			return $this->render('CantigaCoreBundle:UserAreaRequest:edit.html.twig', array(
-				'item' => $item,
-				'pageTitle' => $this->crudInfo->getPageTitle(),
-				'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
-				'form' => $form->createView(),
-				'formRenderer' => $formModel->createFormRenderer(),
-				'project' => $item->getProject(),
+					'item' => $item,
+					'pageTitle' => $this->crudInfo->getPageTitle(),
+					'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
+					'form' => $form->createView(),
+					'formRenderer' => $formModel->createFormRenderer(),
+					'project' => $item->getProject(),
 			));
 		} catch (ModelException $ex) {
 			return $this->showPageWithError($this->trans($ex->getMessage()), $this->crudInfo->getIndexPage());
 		}
 	}
-	
+
 	/**
 	 * @Route("/{id}/remove", name="user_area_request_remove")
 	 */
@@ -249,10 +247,10 @@ class UserAreaRequestController extends UserPageController
 		$action = new RemoveAction($this->crudInfo);
 		return $action->run($this, $id, $request);
 	}
-	
+
 	private function chooseText(AreaRequest $ar, Request $request)
 	{
-		switch($ar->getStatus()) {
+		switch ($ar->getStatus()) {
 			case AreaRequest::STATUS_NEW:
 				$textType = CoreTexts::AREA_REQUEST_NEW_INFO_TEXT;
 				break;
@@ -268,4 +266,5 @@ class UserAreaRequestController extends UserPageController
 		}
 		return $this->getTextRepository()->getTextOrFalse($textType, $request, $ar->getProject());
 	}
+
 }

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\ExportBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
@@ -39,12 +41,14 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class AdminExportController extends AdminPageController
 {
+
 	const REPOSITORY_NAME = 'cantiga.export.repo.export';
+
 	/**
 	 * @var CRUDInfo
 	 */
 	private $crudInfo;
-	
+
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 		$this->crudInfo = $this->newCrudInfo(self::REPOSITORY_NAME)
@@ -61,12 +65,12 @@ class AdminExportController extends AdminPageController
 			->setItemUpdatedMessage('ExportSettingsUpdated: 0')
 			->setItemRemovedMessage('ExportSettingsRemoved: 0')
 			->setRemoveQuestion('ExportSettingsRemoveQuestion: 0');
-		
+
 		$this->breadcrumbs()
 			->workgroup('projects')
 			->entryLink($this->trans('Export settings', [], 'pages'), $this->crudInfo->getIndexPage());
 	}
-		
+
 	/**
 	 * @Route("/index", name="admin_export_index")
 	 */
@@ -74,7 +78,7 @@ class AdminExportController extends AdminPageController
 	{
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$dataTable = $repository->createDataTable();
-        return $this->render($this->crudInfo->getTemplateLocation().'index.html.twig', array(
+		return $this->render($this->crudInfo->getTemplateLocation() . 'index.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'dataTable' => $dataTable,
@@ -83,7 +87,7 @@ class AdminExportController extends AdminPageController
 			'ajaxListPage' => 'admin_export_ajax_list',
 		));
 	}
-	
+
 	/**
 	 * @Route("/ajax-list", name="admin_export_ajax_list")
 	 */
@@ -97,9 +101,9 @@ class AdminExportController extends AdminPageController
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$dataTable = $repository->createDataTable();
 		$dataTable->process($request);
-        return new JsonResponse($routes->process($repository->listData($dataTable)));
+		return new JsonResponse($routes->process($repository->listData($dataTable)));
 	}
-	
+
 	/**
 	 * @Route("/ajax-status", name="admin_export_ajax_status")
 	 */
@@ -109,14 +113,14 @@ class AdminExportController extends AdminPageController
 		try {
 			$projectRepo = $this->get('cantiga.core.repo.project');
 			$statusRepo = $this->get('cantiga.core.repo.project_area_status');
-			
+
 			$project = $projectRepo->getItem($p);
 			return new JsonResponse($statusRepo->getFormChoices($project));
 		} catch (Exception $ex) {
 			return new JsonResponse([]);
 		}
 	}
-	
+
 	/**
 	 * @Route("/{id}/info", name="admin_export_info")
 	 */
@@ -125,31 +129,29 @@ class AdminExportController extends AdminPageController
 		$action = new InfoAction($this->crudInfo);
 		return $action->run($this, $id);
 	}
-	 
+
 	/**
 	 * @Route("/insert", name="admin_export_insert")
 	 */
 	public function insertAction(Request $request)
 	{
 		$action = new InsertAction($this->crudInfo, new DataExport(), new DataExportForm(
-			$this->get('cantiga.core.repo.project'),
-			$this->get('cantiga.core.repo.project_area_status')
+			$this->get('cantiga.core.repo.project'), $this->get('cantiga.core.repo.project_area_status')
 		));
 		return $action->run($this, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/edit", name="admin_export_edit")
 	 */
 	public function editAction($id, Request $request)
 	{
 		$action = new EditAction($this->crudInfo, new DataExportForm(
-			$this->get('cantiga.core.repo.project'),
-			$this->get('cantiga.core.repo.project_area_status')
+			$this->get('cantiga.core.repo.project'), $this->get('cantiga.core.repo.project_area_status')
 		));
 		return $action->run($this, $id, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/remove", name="admin_export_remove")
 	 */
@@ -158,4 +160,5 @@ class AdminExportController extends AdminPageController
 		$action = new RemoveAction($this->crudInfo);
 		return $action->run($this, $id, $request);
 	}
+
 }

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\Metamodel\CustomForm;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -32,23 +34,25 @@ use Symfony\Component\Form\FormEvents;
  */
 class CustomFormEventSubscriber implements EventSubscriberInterface
 {
+
 	private $customFormModel;
-	
-    public static function getSubscribedEvents()
-    {
-        return array(FormEvents::PRE_SET_DATA => 'preSetData');
-    }
-	
+
+	public static function getSubscribedEvents()
+	{
+		return array(FormEvents::PRE_SET_DATA => 'preSetData');
+	}
+
 	public function __construct(CustomFormModelInterface $customFormModel)
 	{
 		$this->customFormModel = $customFormModel;
 	}
-	
+
 	public function preSetData(FormEvent $event)
 	{
 		$form = $event->getForm();
 		$form->add('customData', new CustomFormType(function(FormBuilderInterface $builder) {
-			$this->customFormModel->constructForm($builder);			
+			$this->customFormModel->constructForm($builder);
 		}, [$this->customFormModel, 'validateForm']));
 	}
+
 }

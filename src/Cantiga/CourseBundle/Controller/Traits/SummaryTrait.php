@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CourseBundle\Controller\Traits;
 
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
@@ -32,6 +34,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 trait SummaryTrait
 {
+
 	/**
 	 * @var CRUDInfo
 	 */
@@ -53,15 +56,15 @@ trait SummaryTrait
 			->workgroup('summary')
 			->entryLink($this->trans('Course results', [], 'pages'), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
 	}
-	
+
 	public function performIndex($ajaxListPage, AreaFilter $filter, Request $request)
 	{
 		$filterForm = $filter->createForm($this->createFormBuilder($filter));
 		$filterForm->handleRequest($request);
-		
+
 		$dataTable = $this->crudInfo->getRepository()->createDataTable();
 		$dataTable->filter($filter);
-        return $this->render($this->crudInfo->getTemplateLocation().'area-summary.html.twig', array(
+		return $this->render($this->crudInfo->getTemplateLocation() . 'area-summary.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'dataTable' => $dataTable,
@@ -71,7 +74,7 @@ trait SummaryTrait
 			'filter' => $filter
 		));
 	}
-	
+
 	public function performAjaxList(AreaFilter $filter, Request $request)
 	{
 		$routes = $this->dataRoutes();
@@ -84,41 +87,42 @@ trait SummaryTrait
 		$dataTable = $repository->createDataTable();
 		$dataTable->filter($filter);
 		$dataTable->process($request);
-        return new JsonResponse($routes->process($repository->listData($dataTable)));
+		return new JsonResponse($routes->process($repository->listData($dataTable)));
 	}
-	
+
 	protected function performResults($courseInfoPage, $profilePage, Area $area, Request $request)
 	{
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$text = $this->getTextRepository()->getText(CourseTexts::AREA_COURSE_LIST_TEXT, $request);
 		$this->breadcrumbs()->link($area->getName(), $this->crudInfo->getInfoPage(), ['id' => $area->getId(), 'slug' => $this->getSlug()]);
-        return $this->render($this->crudInfo->getTemplateLocation().'other-individual-results.html.twig', array(
-			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
-			'courseInfoPage' => $courseInfoPage,
-			'userProfilePage' => $profilePage,
-			'area' => $area,
-			'items' => $repository->findTotalIndividualResultsForArea($area),
-			'indexPage' => $this->crudInfo->getIndexPage(),
+		return $this->render($this->crudInfo->getTemplateLocation() . 'other-individual-results.html.twig', array(
+				'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
+				'courseInfoPage' => $courseInfoPage,
+				'userProfilePage' => $profilePage,
+				'area' => $area,
+				'items' => $repository->findTotalIndividualResultsForArea($area),
+				'indexPage' => $this->crudInfo->getIndexPage(),
 		));
 	}
-	
+
 	protected function performCourse($selfPage, $id, Request $request)
 	{
 		try {
 			$repository = $this->get(self::REPOSITORY_NAME);
 			$course = $repository->getCourse($id);
-			
+
 			$this->breadcrumbs()
 				->staticItem($this->trans('Courses', [], 'pages'))
 				->link($course->getName(), $selfPage, ['id' => $course->getId(), 'slug' => $this->getSlug()]);
-			return $this->render($this->crudInfo->getTemplateLocation().'course-info.html.twig', array(
-				'pageTitle' => $this->crudInfo->getPageTitle(),
-				'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
-				'item' => $course,
-				'indexPage' => $this->crudInfo->getIndexPage(),
+			return $this->render($this->crudInfo->getTemplateLocation() . 'course-info.html.twig', array(
+					'pageTitle' => $this->crudInfo->getPageTitle(),
+					'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
+					'item' => $course,
+					'indexPage' => $this->crudInfo->getIndexPage(),
 			));
-		} catch(ItemNotFoundException $exception) {
+		} catch (ItemNotFoundException $exception) {
 			return $this->showPageWithError($this->trans($exception->getMessage()), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
 		}
 	}
+
 }

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Controller\AreaPageController;
@@ -29,22 +31,23 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class AreaDashboardController extends AreaPageController
 {
+
 	use Traits\DashboardTrait;
-	
+
 	/**
 	 * @Route("/index", name="area_dashboard")
 	 */
-    public function indexAction(Request $request)
-    {
-        return $this->render('CantigaCoreBundle:Area:dashboard.html.twig', array(
+	public function indexAction(Request $request)
+	{
+		return $this->render('CantigaCoreBundle:Area:dashboard.html.twig', array(
 			'user' => $this->getUser(),
 			'area' => $this->getMembership()->getItem(),
 			'topExtensions' => $this->renderExtensions($request, $this->findDashboardExtensions(CoreExtensions::AREA_DASHBOARD_TOP)),
 			'rightExtensions' => $this->renderExtensions($request, $this->findDashboardExtensions(CoreExtensions::AREA_DASHBOARD_RIGHT)),
 			'centralExtensions' => $this->renderExtensions($request, $this->findDashboardExtensions(CoreExtensions::AREA_DASHBOARD_CENTRAL)),
 		));
-    }
-	
+	}
+
 	/**
 	 * @Route("/help/introduction", name="area_help_introduction")
 	 */
@@ -52,7 +55,7 @@ class AreaDashboardController extends AreaPageController
 	{
 		return $this->renderHelpPage($request, 'area_help_introduction', CoreTexts::HELP_AREA_INTRODUCTION);
 	}
-	
+
 	/**
 	 * @Route("/help/members", name="area_help_members")
 	 */
@@ -60,4 +63,5 @@ class AreaDashboardController extends AreaPageController
 	{
 		return $this->renderHelpPage($request, 'area_help_members', CoreTexts::HELP_AREA_MEMBERS);
 	}
+
 }

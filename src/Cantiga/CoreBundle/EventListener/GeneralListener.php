@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\EventListener;
 
 use Cantiga\CoreBundle\Api\Controller\CantigaController;
@@ -35,26 +37,32 @@ use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
  */
 class GeneralListener
 {
+
 	const FALLBACK_LOCALE = 'en';
 	const LAST_LANG_COOKIE = 'cc-last-lang';
 	const DEF_LAST_LANG_TIME = 2592000; // 30 days
-	
+
 	/**
 	 * @var AuthorizationCheckerInterface 
 	 */
-    private $authChecker;
+
+	private $authChecker;
+
 	/**
 	 * @var TokenStorageInterface 
 	 */
 	private $tokenStorage;
+
 	/**
 	 * @var Transaction 
 	 */
 	private $transaction;
+
 	/**
 	 * @var Session
 	 */
 	private $session;
+
 	/**
 	 * @var TimeFormatter
 	 */
@@ -68,18 +76,18 @@ class GeneralListener
 		$this->session = $session;
 		$this->timeFormatter = $timeFormatter;
 	}
-	
-    public function onKernelRequest(GetResponseEvent $event)
+
+	public function onKernelRequest(GetResponseEvent $event)
 	{
-		$request = $event->getRequest();		
+		$request = $event->getRequest();
 		// locale detection - request, then query path, if the controller allows to do so, and session.
 		if ($locale = $request->attributes->get('_locale')) {
 			$request->getSession()->set('_locale', $locale);
-		} else if($request->attributes->get('_localeFromQuery') && $request->query->has('_locale')) {
+		} else if ($request->attributes->get('_localeFromQuery') && $request->query->has('_locale')) {
 			$request->getSession()->set('_locale', $request->query->get('_locale', self::FALLBACK_LOCALE));
-		} else if($request->getSession()->has('_user_locale')) {
+		} else if ($request->getSession()->has('_user_locale')) {
 			$request->getSession()->set('_locale', $request->getSession()->get('_user_locale'));
-		} else if($request->cookies->has(self::LAST_LANG_COOKIE)) {
+		} else if ($request->cookies->has(self::LAST_LANG_COOKIE)) {
 			$request->getSession()->set('_locale', $request->cookies->get(self::LAST_LANG_COOKIE));
 		}
 		$request->setLocale($request->getSession()->get('_locale'));
@@ -89,18 +97,18 @@ class GeneralListener
 	{
 		$controller = $event->getController();
 
-		if(!is_array($controller)) {
+		if (!is_array($controller)) {
 			// not a object but a different kind of callable. Do nothing
 			return;
 		}
 
 		$controllerObject = $controller[0];
-		if($controllerObject instanceof CantigaController) {
+		if ($controllerObject instanceof CantigaController) {
 			// set the time formatting settings
 			$controllerObject->get('translator')->setLocale($event->getRequest()->getLocale());
 			$this->timeFormatter->configure($controllerObject->get('translator'), $event->getRequest()->getLocale(), $event->getRequest()->getSession()->get('timezone'));
 			$controllerObject->get('cantiga.locale')->setLocale($event->getRequest()->getLocale());
-			
+
 			// initialize the controller
 			$potentialResponse = $controllerObject->initialize($event->getRequest(), $this->authChecker);
 			if (!empty($potentialResponse)) {
@@ -110,7 +118,7 @@ class GeneralListener
 			}
 		}
 	}
-	
+
 	/**
 	 * Make sure that the transaction is always SOMEHOW closed at the end of the request.
 	 * 
@@ -118,14 +126,14 @@ class GeneralListener
 	 */
 	public function onKernelResponse(FilterResponseEvent $event)
 	{
-		if($event->isMasterRequest()) {
+		if ($event->isMasterRequest()) {
 			$this->transaction->closeTransaction();
 		}
 		if ($event->getRequest()->getSession()->has('_locale')) {
 			$event->getResponse()->headers->setCookie(new Cookie(self::LAST_LANG_COOKIE, $event->getRequest()->getSession()->get('_locale'), time() + self::DEF_LAST_LANG_TIME));
 		}
 	}
-	
+
 	public function onInteractiveLogin(InteractiveLoginEvent $event)
 	{
 		$user = $this->tokenStorage->getToken()->getUser();
@@ -134,11 +142,12 @@ class GeneralListener
 			$timezone = 'UTC';
 		}
 		$this->session->set('timezone', $timezone);
-		
+
 		$locale = $user->getSettingsLanguage()->getLocale();
 		if (empty($locale)) {
 			$locale = 'en'; // fallback to English in case of some misconfiguration
 		}
 		$this->session->set('_user_locale', $locale);
 	}
+
 }

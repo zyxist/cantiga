@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\MilestoneBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Controller\ProjectPageController;
@@ -31,11 +33,12 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class ProjectMilestoneEditorController extends ProjectPageController
 {
+
 	use Traits\MilestoneEditorTrait;
-	
+
 	const REPOSITORY_NAME = 'cantiga.milestone.repo.status';
 	const MILESTONE_TEMPLATE = 'CantigaMilestoneBundle:MilestoneEditor:milestone-editor.html.twig';
-	
+
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 		$this->repository = $this->get(self::REPOSITORY_NAME);
@@ -43,7 +46,7 @@ class ProjectMilestoneEditorController extends ProjectPageController
 			->workgroup('data')
 			->entryLink($this->trans('Milestones', [], 'pages'), 'project_milestone_editor', ['slug' => $this->getSlug()]);
 	}
-	
+
 	/**
 	 * @Route("/editor/{i}", name="project_milestone_editor", defaults={"i" = "current"})
 	 */
@@ -52,9 +55,9 @@ class ProjectMilestoneEditorController extends ProjectPageController
 		if ($i === 'current' || !ctype_digit($i)) {
 			$i = $this->getMembership()->getItem()->getEntity()->getId();
 		}
-		
+
 		$text = $this->getTextRepository()->getText(MilestoneTexts::PROJECT_MILESTONE_EDITOR_TEXT, $request, $this->getActiveProject());
-        return $this->render(self::MILESTONE_TEMPLATE, array(
+		return $this->render(self::MILESTONE_TEMPLATE, array(
 			'pageTitle' => 'Milestones',
 			'pageSubtitle' => 'View and manage the progress',
 			'reloadPage' => 'project_milestone_ajax_reload',
@@ -66,7 +69,7 @@ class ProjectMilestoneEditorController extends ProjectPageController
 			'text' => $text->getContent(),
 		));
 	}
-	
+
 	/**
 	 * @Route("/ajax-reload", name="project_milestone_ajax_reload")
 	 */
@@ -74,7 +77,7 @@ class ProjectMilestoneEditorController extends ProjectPageController
 	{
 		return $this->performReload($request);
 	}
-	
+
 	/**
 	 * @Route("/ajax-complete", name="project_milestone_ajax_complete")
 	 */
@@ -82,7 +85,7 @@ class ProjectMilestoneEditorController extends ProjectPageController
 	{
 		return $this->performComplete($request);
 	}
-	
+
 	/**
 	 * @Route("/ajax-cancel", name="project_milestone_ajax_cancel")
 	 */
@@ -90,7 +93,7 @@ class ProjectMilestoneEditorController extends ProjectPageController
 	{
 		return $this->performCancel($request);
 	}
-	
+
 	/**
 	 * @Route("/ajax-update", name="project_milestone_ajax_update")
 	 */
@@ -98,4 +101,5 @@ class ProjectMilestoneEditorController extends ProjectPageController
 	{
 		return $this->performUpdate($request);
 	}
+
 }

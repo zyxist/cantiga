@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
@@ -38,12 +40,14 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class ProjectTerritoryController extends ProjectPageController
 {
+
 	const REPOSITORY_NAME = 'cantiga.core.repo.project_territory';
+
 	/**
 	 * @var CRUDInfo
 	 */
 	private $crudInfo;
-	
+
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 		$repository = $this->get(self::REPOSITORY_NAME);
@@ -61,26 +65,26 @@ class ProjectTerritoryController extends ProjectPageController
 			->setItemCreatedMessage('The territory \'0\' has been created.')
 			->setItemRemovedMessage('The territory \'0\' has been removed.')
 			->setRemoveQuestion('Do you really want to remove the territory \'0\'?');
-		
+
 		$this->breadcrumbs()
 			->workgroup('manage')
 			->entryLink($this->trans('Territories', [], 'pages'), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
 	}
-		
+
 	/**
 	 * @Route("/index", name="project_territory_index")
 	 */
 	public function indexAction(Request $request)
 	{
 		$dataTable = $this->crudInfo->getRepository()->createDataTable();
-        return $this->render($this->crudInfo->getTemplateLocation().'index.html.twig', array(
+		return $this->render($this->crudInfo->getTemplateLocation() . 'index.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'dataTable' => $dataTable,
 			'locale' => $request->getLocale()
 		));
 	}
-	
+
 	/**
 	 * @Route("/ajax-list", name="project_territory_ajax_list")
 	 */
@@ -94,9 +98,9 @@ class ProjectTerritoryController extends ProjectPageController
 		$repository = $this->crudInfo->getRepository();
 		$dataTable = $repository->createDataTable();
 		$dataTable->process($request);
-        return new JsonResponse($routes->process($repository->listData($dataTable)));
+		return new JsonResponse($routes->process($repository->listData($dataTable)));
 	}
-	
+
 	/**
 	 * @Route("/{id}/info", name="project_territory_info")
 	 */
@@ -106,7 +110,7 @@ class ProjectTerritoryController extends ProjectPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $id);
 	}
-	 
+
 	/**
 	 * @Route("/insert", name="project_territory_insert")
 	 */
@@ -114,12 +118,12 @@ class ProjectTerritoryController extends ProjectPageController
 	{
 		$entity = new Territory();
 		$entity->setProject($this->getActiveProject());
-		
+
 		$action = new InsertAction($this->crudInfo, $entity, new ProjectTerritoryForm());
 		$action->slug($this->getSlug());
 		return $action->run($this, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/edit", name="project_territory_edit")
 	 */
@@ -129,7 +133,7 @@ class ProjectTerritoryController extends ProjectPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/remove", name="project_territory_remove")
 	 */
@@ -139,4 +143,5 @@ class ProjectTerritoryController extends ProjectPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
 	}
+
 }

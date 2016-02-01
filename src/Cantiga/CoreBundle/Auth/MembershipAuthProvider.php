@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Auth;
 
 use Symfony\Component\Security\Core\Authentication\Provider\AuthenticationProviderInterface;
@@ -31,21 +33,18 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
  */
 class MembershipAuthProvider implements AuthenticationProviderInterface
 {
-    private $userProvider;
+	private $userProvider;
 
-    public function __construct(UserProviderInterface $userProvider, $cacheDir)
-    {
-        $this->userProvider = $userProvider;
-    }
+	public function __construct(UserProviderInterface $userProvider, $cacheDir)
+	{
+		$this->userProvider = $userProvider;
+	}
 
 	public function authenticate(TokenInterface $token)
 	{
-		
 	}
 
 	public function supports(TokenInterface $token)
 	{
-		
 	}
-
 }

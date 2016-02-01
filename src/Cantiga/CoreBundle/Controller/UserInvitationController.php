@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Controller\UserPageController;
@@ -30,22 +32,23 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class UserInvitationController extends UserPageController
 {
+
 	const REPOSITORY_NAME = 'cantiga.core.repo.invitation';
 
 	/**
 	 * @Route("/index", name="user_invitation_index")
 	 */
-    public function indexAction(Request $request)
-    {
+	public function indexAction(Request $request)
+	{
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$this->breadcrumbs()
 			->workgroup('profile')
 			->entryLink($this->trans('Invitations'), 'user_invitation_index');
-        return $this->render('CantigaCoreBundle:UserInvitation:index.html.twig', array(
-			'invitations' => $repository->findInvitations($this->getUser()),
+		return $this->render('CantigaCoreBundle:UserInvitation:index.html.twig', array(
+				'invitations' => $repository->findInvitations($this->getUser()),
 		));
 	}
-	
+
 	/**
 	 * @Route("/find", name="user_invitation_find")
 	 */
@@ -54,13 +57,13 @@ class UserInvitationController extends UserPageController
 		try {
 			$repository = $this->get(self::REPOSITORY_NAME);
 			$repository->findAndJoin($request->get('invitationKey'), $this->getUser());
-			
+
 			return $this->showPageWithMessage('InvitationFoundText', 'user_invitation_index');
 		} catch (ModelException $ex) {
 			return $this->showPageWithError($this->trans($ex->getMessage()), 'user_invitation_index');
 		}
 	}
-	
+
 	/**
 	 * @Route("/{id}/accept", name="user_invitation_accept")
 	 */
@@ -69,13 +72,13 @@ class UserInvitationController extends UserPageController
 		try {
 			$repository = $this->get(self::REPOSITORY_NAME);
 			$repository->accept($id, $this->getUser());
-			
+
 			return $this->showPageWithMessage('InvitationAcceptedText', 'user_invitation_index');
 		} catch (ModelException $ex) {
 			return $this->showPageWithError($this->trans($ex->getMessage()), 'user_invitation_index');
 		}
 	}
-	
+
 	/**
 	 * @Route("/{id}/revoke", name="user_invitation_revoke")
 	 */
@@ -84,10 +87,11 @@ class UserInvitationController extends UserPageController
 		try {
 			$repository = $this->get(self::REPOSITORY_NAME);
 			$repository->revoke($id, $this->getUser());
-			
+
 			return $this->showPageWithMessage('InvitationRevokedText', 'user_invitation_index');
 		} catch (ModelException $ex) {
 			return $this->showPageWithError($this->trans($ex->getMessage()), 'user_invitation_index');
 		}
 	}
+
 }

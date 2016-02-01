@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CourseBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
@@ -44,7 +46,9 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class ProjectCourseController extends ProjectPageController
 {
+
 	const REPOSITORY_NAME = 'cantiga.course.repo.course';
+
 	/**
 	 * @var CRUDInfo
 	 */
@@ -80,7 +84,7 @@ class ProjectCourseController extends ProjectPageController
 	public function indexAction(Request $request)
 	{
 		$dataTable = $this->crudInfo->getRepository()->createDataTable();
-        return $this->render($this->crudInfo->getTemplateLocation().'index.html.twig', array(
+		return $this->render($this->crudInfo->getTemplateLocation() . 'index.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'dataTable' => $dataTable,
@@ -89,7 +93,7 @@ class ProjectCourseController extends ProjectPageController
 			'ajaxListPage' => 'project_course_ajax_list'
 		));
 	}
-	
+
 	/**
 	 * @Route("/ajax-list", name="project_course_ajax_list")
 	 */
@@ -103,9 +107,9 @@ class ProjectCourseController extends ProjectPageController
 		$repository = $this->crudInfo->getRepository();
 		$dataTable = $repository->createDataTable();
 		$dataTable->process($request);
-        return new JsonResponse($routes->process($repository->listData($dataTable, $this->get('cantiga.time'))));
+		return new JsonResponse($routes->process($repository->listData($dataTable, $this->get('cantiga.time'))));
 	}
-	
+
 	/**
 	 * @Route("/{id}/info", name="project_course_info")
 	 */
@@ -115,7 +119,7 @@ class ProjectCourseController extends ProjectPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $id);
 	}
-	 
+
 	/**
 	 * @Route("/insert", name="project_course_insert")
 	 */
@@ -123,12 +127,12 @@ class ProjectCourseController extends ProjectPageController
 	{
 		$entity = new Course();
 		$entity->setProject($this->getActiveProject());
-		
+
 		$action = new InsertAction($this->crudInfo, $entity, new CourseForm());
 		$action->slug($this->getSlug());
 		return $action->run($this, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/edit", name="project_course_edit")
 	 */
@@ -138,7 +142,7 @@ class ProjectCourseController extends ProjectPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/remove", name="project_course_remove")
 	 */
@@ -148,7 +152,7 @@ class ProjectCourseController extends ProjectPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/upload-test", name="project_course_upload_test")
 	 */
@@ -159,13 +163,13 @@ class ProjectCourseController extends ProjectPageController
 			$item = $repository->getItem($id);
 			$form = $this->createForm(new CourseTestUploadForm());
 			$form->handleRequest($request);
-			
-			if($form->isValid()) {
+
+			if ($form->isValid()) {
 				$data = $form->getData();
-				if(!$data['file'] instanceof UploadedFile) {
+				if (!$data['file'] instanceof UploadedFile) {
 					return $this->showPageWithError($this->trans('An error occurred during uploading the test questions.'), $this->crudInfo->getInfoPage(), array('id' => $id, 'slug' => $this->getSlug()));
 				}
-				if($data['file']->getMimeType() != 'application/xml') {
+				if ($data['file']->getMimeType() != 'application/xml') {
 					return $this->showPageWithError($this->trans('Please upload an XML file!'), $this->crudInfo->getInfoPage(), array('id' => $id, 'slug' => $this->getSlug()));
 				}
 				$content = file_get_contents($data['file']->getRealPath());
@@ -177,26 +181,27 @@ class ProjectCourseController extends ProjectPageController
 			$this->breadcrumbs()
 				->link($item->getName(), 'project_course_info', ['id' => $item->getId(), 'slug' => $this->getSlug()])
 				->link($this->trans('Upload test'), 'project_course_upload_test', ['id' => $item->getId(), 'slug' => $this->getSlug()]);
-			return $this->render($this->crudInfo->getTemplateLocation().'upload-test.html.twig', array(
-				'pageTitle' => $this->crudInfo->getPageTitle(),
-				'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
-				'item' => $item,
-				'form' => $form->createView(),
+			return $this->render($this->crudInfo->getTemplateLocation() . 'upload-test.html.twig', array(
+					'pageTitle' => $this->crudInfo->getPageTitle(),
+					'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
+					'item' => $item,
+					'form' => $form->createView(),
 			));
-		} catch(ItemNotFoundException $exception) {
+		} catch (ItemNotFoundException $exception) {
 			return $this->showPageWithError($this->crudInfo->getItemNotFoundErrorMessage(), $this->crudInfo->getIndexPage());
-		} catch(ModelException $exception) {
+		} catch (ModelException $exception) {
 			return $this->showPageWithError($this->trans($exception->getMessage()), $this->crudInfo->getIndexPage());
 		}
 	}
-	
+
 	private function verifyFileCorrectness(CourseTest $test)
 	{
 		return $test->constructTestTrial($this->getMinQuestionNum());
 	}
-	
+
 	private function getMinQuestionNum()
 	{
 		return (int) $this->getProjectSettings()->get(CourseSettings::MIN_QUESTION_NUM)->getValue();
 	}
+
 }

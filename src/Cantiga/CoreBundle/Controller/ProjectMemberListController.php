@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -31,13 +33,16 @@ use Cantiga\CoreBundle\Api\Controller\ProjectPageController;
  */
 class ProjectMemberListController extends ProjectPageController
 {
+
 	use Traits\MemberListTrait;
+
 	const REPOSITORY_NAME = 'cantiga.core.repo.project_memberlist';
+
 	/**
 	 * @var CRUDInfo
 	 */
 	private $crudInfo;
-	
+
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 		$this->crudInfo = $this->newCrudInfo(self::REPOSITORY_NAME)
@@ -52,19 +57,19 @@ class ProjectMemberListController extends ProjectPageController
 			->workgroup('community')
 			->entryLink($this->trans('Member list', [], 'pages'), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
 	}
-	
+
 	protected function profilePageSubtitle()
 	{
 		return 'Project member profile';
 	}
-	
+
 	/**
 	 * @Route("/index", name="project_memberlist_index")
 	 */
-    public function indexAction(Request $request)
-    {
+	public function indexAction(Request $request)
+	{
 		return $this->onIndex($request);
-    }
+	}
 
 	/**
 	 * @Route("/{id}/profile", name="project_memberlist_profile")
@@ -73,4 +78,5 @@ class ProjectMemberListController extends ProjectPageController
 	{
 		return $this->onProfile($id, $request);
 	}
+
 }

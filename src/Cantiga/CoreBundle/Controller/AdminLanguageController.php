@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -38,11 +40,12 @@ use Cantiga\CoreBundle\Form\AdminLanguageForm;
  */
 class AdminLanguageController extends AdminPageController
 {
+
 	/**
 	 * @var CRUDInfo
 	 */
 	private $crudInfo;
-	
+
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 		$this->setLocale($request);
@@ -56,12 +59,12 @@ class AdminLanguageController extends AdminPageController
 			->setInsertPage('admin_language_insert')
 			->setEditPage('admin_language_edit')
 			->setRemovePage('admin_language_remove');
-		
+
 		$this->breadcrumbs()
 			->workgroup('settings')
 			->entryLink($this->trans('Languages', [], 'pages'), $this->crudInfo->getIndexPage());
 	}
-	
+
 	/**
 	 * @Route("/index", name="admin_language_index")
 	 */
@@ -69,14 +72,14 @@ class AdminLanguageController extends AdminPageController
 	{
 		$repository = $this->get('cantiga.core.repo.language');
 		$dataTable = $repository->createDataTable();
-        return $this->render('CantigaCoreBundle:AdminLanguage:index.html.twig', array(
+		return $this->render('CantigaCoreBundle:AdminLanguage:index.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'dataTable' => $dataTable,
 			'locale' => $request->getLocale()
 		));
 	}
-	
+
 	/**
 	 * @Route("/ajax-list", name="admin_language_ajax_list")
 	 */
@@ -90,9 +93,9 @@ class AdminLanguageController extends AdminPageController
 		$repository = $this->get('cantiga.core.repo.language');
 		$dataTable = $repository->createDataTable();
 		$dataTable->process($request);
-        return new JsonResponse($routes->process($repository->listData($dataTable)));
+		return new JsonResponse($routes->process($repository->listData($dataTable)));
 	}
-	
+
 	/**
 	 * @Route("/{id}/info", name="admin_language_info")
 	 */
@@ -101,7 +104,7 @@ class AdminLanguageController extends AdminPageController
 		$action = new InfoAction($this->crudInfo);
 		return $action->run($this, $id);
 	}
-	
+
 	/**
 	 * @Route("/insert", name="admin_language_insert")
 	 */
@@ -110,7 +113,7 @@ class AdminLanguageController extends AdminPageController
 		$action = new InsertAction($this->crudInfo, new Language(), new AdminLanguageForm());
 		return $action->run($this, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/edit", name="admin_language_edit")
 	 */
@@ -119,7 +122,7 @@ class AdminLanguageController extends AdminPageController
 		$action = new EditAction($this->crudInfo, new AdminLanguageForm());
 		return $action->run($this, $id, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/remove", name="admin_language_remove")
 	 */
@@ -128,4 +131,5 @@ class AdminLanguageController extends AdminPageController
 		$action = new RemoveAction($this->crudInfo);
 		return $action->run($this, $id, $request);
 	}
+
 }

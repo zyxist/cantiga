@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CourseBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
@@ -36,7 +38,9 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class AreaCourseController extends AreaPageController
 {
+
 	const REPOSITORY_NAME = 'cantiga.course.repo.area_course';
+
 	/**
 	 * @var CRUDInfo
 	 */
@@ -58,7 +62,7 @@ class AreaCourseController extends AreaPageController
 			->workgroup('area')
 			->entryLink($this->trans('Courses', [], 'pages'), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
 	}
-	
+
 	/**
 	 * @Route("/index", name="area_course_index")
 	 */
@@ -66,7 +70,7 @@ class AreaCourseController extends AreaPageController
 	{
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$text = $this->getTextRepository()->getText(CourseTexts::AREA_COURSE_LIST_TEXT, $request, $this->getActiveProject());
-        return $this->render($this->crudInfo->getTemplateLocation().'index.html.twig', array(
+		return $this->render($this->crudInfo->getTemplateLocation() . 'index.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'courseListText' => $text,
@@ -74,7 +78,7 @@ class AreaCourseController extends AreaPageController
 			'items' => $repository->findAvailableCourses($this->getUser())
 		));
 	}
-	
+
 	/**
 	 * @Route("/{id}/info", name="area_course_info")
 	 */
@@ -86,37 +90,38 @@ class AreaCourseController extends AreaPageController
 			$result = $repo->getTestResult($this->getUser(), $item);
 			$areaResult = $repo->getAreaResult($this->getMembership()->getItem(), $item);
 			$this->breadcrumbs()->link($item->getName(), 'area_course_info', ['slug' => $this->getSlug(), 'id' => $item->getId()]);
-			return $this->render($this->crudInfo->getTemplateLocation().'info.html.twig', array(
-				'item' => $item,
-				'result' => $result,
-				'areaResult' => $areaResult,
-				'pageTitle' => $item->getName(),
-				'pageSubtitle' => 'Take the on-line course',
+			return $this->render($this->crudInfo->getTemplateLocation() . 'info.html.twig', array(
+					'item' => $item,
+					'result' => $result,
+					'areaResult' => $areaResult,
+					'pageTitle' => $item->getName(),
+					'pageSubtitle' => 'Take the on-line course',
 			));
-		} catch(ItemNotFoundException $exception) {
+		} catch (ItemNotFoundException $exception) {
 			return $this->showPageWithError($this->trans('CourseNotFoundMsg'), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
 		}
 	}
-	
+
 	/**
 	 * @Route("/{id}/test", name="area_course_test")
 	 */
-	public function testAction($id, Request $request) {
+	public function testAction($id, Request $request)
+	{
 		try {
 			$repo = $this->get(self::REPOSITORY_NAME);
 			$item = $repo->getItem($id);
 			$minQuestionNum = $this->getMinQuestionNum();
-			if(!$item->hasTest()) {
+			if (!$item->hasTest()) {
 				return $this->showPageWithError($this->trans('TestQuestionsNotPublishedMsg'), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
 			}
 			$result = $repo->getTestResult($this->getUser(), $item);
-			
-			if($result->getResult() == Question::RESULT_CORRECT) {
+
+			if ($result->getResult() == Question::RESULT_CORRECT) {
 				return $this->showPageWithMessage($this->trans('CourseAlreadyCompletedMsg'), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
 			}
-			
-			if($this->get('session')->has('trial')) {
-				if(!$request->isMethod('POST')) {
+
+			if ($this->get('session')->has('trial')) {
+				if (!$request->isMethod('POST')) {
 					return $this->showPageWithError($this->trans('TestAlreadyInProgressMsg'), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
 				}
 				$testTrial = $this->get('session')->get('trial');
@@ -127,55 +132,57 @@ class AreaCourseController extends AreaPageController
 			}
 			$form = $testTrial->generateTestForm($this->createFormBuilder(), $this->getTranslator());
 			$form->handleRequest($request);
-			
-			if($form->isValid()) {
+
+			if ($form->isValid()) {
 				$this->get('session')->remove('trial');
 				$ok = $testTrial->validateTestTrial($form->getData());
 				$repo->completeTrial($result, $this->getMembership()->getItem(), $testTrial);
-				if($ok) {
+				if ($ok) {
 					return $this->showPageWithMessage($this->trans('TestPassedMsg'), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
 				} else {
 					return $this->showPageWithError($this->trans('TestFailedMsg'), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
 				}
 			}
-			
+
 			$this->breadcrumbs()->link($this->trans('Test', [], 'course'), 'area_course_test', ['slug' => $this->getSlug(), 'id' => $item->getId()]);
-			return $this->render($this->crudInfo->getTemplateLocation().'test.html.twig', array(
-				'item' => $item,
-				'form' => $form->createView(),
-				'fieldNames' => $testTrial->generateFormFieldNames(),
-				'testTime' => $testTrial->getTimeLimitInMinutes(),
-				'pageSubtitle' => 'Take the on-line course',
+			return $this->render($this->crudInfo->getTemplateLocation() . 'test.html.twig', array(
+					'item' => $item,
+					'form' => $form->createView(),
+					'fieldNames' => $testTrial->generateFormFieldNames(),
+					'testTime' => $testTrial->getTimeLimitInMinutes(),
+					'pageSubtitle' => 'Take the on-line course',
 			));
-		} catch(ItemNotFoundException $exception) {
+		} catch (ItemNotFoundException $exception) {
 			return $this->showPageWithError($this->trans('CourseNotFoundMsg'), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
-		} catch(TrainingTestException $exception) {
+		} catch (TrainingTestException $exception) {
 			return $this->showPageWithError($this->trans($exception->getMessage()), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
-		} catch(ModelException $exception) {
+		} catch (ModelException $exception) {
 			return $this->showPageWithError($this->trans($exception->getMessage()), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
 		}
 	}
-	
+
 	/**
 	 * @Route("/{id}/complete", name="area_course_complete")
 	 */
-	public function goodFaithCompletionAction($id) {
+	public function goodFaithCompletionAction($id)
+	{
 		try {
 			$repo = $this->get(self::REPOSITORY_NAME);
 			$item = $repo->getItem($id);
-			
-			if($item->hasTest()) {
+
+			if ($item->hasTest()) {
 				return $this->showPageWithError($this->trans('CourseHasTestMsg'), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
 			}
 			$repo->confirmGoodFaithCompletion($this->getMembership()->getItem(), $this->getUser(), $item);
 			return $this->showPageWithMessage($this->trans('CourseCompletedConfirmationMsg'), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
-		} catch(ModelException $exception) {
+		} catch (ModelException $exception) {
 			return $this->showPageWithError($this->trans($exception->getMessage()), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
 		}
 	}
-	
+
 	private function getMinQuestionNum()
 	{
 		return (int) $this->getProjectSettings()->get(CourseSettings::MIN_QUESTION_NUM)->getValue();
 	}
+
 }

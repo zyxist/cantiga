@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
@@ -31,18 +33,20 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class MembershipPass implements CompilerPassInterface
 {
+
 	public function process(ContainerBuilder $container)
 	{
 		if (!$container->has('cantiga.core.repo.invitation')) {
-            return;
-        }
+			return;
+		}
 		$definition = $container->findDefinition('cantiga.core.repo.invitation');
 		$taggedServices = $container->findTaggedServiceIds('cantiga.invitation-aware');
-		
+
 		foreach ($taggedServices as $id => $tags) {
 			foreach ($tags as $attr) {
 				$definition->addMethodCall('registerRepository', [$attr['entity'], new Reference($id)]);
 			}
 		}
 	}
+
 }

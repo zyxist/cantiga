@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
@@ -38,12 +40,14 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class ProjectGroupCategoryController extends ProjectPageController
 {
+
 	const REPOSITORY_NAME = 'cantiga.core.repo.project_group_category';
+
 	/**
 	 * @var CRUDInfo
 	 */
 	private $crudInfo;
-	
+
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 		$repository = $this->get(self::REPOSITORY_NAME);
@@ -62,19 +66,19 @@ class ProjectGroupCategoryController extends ProjectPageController
 			->setItemUpdatedMessage('The group category \'0\' has been updated.')
 			->setItemRemovedMessage('The group category \'0\' has been removed.')
 			->setRemoveQuestion('Do you really want to remove the group category \'0\'?');
-		
+
 		$this->breadcrumbs()
 			->workgroup('data')
 			->entryLink($this->trans('Group categories', [], 'pages'), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
 	}
-		
+
 	/**
 	 * @Route("/index", name="project_group_category_index")
 	 */
 	public function indexAction(Request $request)
 	{
 		$dataTable = $this->crudInfo->getRepository()->createDataTable();
-        return $this->render($this->crudInfo->getTemplateLocation().'index.html.twig', array(
+		return $this->render($this->crudInfo->getTemplateLocation() . 'index.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'dataTable' => $dataTable,
@@ -83,7 +87,7 @@ class ProjectGroupCategoryController extends ProjectPageController
 			'ajaxListPage' => 'project_group_category_ajax_list',
 		));
 	}
-	
+
 	/**
 	 * @Route("/ajax-list", name="project_group_category_ajax_list")
 	 */
@@ -97,9 +101,9 @@ class ProjectGroupCategoryController extends ProjectPageController
 		$repository = $this->crudInfo->getRepository();
 		$dataTable = $repository->createDataTable();
 		$dataTable->process($request);
-        return new JsonResponse($routes->process($repository->listData($dataTable)));
+		return new JsonResponse($routes->process($repository->listData($dataTable)));
 	}
-	
+
 	/**
 	 * @Route("/{id}/info", name="project_group_category_info")
 	 */
@@ -109,7 +113,7 @@ class ProjectGroupCategoryController extends ProjectPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $id);
 	}
-	 
+
 	/**
 	 * @Route("/insert", name="project_group_category_insert")
 	 */
@@ -117,12 +121,12 @@ class ProjectGroupCategoryController extends ProjectPageController
 	{
 		$entity = new GroupCategory();
 		$entity->setProject($this->getActiveProject());
-		
+
 		$action = new InsertAction($this->crudInfo, $entity, new ProjectGroupCategoryForm());
 		$action->slug($this->getSlug());
 		return $action->run($this, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/edit", name="project_group_category_edit")
 	 */
@@ -132,7 +136,7 @@ class ProjectGroupCategoryController extends ProjectPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/remove", name="project_group_category_remove")
 	 */
@@ -142,4 +146,5 @@ class ProjectGroupCategoryController extends ProjectPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
 	}
+
 }

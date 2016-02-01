@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -38,12 +40,14 @@ use Cantiga\CoreBundle\Entity\AreaStatus;
  */
 class ProjectAreaStatusController extends ProjectPageController
 {
+
 	const REPOSITORY_NAME = 'cantiga.core.repo.project_area_status';
+
 	/**
 	 * @var CRUDInfo
 	 */
 	private $crudInfo;
-	
+
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 		$repository = $this->get(self::REPOSITORY_NAME);
@@ -59,26 +63,26 @@ class ProjectAreaStatusController extends ProjectPageController
 			->setEditPage('project_area_status_edit')
 			->setRemovePage('project_area_status_remove')
 			->setRemoveQuestion('Do you really want to remove the status \'0\'?');
-		
+
 		$this->breadcrumbs()
 			->workgroup('manage')
 			->entryLink($this->trans('Area status', [], 'pages'), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
 	}
-		
+
 	/**
 	 * @Route("/index", name="project_area_status_index")
 	 */
 	public function indexAction(Request $request)
 	{
 		$dataTable = $this->crudInfo->getRepository()->createDataTable();
-        return $this->render($this->crudInfo->getTemplateLocation().'index.html.twig', array(
+		return $this->render($this->crudInfo->getTemplateLocation() . 'index.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'dataTable' => $dataTable,
 			'locale' => $request->getLocale()
 		));
 	}
-	
+
 	/**
 	 * @Route("/ajax-list", name="project_area_status_ajax_list")
 	 */
@@ -92,9 +96,9 @@ class ProjectAreaStatusController extends ProjectPageController
 		$repository = $this->crudInfo->getRepository();
 		$dataTable = $repository->createDataTable();
 		$dataTable->process($request);
-        return new JsonResponse($routes->process($repository->listData($dataTable)));
+		return new JsonResponse($routes->process($repository->listData($dataTable)));
 	}
-	
+
 	/**
 	 * @Route("/{id}/info", name="project_area_status_info")
 	 */
@@ -104,7 +108,7 @@ class ProjectAreaStatusController extends ProjectPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $id);
 	}
-	 
+
 	/**
 	 * @Route("/insert", name="project_area_status_insert")
 	 */
@@ -112,12 +116,12 @@ class ProjectAreaStatusController extends ProjectPageController
 	{
 		$entity = new AreaStatus();
 		$entity->setProject($this->getActiveProject());
-		
+
 		$action = new InsertAction($this->crudInfo, $entity, new ProjectAreaStatusForm());
 		$action->slug($this->getSlug());
 		return $action->run($this, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/edit", name="project_area_status_edit")
 	 */
@@ -127,7 +131,7 @@ class ProjectAreaStatusController extends ProjectPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/remove", name="project_area_status_remove")
 	 */
@@ -137,4 +141,5 @@ class ProjectAreaStatusController extends ProjectPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
 	}
+
 }

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Controller\UserPageController;
@@ -31,18 +33,19 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class UserPlaceController extends UserPageController
 {
+
 	const REPOSITORY_NAME = 'cantiga.core.repo.invitation';
 
 	/**
 	 * @Route("/index", name="user_place_index")
 	 */
-    public function indexAction(Request $request)
-    {
+	public function indexAction(Request $request)
+	{
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$this->breadcrumbs()
 			->workgroup('areas')
 			->entryLink($this->trans('Places'), 'user_place_index');
-		
+
 		$loaders = $this->getExtensionPoints()->findImplementations(CoreExtensions::MEMBERSHIP_LOADER, new ExtensionPointFilter());
 		$user = $this->getUser();
 		$places = [];
@@ -51,11 +54,12 @@ class UserPlaceController extends UserPageController
 				$places[] = $proj;
 			}
 		}
-		
-        return $this->render('CantigaCoreBundle:UserPlace:index.html.twig', array(
-			'pageTitle' => 'Your places',
-			'pageSubtitle' => 'Places you are a member of',
-			'places' => $places,
+
+		return $this->render('CantigaCoreBundle:UserPlace:index.html.twig', array(
+				'pageTitle' => 'Your places',
+				'pageSubtitle' => 'Places you are a member of',
+				'places' => $places,
 		));
 	}
+
 }

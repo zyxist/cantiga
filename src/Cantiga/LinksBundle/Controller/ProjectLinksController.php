@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\LinksBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
@@ -38,12 +40,14 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class ProjectLinksController extends ProjectPageController
 {
+
 	const REPOSITORY_NAME = 'cantiga.links.repo.links';
+
 	/**
 	 * @var CRUDInfo
 	 */
 	private $crudInfo;
-	
+
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 		$repository = $this->get(self::REPOSITORY_NAME);
@@ -61,19 +65,19 @@ class ProjectLinksController extends ProjectPageController
 			->setItemCreatedMessage('The link \'0\' has been created.')
 			->setItemRemovedMessage('The link \'0\' has been removed.')
 			->setRemoveQuestion('Do you really want to remove the link \'0\'?');
-		
+
 		$this->breadcrumbs()
 			->workgroup('manage')
 			->entryLink($this->trans('Important links', [], 'pages'), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
 	}
-		
+
 	/**
 	 * @Route("/index", name="project_links_index")
 	 */
 	public function indexAction(Request $request)
 	{
 		$dataTable = $this->crudInfo->getRepository()->createDataTable();
-        return $this->render($this->crudInfo->getTemplateLocation().'index.html.twig', array(
+		return $this->render($this->crudInfo->getTemplateLocation() . 'index.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'dataTable' => $dataTable,
@@ -82,7 +86,7 @@ class ProjectLinksController extends ProjectPageController
 			'insertPage' => $this->crudInfo->getInsertPage()
 		));
 	}
-	
+
 	/**
 	 * @Route("/ajax-list", name="project_links_ajax_list")
 	 */
@@ -96,9 +100,9 @@ class ProjectLinksController extends ProjectPageController
 		$repository = $this->crudInfo->getRepository();
 		$dataTable = $repository->createDataTable();
 		$dataTable->process($request);
-        return new JsonResponse($routes->process($repository->listData($dataTable, $this->getTranslator())));
+		return new JsonResponse($routes->process($repository->listData($dataTable, $this->getTranslator())));
 	}
-	
+
 	/**
 	 * @Route("/{id}/info", name="project_links_info")
 	 */
@@ -108,7 +112,7 @@ class ProjectLinksController extends ProjectPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $id);
 	}
-	 
+
 	/**
 	 * @Route("/insert", name="project_links_insert")
 	 */
@@ -116,12 +120,12 @@ class ProjectLinksController extends ProjectPageController
 	{
 		$entity = new Link();
 		$entity->setProject($this->getActiveProject());
-		
+
 		$action = new InsertAction($this->crudInfo, $entity, new LinkForm(LinkForm::PROJECT_SPECIFIC));
 		$action->slug($this->getSlug());
 		return $action->run($this, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/edit", name="project_links_edit")
 	 */
@@ -131,7 +135,7 @@ class ProjectLinksController extends ProjectPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/remove", name="project_links_remove")
 	 */
@@ -141,4 +145,5 @@ class ProjectLinksController extends ProjectPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
 	}
+
 }

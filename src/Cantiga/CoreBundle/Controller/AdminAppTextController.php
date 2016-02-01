@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -38,12 +40,14 @@ use Cantiga\CoreBundle\Entity\AppText;
  */
 class AdminAppTextController extends AdminPageController
 {
+
 	const REPOSITORY_NAME = 'cantiga.core.repo.text';
+
 	/**
 	 * @var CRUDInfo
 	 */
 	private $crudInfo;
-	
+
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 		$this->crudInfo = $this->newCrudInfo(self::REPOSITORY_NAME)
@@ -60,12 +64,12 @@ class AdminAppTextController extends AdminPageController
 			->setItemUpdatedMessage('The text \'0\' has been updated.')
 			->setItemRemovedMessage('The text \'0\' has been removed.')
 			->setRemoveQuestion('Do you really want to remove \'0\' text?');
-		
+
 		$this->breadcrumbs()
 			->workgroup('settings')
 			->entryLink($this->trans('Application texts', [], 'pages'), $this->crudInfo->getIndexPage());
 	}
-		
+
 	/**
 	 * @Route("/index", name="admin_app_text_index")
 	 */
@@ -73,7 +77,7 @@ class AdminAppTextController extends AdminPageController
 	{
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$dataTable = $repository->createDataTable();
-        return $this->render($this->crudInfo->getTemplateLocation().'index.html.twig', array(
+		return $this->render($this->crudInfo->getTemplateLocation() . 'index.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'dataTable' => $dataTable,
@@ -82,7 +86,7 @@ class AdminAppTextController extends AdminPageController
 			'ajaxListPage' => 'admin_app_text_ajax_list'
 		));
 	}
-	
+
 	/**
 	 * @Route("/ajax-list", name="admin_app_text_ajax_list")
 	 */
@@ -96,9 +100,9 @@ class AdminAppTextController extends AdminPageController
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$dataTable = $repository->createDataTable();
 		$dataTable->process($request);
-        return new JsonResponse($routes->process($repository->listData($dataTable)));
+		return new JsonResponse($routes->process($repository->listData($dataTable)));
 	}
-	
+
 	/**
 	 * @Route("/{id}/info", name="admin_app_text_info")
 	 */
@@ -107,7 +111,7 @@ class AdminAppTextController extends AdminPageController
 		$action = new InfoAction($this->crudInfo);
 		return $action->run($this, $id);
 	}
-	 
+
 	/**
 	 * @Route("/insert", name="admin_app_text_insert")
 	 */
@@ -116,7 +120,7 @@ class AdminAppTextController extends AdminPageController
 		$action = new InsertAction($this->crudInfo, new AppText(), new AppTextForm());
 		return $action->run($this, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/edit", name="admin_app_text_edit")
 	 */
@@ -125,7 +129,7 @@ class AdminAppTextController extends AdminPageController
 		$action = new EditAction($this->crudInfo, new AppTextForm());
 		return $action->run($this, $id, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/remove", name="admin_app_text_remove")
 	 */
@@ -134,4 +138,5 @@ class AdminAppTextController extends AdminPageController
 		$action = new RemoveAction($this->crudInfo);
 		return $action->run($this, $id, $request);
 	}
+
 }

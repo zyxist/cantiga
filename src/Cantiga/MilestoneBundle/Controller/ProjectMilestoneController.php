@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\MilestoneBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -38,7 +40,9 @@ use Cantiga\MilestoneBundle\Entity\Milestone;
  */
 class ProjectMilestoneController extends ProjectPageController
 {
+
 	const REPOSITORY_NAME = 'cantiga.milestone.repo.milestone';
+
 	/**
 	 * @var CRUDInfo
 	 */
@@ -74,7 +78,7 @@ class ProjectMilestoneController extends ProjectPageController
 	public function indexAction(Request $request)
 	{
 		$dataTable = $this->crudInfo->getRepository()->createDataTable();
-        return $this->render($this->crudInfo->getTemplateLocation().'index.html.twig', array(
+		return $this->render($this->crudInfo->getTemplateLocation() . 'index.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'dataTable' => $dataTable,
@@ -83,7 +87,7 @@ class ProjectMilestoneController extends ProjectPageController
 			'ajaxListPage' => 'project_milestone_ajax_list'
 		));
 	}
-	
+
 	/**
 	 * @Route("/ajax-list", name="project_milestone_ajax_list")
 	 */
@@ -97,9 +101,9 @@ class ProjectMilestoneController extends ProjectPageController
 		$repository = $this->crudInfo->getRepository();
 		$dataTable = $repository->createDataTable();
 		$dataTable->process($request);
-        return new JsonResponse($routes->process($repository->listData($dataTable, $this->getTranslator())));
+		return new JsonResponse($routes->process($repository->listData($dataTable, $this->getTranslator())));
 	}
-	
+
 	/**
 	 * @Route("/{id}/info", name="project_milestone_info")
 	 */
@@ -109,7 +113,7 @@ class ProjectMilestoneController extends ProjectPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $id);
 	}
-	 
+
 	/**
 	 * @Route("/insert", name="project_milestone_insert")
 	 */
@@ -117,12 +121,12 @@ class ProjectMilestoneController extends ProjectPageController
 	{
 		$entity = new Milestone();
 		$entity->setProject($this->getActiveProject());
-		
+
 		$action = new InsertAction($this->crudInfo, $entity, new MilestoneForm(true));
 		$action->slug($this->getSlug());
 		return $action->run($this, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/edit", name="project_milestone_edit")
 	 */
@@ -132,7 +136,7 @@ class ProjectMilestoneController extends ProjectPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/remove", name="project_milestone_remove")
 	 */
@@ -142,4 +146,5 @@ class ProjectMilestoneController extends ProjectPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
 	}
+
 }

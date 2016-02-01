@@ -114,7 +114,7 @@ class {$this->name}Controller extends {$this->baseController}
 	{
 		\$repository = \$this->get(self::REPOSITORY_NAME);
 		\$dataTable = \$repository->createDataTable();
-        return \$this->render('{$this->genBundleName()}:{$this->name}:index.html.twig', array(
+		return \$this->render('{$this->genBundleName()}:{$this->name}:index.html.twig', array(
 			'pageTitle' => \$this->crudInfo->getPageTitle(),
 			'pageSubtitle' => \$this->crudInfo->getPageSubtitle(),
 			'dataTable' => \$dataTable,
@@ -135,7 +135,7 @@ class {$this->name}Controller extends {$this->baseController}
 		\$repository = \$this->get(self::REPOSITORY_NAME);
 		\$dataTable = \$repository->createDataTable();
 		\$dataTable->process(\$request);
-        return new JsonResponse(\$routes->process(\$repository->listData(\$dataTable)));
+		return new JsonResponse(\$routes->process(\$repository->listData(\$dataTable)));
 	}
 	
 	/**

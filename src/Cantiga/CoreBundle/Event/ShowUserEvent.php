@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Event;
 
 use Symfony\Component\EventDispatcher\Event;
@@ -29,19 +31,21 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class ShowUserEvent extends Event
 {
-    /**
-     * @var UserInterface
-     */
-    protected $user;
 
-    public function setUser($user)
-    {
-        $this->user = $user;
-        return $this;
-    }
+	/**
+	 * @var UserInterface
+	 */
+	protected $user;
 
-    public function getUser()
-    {
-        return $this->user;
-    }
+	public function setUser($user)
+	{
+		$this->user = $user;
+		return $this;
+	}
+
+	public function getUser()
+	{
+		return $this->user;
+	}
+
 }
