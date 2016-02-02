@@ -76,7 +76,8 @@ class GroupAreaRepository implements AreaRepositoryInterface
 			->searchableColumn('name', 'i.name')
 			->column('territory', 't.name')
 			->searchableColumn('status', 's.id')
-			->column('memberNum', 'i.memberNum');
+			->column('memberNum', 'i.memberNum')
+			->column('percentCompleteness', 'i.percentCompleteness');
 		return $dt;
 	}
 	
@@ -90,6 +91,7 @@ class GroupAreaRepository implements AreaRepositoryInterface
 			->field('s.label', 'statusLabel')
 			->field('t.name', 'territory')
 			->field('i.memberNum', 'memberNum')
+			->field('i.percentCompleteness', 'percentCompleteness')
 			->from(CoreTables::AREA_TBL, 'i')
 			->join(CoreTables::TERRITORY_TBL, 't', QueryClause::clause('i.territoryId = t.id'))
 			->join(CoreTables::AREA_STATUS_TBL, 's', QueryClause::clause('i.statusId = s.id'))
@@ -106,6 +108,7 @@ class GroupAreaRepository implements AreaRepositoryInterface
 
 		$qb->postprocess(function($row) use($translator) {
 			$row['statusName'] = $translator->trans($row['statusName'], [], 'statuses');
+			$row['percentCompleteness'] .= '%';
 			return $row;
 		});
 		$dataTable->processQuery($qb);

@@ -51,6 +51,7 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 	private $customData;
 	private $createdAt;
 	private $lastUpdatedAt;
+	private $percentCompleteness;
 	
 	private $oldGroup;
 	private $oldStatus;
@@ -340,6 +341,22 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		$this->lastUpdatedAt = $lastUpdatedAt;
 		return $this;
 	}
+	
+	public function getPercentCompleteness()
+	{
+		return $this->percentCompleteness;
+	}
+
+	public function setPercentCompleteness($percentCompleteness)
+	{
+		if ($percentCompleteness > 100) {
+			$percentCompleteness = 100;
+		} elseif($percentCompleteness < 0) {
+			$percentCompleteness = 0;
+		}
+		$this->percentCompleteness = $percentCompleteness;
+		return $this;
+	}
 
 	/**
 	 * Fetches a value of a custom property. Null value is returned,
@@ -380,7 +397,7 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		$this->slug = DataMappers::generateSlug($conn, CoreTables::GROUP_TBL);
 		$conn->insert(
 			CoreTables::AREA_TBL,
-			DataMappers::pick($this, ['name', 'slug', 'project', 'group', 'territory', 'status', 'reporter', 'entity', 'createdAt', 'lastUpdatedAt'], ['customData' => json_encode($this->customData), 'groupName' => $groupName])
+			DataMappers::pick($this, ['name', 'slug', 'project', 'group', 'territory', 'status', 'reporter', 'entity', 'createdAt', 'lastUpdatedAt', 'percentCompleteness'], ['customData' => json_encode($this->customData), 'groupName' => $groupName])
 		);
 		return $this->id = $conn->lastInsertId();
 	}
@@ -408,7 +425,7 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		
 		return $conn->update(
 			CoreTables::AREA_TBL,
-			DataMappers::pick($this, ['name', 'group', 'territory', 'status', 'lastUpdatedAt'], ['customData' => json_encode($this->customData), 'groupName' => $groupName]),
+			DataMappers::pick($this, ['name', 'group', 'territory', 'status', 'lastUpdatedAt', 'percentCompleteness'], ['customData' => json_encode($this->customData), 'groupName' => $groupName]),
 			DataMappers::pick($this, ['id'])
 		);
 	}

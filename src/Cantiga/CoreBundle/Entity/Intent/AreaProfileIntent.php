@@ -34,6 +34,7 @@ class AreaProfileIntent
 	public $name;
 	public $territory;
 	public $customData;
+	private $percentCompleteness;
 	
 	/**
 	 * @var Area
@@ -59,10 +60,21 @@ class AreaProfileIntent
 		$metadata->addPropertyConstraint('name', new Length(array('min' => 2, 'max' => 100)));
 	}
 	
+	public function getCustomData()
+	{
+		return $this->customData;
+	}
+	
+	public function setPercentCompleteness($percent)
+	{
+		$this->percentCompleteness = $percent;
+	}
+	
 	public function execute()
 	{
 		$this->area->setName($this->name);
 		$this->area->setTerritory($this->territory);
+		$this->area->setPercentCompleteness($this->percentCompleteness);
 		$this->area->setCustomData($this->customData);
 		$this->repository->update($this->area);
 	}

@@ -20,6 +20,11 @@ services:
         arguments: ["@translator"]
         tags:
             - { name: cantiga.extension, point: core.form.area, module: edk, description: "EDK area form" }
+    wio.edk.model_listener:
+        class: WIO\EdkBundle\EventListener\ModelListener
+        arguments: ["@event_dispatcher"]
+        tags:
+            - { name: kernel.event_listener, event: cantiga.area.updated, method: onAreaUpdated }
     wio.edk.workspace_listener:
         class: WIO\EdkBundle\EventListener\WorkspaceListener
         tags:

@@ -18,6 +18,7 @@
  */
 namespace WIO\EdkBundle\CustomForm;
 
+use Cantiga\Metamodel\Capabilities\CompletenessCalculatorInterface;
 use Cantiga\Metamodel\CustomForm\CustomFormModelInterface;
 use Cantiga\Metamodel\CustomForm\DefaultCustomFormRenderer;
 use Cantiga\Metamodel\CustomForm\DefaultCustomFormSummary;
@@ -36,7 +37,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 /**
  * @author Tomasz Jędrzejewski
  */
-class AreaModel implements CustomFormModelInterface
+class AreaModel implements CustomFormModelInterface, CompletenessCalculatorInterface
 {
 	private $translator;
 	
@@ -134,6 +135,26 @@ class AreaModel implements CustomFormModelInterface
 		});
 		$s->present('facebookProfile', 'Facebook profile', 'string');
 		return $s;
+	}
+	
+	public function calculateCompleteness(array $data)
+	{
+		$fieldCollection = ['positionLat', 'ewcDate', 'positionLng', 'parishName', 'parishAddress', 'parishPostal', 'parishCity', 'parishWebsite', 'responsiblePriest', 'responsibleCoordinator', 'contactPhone', 'areaWebsite', 'facebookProfile'];
+	
+		$total = sizeof($fieldCollection);
+		$filled = 0;
+		foreach ($fieldCollection as $name) {
+			if (!empty($data[$name])) {
+				if (is_array($data[$name])) {
+					if (!empty($data[$name]['year'])) {
+						$filled++;
+					}
+				} else {
+					$filled++;
+				}
+			}
+		}
+		return round(($filled / $total) * 100);
 	}
 	
 	public function generateYears() {

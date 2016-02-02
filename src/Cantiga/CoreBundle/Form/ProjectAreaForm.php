@@ -18,11 +18,14 @@
  */
 namespace Cantiga\CoreBundle\Form;
 
+use Cantiga\Metamodel\Capabilities\CompletenessCalculatorInterface;
 use Cantiga\Metamodel\CustomForm\CustomFormEventSubscriber;
 use Cantiga\Metamodel\CustomForm\CustomFormModelInterface;
 use Cantiga\Metamodel\Form\EntityTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 
 class ProjectAreaForm extends AbstractType
 {
@@ -54,6 +57,12 @@ class ProjectAreaForm extends AbstractType
 		$builder->get('group')->addModelTransformer(new EntityTransformer($this->groupRepository));
 		$builder->get('status')->addModelTransformer(new EntityTransformer($this->statusRepository));
 		$builder->addEventSubscriber(new CustomFormEventSubscriber($this->customFormModel));
+		$builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+			if ($this->customFormModel instanceof CompletenessCalculatorInterface) {
+				$entity = $event->getData();
+				$entity->setPercentCompleteness($this->customFormModel->calculateCompleteness($entity->getCustomData()));
+			}
+		});
 	}
 
 	public function getName()
