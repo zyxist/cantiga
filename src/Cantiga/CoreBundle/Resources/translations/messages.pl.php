@@ -176,6 +176,9 @@ return array(
 	'Edit group: 0' => 'Edytuj grupę: 0',
 	'Group details: 0' => 'Szczegóły grupy: 0',
 	
+	// Area dashboard
+	'Your status' => 'Twój status',
+	
 	// Area group information
 	'AreaNotAssignedToGroupMsg' => 'Ten rejon nie jest jeszcze przydzielony do żadnej grupy. Kiedy zostanie przydzielony, znajdziesz tutaj wszystkie informacje o swojej grupie.',
 	

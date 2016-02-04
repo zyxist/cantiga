@@ -229,6 +229,10 @@ services:
         arguments: ["@cantiga.core.repo.project_area_request"]
         tags:
             - { name: cantiga.extension, point: core.dashboard.project.central }
+    cantiga.core.dashboard.area_summary:
+        class: Cantiga\CoreBundle\Extension\AreaSummaryExtension
+        tags:
+            - { name: cantiga.extension, point: core.dashboard.area.top }
     cantiga.core.dashboard.project_summary:
         class: Cantiga\CoreBundle\Extension\ProjectSummaryExtension
         arguments: ["@cantiga.core.repo.statistics"]
