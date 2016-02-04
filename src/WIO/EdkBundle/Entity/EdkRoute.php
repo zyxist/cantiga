@@ -319,7 +319,6 @@ class EdkRoute implements IdentifiableInterface, InsertableEntityInterface, Edit
 
 	public function setArea(Area $area)
 	{
-		DataMappers::noOverwritingField($this->area);
 		$this->area = $area;
 		return $this;
 	}
