@@ -393,7 +393,7 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		$this->entity->insert($conn);
 		
 		$this->createdAt = $this->lastUpdatedAt = time();
-		
+		$this->percentCompleteness = 0;
 		$this->slug = DataMappers::generateSlug($conn, CoreTables::GROUP_TBL);
 		$conn->insert(
 			CoreTables::AREA_TBL,
