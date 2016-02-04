@@ -18,20 +18,20 @@
  */
 namespace Cantiga\MilestoneBundle\Repository;
 
+use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
-use Cantiga\Metamodel\Form\EntityTransformerInterface;
 use Cantiga\Metamodel\QueryBuilder;
 use Cantiga\Metamodel\QueryClause;
+use Cantiga\Metamodel\TimeFormatterInterface;
 use Cantiga\Metamodel\Transaction;
-use Cantiga\MilestoneBundle\Entity\Milestone;
+use Cantiga\MilestoneBundle\Entity\MilestoneStatusRule;
 use Cantiga\MilestoneBundle\MilestoneTables;
 use Doctrine\DBAL\Connection;
-use PDO;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class ProjectMilestoneRepository implements EntityTransformerInterface
+class ProjectMilestoneStatusRuleRepository
 {
 	/**
 	 * @var Connection 
@@ -45,11 +45,16 @@ class ProjectMilestoneRepository implements EntityTransformerInterface
 	 * @var Project
 	 */
 	private $project;
+	/**
+	 * @var TimeFormatterInterface
+	 */
+	private $timeFormatter;
 	
-	public function __construct(Connection $conn, Transaction $transaction)
+	public function __construct(Connection $conn, Transaction $transaction, TimeFormatterInterface $timeFormatter)
 	{
 		$this->conn = $conn;
 		$this->transaction = $transaction;
+		$this->timeFormatter = $timeFormatter;
 	}
 	
 	public function setProject(Project $project)
@@ -65,8 +70,10 @@ class ProjectMilestoneRepository implements EntityTransformerInterface
 		$dt = new DataTable();
 		$dt->id('id', 'i.id')
 			->searchableColumn('name', 'i.name')
-			->column('entityType', 'i.entityType')
-			->column('displayOrder', 'i.displayOrder');
+			->column('newStatus', 's1.name')
+			->column('prevStatus', 's2.name')
+			->column('activationOrder', 'i.activationOrder')
+			->column('lastUpdatedAt', 'i.lastUpdatedAt');
 		return $dt;
 	}
 	
@@ -75,23 +82,31 @@ class ProjectMilestoneRepository implements EntityTransformerInterface
 		$qb = QueryBuilder::select()
 			->field('i.id', 'id')
 			->field('i.name', 'name')
-			->field('i.entityType', 'entityType')
-			->field('i.displayOrder', 'displayOrder')
-			->from(MilestoneTables::MILESTONE_TBL, 'i')
+			->field('s1.name', 'newStatus')
+			->field('s1.label', 'newStatusLabel')
+			->field('s2.name', 'prevStatus')
+			->field('s2.label', 'prevStatusLabel')
+			->field('i.activationOrder', 'activationOrder')
+			->field('i.lastUpdatedAt', 'lastUpdatedAt')
+			->from(MilestoneTables::MILESTONE_STATUS_RULE_TBL, 'i')
+			->join(CoreTables::AREA_STATUS_TBL, 's1', QueryClause::clause('i.newStatusId = s1.id'))
+			->join(CoreTables::AREA_STATUS_TBL, 's2', QueryClause::clause('i.prevStatusId = s2.id'))
 			->where(QueryClause::clause('i.`projectId` = :projectId', ':projectId', $this->project->getId()));
 
 		$qb->postprocess(function($row) use($translator) {
-			$row['entityTypeText'] = $translator->trans($row['entityType']);
+			$row['lastUpdatedAt'] = $this->timeFormatter->ago($row['lastUpdatedAt']);
 			return $row;
 		});
 		
-		$recordsTotal = QueryBuilder::copyWithoutFields($qb)
+		$recordsTotal = QueryBuilder::select()
 			->field('COUNT(id)', 'cnt')
-			->where($dataTable->buildCountingCondition($qb->getWhere()))
+			->from(MilestoneTables::MILESTONE_STATUS_RULE_TBL, 'i')
+			->where($dataTable->buildCountingCondition(QueryClause::clause('i.`projectId` = :projectId', ':projectId', $this->project->getId())))
 			->fetchCell($this->conn);
-		$recordsFiltered = QueryBuilder::copyWithoutFields($qb)
+		$recordsFiltered = QueryBuilder::select()
 			->field('COUNT(id)', 'cnt')
-			->where($dataTable->buildFetchingCondition($qb->getWhere()))
+			->from(MilestoneTables::MILESTONE_STATUS_RULE_TBL, 'i')
+			->where($dataTable->buildFetchingCondition(QueryClause::clause('i.`projectId` = :projectId', ':projectId', $this->project->getId())))
 			->fetchCell($this->conn);
 		$dataTable->processQuery($qb);
 		return $dataTable->createAnswer(
@@ -102,21 +117,27 @@ class ProjectMilestoneRepository implements EntityTransformerInterface
 	}
 	
 	/**
-	 * @return Milestone
+	 * @return MilestoneStatusRule
 	 */
 	public function getItem($id)
 	{
 		$this->transaction->requestTransaction();
-		$item = Milestone::fetchByProject($this->conn, $id, $this->project);
-		
-		if(false === $item) {
+		try {
+			$item = MilestoneStatusRule::fetchByProject($this->conn, $id, $this->project);
+
+			if(false === $item) {
+				$this->transaction->requestRollback();
+				throw new ItemNotFoundException('The specified item has not been found.', $id);
+			}
+			$item->fetchMilestoneSummary($this->conn);
+			return $item;
+		} catch(Exception $ex) {
 			$this->transaction->requestRollback();
-			throw new ItemNotFoundException('The specified item has not been found.', $id);
+			throw $ex;
 		}
-		return $item;
 	}
 	
-	public function insert(Milestone $item)
+	public function insert(MilestoneStatusRule $item)
 	{
 		$this->transaction->requestTransaction();
 		try {
@@ -127,7 +148,7 @@ class ProjectMilestoneRepository implements EntityTransformerInterface
 		}
 	}
 	
-	public function update(Milestone $item)
+	public function update(MilestoneStatusRule $item)
 	{
 		$this->transaction->requestTransaction();
 		try {
@@ -138,7 +159,7 @@ class ProjectMilestoneRepository implements EntityTransformerInterface
 		}
 	}
 	
-	public function remove(Milestone $item)
+	public function remove(MilestoneStatusRule $item)
 	{
 		$this->transaction->requestTransaction();
 		try {
@@ -147,30 +168,5 @@ class ProjectMilestoneRepository implements EntityTransformerInterface
 			$this->transaction->requestRollback();
 			throw $ex;
 		}
-	}
-	
-	public function getFormChoices($entityType)
-	{
-		$this->transaction->requestTransaction();
-		$stmt = $this->conn->prepare('SELECT `id`, `name` FROM `'.MilestoneTables::MILESTONE_TBL.'` WHERE `projectId` = :projectId AND `entityType` = :entityType ORDER BY `displayOrder`');
-		$stmt->bindValue(':projectId', $this->project->getId());
-		$stmt->bindValue(':entityType', $entityType);
-		$stmt->execute();
-		$result = array();
-		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$result[$row['id']] = $row['name'];
-		}
-		$stmt->closeCursor();
-		return $result;
-	}
-
-	public function transformToEntity($key)
-	{
-		return $this->getItem($key);
-	}
-
-	public function transformToKey($entity)
-	{
-		return $entity->getId();
 	}
 }

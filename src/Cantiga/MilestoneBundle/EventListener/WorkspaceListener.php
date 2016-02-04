@@ -33,6 +33,7 @@ class WorkspaceListener
 			$workspace->addWorkItem('summary', new WorkItem('project_milestone_summary', 'Milestones'));
 			$workspace->addWorkItem('data', new WorkItem('project_milestone_editor', 'Milestones'));
 			$workspace->addWorkItem('manage', new WorkItem('project_milestone_index', 'Milestones'));
+			$workspace->addWorkItem('manage', new WorkItem('project_milestone_status_rule_index', 'Status rules'));
 		}
 	}
 	

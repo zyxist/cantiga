@@ -13,6 +13,9 @@ _project_milestone_summary_controller:
 _project_milestone_editor_controller:                                                                                                                                                   
     resource: "@CantigaMilestoneBundle/Controller/ProjectMilestoneEditorController.php"                                                                                                      
     type:     annotation
+_project_milestone_status_rule_controller:                                                                                                                                                   
+    resource: "@CantigaMilestoneBundle/Controller/ProjectMilestoneStatusRuleController.php"                                                                                                      
+    type:     annotation
 _project_milestone_controller:                                                                                                                                                   
     resource: "@CantigaMilestoneBundle/Controller/ProjectMilestoneController.php"                                                                                                      
     type:     annotation

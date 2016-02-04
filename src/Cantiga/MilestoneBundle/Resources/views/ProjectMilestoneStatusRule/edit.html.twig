@@ -1,0 +1,32 @@
+{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+
+{% block box_header %}
+	<h4>{{ 'Edit: 0' | trans([item.name], 'general') }}</h4>
+{% endblock %}
+
+{% block box_body %}
+
+	{{ form_start(form) }}
+	<div class="row">
+		<div class="col-md-6 col-xs-12">
+			{{ form_row(form.name) }}
+		</div>
+		<div class="col-md-6 col-xs-12">
+			{{ form_row(form.activationOrder) }}
+		</div>
+		<div class="col-md-6 col-xs-12">
+			{{ form_row(form.newStatus) }}
+		</div>
+		<div class="col-md-6 col-xs-12">
+			{{ form_row(form.prevStatus) }}
+		</div>
+		<div class="col-md-6 col-xs-12">
+			{{ form_row(form.milestoneMap) }}
+		</div>
+	</div>
+	{{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts_inline %}
+{{ use_icheck() }}
+{% endblock %}

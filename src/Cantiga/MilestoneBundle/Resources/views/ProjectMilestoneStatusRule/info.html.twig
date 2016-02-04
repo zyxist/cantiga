@@ -1,0 +1,50 @@
+{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+
+{% block box_header %}
+	<h4>{{ 'Details: 0' | trans([item.name], 'general') }}</h4>
+{% endblock %}
+
+{% block box_body %}
+<table class="table table-hover">
+	<tbody>
+		<tr>
+			<td width="30%">{{ 'Name' | trans }}</td>
+			<td>{{ item.name }}</td>
+		</tr>
+		<tr>
+			<td width="30%">{{ 'New status' | trans([], 'milestone') }}</td>
+			<td><span class="label label-{{item.newStatus.label}}">{{ item.newStatus.name }}</span></td>
+		</tr>
+		<tr>
+			<td width="30%">{{ 'Previous status' | trans([], 'milestone') }}</td>
+			<td><span class="label label-{{item.prevStatus.label}}">{{ item.prevStatus.name }}</span></td>
+		</tr>
+		<tr>
+			<td width="30%">{{ 'Activation order' | trans([], 'milestone') }}</td>
+			<td>{{ item.activationOrder }}</td>
+		</tr>
+		<tr>
+			<td width="30%">{{ 'Last updated' | trans }}</td>
+			<td>{{ format_time(TimeFormatter.FORMAT_DATE_LONG, item.lastUpdatedAt) }}</td>
+		</tr>
+		<tr>
+			<td width="30%">{{ 'Required milestones' | trans([], 'milestone') }}</td>
+			<td><ul>
+				{% for milestone in item.milestoneSummary %}
+				<li><a href="{{ spath('project_milestone_info', {'id' : milestone['id'] })}}">{{ milestone['name'] }}</a></li>
+				{% endfor %}
+			</ul></td>
+		</tr>
+	</tbody>
+</table>
+{% endblock %}
+
+{% block box_footer %}
+<p>
+	<a href="{{ spath(indexPage) }}" class="btn btn-default btn-sm" role="button">{{ 'Back' | trans({}, 'general') }}</a>
+	<a href="{{ spath(editPage, {'id': item.id }) }}" class="btn btn-warning btn-sm" role="button">{{ 'Edit' | trans({}, 'general') }}</a>
+	{% if item.canRemove() %}
+	<a href="{{ spath(removePage, {'id': item.id }) }}" class="btn btn-danger btn-sm" role="button">{{ 'Remove' | trans({}, 'general') }}</a>
+	{% endif %}
+</p>
+{% endblock %}

@@ -21,4 +21,11 @@ return [
 	'Completed milestones' => 'Ukończonych',
 	'View areas' => 'Zobacz rejony',
 	'View groups' => 'Zobacz grupy',
+	
+	'Name' => 'Nazwa',
+	'Save' => 'Zapisz',
+	'New status' => 'Nowy status',
+	'Previous status' => 'Poprzedni status',
+	'Required milestones' => 'Wymagane kamienie milowe',
+	'Activation order' => 'Kolejność aktywacji',
 ];

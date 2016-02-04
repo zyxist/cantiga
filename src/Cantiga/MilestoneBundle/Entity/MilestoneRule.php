@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *

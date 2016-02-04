@@ -24,4 +24,5 @@ class MilestoneTables
 	const MILESTONE_PROGRESS_TBL = 'cantiga_milestone_progress';
 	const MILESTONE_STATUS_TBL = 'cantiga_milestone_status';
 	const MILESTONE_RULE_TBL = 'cantiga_milestone_rules';
+	const MILESTONE_STATUS_RULE_TBL = 'cantiga_milestone_status_rules';
 }
