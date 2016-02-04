@@ -71,4 +71,11 @@ return array(
 	
 	'RouteLengthHistogram' => 'Histogram długości tras',
 	'RouteAscentHistogram' => 'Histogram sumy przewyższeń',
+	
+	'The MIME type of the uploaded GPS track is invalid.' => 'Typ wgranego pliku ze śladem GPS jest nieprawidłowy (ma być plik KML).',
+	'The MIME type of the uploaded map is invalid.' => 'Typ wgranego pliku z mapą jest nieprawidłowy (ma być plik JPG lub PDF).',
+	'The MIME type of the uploaded description is invalid.' => 'Typ wgranego pliku z opisem jest nieprawidłowy (ma być plik PDF).',
+	'The extension of the uploaded GPS track is invalid.' => 'Rozszerzenie wgranego pliku ze śladem GPS jest nieprawidłowe (używaj małych liter).',
+	'The extension of the uploaded map is invalid.' => 'Rozszerzenie wgranego pliku z mapą jest nieprawidłowe (używaj małych liter).',
+	'The extension of the uploaded description is invalid.' => 'Rozszerzenie wgranego pliku z opisem jest nieprawidłowe (używaj małych liter).',
 );

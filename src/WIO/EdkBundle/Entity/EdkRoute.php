@@ -719,6 +719,9 @@ class EdkRoute implements IdentifiableInterface, InsertableEntityInterface, Edit
 			if ($this->getDescriptionFileUpload()->getMimeType() != 'application/pdf') {
 				throw new DiskAssetException('The MIME type of the uploaded description is invalid.');
 			}
+			if ($this->getDescriptionFileUpload()->getClientOriginalExtension() != 'pdf') {
+				throw new DiskAssetException('The extension of the uploaded description is invalid.');
+			}
 		}
 	}
 
@@ -728,6 +731,10 @@ class EdkRoute implements IdentifiableInterface, InsertableEntityInterface, Edit
 			if ($this->getMapFileUpload()->getMimeType() != 'application/pdf' && $this->getMapFileUpload()->getMimeType() != 'image/jpeg') {
 				throw new DiskAssetException('The MIME type of the uploaded map is invalid.');
 			}
+			$ext = $this->getMapFileUpload()->getClientOriginalExtension();
+			if ($ext != 'jpg' && $ext != 'pdf') {
+				throw new DiskAssetException('The extension of the uploaded map is invalid.');
+			}
 		}
 	}
 
@@ -736,6 +743,9 @@ class EdkRoute implements IdentifiableInterface, InsertableEntityInterface, Edit
 		if (null !== $this->getGpsTrackFileUpload()) {
 			if ($this->getGpsTrackFileUpload()->getMimeType() != 'application/vnd.google-earth.kml+xml' && $this->getGpsTrackFileUpload()->getMimeType() != 'application/xml') {
 				throw new DiskAssetException('The MIME type of the uploaded GPS track is invalid.');
+			}
+			if ($this->getGpsTrackFileUpload()->getClientOriginalExtension() != 'kml') {
+				throw new DiskAssetException('The extension of the uploaded GPS track is invalid.');
 			}
 		}
 	}
