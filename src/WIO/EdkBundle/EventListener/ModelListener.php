@@ -40,7 +40,7 @@ class ModelListener
 	 */
 	private $eventDispatcher;
 	
-	public function __construct(EventDispatcherInterface $eventDispatcher, EdkExportRepository $exportRepository)
+	public function __construct(EventDispatcherInterface $eventDispatcher)
 	{
 		$this->eventDispatcher = $eventDispatcher;
 	}

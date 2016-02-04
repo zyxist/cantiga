@@ -14,6 +14,9 @@ services:
     cantiga.milestone.repo.summary:
         class:     Cantiga\MilestoneBundle\Repository\MilestoneSummaryRepository
         arguments: ["@database_connection", "@cantiga.transaction"]
+    cantiga.milestone.repo.update:
+        class:     Cantiga\MilestoneBundle\Repository\UpdateRepository
+        arguments: ["@database_connection", "@cantiga.transaction"]
     cantiga.milestone.workspace_listener:
         class: Cantiga\MilestoneBundle\EventListener\WorkspaceListener
         tags:
