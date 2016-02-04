@@ -49,9 +49,10 @@ class DataExportForm extends AbstractType
 
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
+		$projects = $this->projectRepository->getFormChoices();
 		$builder
 			->add('name', new TextType, array('label' => 'Name'))
-			->add('project', new ChoiceType, array('label' => 'Project', 'choices' => $this->projectRepository->getFormChoices()))
+			->add('project', new ChoiceType, array('label' => 'Project', 'choices' => $projects))
 			->add('url', new UrlType, array('label' => 'Export URL'))
 			->add('encryptionKey', new TextType, ['label' => 'Encryption key'])
 			->add('active', new BooleanType, ['label' => 'Active'])
@@ -60,8 +61,12 @@ class DataExportForm extends AbstractType
 
 		$builder->get('project')->addModelTransformer(new EntityTransformer($this->projectRepository));
 
-		$formModifier = function (FormInterface $form, Project $project = null) {
-			$statuses = (null === $project ? [] : $this->areaStatusRepository->getFormChoices($project));
+		$formModifier = function (FormInterface $form, Project $project = null) use($projects) {
+			if (sizeof($projects) == 1) {
+				$statuses = $this->areaStatusRepository->getFormChoices(reset($projects));
+			} else {
+				$statuses = (null === $project ? [] : $this->areaStatusRepository->getFormChoices($project));
+			}
 			$form->add('areaStatus', new ChoiceType, ['label' => 'Area status', 'choices' => $statuses]);
 		};
 
