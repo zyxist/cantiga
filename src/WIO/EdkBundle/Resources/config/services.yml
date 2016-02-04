@@ -5,6 +5,9 @@ services:
     wio.edk.repo.route:
         class:     WIO\EdkBundle\Repository\EdkRouteRepository
         arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher", "@cantiga.time", "@cantiga.files"]
+    wio.edk.repo.export:
+        class:     WIO\EdkBundle\Repository\EdkExportRepository
+        arguments: ["@database_connection"]
     wio.edk.extension.area_information_map:
         class:     WIO\EdkBundle\Extension\AreaInformationMapExtension
         arguments: ["@translator"]
@@ -25,6 +28,11 @@ services:
         arguments: ["@event_dispatcher"]
         tags:
             - { name: kernel.event_listener, event: cantiga.area.updated, method: onAreaUpdated }
+    wio.edk.export_listener:
+         class: WIO\EdkBundle\EventListener\ExportListener
+         arguments: ["@wio.edk.repo.export"]
+         tags:
+            - { name: kernel.event_listener, event: cantiga.export.ongoing, method: onProjectExported }
     wio.edk.workspace_listener:
         class: WIO\EdkBundle\EventListener\WorkspaceListener
         tags:

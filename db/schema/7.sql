@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS `cantiga_edk_area_notes` (
   `areaId` int(11) NOT NULL,
   `noteType` tinyint(4) NOT NULL,
   `content` text NOT NULL,
+  `lastUpdatedAt` int(11) NULL,
   PRIMARY KEY (`areaId`,`noteType`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -94,6 +95,8 @@ CREATE TABLE IF NOT EXISTS `cantiga_edk_removed_participants` (
   KEY `areaId` (`areaId`),
   KEY `removedById` (`removedById`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE  `cantiga_edk_route_notes` ADD  `lastUpdatedAt` INT NULL ;
 
 ALTER TABLE `cantiga_edk_area_notes`
    ADD CONSTRAINT `cantiga_edk_area_notes_fk1` FOREIGN KEY (`areaId`) REFERENCES `cantiga_areas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;

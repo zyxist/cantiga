@@ -26,5 +26,5 @@ class ExportEvents
 	/**
 	 * Call for adding the blocks to export to the external system.
 	 */
-	const EXPORT_ONGOING = 'export.ongoing';
+	const EXPORT_ONGOING = 'cantiga.export.ongoing';
 }

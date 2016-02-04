@@ -492,11 +492,12 @@ class EdkRoute implements IdentifiableInterface, InsertableEntityInterface, Edit
 			$conn->delete(EdkTables::ROUTE_NOTE_TBL, array('routeId' => $this->getId(), 'noteType' => $type));
 			unset($this->notes[$type]);
 		} else {
-			$stmt = $conn->prepare('INSERT INTO `' . EdkTables::ROUTE_NOTE_TBL . '` (`routeId`, `noteType`, `content`) VALUES(:routeId, :noteType, :content)'
-				. ' ON DUPLICATE KEY UPDATE `content` = VALUES(`content`)');
+			$stmt = $conn->prepare('INSERT INTO `' . EdkTables::ROUTE_NOTE_TBL . '` (`routeId`, `noteType`, `content`, `lastUpdatedAt`) VALUES(:routeId, :noteType, :content, :lastUpdatedAt)'
+				. ' ON DUPLICATE KEY UPDATE `content` = VALUES(`content`), `lastUpdatedAt` = VALUES(`lastUpdatedAt`)');
 			$stmt->bindValue(':routeId', $this->getId());
 			$stmt->bindValue(':noteType', $type);
 			$stmt->bindValue(':content', $content);
+			$stmt->bindValue(':lastUpdatedAt', time());
 			$stmt->execute();
 			$this->notes[$type] = $content;
 		}

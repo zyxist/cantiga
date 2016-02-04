@@ -20,6 +20,7 @@ namespace WIO\EdkBundle\EventListener;
 
 use Cantiga\CoreBundle\Entity\Area;
 use Cantiga\CoreBundle\Event\AreaEvent;
+use Cantiga\ExportBundle\Event\ExportEvent;
 use Cantiga\MilestoneBundle\Entity\NewMilestoneStatus;
 use Cantiga\MilestoneBundle\Event\ActivationEvent;
 use Cantiga\MilestoneBundle\MilestoneEvents;
@@ -39,7 +40,7 @@ class ModelListener
 	 */
 	private $eventDispatcher;
 	
-	public function __construct(EventDispatcherInterface $eventDispatcher)
+	public function __construct(EventDispatcherInterface $eventDispatcher, EdkExportRepository $exportRepository)
 	{
 		$this->eventDispatcher = $eventDispatcher;
 	}

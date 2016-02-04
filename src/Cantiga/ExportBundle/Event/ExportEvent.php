@@ -31,10 +31,24 @@ class ExportEvent extends Event
 {
 	private $blocks = array();
 	private $reporter = null;
+	private $projectId;
+	private $lastExportAt;
 	
-	public function __construct($reporterCallback)
+	public function __construct($projectId, $lastExportAt, $reporterCallback)
 	{
+		$this->projectId = $projectId;
+		$this->lastExportAt = $lastExportAt;
 		$this->reporter = $reporterCallback;
+	}
+	
+	public function getProjectId()
+	{
+		return $this->projectId;
+	}
+	
+	public function getLastExportAt()
+	{
+		return $this->lastExportAt;
 	}
 	
 	public function addBlock($name, ExportBlock $block)
@@ -47,6 +61,13 @@ class ExportEvent extends Event
 		$callback('Exporting block '.$name.': IDs '.$block->countIds().'; Updates '.$block->countUpdates());
 	}
 	
+	/**
+	 * Fetches the export block with the given name.
+	 * 
+	 * @param string $name Name of the block to return.
+	 * @return ExportBlock
+	 * @throws InvalidArgumentException
+	 */
 	public function getBlock($name)
 	{
 		if (!isset($this->blocks[$name])) {

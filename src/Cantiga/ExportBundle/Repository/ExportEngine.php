@@ -76,7 +76,7 @@ class ExportEngine
 				}
 			}
 			
-			$event = new ExportEvent($reporter);
+			$event = new ExportEvent($export['projectId'], $export['lastExportedAt'], $reporter);
 			$event->addBlock('area', $block);
 			
 			$event = $this->eventDispatcher->dispatch(ExportEvents::EXPORT_ONGOING, $event);
