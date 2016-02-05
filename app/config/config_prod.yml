@@ -19,9 +19,14 @@ monolog:
             type:         fingers_crossed
             action_level: error
             handler:      nested
+            excluded_404s:
+                - ^/favicon.ico
+                - ^/phpmyadmin
+                - ^/apple([a-zA-Z0-9\-]+).png
+                - ^/browserconfig.xml
         nested:
             type:  stream
             path:  "%kernel.logs_dir%/%kernel.environment%.log"
-            level: debug
+            level: info
         console:
             type:  console
