@@ -95,7 +95,7 @@ class EdkAreaNotes
 
 		if (empty($content)) {
 			$html = '';
-			$conn->delete(EdkTables::AREA_NOTE_TBL, array('routeId' => $this->getId(), 'noteType' => $type));
+			$conn->delete(EdkTables::AREA_NOTE_TBL, array('areaId' => $this->area->getId(), 'noteType' => $type));
 			unset($this->notes[$type]);
 		} else {
 			$stmt = $conn->prepare('INSERT INTO `' . EdkTables::AREA_NOTE_TBL . '` (`areaId`, `noteType`, `content`, `lastUpdatedAt`) VALUES(:routeId, :noteType, :content, :lastUpdatedAt)'
