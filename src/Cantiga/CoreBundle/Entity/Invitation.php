@@ -25,7 +25,10 @@ use Cantiga\Metamodel\Capabilities\RemovableEntityInterface;
 use Cantiga\Metamodel\DataMappers;
 use Cantiga\Metamodel\QueryClause;
 use Doctrine\DBAL\Connection;
-use PDOException;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 /**
  * Invitations are a way to join to the existing project, group or area. The manager of the place can
@@ -79,6 +82,15 @@ class Invitation implements IdentifiableInterface, InsertableEntityInterface, Re
 		$item = new Invitation;
 		DataMappers::fromArray($item, $array, $prefix);
 		return $item;
+	}
+	
+	public static function loadValidatorMetadata(ClassMetadata $metadata)
+	{
+		$metadata->addPropertyConstraint('email', new NotBlank());
+		$metadata->addPropertyConstraint('email', new Length(array('min' => 2, 'max' => 100)));
+		$metadata->addPropertyConstraint('email', new Email());
+		$metadata->addPropertyConstraint('note', new NotBlank());
+		$metadata->addPropertyConstraint('note', new Length(array('min' => 2, 'max' => 30)));
 	}
 	
 	public function getId()
