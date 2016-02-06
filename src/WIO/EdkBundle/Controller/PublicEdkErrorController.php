@@ -16,31 +16,25 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-namespace Cantiga\CoreBundle\DependencyInjection;
+namespace WIO\EdkBundle\Controller;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\DependencyInjection\Loader;
+use Cantiga\CoreBundle\Api\Controller\PublicPageController;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
+
 
 /**
- * @author Tomasz Jędrzejewski
+ * @Route("/pub/edk")
  */
-class CantigaCoreExtension extends Extension
+class PublicEdkErrorController extends PublicPageController
 {
-
 	/**
-	 * {@inheritDoc}
+	 * @Route("/blad", name="public_edk_error")
 	 */
-	public function load(array $configs, ContainerBuilder $container)
+	public function completedAction(Request $request)
 	{
-		$configuration = new Configuration();
-		$config = $this->processConfiguration($configuration, $configs);
-
-		$container->setParameter('cantiga', $config);
-		$loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-		$loader->load('services.yml');
-		$loader->load('mail.yml');
+		return $this->render('WioEdkBundle:Public:public-error.html.twig', [
+			'message' => $this->trans('We are sorry, but we cannot find the specified edition of Extreme Way of the Cross.', [], 'public'),
+		]);
 	}
-
 }

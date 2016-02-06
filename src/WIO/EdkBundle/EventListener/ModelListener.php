@@ -20,11 +20,13 @@ namespace WIO\EdkBundle\EventListener;
 
 use Cantiga\CoreBundle\Entity\Area;
 use Cantiga\CoreBundle\Event\AreaEvent;
-use Cantiga\ExportBundle\Event\ExportEvent;
+use Cantiga\CoreBundle\Event\ProjectCreatedEvent;
+use Cantiga\CoreBundle\Settings\Setting;
 use Cantiga\MilestoneBundle\Entity\NewMilestoneStatus;
 use Cantiga\MilestoneBundle\Event\ActivationEvent;
 use Cantiga\MilestoneBundle\MilestoneEvents;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use WIO\EdkBundle\EdkSettings;
 
 /**
  * Handles profile completeness and other stuff.
@@ -43,6 +45,12 @@ class ModelListener
 	public function __construct(EventDispatcherInterface $eventDispatcher)
 	{
 		$this->eventDispatcher = $eventDispatcher;
+	}
+	
+	public function onProjectCreated(ProjectCreatedEvent $event)
+	{
+		$settings = $event->getSettings();
+		$settings->create(new Setting(EdkSettings::PUBLISHED_AREA_STATUS, 'Published area status ID', 'edk', 0, Setting::TYPE_INTEGER));
 	}
 
 	public function onAreaUpdated(AreaEvent $event)

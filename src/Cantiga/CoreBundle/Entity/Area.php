@@ -94,6 +94,12 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		return $item;
 	}
 	
+	/**
+	 * @param Connection $conn
+	 * @param int $id
+	 * @param \Cantiga\CoreBundle\Entity\Project $project
+	 * @return Area
+	 */
 	public static function fetchByProject(Connection $conn, $id, Project $project)
 	{
 		$data = $conn->fetchAssoc('SELECT a.*, '
@@ -238,6 +244,9 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		return $this;
 	}
 	
+	/**
+	 * @return Project
+	 */
 	public function getProject()
 	{
 		return $this->project;

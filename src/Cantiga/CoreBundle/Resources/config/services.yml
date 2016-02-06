@@ -67,6 +67,9 @@ services:
         arguments: ["%targetFileDirectory%"]
     cantiga.roles:
         class:     "%role_resolver.class%"
+    cantiga.security.recaptcha:
+        class:     Cantiga\CoreBundle\Services\RecaptchaService
+        arguments: ["@=container.getParameter('cantiga')['recaptcha']['siteKey']", "@=container.getParameter('cantiga')['recaptcha']['secretKey']"]
     cantiga.project.settings.database_storage:
         class:     "%database_settings_storage.class%"
         arguments: ["@database_connection"]

@@ -1,0 +1,41 @@
+{% extends 'WioEdkBundle:Public:layout.html.twig' %}
+
+{% block title %}{{ 'Write to area' | trans([], 'public') }} - {{ 'Extreme Way of the Cross' | trans([], 'public') }}{% endblock %}
+
+{% block page_content %}
+	<h2>{{ 'Write to area' | trans([], 'public') }}</h2>
+	
+	{{ form_start(form) }}
+	<div class="row">
+		<div class="col-lg-6 col-md-12">
+			{{ form_row(form.subject) }}
+			{{ form_row(form.content) }}
+			
+		</div>
+		<div class="col-lg-6 col-md-12">
+			{{ form_row(form.area) }}
+			{{ form_row(form.authorName) }}
+			<fieldset>
+				<legend>{{ 'Contact' | trans([], 'public') }}</legend>
+				<p>{{ 'Please leave either an e-mail or phone number, so that we could answer you.' | trans([], 'public') }}</p>
+				{{ form_row(form.authorEmail) }}
+				{{ form_row(form.authorPhone) }}
+			</fieldset>
+			<fieldset>
+				<legend>{{ 'Spam protection' | trans([], 'public') }}</legend>
+				{{ recaptcha.generateHtmlCode() | raw }}
+			</fieldset>
+			
+		</div>
+	</div>
+	<div class="col-lg-12">
+		
+		
+		{{ form_row(form.save) }}
+	</div>
+	{{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts_head %}
+<script src='https://www.google.com/recaptcha/api.js'></script>
+{% endblock %}

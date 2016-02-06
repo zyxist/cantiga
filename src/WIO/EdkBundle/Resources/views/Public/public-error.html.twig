@@ -1,0 +1,9 @@
+{% extends 'WioEdkBundle:Public:layout.html.twig' %}
+
+{% block page_content %}
+	<div class="col-lg-4 col-lg-offset-4">
+		<h2>{{ 'Error' | trans([], 'public') }}</h2>
+		<p class="text-danger">{{ message }}</p>
+	</div>
+{% endblock %}
+

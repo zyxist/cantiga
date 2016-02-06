@@ -38,6 +38,16 @@ class Configuration implements ConfigurationInterface
 	{
 		$treeBuilder = new TreeBuilder();
 		$rootNode = $treeBuilder->root('cantiga');
+		$rootNode
+			->children()
+				->arrayNode('recaptcha')
+					->children()
+						->scalarNode('siteKey')->defaultValue('')->end()
+						->scalarNode('secretKey')->defaultValue('')->end()
+					->end()
+				->end()
+			->end()
+		;
 		return $treeBuilder;
 	}
 

@@ -27,16 +27,19 @@ CREATE TABLE IF NOT EXISTS `cantiga_edk_messages` (
   `subject` VARCHAR(100) NOT NULL,
   `content` TEXT NOT NULL,
   `authorName` VARCHAR(50) NOT NULL,
-  `authorEmail` VARCHAR(100) NOT NULL,
-  `authorPhone` VARCHAR(30) NOT NULL,
+  `authorEmail` VARCHAR(100) NULL,
+  `authorPhone` VARCHAR(30) NULL,
   `createdAt` INT(11) NOT NULL,
   `answeredAt` INT(11) NOT NULL,
   `completedAt` INT(11) NOT NULL,
   `status` TINYINT(1) NOT NULL DEFAULT 0,
   `responderId` INT(11) NULL DEFAULT NULL,
+  `duplicate` TINYINT(1) NOT NULL DEFAULT 0,
+  `ipAddress` INT(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `areaId` (`areaId`),
-  KEY `responderId` (`responderId`)
+  KEY `responderId` (`responderId`),
+  KEY `lastUpdate` (`ipAddress`, `createdAt`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `cantiga_edk_registration_settings` (

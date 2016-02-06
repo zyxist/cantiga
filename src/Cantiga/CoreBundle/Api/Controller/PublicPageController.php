@@ -18,14 +18,11 @@
  */
 namespace Cantiga\CoreBundle\Api\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
 /**
  * Pages that do not require the authentication, shall use this controller.
  *
  * @author Tomasz Jędrzejewski
  */
-class PublicPageController extends Controller
+class PublicPageController extends CantigaController
 {
-	//put your code here
 }

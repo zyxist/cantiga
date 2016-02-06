@@ -16,31 +16,43 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-namespace Cantiga\CoreBundle\DependencyInjection;
+namespace WIO\EdkBundle\Repository;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\DependencyInjection\Loader;
+use Cantiga\Metamodel\Capabilities\InsertableRepositoryInterface;
+use Cantiga\Metamodel\Transaction;
+use Doctrine\DBAL\Connection;
+use Exception;
 
 /**
+ * Description of EdkMessageRepository
+ *
  * @author Tomasz Jędrzejewski
  */
-class CantigaCoreExtension extends Extension
+class EdkMessageRepository implements InsertableRepositoryInterface
 {
-
 	/**
-	 * {@inheritDoc}
+	 * @var Connection 
 	 */
-	public function load(array $configs, ContainerBuilder $container)
+	private $conn;
+	/**
+	 * @var Transaction
+	 */
+	private $transaction;
+	
+	public function __construct(Connection $conn, Transaction $transaction)
 	{
-		$configuration = new Configuration();
-		$config = $this->processConfiguration($configuration, $configs);
-
-		$container->setParameter('cantiga', $config);
-		$loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-		$loader->load('services.yml');
-		$loader->load('mail.yml');
+		$this->conn = $conn;
+		$this->transaction = $transaction;
 	}
-
+	
+	public function insert($item)
+	{
+		$this->transaction->requestTransaction();
+		try {
+			return $item->insert($this->conn);
+		} catch(Exception $ex) {
+			$this->transaction->requestRollback();
+			throw $ex;
+		}
+	}
 }

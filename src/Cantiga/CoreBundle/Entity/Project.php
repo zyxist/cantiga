@@ -67,6 +67,21 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 		return $item;
 	}
 	
+	public static function fetchBySlug(Connection $conn, $slug)
+	{
+		$data = $conn->fetchAssoc('SELECT p.*, '
+			. self::createEntityFieldList()
+			. 'FROM `'.CoreTables::PROJECT_TBL.'` p '
+			. self::createEntityJoin('p')
+			. 'WHERE p.`slug` = :slug AND p.`archived` = 0', [':slug' => $slug]);
+		if (false === $data) {
+			return false;
+		}
+		$item = self::fromArray($data);
+		$item->entity = Entity::fromArray($data, 'entity');
+		return $item;
+	}
+	
 	public static function fetch(Connection $conn, $id)
 	{
 		$data = $conn->fetchAssoc('SELECT p.*, '

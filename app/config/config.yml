@@ -63,3 +63,8 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
+
+cantiga_core:
+     recaptcha:
+          siteKey: "%recaptcha_siteKey%"
+          secretKey: "%recaptcha_secretKey%"

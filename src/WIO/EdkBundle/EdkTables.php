@@ -28,6 +28,7 @@ class EdkTables
 	const ROUTE_COMMENT_TBL = 'cantiga_edk_route_comments';
 	const AREA_NOTE_TBL = 'cantiga_edk_area_notes';
 	
+	const MESSAGE_TBL = 'cantiga_edk_messages';
 	const REGISTRATION_SETTINGS_TBL = 'cantiga_edk_registration_settings';
 	const PARTICIPANT_TBL = 'cantiga_edk_participants';
 	const REMOVED_PARTICIPANT_TBL = 'cantiga_edk_removed_participants';

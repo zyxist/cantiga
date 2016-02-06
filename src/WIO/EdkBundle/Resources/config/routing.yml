@@ -1,6 +1,12 @@
 public_route_data_controller:
     resource: "@WioEdkBundle/Controller/PublicRouteDataController.php"
     type:     annotation
+public_edk_error_controller:
+    resource: "@WioEdkBundle/Controller/PublicEdkErrorController.php"
+    type:     annotation
+public_message_form_controller:
+    resource: "@WioEdkBundle/Controller/PublicMessageFormController.php"
+    type:     annotation
 area_note_controller:
     resource: "@WioEdkBundle/Controller/AreaNoteController.php"
     type:     annotation

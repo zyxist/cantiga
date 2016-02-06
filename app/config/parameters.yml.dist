@@ -16,3 +16,5 @@ parameters:
     locale: en
     defaultTimezone: Europe/Warsaw
     sourceMail: foo@example.com
+    recaptcha_siteKey:
+    recaptcha_secretKey:

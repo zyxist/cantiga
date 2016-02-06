@@ -16,31 +16,9 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-namespace Cantiga\CoreBundle\DependencyInjection;
+namespace WIO\EdkBundle;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Symfony\Component\DependencyInjection\Loader;
-
-/**
- * @author Tomasz Jędrzejewski
- */
-class CantigaCoreExtension extends Extension
+class EdkSettings
 {
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public function load(array $configs, ContainerBuilder $container)
-	{
-		$configuration = new Configuration();
-		$config = $this->processConfiguration($configuration, $configs);
-
-		$container->setParameter('cantiga', $config);
-		$loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
-		$loader->load('services.yml');
-		$loader->load('mail.yml');
-	}
-
+	const PUBLISHED_AREA_STATUS = 'edk_published_area_status';
 }
