@@ -82,13 +82,14 @@ class UpdateRepository
 	
 	private function applyChanges($areas, $rules, $reverseRules)
 	{
-		$stmt = $this->conn->prepare('UPDATE `'.CoreTables::AREA_TBL.'` SET `statusId` = :statusId WHERE `id` = :id');
+		$stmt = $this->conn->prepare('UPDATE `'.CoreTables::AREA_TBL.'` SET `statusId` = :statusId, `lastUpdatedAt` = :lastUpdated WHERE `id` = :id');
 		$count = 0;
 		foreach ($areas as $area) {
 			foreach ($rules as $rule) {
 				if ($this->isMatching($area, $rule)) {
 					$stmt->bindValue(':id', $area['id']);
 					$stmt->bindValue(':statusId', $rule['newStatusId']);
+					$stmt->bindValue(':lastUpdated', time());
 					$stmt->execute();
 					$count++;
 					continue 2;
@@ -98,6 +99,7 @@ class UpdateRepository
 				if ($this->isNotMatching($area, $rule)) {
 					$stmt->bindValue(':id', $area['id']);
 					$stmt->bindValue(':statusId', $rule['prevStatusId']);
+					$stmt->bindValue(':lastUpdated', time());
 					$stmt->execute();
 					$count++;
 					continue 2;
