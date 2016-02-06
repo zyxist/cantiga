@@ -24,4 +24,23 @@ return [
 	'EwcBeginningNote' => 'Beginning',
 	'EwcRegistrationNote' => 'Registration',
 	'EwcAdditionalNote' => 'Additional information',
+	
+	'RegistrationTypeNo' => 'No registration',
+	'RegistrationTypeEdkWebsite' => 'Via EDK.org.pl',
+	'RegistrationTypeOtherWebsite' => 'Via external website',
+	'RegistrationTypeOther' => 'Other way',
+	'RegistrationTypeClosed' => 'Registration closed',
+	
+	'ExternalRegistrationUrlHint' => 'If you choose the registration via an external website, enter the FULL address to your custom registration form.',
+	'AllowLimitExceedHint' => 'If active, the participants can still register for this route even if the participant limit has been already exceeded.',
+	'MaxPeoplePerRecordHint' => 'Only for adding participants by the Area leader: you can register a group of participants, if you set this field to more than 1.',
+	'CustomQuestionHint' => 'Additional (optional) question that is shown in the registration form for this route.',
+	
+	'RegistrationViaEdkWebsiteText' => 'Fill in if you choose the registration via EDK.org.pl website.',
+	'RegistrationViaExternalWebsiteText' => 'Fill in if you choose the registration via external website.',
+	'OtherRegistrationTypesText' => 'If you are going not to use the Internet for registering participants, please select the "Other way" as the registration type and describe how the participants can register in "Registration information" section on "WWW: area information" screen.',
+
+	'RegistrationAlreadyOpenText' => 'The registration is already open.',
+	'RegistrationNotActiveText' => 'The registration is closed.',
+	'NoRegistrationText' => 'There is no registration for this route.',
 ];

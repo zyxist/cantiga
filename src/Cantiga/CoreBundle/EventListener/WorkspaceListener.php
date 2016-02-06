@@ -147,7 +147,7 @@ class WorkspaceListener implements WorkspaceSourceInterface
 			$workspace->addWorkgroup(new Workgroup('data', 'Data', 'database', 3));
 		}
 		if ($this->authChecker->isGranted('ROLE_PROJECT_MANAGER')) {
-			$workspace->addWorkgroup(new Workgroup('manage', 'Manage', 'wrench', 4));
+			$workspace->addWorkgroup(new Workgroup('manage', 'Manage', 'wrench', 10));
 		}
 		
 		$workspace->addWorkItem('community', new WorkItem('project_memberlist_index', 'Member list'));
@@ -194,7 +194,7 @@ class WorkspaceListener implements WorkspaceSourceInterface
 		$workspace->addWorkgroup(new Workgroup('summary', 'Summary', 'table', 2));
 		$workspace->addWorkgroup(new Workgroup('area', 'Area', 'flag-o', 3));
 		if ($this->authChecker->isGranted('ROLE_AREA_MANAGER')) {
-			$workspace->addWorkgroup(new Workgroup('manage', 'Manage', 'wrench', 4));
+			$workspace->addWorkgroup(new Workgroup('manage', 'Manage', 'wrench', 10));
 		}
 		
 		$workspace->addWorkItem('community', new WorkItem('area_memberlist_index', 'Member list'));

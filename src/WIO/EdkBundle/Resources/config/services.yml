@@ -8,6 +8,9 @@ services:
     wio.edk.repo.export:
         class:     WIO\EdkBundle\Repository\EdkExportRepository
         arguments: ["@database_connection"]
+    wio.edk.repo.registration:
+        class:     WIO\EdkBundle\Repository\EdkRegistrationSettingsRepository
+        arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.time"]
     wio.edk.extension.area_information_map:
         class:     WIO\EdkBundle\Extension\AreaInformationMapExtension
         arguments: ["@translator"]

@@ -18,6 +18,7 @@
  */
 namespace WIO\EdkBundle;
 
+use Cantiga\CoreBundle\Api\AppTexts;
 use Cantiga\CoreBundle\Api\CustomForms;
 use Cantiga\CoreBundle\Api\Modules;
 use Cantiga\MilestoneBundle\Api\Activators;
@@ -30,6 +31,8 @@ class WioEdkBundle extends Bundle
 		Modules::registerModule('edk', 'EDK module');
 		CustomForms::registerService('edk:area-request-form', 'wio.edk.form.area_request');
 		CustomForms::registerService('edk:area-form', 'wio.edk.form.area');
+		
+		AppTexts::registerName(EdkTexts::REGISTRATION_SETTINGS_TEXT);
 		
 		Activators::registerActivator('route.approved');
 	}

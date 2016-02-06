@@ -64,7 +64,7 @@ class TimeFormatter implements TimeFormatterInterface
 			$this->timezone = new \DateTimeZone($timezoneInfo);
 		}
 
-		$this->formatLong = new \IntlDateFormatter($locale, \IntlDateFormatter::LONG, \IntlDateFormatter::LONG);
+		$this->formatLong = new \IntlDateFormatter($locale, \IntlDateFormatter::LONG, \IntlDateFormatter::SHORT);
 		$this->formatShort = new \IntlDateFormatter($locale, \IntlDateFormatter::SHORT, \IntlDateFormatter::SHORT);
 		$this->formatCalendar = new \IntlDateFormatter($locale, \IntlDateFormatter::LONG, \IntlDateFormatter::LONG);
 		$this->formatDateLong = new \IntlDateFormatter($locale, \IntlDateFormatter::LONG, \IntlDateFormatter::NONE);

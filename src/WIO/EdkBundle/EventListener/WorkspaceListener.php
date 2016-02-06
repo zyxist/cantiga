@@ -18,6 +18,7 @@
  */
 namespace WIO\EdkBundle\EventListener;
 
+use Cantiga\CoreBundle\Api\Workgroup;
 use Cantiga\CoreBundle\Api\WorkItem;
 use Cantiga\CoreBundle\Event\WorkspaceEvent;
 
@@ -30,8 +31,12 @@ class WorkspaceListener
 	{
 		$workspace = $event->getWorkspace();
 		if ($workspace->getProject()->supportsModule('edk')) {
+			$workspace->addWorkgroup(new Workgroup('participants', 'Participants', 'male', 6));
+			
 			$workspace->addWorkItem('statistics', new WorkItem('project_stats_route_index', 'Route statistics'));
 			$workspace->addWorkItem('data', new WorkItem('project_route_index', 'Routes'));
+			
+			$workspace->addWorkItem('participants', new WorkItem('project_reg_settings_index', 'Registration settings'));
 		}
 	}
 	
@@ -39,16 +44,24 @@ class WorkspaceListener
 	{
 		$workspace = $event->getWorkspace();
 		if ($workspace->getProject()->supportsModule('edk')) {
+			$workspace->addWorkgroup(new Workgroup('participants', 'Participants', 'male', 4));
+			
 			$workspace->addWorkItem('data', new WorkItem('group_route_index', 'Routes'));
+			$workspace->addWorkItem('participants', new WorkItem('group_reg_settings_index', 'Registration settings'));
 		}
 	}
 	
 	public function onAreaWorkspace(WorkspaceEvent $event)
 	{
 		$workspace = $event->getWorkspace();
+		
 		if ($workspace->getProject()->supportsModule('edk')) {
+			$workspace->addWorkgroup(new Workgroup('participants', 'Participants', 'male', 4));
+			
 			$workspace->addWorkItem('area', new WorkItem('area_note_index', 'WWW: area information'));
 			$workspace->addWorkItem('area', new WorkItem('area_route_index', 'Routes'));
+			
+			$workspace->addWorkItem('participants', new WorkItem('area_reg_settings_index', 'Registration settings'));
 		}
 	}
 }

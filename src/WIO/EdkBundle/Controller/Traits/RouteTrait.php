@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace WIO\EdkBundle\Controller\Traits;
 
 use Cantiga\CoreBundle\Api\Actions\EditAction;
@@ -41,10 +43,11 @@ use WIO\EdkBundle\Form\EdkRouteForm;
  */
 trait RouteTrait
 {
+
 	protected function performIndex(Request $request)
 	{
 		$dataTable = $this->crudInfo->getRepository()->createDataTable();
-        return $this->render($this->crudInfo->getTemplateLocation().'index.html.twig', array(
+		return $this->render($this->crudInfo->getTemplateLocation() . 'index.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'dataTable' => $dataTable,
@@ -54,7 +57,7 @@ trait RouteTrait
 			'isArea' => $this->isArea(),
 		));
 	}
-	
+
 	protected function performAjaxList(Request $request)
 	{
 		$routes = $this->dataRoutes()
@@ -65,9 +68,9 @@ trait RouteTrait
 		$repository = $this->crudInfo->getRepository();
 		$dataTable = $repository->createDataTable();
 		$dataTable->process($request);
-        return new JsonResponse($routes->process($repository->listData($dataTable)));
+		return new JsonResponse($routes->process($repository->listData($dataTable)));
 	}
-	
+
 	protected function performInfo($id)
 	{
 		$action = new InfoAction($this->crudInfo);
@@ -77,15 +80,15 @@ trait RouteTrait
 			->set('ajaxChatFeedPage', self::AJAX_FEED_PAGE)
 			->set('ajaxChatPostPage', self::AJAX_POST_PAGE)
 			->set('isArea', $this->isArea());
-		if(!$this->isArea()) {
+		if (!$this->isArea()) {
 			$action->set('approvePage', self::APPROVE_PAGE)->set('revokePage', self::REVOKE_PAGE);
 		}
 		return $action->run($this, $id);
 	}
-	 
+
 	protected function performInsert(Request $request)
 	{
-		$entity = new EdkRoute();		
+		$entity = new EdkRoute();
 		$action = new InsertAction($this->crudInfo, $entity, new EdkRouteForm(EdkRouteForm::ADD, $this->findAreaRepository()));
 		$action->slug($this->getSlug());
 		$action->set('isArea', $this->isArea());
@@ -99,7 +102,7 @@ trait RouteTrait
 		$action->set('isArea', $this->isArea());
 		return $action->run($this, $id, $request);
 	}
-	
+
 	protected function performRemove($id, Request $request)
 	{
 		$action = new RemoveAction($this->crudInfo);
@@ -116,7 +119,7 @@ trait RouteTrait
 			return new JsonResponse(['success' => 0]);
 		}
 	}
-	
+
 	protected function performAjaxUpdate($id, Request $request)
 	{
 		try {
@@ -125,7 +128,7 @@ trait RouteTrait
 			if (empty($c)) {
 				$c = null;
 			}
-			
+
 			$route = $this->crudInfo->getRepository()->getItem($id);
 			$route->saveEditableNote($this->get('database_connection'), $i, $c);
 			return new JsonResponse(['success' => 1, 'note' => $route->getFullEditableNote($this->getTranslator(), $i)]);
@@ -144,7 +147,7 @@ trait RouteTrait
 			return new JsonResponse(['status' => 0]);
 		}
 	}
-	
+
 	protected function performAjaxPost($id, Request $request)
 	{
 		try {
@@ -166,7 +169,7 @@ trait RouteTrait
 		try {
 			$repository = $this->get(self::REPOSITORY_NAME);
 			$item = $repository->getItem($id);
-			
+
 			$question = new QuestionHelper($this->trans('Do you want to approve the route \'0\'?', [$item->getName()], 'edk'));
 			$question->onSuccess(function() use($repository, $item) {
 				$repository->approve($item);
@@ -176,17 +179,17 @@ trait RouteTrait
 			$question->title($this->trans('EdkRoute: 0', [$item->getName()]), $this->crudInfo->getPageSubtitle());
 			$this->breadcrumbs()->link($item->getName(), $this->crudInfo->getInfoPage(), ['id' => $item->getId(), 'slug' => $this->getSlug()]);
 			return $question->handleRequest($this, $request);
-		} catch(ModelException $exception) {
+		} catch (ModelException $exception) {
 			return $this->showPageWithError($exception->getMessage(), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
 		}
 	}
-	
+
 	public function performRevoke($id, Request $request)
 	{
 		try {
 			$repository = $this->get(self::REPOSITORY_NAME);
 			$item = $repository->getItem($id);
-			
+
 			$question = new QuestionHelper($this->trans('Do you want to revoke the route \'0\'?', [$item->getName()], 'edk'));
 			$question->onSuccess(function() use($repository, $item) {
 				$repository->revoke($item);
@@ -196,16 +199,16 @@ trait RouteTrait
 			$question->title($this->trans('EdkRoute: 0', [$item->getName()]), $this->crudInfo->getPageSubtitle());
 			$this->breadcrumbs()->link($item->getName(), $this->crudInfo->getInfoPage(), ['id' => $item->getId(), 'slug' => $this->getSlug()]);
 			return $question->handleRequest($this, $request);
-		} catch(ModelException $exception) {
+		} catch (ModelException $exception) {
 			return $this->showPageWithError($exception->getMessage(), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
 		}
 	}
-	
+
 	private function isArea()
 	{
 		return ($this->getMembership()->getItem() instanceof Area);
 	}
-	
+
 	private function findAreaRepository()
 	{
 		$item = $this->getMembership()->getItem();
@@ -220,4 +223,5 @@ trait RouteTrait
 		}
 		return null;
 	}
+
 }

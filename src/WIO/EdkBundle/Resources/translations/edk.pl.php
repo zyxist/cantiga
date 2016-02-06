@@ -68,4 +68,39 @@ return [
 	'EwcBeginningNote' => 'Rozpoczęcie',
 	'EwcRegistrationNote' => 'Informacje o zapisach',
 	'EwcAdditionalNote' => 'Dodatkowe informacje',
+	
+	'Registration type' => 'Sposób zapisów',
+	'RegistrationTypeNo' => 'Brak zapisów',
+	'RegistrationTypeEdkWebsite' => 'Strona EDK',
+	'RegistrationTypeOtherWebsite' => 'Zewnętrzna strona WWW',
+	'RegistrationTypeOther' => 'Inaczej',
+	'RegistrationTypeClosed' => 'Zapisy zamknięte',
+	
+	'Edit settings: 0' => 'Edytuj ustawienia: 0',
+	'Registration settings for: 0' => 'Ustawienia zapisów dla: 0',
+	'Registration via EDK.org.pl website' => 'Zapisy przez stronę EDK.org.pl',
+	'Registration via external website' => 'Zapisy przez zewnętrzną stronę WWW',
+	
+	'Participants' => 'Uczestnicy',
+	'Current number of participants' => 'Obecnie zapisanych',
+	'Beginning of registration' => 'Początek zapisów',
+	'End of registration' => 'Koniec zapisów',
+	'External registration URL' => 'Zewnętrzny adres URL do zapisów',
+	'Expected number of participants' => 'Spodziewana liczba uczestników',
+	'Allow exceeding the participant limit' => 'Dopuść przekroczenie limitu uczestników',
+	'Max. number of people in the record' => 'Max. liczba ludzi na jedno zgłoszenie',
+	'Custom question' => 'Dowolne pytanie',
+	
+	'ExternalRegistrationUrlHint' => 'Jeśli wybrałeś sposób zapisów przez zewnętrzną stronę WWW, podaj tutaj PEŁNY odnośnik do formularza zapisów.',
+	'AllowLimitExceedHint' => 'Jeśli włączysz tę opcję, uczestnicy będą mogli zapisywać się dalej nawet wtedy, gdy limit osób na danej trasie zostanie osiągnięty.',
+	'MaxPeoplePerRecordHint' => 'Tylko do dodawania uczestników przez Lidera Rejonów: możesz w jednym zgłoszeniu zapisywać grupę uczestników, jeśli ustawisz to na więcej niż 1',
+	'CustomQuestionHint' => 'Dodatkowe (opcjonalne) pytanie, które pokaże się w formularzu zapisów na tę trasę.',
+	
+	'RegistrationViaEdkWebsiteText' => 'Wypełnij, jeśli wybrałeś zapisy przez stronę EDK.',
+	'RegistrationViaExternalWebsiteText' => 'Wypełnij, jeśli wybrałeś zapisy przez zewnętrzną stronę EDK.',
+	'OtherRegistrationTypesText' => 'Jeśli chcesz prowadzić zapisy w inny sposób niż przez Internet, wybierz "Inaczej" jako sposób prowadzenia zapisów i opisz go w sekcji "Informacje o zapisach" na podstronie "WWW: informacje o rejonie".',
+
+	'RegistrationAlreadyOpenText' => 'Zapisy są aktualnie otwarte.',
+	'RegistrationNotActiveText' => 'Zapisy są zamknięte.',
+	'NoRegistrationText' => 'Na tę trasę nie są prowadzone zapisy.',
 ];

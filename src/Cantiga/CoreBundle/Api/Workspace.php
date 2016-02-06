@@ -55,7 +55,11 @@ abstract class Workspace
 	
 	final public function getWorkgroups()
 	{
-		return array_values($this->workgroups);
+		$workgroups = array_values($this->workgroups);
+		usort($workgroups, function($a, $b) {
+			return $a->getOrder() - $b->getOrder();
+		});
+		return $workgroups;
 	}
 	
 	final public function workgroupHasContent(Workgroup $workgroup)

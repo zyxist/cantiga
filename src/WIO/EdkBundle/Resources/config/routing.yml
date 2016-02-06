@@ -1,18 +1,27 @@
-public_route_data_controller:                                                                                                                                                   
-    resource: "@WioEdkBundle/Controller/PublicRouteDataController.php"                                                                                                      
+public_route_data_controller:
+    resource: "@WioEdkBundle/Controller/PublicRouteDataController.php"
     type:     annotation
-area_note_controller:                                                                                                                                                   
-    resource: "@WioEdkBundle/Controller/AreaNoteController.php"                                                                                                      
+area_note_controller:
+    resource: "@WioEdkBundle/Controller/AreaNoteController.php"
     type:     annotation
-area_route_controller:                                                                                                                                                   
-    resource: "@WioEdkBundle/Controller/AreaRouteController.php"                                                                                                      
+area_route_controller:
+    resource: "@WioEdkBundle/Controller/AreaRouteController.php"
     type:     annotation
-group_route_controller:                                                                                                                                                   
-    resource: "@WioEdkBundle/Controller/GroupRouteController.php"                                                                                                      
+area_registration_controller:
+    resource: "@WioEdkBundle/Controller/AreaRegistrationSettingsController.php"
     type:     annotation
-project_route_controller:                                                                                                                                                   
-    resource: "@WioEdkBundle/Controller/ProjectRouteController.php"                                                                                                      
+group_route_controller:
+    resource: "@WioEdkBundle/Controller/GroupRouteController.php"
     type:     annotation
-project_stats_route_controller:                                                                                                                                                   
-    resource: "@WioEdkBundle/Controller/ProjectStatsRouteController.php"                                                                                                      
+group_registration_controller:
+    resource: "@WioEdkBundle/Controller/GroupRegistrationSettingsController.php"
+    type:     annotation
+project_route_controller:
+    resource: "@WioEdkBundle/Controller/ProjectRouteController.php"
+    type:     annotation
+project_stats_route_controller:
+    resource: "@WioEdkBundle/Controller/ProjectStatsRouteController.php"
+    type:     annotation
+project_registration_controller:
+    resource: "@WioEdkBundle/Controller/ProjectRegistrationSettingsController.php"
     type:     annotation

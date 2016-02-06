@@ -50,6 +50,7 @@ CREATE TABLE IF NOT EXISTS `cantiga_edk_registration_settings` (
   `maxPeoplePerRecord` INT(11) NULL,
   `allowLimitExceed` TINYINT(4) NULL,
   `participantNum` INT(11) NOT NULL DEFAULT 0,
+  `customQuestion` VARCHAR(200) NULL,
   PRIMARY KEY (`routeId`),
   KEY `areaId` (`areaId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
