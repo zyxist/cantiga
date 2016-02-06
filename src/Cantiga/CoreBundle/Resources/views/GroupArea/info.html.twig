@@ -49,6 +49,11 @@
 			</ul>
 			<div class="tab-content">
 				<div role="tabpanel" class="tab-pane active" id="request-info">
+					<div class="progress progress-sm">
+						<div class="progress-bar progress-bar-{{ custom.progressBarColor }}" role="progressbar" aria-valuenow="{{item.percentCompleteness}}" aria-valuemin="0" aria-valuemax="100" style="width: {{item.percentCompleteness}}%">
+							<span class="sr-only">{{item.percentCompleteness}}%</span>
+						</div>
+					</div>
 					<table class="table table-hover">
 						<tbody>
 							{% include custom.summary.template with { 'summary': custom.summary, 'item': item } only %}

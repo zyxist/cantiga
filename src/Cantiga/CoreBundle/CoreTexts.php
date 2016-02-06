@@ -37,6 +37,8 @@ class CoreTexts
 	const DASHBOARD_GROUP_TEXT = 'cantiga:dashboard:group';
 	const DASHBOARD_AREA_TEXT = 'cantiga:dashboard:area';
 	
+	const AREA_PROFILE_EDITOR_TEXT = 'cantiga:area:profile-editor';
+	
 	const HELP_INTRODUCTION = 'cantiga:help:introduction';
 	const HELP_PROFILE = 'cantiga:help:profile';
 	const HELP_REQUEST_AREAS = 'cantiga:help:requesting-areas';

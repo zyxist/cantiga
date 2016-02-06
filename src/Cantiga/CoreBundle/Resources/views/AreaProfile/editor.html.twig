@@ -9,6 +9,16 @@
 {% endblock %}
 
 {% block box_body %}
+	{% if text %}
+		{{ text.content | raw }}
+	{% endif %}
+	
+	<div class="progress progress active">
+		<div class="progress-bar progress-bar-{{ progressBarColor }}" role="progressbar" aria-valuenow="{{percentCompleteness}}" aria-valuemin="0" aria-valuemax="100" style="width: {{percentCompleteness}}%">
+			<span class="sr-only">{{percentCompleteness}}%</span>
+		</div>
+	</div>
+	
 	{{ form_start(form) }}
 	<div class="row">
 		<div class="col-md-3 col-xs-12">

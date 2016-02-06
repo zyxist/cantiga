@@ -50,6 +50,7 @@ class CantigaCoreBundle extends Bundle
 		AppTexts::registerName(CoreTexts::DASHBOARD_PROJECT_TEXT);
 		AppTexts::registerName(CoreTexts::DASHBOARD_GROUP_TEXT);
 		AppTexts::registerName(CoreTexts::DASHBOARD_AREA_TEXT);
+		AppTexts::registerName(CoreTexts::AREA_PROFILE_EDITOR_TEXT);
 
 		AppTexts::registerName(CoreTexts::HELP_INTRODUCTION);
 		AppTexts::registerName(CoreTexts::HELP_PROFILE);

@@ -22,6 +22,7 @@ use Cantiga\CoreBundle\Api\Actions\FormAction;
 use Cantiga\CoreBundle\Api\Controller\AreaPageController;
 use Cantiga\CoreBundle\CoreExtensions;
 use Cantiga\CoreBundle\CoreSettings;
+use Cantiga\CoreBundle\CoreTexts;
 use Cantiga\CoreBundle\Entity\Intent\AreaProfileIntent;
 use Cantiga\CoreBundle\Form\AreaProfileForm;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -54,6 +55,8 @@ class AreaProfileController extends AreaPageController
 		$territoryRepo->setProject($area->getProject());
 		$formModel = $this->extensionPointFromSettings(CoreExtensions::AREA_FORM, CoreSettings::AREA_FORM);		
 		
+		$text = $this->getTextRepository()->getTextOrFalse(CoreTexts::AREA_PROFILE_EDITOR_TEXT, $request, $this->getActiveProject());
+		
 		$intent = new AreaProfileIntent($area, $repo);
 		$action = new FormAction($intent, new AreaProfileForm($this->getProjectSettings(), $formModel, $territoryRepo));
 		$action->slug($this->getSlug());
@@ -61,6 +64,9 @@ class AreaProfileController extends AreaPageController
 			->template('CantigaCoreBundle:AreaProfile:editor.html.twig')
 			->redirect($this->generateUrl('area_profile_editor', ['slug' => $this->getSlug()]))
 			->formSubmittedMessage('AreaProfileSaved')
+			->set('progressBarColor', $area->getPercentCompleteness() < 50 ? 'red' : ($area->getPercentCompleteness() < 80 ? 'orange' : 'green'))
+			->set('percentCompleteness', $area->getPercentCompleteness())
+			->set('text', $text)
 			->customForm($formModel)
 			->onSubmit(function(AreaProfileIntent $intent) use($repo) {
 				$intent->execute();
