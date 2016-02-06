@@ -52,7 +52,7 @@
 					{% if not isArea %}
 					<div class="info-item">
 						<h4><i class="fa fa-flag-o"></i> {{ 'Area' | trans({}, 'edk') }}</h4>
-						<span class="value"><a href="#">{{ item.area.name }}</a></span>
+						<span class="value"><a href="{{ spath(areaInfoPage, {'id': item.area.id }) }}">{{ item.area.name }}</a></span>
 					</div>
 					{% endif %}
 					<div class="info-item">

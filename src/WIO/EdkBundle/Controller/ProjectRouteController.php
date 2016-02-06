@@ -41,6 +41,7 @@ class ProjectRouteController extends ProjectPageController
 	const AJAX_POST_PAGE = 'project_route_ajax_post';
 	const APPROVE_PAGE = 'project_route_approve';
 	const REVOKE_PAGE = 'project_route_revoke';
+	const AREA_INFO_PAGE = 'project_area_info';
 	
 	/**
 	 * @var CRUDInfo

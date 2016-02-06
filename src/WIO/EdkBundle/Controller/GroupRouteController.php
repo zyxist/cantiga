@@ -41,6 +41,7 @@ class GroupRouteController extends GroupPageController
 	const AJAX_POST_PAGE = 'group_route_ajax_post';
 	const APPROVE_PAGE = 'group_route_approve';
 	const REVOKE_PAGE = 'group_route_revoke';
+	const AREA_INFO_PAGE = 'group_area_info';
 	
 	/**
 	 * @var CRUDInfo

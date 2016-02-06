@@ -158,6 +158,11 @@ class EdkRouteRepository
 		);
 	}
 	
+	public function findRouteSummary(Area $area)
+	{
+		return $this->conn->fetchAll('SELECT `id`, `name`, `approved` FROM `'.EdkTables::ROUTE_TBL.'` WHERE `areaId` = :id', [':id' => $area->getId()]);
+	}
+	
 	/**
 	 * @return EdkRoute
 	 */

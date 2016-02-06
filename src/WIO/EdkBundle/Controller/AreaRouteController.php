@@ -39,6 +39,7 @@ class AreaRouteController extends AreaPageController
 	const AJAX_UPDATE_PAGE = 'area_route_ajax_update';
 	const AJAX_FEED_PAGE = 'area_route_ajax_feed';
 	const AJAX_POST_PAGE = 'area_route_ajax_post';
+	const AREA_INFO_PAGE = '';
 	
 	/**
 	 * @var CRUDInfo

@@ -79,6 +79,7 @@ trait RouteTrait
 			->set('ajaxUpdatePage', self::AJAX_UPDATE_PAGE)
 			->set('ajaxChatFeedPage', self::AJAX_FEED_PAGE)
 			->set('ajaxChatPostPage', self::AJAX_POST_PAGE)
+			->set('areaInfoPage', self::AREA_INFO_PAGE)
 			->set('isArea', $this->isArea());
 		if (!$this->isArea()) {
 			$action->set('approvePage', self::APPROVE_PAGE)->set('revokePage', self::REVOKE_PAGE);

@@ -16,6 +16,11 @@ services:
         arguments: ["@translator"]
         tags:
             - { name: cantiga.extension, point: core.page.area.info, module: edk }
+    wio.edk.extension.area_routes:
+        class:     WIO\EdkBundle\Extension\AreaRouteExtension
+        arguments: ["@wio.edk.repo.route"]
+        tags:
+            - { name: cantiga.extension, point: core.page.area.info, module: edk }
     wio.edk.form.area_request:
         class:     WIO\EdkBundle\CustomForm\AreaRequestModel
         arguments: ["@translator"]
