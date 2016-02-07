@@ -22,4 +22,7 @@ class EdkTexts
 {
 	const REGISTRATION_SETTINGS_TEXT = 'edk:registration-settings';
 	const MESSAGE_TEXT = 'edk:messages';
+	
+	const NOTIFICATION_MAIL = 'edk:notification';
+	const REGISTRATION_MAIL = 'edk:registration';
 }

@@ -18,6 +18,7 @@
  */
 namespace WIO\EdkBundle;
 
+use Cantiga\CoreBundle\Api\AppMails;
 use Cantiga\CoreBundle\Api\AppTexts;
 use Cantiga\CoreBundle\Api\CustomForms;
 use Cantiga\CoreBundle\Api\Modules;
@@ -34,6 +35,9 @@ class WioEdkBundle extends Bundle
 		
 		AppTexts::registerName(EdkTexts::REGISTRATION_SETTINGS_TEXT);
 		AppTexts::registerName(EdkTexts::MESSAGE_TEXT);
+		
+		AppMails::registerName(EdkTexts::NOTIFICATION_MAIL);
+		AppMails::registerName(EdkTexts::REGISTRATION_MAIL);
 		
 		Activators::registerActivator('route.approved');
 	}
