@@ -54,14 +54,14 @@ class EdkExportRepository
 		return $block;
 	}
 	
-	public function exportAreaDescriptions($lastExport, $areaIds)
+	public function exportAreaDescriptions($lastExport, $areaIds, $updatedAreaIds)
 	{
 		$block = new ExportBlock();
 		if (sizeof($areaIds) > 0) {
 			$stmt = $this->conn->query('SELECT `areaId`, `noteType`, `content`, `lastUpdatedAt`  FROM `'.EdkTables::AREA_NOTE_TBL.'` WHERE `areaId` IN ('.implode(',', $areaIds).') ');
 			while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 				$block->addId(['areaId' => $row['areaId'], 'noteType' => $row['noteType']]);
-				if ($row['lastUpdatedAt'] > $lastExport) {
+				if ($row['lastUpdatedAt'] > $lastExport || in_array($row['areaId'], $updatedAreaIds)) {
 					$block->addUpdate($row);
 				}
 			}
@@ -70,7 +70,7 @@ class EdkExportRepository
 		return $block;
 	}
 	
-	public function exportRoutes($lastExport, $areaIds)
+	public function exportRoutes($lastExport, $areaIds, $updatedAreaIds)
 	{
 		$block = new ExportBlock();
 		if (sizeof ($areaIds) > 0) {
@@ -80,7 +80,8 @@ class EdkExportRepository
 				. 'WHERE r.`areaId` IN ('.implode(',', $areaIds).') AND r.`approved` = 1');
 			while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 				$block->addId($row['id']);
-				if ($row['updatedAt'] > $lastExport) {
+				if ($row['updatedAt'] > $lastExport || in_array($row['areaId'], $updatedAreaIds)) {
+					$block->addUpdatedId($row['id']);
 					$block->addUpdate($row);
 				}
 			}
@@ -89,14 +90,14 @@ class EdkExportRepository
 		return $block;
 	}
 	
-	public function exportRouteDescriptions($lastExport, $routeIds)
+	public function exportRouteDescriptions($lastExport, $routeIds, $updatedRouteIds)
 	{
 		$block = new ExportBlock();
 		if (sizeof ($routeIds) > 0) {
 			$stmt = $this->conn->query('SELECT `routeId`, `noteType`, `content`, `lastUpdatedAt`  FROM `'.EdkTables::ROUTE_NOTE_TBL.'` WHERE `routeId` IN ('.implode(',', $routeIds).') ');
 			while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 				$block->addId(['routeId' => $row['routeId'], 'noteType' => $row['noteType']]);
-				if ($row['lastUpdatedAt'] > $lastExport) {
+				if ($row['lastUpdatedAt'] > $lastExport || in_array($row['routeId'], $updatedRouteIds)) {
 					$block->addUpdate($row);
 				}
 			}

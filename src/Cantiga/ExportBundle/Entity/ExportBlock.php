@@ -28,11 +28,17 @@ namespace Cantiga\ExportBundle\Entity;
 class ExportBlock
 {
 	private $ids = [];
+	private $updatedIds = [];
 	private $update = [];
 	
 	public function addId($id)
 	{
 		$this->ids[] = $id;
+	}
+	
+	public function addUpdatedId($updatedId)
+	{
+		$this->updatedIds[] = $updatedId;
 	}
 	
 	public function addUpdate(array $update)
@@ -53,6 +59,11 @@ class ExportBlock
 	public function getIds()
 	{
 		return $this->ids;
+	}
+	
+	public function getUpdatedIds()
+	{
+		return $this->updatedIds;
 	}
 	
 	public function output()

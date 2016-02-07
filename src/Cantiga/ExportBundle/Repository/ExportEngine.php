@@ -72,6 +72,7 @@ class ExportEngine
 				$block->addId($area['id']);
 				if ($area['lastUpdatedAt'] > $lastExportedAt) {
 					$area['customData'] = json_decode($area['customData']);
+					$block->addUpdatedId($area['id']);
 					$block->addUpdate($area);
 				}
 			}
