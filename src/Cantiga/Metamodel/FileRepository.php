@@ -77,7 +77,7 @@ class FileRepository implements FileRepositoryInterface
 	{
 		$fullPath = $this->targetDirectory.DIRECTORY_SEPARATOR.$this->hashToLocation($name);
 		if(!file_exists($fullPath)) {
-			throw new DiskAssetException('Cannot replace a file that does not exist.');
+			return $this->storeFile($file);
 		}
 		$directory = dirname($fullPath);
 		

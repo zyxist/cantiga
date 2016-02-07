@@ -565,7 +565,7 @@ class EdkRoute implements IdentifiableInterface, InsertableEntityInterface, Edit
 			if(null === $this->descriptionFile) {
 				$this->descriptionFile = $fileRepository->storeFile($this->getDescriptionFileUpload());
 			} else {
-				$fileRepository->replaceFile($this->descriptionFile, $this->getDescriptionFileUpload());
+				$this->descriptionFile = $fileRepository->replaceFile($this->descriptionFile, $this->getDescriptionFileUpload());
 			}
 		}
 		if (null !== $this->getMapFileUpload()) {
@@ -576,7 +576,7 @@ class EdkRoute implements IdentifiableInterface, InsertableEntityInterface, Edit
 			}
 		}
 		if (null !== $this->getGpsTrackFileUpload()) {
-			$fileRepository->replaceFile($this->gpsTrackFile, $this->getGpsTrackFileUpload());
+			$this->gpsTrackFile = $fileRepository->replaceFile($this->gpsTrackFile, $this->getGpsTrackFileUpload());
 		}
 	}
 	
