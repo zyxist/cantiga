@@ -165,7 +165,7 @@ class CantigaExtension extends Twig_Extension
 		$i = 0;
 		foreach ($dt->getColumnDefinitions() as $column) {
 			if ($column['name'] == $columnName) {
-				return '{ targets: ' . $i . ', render: function(data, type, row) { return \'<a href="\'+row[\'' . $linkName . '\']+\'">\'+row[\'' . $columnName . '\']+\'</a>\'; } }, ';
+				return '{ targets: ' . $i . ', render: function(data, type, row) { if (row[\'' . $linkName . '\']) { return \'<a href="\'+row[\'' . $linkName . '\']+\'">\'+row[\'' . $columnName . '\']+\'</a>\'; } return \'--\'; } }, ';
 			}
 			$i++;
 		}

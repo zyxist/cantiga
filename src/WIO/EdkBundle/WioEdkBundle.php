@@ -33,6 +33,7 @@ class WioEdkBundle extends Bundle
 		CustomForms::registerService('edk:area-form', 'wio.edk.form.area');
 		
 		AppTexts::registerName(EdkTexts::REGISTRATION_SETTINGS_TEXT);
+		AppTexts::registerName(EdkTexts::MESSAGE_TEXT);
 		
 		Activators::registerActivator('route.approved');
 	}

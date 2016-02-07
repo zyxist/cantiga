@@ -16,6 +16,9 @@ area_route_controller:
 area_registration_controller:
     resource: "@WioEdkBundle/Controller/AreaRegistrationSettingsController.php"
     type:     annotation
+area_message_controller:
+    resource: "@WioEdkBundle/Controller/AreaMessageController.php"
+    type:     annotation
 group_route_controller:
     resource: "@WioEdkBundle/Controller/GroupRouteController.php"
     type:     annotation

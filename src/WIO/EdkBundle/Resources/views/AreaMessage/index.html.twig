@@ -1,0 +1,33 @@
+{% extends 'CantigaCoreBundle:layout:list-layout.html.twig' %}
+
+{% block content_before %}
+	{% if text %}
+		<p>{{text.content | raw }}</p>
+	{% endif %}
+{% endblock %}
+
+{% block column_list %}
+<tr>
+	<th width="30">#</th>
+	<th>{{ 'Subject' | trans([], 'edk') }}</th>
+	<th width="140">{{ 'Created at' | trans([], 'edk')  }}</th>
+	<th width="100">{{ 'Status' | trans([], 'edk') }}</th>
+	<th width="140">{{ 'Assignee' | trans([], 'edk')  }}</th>
+	<th width="80">{{ 'Duplicate' | trans([], 'edk')  }}</th>
+	<th width="120">{{ 'Actions' | trans({}, 'general') }}</th>
+</tr>
+{% endblock %}
+
+{% block custom_datatable_config %}
+	aaSorting: [],
+	ajax: "{{ spath(ajaxListPage) }}",
+	columnDefs: [
+		{{ dt_col_link(dataTable, 'subject', 'info_link') }}
+		{{ dt_col_label(dataTable, 'status', 'statusText', 'statusLabel') }}
+		{{ dt_col_link(dataTable, 'responder', 'assignee_link') }}
+		{{ dt_col_boolean(dataTable, 'duplicate') }}
+		{{ dt_actions(dataTable, [
+			{ 'link': 'info_link', 'name': 'Info' | trans({}, 'general'), 'label': 'btn-primary' }
+		]) }}
+	]
+{% endblock %}

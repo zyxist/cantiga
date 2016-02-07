@@ -100,6 +100,17 @@ class QueryBuilder
 		return $this;
 	}
 	
+	/**
+	 * Cleans up the already defined ORDER BY column list.
+	 * 
+	 * @return \Cantiga\Metamodel\QueryBuilder Fluent interface.
+	 */
+	public function resetOrders()
+	{
+		$this->orderBy = [];
+		return $this;
+	}
+	
 	public function limit($limit, $offset)
 	{
 		$this->limit = $limit;

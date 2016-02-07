@@ -43,4 +43,8 @@ return [
 	'RegistrationAlreadyOpenText' => 'The registration is already open.',
 	'RegistrationNotActiveText' => 'The registration is closed.',
 	'NoRegistrationText' => 'There is no registration for this route.',
+	
+	'MsgStatusNew' => 'New message',
+	'MsgStatusAnswring' => 'Answering',
+	'MsgStatusCompleted' => 'Completed',
 ];

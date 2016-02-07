@@ -242,8 +242,11 @@ class DataTable
 	public function processQuery(QueryBuilder $qb)
 	{
 		$qb->limit($this->length, $this->start);
-		foreach ($this->orders as $order) {
-			$qb->orderBy($order['dbName'], $order['direction']);
+		if (sizeof($this->orders) > 0) {
+			$qb->resetOrders();
+			foreach ($this->orders as $order) {
+				$qb->orderBy($order['dbName'], $order['direction']);
+			}
 		}
 		return $qb;
 	}

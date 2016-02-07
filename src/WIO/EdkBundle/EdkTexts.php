@@ -21,4 +21,5 @@ namespace WIO\EdkBundle;
 class EdkTexts
 {
 	const REGISTRATION_SETTINGS_TEXT = 'edk:registration-settings';
+	const MESSAGE_TEXT = 'edk:messages';
 }

@@ -62,6 +62,7 @@ class WorkspaceListener
 			$workspace->addWorkItem('area', new WorkItem('area_route_index', 'Routes'));
 			
 			$workspace->addWorkItem('participants', new WorkItem('area_reg_settings_index', 'Registration settings'));
+			$workspace->addWorkItem('participants', new WorkItem('area_edk_message_index', 'Messages'));
 		}
 	}
 }

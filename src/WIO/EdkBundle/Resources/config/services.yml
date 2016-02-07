@@ -13,7 +13,7 @@ services:
         arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.time"]
     wio.edk.repo.message:
         class:     WIO\EdkBundle\Repository\EdkMessageRepository
-        arguments: ["@database_connection", "@cantiga.transaction"]
+        arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.time"]
     wio.edk.repo.published_data:
         class:     WIO\EdkBundle\Repository\EdkPublishedDataRepository
         arguments: ["@database_connection", "@cantiga.transaction"]
