@@ -276,7 +276,7 @@ class Course implements InsertableEntityInterface, EditableEntityInterface, Remo
 		if($this->deadline === null) {
 			return true;
 		}
-		return ($this->deadline > time());
+		return (($this->deadline + 86400) > time());
 	}
 	
 	/**

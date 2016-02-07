@@ -220,7 +220,7 @@ class Milestone implements IdentifiableInterface, InsertableEntityInterface, Edi
 	public function isBeforeDeadline()
 	{
 		if (null !== $this->deadline) {
-			return time() < $this->deadline;
+			return time() < ($this->deadline + 86400);
 		}
 		return true;
 	}
