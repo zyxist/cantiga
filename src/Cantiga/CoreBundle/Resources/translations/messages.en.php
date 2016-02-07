@@ -45,6 +45,9 @@ return array(
 	// Project groups and categories
 	'GroupCategoryDescriptionText' => 'Categories ease the group management. Create categories and assign the groups to them, and you will be able to filter the data through them on other pages.',
 	
+	// Project territory
+	'TerritoryLocaleHelpText' => 'Can be used to select a language of notifications to areas from this territory.',
+	
 	// Invitation type forms
 	'ProjectNominative: 0' => 'Project "0"',
 	'GroupNominative: 0' => 'Group "0"',

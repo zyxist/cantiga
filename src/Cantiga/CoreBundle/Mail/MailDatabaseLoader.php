@@ -60,7 +60,10 @@ class MailDatabaseLoader implements MailLoaderInterface
 
 	public function getSource($place)
 	{
-		return $this->conn->fetchColumn('SELECT `content` FROM `'.CoreTables::MAIL_TBL.'` WHERE `place` = :place AND `locale` = :locale', [':place' => $place, ':locale' => $this->locale]);
+		$tpl = $this->getActualPart($place);
+		$locale = $this->getLocalePart($place);
+		
+		return $this->conn->fetchColumn('SELECT `content` FROM `'.CoreTables::MAIL_TBL.'` WHERE `place` = :place AND `locale` = :locale', [':place' => $tpl, ':locale' => $locale]);
 	}
 
 	public function isFresh($place, $time)
@@ -71,13 +74,32 @@ class MailDatabaseLoader implements MailLoaderInterface
 	
 	private function getMetadata($place)
 	{
+		$tpl = $this->getActualPart($place);
+		$locale = $this->getLocalePart($place);
+		
 		if (!empty($this->cachedMetadata[$place])) {
 			return $this->cachedMetadata[$place];
 		}
-		$metadata = $this->conn->fetchAssoc('SELECT `id`, `subject`, `lastUpdate` FROM `'.CoreTables::MAIL_TBL.'` WHERE `place` = :place AND `locale` = :locale', [':place' => $place, ':locale' => $this->locale]);
+		$metadata = $this->conn->fetchAssoc('SELECT `id`, `subject`, `lastUpdate` FROM `'.CoreTables::MAIL_TBL.'` WHERE `place` = :place AND `locale` = :locale', [':place' => $tpl, ':locale' => $locale]);
 		if (empty($metadata)) {
 			throw new MailException('No such mail template: '.$place.' with locale '.$this->locale);
 		}
 		return $this->cachedMetadata[$place] = $metadata;
+	}
+	
+	private function getActualPart($place)
+	{
+		if (($id = strpos($place, '@@')) !== false) {
+			return substr($place, 0, $id);
+		}
+		return $place;
+	}
+	
+	private function getLocalePart($place)
+	{
+		if (($id = strpos($place, '@@')) !== false) {
+			return substr($place, $id + 2);
+		}
+		return $this->locale;
 	}
 }

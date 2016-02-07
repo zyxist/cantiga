@@ -19,6 +19,8 @@
 namespace Cantiga\CoreBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class ProjectTerritoryForm extends AbstractType
@@ -26,8 +28,9 @@ class ProjectTerritoryForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add('name', 'text', array('label' => 'Name'))
-			->add('save', 'submit', array('label' => 'Save'));
+			->add('name', new TextType, ['label' => 'Name'])
+			->add('locale', new TextType, ['label' => 'Locale', 'attr' => ['help_text' => 'TerritoryLocaleHelpText']])
+			->add('save', new SubmitType, ['label' => 'Save']);
 	}
 
 	public function getName()

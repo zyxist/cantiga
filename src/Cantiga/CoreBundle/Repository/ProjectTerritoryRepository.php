@@ -64,6 +64,7 @@ class ProjectTerritoryRepository implements EntityTransformerInterface
 		$dt = new DataTable();
 		$dt->id('id', 'i.id')
 			->searchableColumn('name', 'i.name')
+			->column('locale', 'i.locale')
 			->column('areaNum', 'i.areaNum')
 			->column('requestNum', 'i.requestNum');
 		return $dt;
@@ -74,6 +75,7 @@ class ProjectTerritoryRepository implements EntityTransformerInterface
 		$qb = QueryBuilder::select()
 			->field('i.id', 'id')
 			->field('i.name', 'name')
+			->field('i.locale', 'locale')
 			->field('i.areaNum', 'areaNum')
 			->field('i.requestNum', 'requestNum')
 			->from(CoreTables::TERRITORY_TBL, 'i');

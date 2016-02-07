@@ -30,6 +30,7 @@ class Territory implements IdentifiableInterface, InsertableEntityInterface, Edi
 {
 	private $id;
 	private $name;
+	private $locale;
 	private $areaNum;
 	private $requestNum;
 	private $project;
@@ -80,6 +81,17 @@ class Territory implements IdentifiableInterface, InsertableEntityInterface, Edi
 		return $this;
 	}
 
+	public function getLocale()
+	{
+		return $this->locale;
+	}
+
+	public function setLocale($locale)
+	{
+		$this->locale = $locale;
+		return $this;
+	}
+	
 	public function getAreaNum()
 	{
 		return $this->areaNum;
@@ -117,7 +129,7 @@ class Territory implements IdentifiableInterface, InsertableEntityInterface, Edi
 	{
 		$conn->insert(
 			CoreTables::TERRITORY_TBL,
-			DataMappers::pick($this, ['name', 'project'])
+			DataMappers::pick($this, ['name', 'locale', 'project'])
 		);
 		return $conn->lastInsertId();
 	}
@@ -126,7 +138,7 @@ class Territory implements IdentifiableInterface, InsertableEntityInterface, Edi
 	{
 		return $conn->update(
 			CoreTables::TERRITORY_TBL,
-			DataMappers::pick($this, ['name', 'project']),
+			DataMappers::pick($this, ['name', 'locale', 'project']),
 			DataMappers::pick($this, ['id'])
 		);
 	}

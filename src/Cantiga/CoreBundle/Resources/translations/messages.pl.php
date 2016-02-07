@@ -232,6 +232,7 @@ return array(
 	'The territory \'0\' has been removed.' => 'Terytorium "0" zostało usunięte.',
 	'Do you really want to remove the territory \'0\'?' => 'Czy na pewno chcesz usunąć terytorium "0"?',
 	'Request number' => 'Liczba zgłoszeń',
+	'TerritoryLocaleHelpText' => 'Może być użyty to wyboru języka powiadomień dla rejonów z tego obszaru.',
 	
 	// Admin Users
 	'UserRemovalQuestionText' => 'Czy na pewno chcesz usunąć użytkownika "0"? Spowoduje to usunięcie wszystkich danych osobowych, ustawień i informacji o członkostwie, ale pozostawi wszystkie wyprodukowane przez tego użytkownika dane. Będziesz mógł odtworzyć to konto w późniejszym czasie, jednak skasowane informacje będą musiały być skonfigurowane ponownie.',
