@@ -41,7 +41,8 @@ class MembershipRoleResolver
 		$this->roles['Group'][0] = new MembershipRole(0, 'Member', 'ROLE_GROUP_MEMBER');
 		
 		$this->roles['Area'][0] = new MembershipRole(0, 'Member', 'ROLE_AREA_MEMBER');
-		$this->roles['Area'][1] = new MembershipRole(1, 'Manager', 'ROLE_AREA_MANAGER');
+		$this->roles['Area'][1] = new MembershipRole(1, 'Personal data access', 'ROLE_AREA_PD_ADMIN');
+		$this->roles['Area'][2] = new MembershipRole(2, 'Manager', 'ROLE_AREA_MANAGER');
 	}
 
 	public function registerRole($itemType, MembershipRole $role)

@@ -283,6 +283,7 @@ return array(
 	'Member role' => 'Rola nowego członka',
 	'Role' => 'Rola',
 	'Visitor' => 'Wizytator',
+	'Personal data access' => 'Dostęp do danych osobowych',
 	'Member' => 'Członek',
 	'Manager' => 'Zarządca',
 	'Change role' => 'Zmień rolę',
