@@ -85,10 +85,10 @@ class EdkRegistrationSettingsRepository implements EditableRepositoryInterface
 		}
 		$dt
 			->searchableColumn('name', 'i.name')
-			->searchableColumn('registrationType', 'i.registrationType')
-			->searchableColumn('startTime', 'i.startTime')
-			->column('endTime', 'i.endTime')
-			->column('participantNum', 'i.participantNum');
+			->searchableColumn('registrationType', 'r.registrationType')
+			->searchableColumn('startTime', 'r.startTime')
+			->column('endTime', 'r.endTime')
+			->column('participantNum', 'r.participantNum');
 		return $dt;
 	}
 	
