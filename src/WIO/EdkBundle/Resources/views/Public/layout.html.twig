@@ -8,16 +8,72 @@
 
     {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}" />
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+
+    <link rel="stylesheet" href="http://2016webiso.edk.org.pl/css/style.css">
+    <link rel="stylesheet" href="http://2016webiso.edk.org.pl/css/style-form.css">
+    <link rel="stylesheet" href="{{ asset('css/public.min.css') }}" />
     {% endblock %}
     <link rel="icon" type="image/x-icon" href="{{ asset(Branding.LOGO_FILE) }}" />
     {%  block javascripts_head %}
     {% endblock %}
   </head>
   <body>
+	  <header>
+		  <div class="container">
+			  <div class="logo col-md-4">
+				  <a href="http://www.edk.org.pl/"><img src="http://2016webiso.edk.org.pl/img/logo.png" alt=""></a>
+			  </div>
+
+			  <div class="menu col-md-8">
+				  <ul class="list-inline">
+					  <li class="menuactive menuparent"><a class="menuactive menuparent" href="http://www.edk.org.pl">{{ 'Back to EDK home page' | trans([], 'public' ) }}</a></li>
+					  <li><a href="{{ path('public_edk_register', {'slug': slug }) }}">{{ 'Register' | trans([], 'public' ) }}</a></li>
+					  <li><a href="{{ path('public_edk_write_msg', {'slug': slug }) }}">{{ 'Contact with area' | trans([], 'public' ) }}</a></li>
+					  <li><a href="{{ path('public_edk_check', {'slug': slug }) }}">{{ 'Check registration' | trans([], 'public' ) }}</a></li>
+				  </ul>
+			  </div>
+		  </div>
+	  </header>
+
 	{% include 'CantigaCoreBundle:layout:flash.html.twig' %}
-	<div class="container">
+	<div class="container" style="margin-bottom: 20px">
+		<p class="text-danger">BETA PREVIEW BETA PREVIEW BETA PREVIEW - NIE UŻYWAĆ DO NOT USE</p>
 		{% block page_content %}
 		{% endblock %}
 	</div>
+	
+	<footer>
+		<div class="container">
+			<div class="col-md-2 bottom-menu">
+				<ul class="list-unstyled">
+					<li><a href="http://www.edk.org.pl/">{{ 'Home page' | trans([], 'public' ) }}</a></li>
+					<li><a href="{{ path('public_edk_register', {'slug': slug }) }}">{{ 'Register' | trans([], 'public' ) }}</a></li>
+					<li><a href="{{ path('public_edk_write_msg', {'slug': slug }) }}">{{ 'Contact with area' | trans([], 'public' ) }}</a></li>
+					<li><a href="{{ path('public_edk_check', {'slug': slug }) }}">{{ 'Check registration' | trans([], 'public' ) }}</a></li>
+				</ul>
+			</div>
+
+
+			<div class="col-md-2 col-md-offset-4">
+				<div class="stopka-webiso">
+					<a title="Projekt i wykonanie - Webiso" href="http://www.webiso.pl"><span>WEB</span><span>ISO</span></a>
+				</div>
+			</div>
+
+		</div>
+	</footer>
+	<div class=" container footer">
+		<div class="col-md-3"><h5>Media</h5><img src="http://2016webiso.edk.org.pl/img/modlitwa-w-drodze.png" alt=""></div>
+		<div class="col-md-6 col-md-offset-3"><h5>{{ 'Partners' | trans([], 'public' ) }}</h5>
+			<img src="http://2016webiso.edk.org.pl/img/wiosna.png" alt="" style="margin-right:30px;">
+			<img src="http://2016webiso.edk.org.pl/img/wio.png" alt=""></div>
+	</div>
+
+	
+	{% block javascripts %}
+	{% endblock %}
+	{% block javascripts_inline %}
+	{% endblock %}
   </body>
 </html>

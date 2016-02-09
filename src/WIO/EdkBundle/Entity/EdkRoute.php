@@ -134,6 +134,17 @@ class EdkRoute implements IdentifiableInterface, InsertableEntityInterface, Edit
 		return $item;
 	}
 	
+	public static function fetchApproved(Connection $conn, $id)
+	{
+		$data = $conn->fetchAssoc('SELECT * FROM `'.EdkTables::ROUTE_TBL.'` WHERE `id` = :id AND `approved` = 1', [':id' => $id]);
+		if (false === $data) {
+			return false;
+		}
+		$item = self::fromArray($data);
+		$item->area = Area::fetchActive($conn, $data['areaId']);
+		return $item;
+	}
+	
 	public static function fetchBySlug(Connection $conn, $slug)
 	{
 		$data = $conn->fetchAssoc('SELECT * FROM `'.EdkTables::ROUTE_TBL.'` WHERE `publicAccessSlug` = :slug', [':slug' => $slug]);

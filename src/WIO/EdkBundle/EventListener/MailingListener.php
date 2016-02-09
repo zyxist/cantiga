@@ -16,17 +16,37 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-namespace WIO\EdkBundle;
+namespace WIO\EdkBundle\EventListener;
 
-class EdkTexts
+use Cantiga\CoreBundle\Mail\MailSenderInterface;
+use WIO\EdkBundle\EdkTexts;
+use WIO\EdkBundle\Event\RegistrationEvent;
+
+/**
+ * Sends the e-mails to the users in response to certain events.
+ *
+ * @author Tomasz Jędrzejewski
+ */
+class MailingListener
 {
-	const REGISTRATION_SETTINGS_TEXT = 'edk:registration-settings';
-	const MESSAGE_TEXT = 'edk:messages';
-	const REGISTRATION_TERMS1_TEXT = 'edk:registration-terms1-text';
-	const REGISTRATION_TERMS2_TEXT = 'edk:registration-terms2-text';
-	const REGISTRATION_TERMS3_TEXT = 'edk:registration-terms3-text';
-	const REGISTRATION_FORM_TEXT = 'edk:registration-form';
+	/**
+	 * @var MailSenderInterface 
+	 */
+	private $mailSender;
 	
-	const NOTIFICATION_MAIL = 'edk:notification';
-	const REGISTRATION_MAIL = 'edk:registration';
+	public function __construct(MailSenderInterface $mailSender)
+	{
+		$this->mailSender = $mailSender;
+	}
+	
+	public function onRegistrationCompleted(RegistrationEvent $event)
+	{
+		$participant = $event->getParticipant();
+		$this->mailSender->send(
+			EdkTexts::REGISTRATION_MAIL,
+			$participant->getEmail(),
+			'user \''.$participant->getEmail().'\'',
+			[ 'participant' => $participant, 'slug' => $event->getSlug() ]
+		);
+	}
 }

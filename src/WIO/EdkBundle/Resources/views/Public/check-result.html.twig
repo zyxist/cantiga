@@ -1,0 +1,32 @@
+{% extends 'WioEdkBundle:Public:layout.html.twig' %}
+
+{% block title %}{{ 'Check registration' | trans([], 'public') }} - {{ 'Extreme Way of the Cross' | trans([], 'public') }}{% endblock %}
+
+{% block page_content %}
+<div>
+	<h2>{{ 'Your registration' | trans([], 'public') }}</h2>
+	
+	<table class="table table-hover">
+		<tr>
+			<td width="30%">{{ 'First name' | trans([], 'public') }}</td>
+			<td width="70%">{{ item.firstName }}</td>
+		</tr>
+		<tr>
+			<td width="30%">{{ 'Last name' | trans([], 'public') }}</td>
+			<td width="70%">{{ item.lastName }}</td>
+		</tr>
+		<tr>
+			<td width="30%">{{ 'Route' | trans([], 'public') }}</td>
+			<td width="70%">{{ item.registrationSettings.route.name }}</td>
+		</tr>
+		<tr>
+			<td width="30%">{{ 'Area' | trans([], 'public') }}</td>
+			<td width="70%">{{ item.registrationSettings.route.area.name }}</td>
+		</tr>
+		<tr>
+			<td width="30%">{{ 'Registration date' | trans([], 'public') }}</td>
+			<td width="70%">{{ format_time(TimeFormatter.FORMAT_LONG, item.createdAt) }} ( {{ ago(item.createdAt) }})</td>
+		</tr>
+	</table>
+</div>
+{% endblock %}

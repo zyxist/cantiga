@@ -27,6 +27,8 @@ use Cantiga\Metamodel\Transaction;
 use Doctrine\DBAL\Connection;
 use Exception;
 use PDO;
+use WIO\EdkBundle\EdkTables;
+use WIO\EdkBundle\Entity\EdkRegistrationSettings;
 
 /**
  * @author Tomasz Jędrzejewski
@@ -102,5 +104,54 @@ class EdkPublishedDataRepository implements EntityTransformerInterface
 	public function transformToKey($entity)
 	{
 		return $entity->getId();
+	}
+	
+	public function getOpenRegistrations(Project $project, $acceptedStatus)
+	{
+		$stmt = $this->conn->prepare('SELECT r.`id` AS `routeId`, a.`id` AS `areaId`, t.`id` AS `territoryId`, r.`name` AS `routeName`, a.`name` AS `areaName`, t.`name` AS `territoryName`, s.`startTime`, s.`endTime`, s.`participantLimit`, s.`participantNum`, s.`allowLimitExceed`, s.`customQuestion`, r.`routeFrom`, r.`routeTo`, r.`routeLength`, r.`routeAscent`, r.`routeType` '
+			. 'FROM `'.EdkTables::ROUTE_TBL.'` r '
+			. 'INNER JOIN `'.CoreTables::AREA_TBL.'` a ON a.`id` = r.`areaId` '
+			. 'INNER JOIN `'.CoreTables::TERRITORY_TBL.'` t ON t.`id` = a.`territoryId` '
+			. 'INNER JOIN `'.EdkTables::REGISTRATION_SETTINGS_TBL.'` s ON s.`routeId` = r.`id` '
+			. 'WHERE a.`statusId` = :statusId AND a.`projectId` = :projectId AND r.`approved` = 1 AND s.`registrationType` = '.EdkRegistrationSettings::TYPE_EDK_WEBSITE.' '
+			. 'ORDER BY a.`name`, r.`name`');
+		$stmt->bindValue(':statusId', $acceptedStatus);
+		$stmt->bindValue(':projectId', $project->getId());
+		$stmt->execute();
+		
+		$results = array();
+		$now = time();
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			if ($now < $row['startTime'] || $row['endTime'] < $now) {
+				continue;
+			}
+			if ($row['participantNum'] >= $row['participantLimit'] && !$row['allowLimitExceed']) {
+				continue;
+			}	
+			if (!isset($results[$row['territoryId']])) {
+				$results[$row['territoryId']] = ['id' => $row['territoryId'], 'name' => $row['territoryName'], 'areas' => []];
+			}
+			if (!isset($results[$row['territoryId']]['areas'][$row['areaId']])) {
+				$results[$row['territoryId']]['areas'][$row['areaId']] = ['id' => $row['areaId'], 'name' => $row['areaName'], 'routes' => []];
+			}
+			if (!isset($results[$row['territoryId']]['areas'][$row['areaId']]['routes'][$row['routeId']])) {
+				$results[$row['territoryId']]['areas'][$row['areaId']]['routes'][$row['routeId']] = [
+					'id' => $row['routeId'],
+					'name' => $row['routeName'],
+					'from' => $row['routeFrom'],
+					'to' => $row['routeTo'],
+					'length' => $row['routeLength'],
+					'ascent' => $row['routeAscent'],
+					'q' => $row['customQuestion'],
+					'pn' => $row['participantNum'],
+					'pl' => $row['participantLimit'],
+					't' => $row['routeType']];
+			}
+		}
+		$stmt->closeCursor();
+		usort($results, function($a, $b) {
+			return strcmp($a['name'], $b['name']);
+		});
+		return $results;
 	}
 }

@@ -1,0 +1,27 @@
+{% extends 'WioEdkBundle:Public:layout.html.twig' %}
+
+{% block title %}{{ 'Check registration' | trans([], 'public') }} - {{ 'Extreme Way of the Cross' | trans([], 'public') }}{% endblock %}
+
+{% block page_content %}
+<div>
+	<h2>{{ 'Check your registration' | trans([], 'public') }}</h2>
+	
+	<p>{{ 'CheckYourRegistrationText' | trans([], 'public') }}</p>
+	
+	<form method="get" action="{{ path('public_edk_check', { 'slug': slug }) }}">
+		<div class="form-group">
+			<label for="key">{{ 'Your access code' | trans([], 'public') }}</label>
+			<input type="text" name="k" class="form-control" id="key" />
+		</div>
+		<div class="form-group">
+			<label class="radio-inline">
+				<input type="radio" name="t" id="ch1" value="0" checked> {{ 'I want to check my status' | trans([], 'public') }}
+			</label>
+			<label class="radio-inline">
+				<input type="radio" name="t" id="ch1" value="1"> {{ 'I want to remove my request' | trans([], 'public') }}
+			</label>
+		</div>
+		<input class="btn btn-primary" type="submit" value="{{ 'Execute' | trans([], 'public') }}" />
+	</form>
+</div>
+{% endblock %}

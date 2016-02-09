@@ -35,6 +35,10 @@ class WioEdkBundle extends Bundle
 		
 		AppTexts::registerName(EdkTexts::REGISTRATION_SETTINGS_TEXT);
 		AppTexts::registerName(EdkTexts::MESSAGE_TEXT);
+		AppTexts::registerName(EdkTexts::REGISTRATION_FORM_TEXT);
+		AppTexts::registerName(EdkTexts::REGISTRATION_TERMS1_TEXT);
+		AppTexts::registerName(EdkTexts::REGISTRATION_TERMS2_TEXT);
+		AppTexts::registerName(EdkTexts::REGISTRATION_TERMS3_TEXT);
 		
 		AppMails::registerName(EdkTexts::NOTIFICATION_MAIL);
 		AppMails::registerName(EdkTexts::REGISTRATION_MAIL);

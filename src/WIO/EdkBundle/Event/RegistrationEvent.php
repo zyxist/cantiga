@@ -16,17 +16,37 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-namespace WIO\EdkBundle;
+namespace WIO\EdkBundle\Event;
 
-class EdkTexts
+use Symfony\Component\EventDispatcher\Event;
+use WIO\EdkBundle\Entity\EdkParticipant;
+
+/**
+ * Informs about the registration of the participant.
+ *
+ * @author Tomasz Jędrzejewski
+ */
+class RegistrationEvent extends Event
 {
-	const REGISTRATION_SETTINGS_TEXT = 'edk:registration-settings';
-	const MESSAGE_TEXT = 'edk:messages';
-	const REGISTRATION_TERMS1_TEXT = 'edk:registration-terms1-text';
-	const REGISTRATION_TERMS2_TEXT = 'edk:registration-terms2-text';
-	const REGISTRATION_TERMS3_TEXT = 'edk:registration-terms3-text';
-	const REGISTRATION_FORM_TEXT = 'edk:registration-form';
+	private $participant;
+	private $slug;
 	
-	const NOTIFICATION_MAIL = 'edk:notification';
-	const REGISTRATION_MAIL = 'edk:registration';
+	public function __construct($participant, $slug)
+	{
+		$this->participant = $participant;
+		$this->slug = $slug;
+	}
+	
+	/**
+	 * @return EdkParticipant
+	 */
+	public function getParticipant()
+	{
+		return $this->participant;
+	}
+	
+	public function getSlug()
+	{
+		return $this->slug;
+	}
 }

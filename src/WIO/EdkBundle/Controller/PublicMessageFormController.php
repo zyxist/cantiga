@@ -56,6 +56,7 @@ class PublicMessageFormController extends PublicEdkController
 				} else {
 					return $this->render('WioEdkBundle:Public:public-error.html.twig', [
 						'message' => $this->trans('You did not solve the CAPTCHA correctly, sorry.', [], 'public'),
+						'slug' => $this->project->getSlug()
 					]);
 				}
 			}
@@ -63,10 +64,12 @@ class PublicMessageFormController extends PublicEdkController
 			return $this->render('WioEdkBundle:Public:message-form.html.twig', [
 				'form' => $form->createView(),
 				'recaptcha' => $recaptcha,
+				'slug' => $this->project->getSlug()
 			]);
 		} catch (ModelException $exception) {
 			return $this->render('WioEdkBundle:Public:public-error.html.twig', [
 				'message' => $this->trans($exception->getMessage(), [], 'public'),
+				'slug' => $this->project->getSlug()
 			]);
 		}
 	}
@@ -78,6 +81,7 @@ class PublicMessageFormController extends PublicEdkController
 	{
 		return $this->render('WioEdkBundle:Public:public-message.html.twig', [
 			'message' => $this->trans('Thank you, the message has been passed to the area. Please wait for the answer.', [], 'public'),
+			'slug' => $this->project->getSlug()
 		]);
 	}
 }

@@ -23,7 +23,6 @@ use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
 use Cantiga\Metamodel\DataMappers;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\Validator\Constraints\Callback;
-use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -57,6 +56,22 @@ class EdkRegistrationSettings implements IdentifiableInterface, EditableEntityIn
 	private $customQuestion;
 	
 	private $isNew = false;
+	
+	public static function fetchPublic(Connection $conn, $routeId, $expectedAreaStatus, $forUpdate = false)
+	{
+		$route = EdkRoute::fetchApproved($conn, $routeId);
+		if (false === $route || $route->getArea()->getStatus()->getId() != $expectedAreaStatus) {
+			return false;
+		}
+		
+		$data = $conn->fetchAssoc('SELECT s.* FROM `'.EdkTables::REGISTRATION_SETTINGS_TBL.'` s WHERE `routeId` = :id AND `registrationType` = '.EdkRegistrationSettings::TYPE_EDK_WEBSITE.($forUpdate ? ' FOR UPDATE' : ''), [':id' => $routeId]);
+		if (false === $data) {
+			return false;
+		}
+		$item = self::fromArray($data);
+		$item->route = $route;
+		return $item;
+	}
 	
 	public static function fetchByRoute(Connection $conn, EdkRoute $route)
 	{
@@ -285,6 +300,11 @@ class EdkRegistrationSettings implements IdentifiableInterface, EditableEntityIn
 		return $this;
 	}
 	
+	public function hasCustomQuestion()
+	{
+		return !empty($this->customQuestion);
+	}
+	
 	/**
 	 * Returns <strong>true</strong>, if the registration is currently open.
 	 * 
@@ -323,5 +343,17 @@ class EdkRegistrationSettings implements IdentifiableInterface, EditableEntityIn
 		}
 		$conn->update(EdkTables::ROUTE_TBL, ['updatedAt' => time()], ['id' => $this->route->getId()]);
 		return $this->route->getId();
+	}
+	
+	public function registerParticipant(Connection $conn, EdkParticipant $participant)
+	{
+		$count = $conn->fetchColumn('SELECT COUNT(`id`) FROM `'.EdkTables::PARTICIPANT_TBL.'` WHERE `routeId` = :routeId', [':routeId' => $this->route->getId()]);
+		$conn->update(EdkTables::REGISTRATION_SETTINGS_TBL, ['participantNum' => $count], ['routeId' => $this->route->getId()]);
+	}
+	
+	public function unregisterParticipant(Connection $conn, EdkParticipant $participant)
+	{
+		$count = $conn->fetchColumn('SELECT COUNT(`id`) FROM `'.EdkTables::PARTICIPANT_TBL.'` WHERE `routeId` = :routeId', [':routeId' => $this->route->getId()]);
+		$conn->update(EdkTables::REGISTRATION_SETTINGS_TBL, ['participantNum' => $count], ['routeId' => $this->route->getId()]);
 	}
 }

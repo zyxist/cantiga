@@ -7,6 +7,9 @@ public_edk_error_controller:
 public_message_form_controller:
     resource: "@WioEdkBundle/Controller/PublicMessageFormController.php"
     type:     annotation
+public_registration_form_controller:
+    resource: "@WioEdkBundle/Controller/PublicRegistrationFormController.php"
+    type:     annotation
 area_note_controller:
     resource: "@WioEdkBundle/Controller/AreaNoteController.php"
     type:     annotation

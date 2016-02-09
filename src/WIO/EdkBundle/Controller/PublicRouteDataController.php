@@ -20,7 +20,10 @@ namespace WIO\EdkBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Controller\PublicPageController;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
+use DateInterval;
+use DateTime;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 

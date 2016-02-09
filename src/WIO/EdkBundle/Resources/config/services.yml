@@ -17,6 +17,9 @@ services:
     wio.edk.repo.published_data:
         class:     WIO\EdkBundle\Repository\EdkPublishedDataRepository
         arguments: ["@database_connection", "@cantiga.transaction"]
+    wio.edk.repo.participant:
+        class:     WIO\EdkBundle\Repository\EdkParticipantRepository
+        arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher"]
     wio.edk.extension.area_information_map:
         class:     WIO\EdkBundle\Extension\AreaInformationMapExtension
         arguments: ["@translator"]
@@ -37,6 +40,11 @@ services:
         arguments: ["@translator"]
         tags:
             - { name: cantiga.extension, point: core.form.area, module: edk, description: "EDK area form" }
+    wio.edk.mailing_listener:
+        class: WIO\EdkBundle\EventListener\MailingListener
+        arguments: ["@cantiga.mail.sender"]
+        tags:
+            - { name: kernel.event_listener, event: edk.registration.completed, method: onRegistrationCompleted }
     wio.edk.model_listener:
         class: WIO\EdkBundle\EventListener\ModelListener
         arguments: ["@event_dispatcher"]
