@@ -77,7 +77,7 @@ services:
             - { name: cantiga.extension, point: core.dashboard.group.central, module: edk }
     wio.edk.dashboard.route_summary:
         class: WIO\EdkBundle\Extension\DashboardRouteSummaryExtension
-        arguments: ["@wio.edk.repo.route"]
+        arguments: ["@wio.edk.repo.route", "@wio.edk.repo.registration"]
         tags:
             - { name: cantiga.extension, point: core.dashboard.project.top, module: edk }
             - { name: cantiga.extension, point: core.dashboard.group.top, module: edk }

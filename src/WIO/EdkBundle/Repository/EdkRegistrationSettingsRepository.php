@@ -181,6 +181,32 @@ class EdkRegistrationSettingsRepository implements EditableRepositoryInterface, 
 		}
 	}
 	
+	public function countParticipants()
+	{
+		$this->transaction->requestTransaction();
+		try {
+			return $this->conn->fetchColumn('SELECT SUM(s.`participantNum`) '
+				. 'FROM `'.EdkTables::REGISTRATION_SETTINGS_TBL.'` s '
+				. 'INNER JOIN `'.EdkTables::ROUTE_TBL.'` r ON r.`id` = s.`routeId` '
+				. 'INNER JOIN `'.CoreTables::AREA_TBL.'` a ON r.`areaId` = a.`id` '
+				. $this->createWhereClause(), [':itemId' => $this->root->getId()]);
+		} catch (Exception $ex) {
+			$this->transaction->requestRollback();
+			throw $ex;
+		}
+	}
+	
+	private function createWhereClause()
+	{
+		if ($this->root instanceof Area) {
+			return 'WHERE r.`areaId` = :itemId ';				
+		} elseif ($this->root instanceof Group) {
+			return 'WHERE a.`groupId` = :itemId ';
+		} elseif ($this->root instanceof Project) {
+			return 'WHERE a.`projectId` = :itemId ';
+		}
+	}
+	
 	public function getFormChoices()
 	{
 		$this->transaction->requestTransaction();
