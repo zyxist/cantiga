@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS `cantiga_edk_participants` (
   `peopleNum` TINYINT(1) NOT NULL DEFAULT 1,
   `customAnswer` VARCHAR(250),
   `howManyTimes` TINYINT(4) NOT NULL,
-  `whyParticipate` VARCHAR(200) NOT NULL,
+  `whyParticipate` VARCHAR(200) NULL,
   `whereLearnt` TINYINT(4) NOT NULL,
   `whereLearntOther` VARCHAR(40) NULL,
   `terms1Accepted` TINYINT(4) NOT NULL,
