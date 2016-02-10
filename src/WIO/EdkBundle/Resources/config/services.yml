@@ -19,7 +19,7 @@ services:
         arguments: ["@database_connection", "@cantiga.transaction"]
     wio.edk.repo.participant:
         class:     WIO\EdkBundle\Repository\EdkParticipantRepository
-        arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher"]
+        arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher", "@cantiga.time"]
     wio.edk.extension.area_information_map:
         class:     WIO\EdkBundle\Extension\AreaInformationMapExtension
         arguments: ["@translator"]
@@ -58,6 +58,7 @@ services:
             - { name: kernel.event_listener, event: cantiga.export.ongoing, method: onProjectExported }
     wio.edk.workspace_listener:
         class: WIO\EdkBundle\EventListener\WorkspaceListener
+        arguments: ["@security.authorization_checker"]
         tags:
             - { name: kernel.event_listener, event: cantiga.workspace.project, method: onProjectWorkspace }
             - { name: kernel.event_listener, event: cantiga.workspace.group, method: onGroupWorkspace }

@@ -22,6 +22,9 @@ area_registration_controller:
 area_message_controller:
     resource: "@WioEdkBundle/Controller/AreaMessageController.php"
     type:     annotation
+area_participant_controller:
+    resource: "@WioEdkBundle/Controller/AreaParticipantController.php"
+    type:     annotation
 group_route_controller:
     resource: "@WioEdkBundle/Controller/GroupRouteController.php"
     type:     annotation

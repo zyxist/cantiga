@@ -18,6 +18,7 @@
  */
 namespace WIO\EdkBundle\Entity;
 
+use Cantiga\CoreBundle\Entity\Area;
 use Cantiga\Metamodel\Capabilities\EditableEntityInterface;
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
 use Cantiga\Metamodel\Capabilities\InsertableEntityInterface;
@@ -89,6 +90,35 @@ class EdkParticipant implements IdentifiableInterface, InsertableEntityInterface
 		return $item;
 	}
 	
+	/**
+	 * Fetches the participant by his/her ID and area.
+	 * 
+	 * @param Connection $conn
+	 * @param int $id
+	 * @param Area $area
+	 * @param boolean $forUpdate Whether to lock the registration settings for writing
+	 * @return EdkParticipant
+	 */
+	public static function fetchByArea(Connection $conn, $id, Area $area)
+	{
+		$data = $conn->fetchAssoc('SELECT * FROM `'.EdkTables::PARTICIPANT_TBL.'` WHERE `id` = :id AND `areaId` = :areaId', [':id' => $id, ':areaId' => $area->getId()]);
+		if (false === $data) {
+			return false;
+		}
+		$route = EdkRoute::fetchByRoot($conn, $data['routeId'], $area);
+		if (empty($route)) {
+			return false;
+		}
+		$registrationSettings = EdkRegistrationSettings::fetchByRoute($conn, $route);
+		
+		if (empty($registrationSettings)) {
+			return false;
+		}
+		$item = EdkParticipant::fromArray($data);
+		$item->setRegistrationSettings($registrationSettings);
+		return $item;
+	}
+	
 	public static function fromArray($array, $prefix = '')
 	{
 		$item = new EdkParticipant;
@@ -109,6 +139,11 @@ class EdkParticipant implements IdentifiableInterface, InsertableEntityInterface
 	public function getAccessKey()
 	{
 		return $this->accessKey;
+	}
+	
+	public function getName()
+	{
+		return $this->firstName.' '.$this->lastName;
 	}
 
 	public function getFirstName()
@@ -160,6 +195,14 @@ class EdkParticipant implements IdentifiableInterface, InsertableEntityInterface
 	{
 		return $this->whereLearnt;
 	}
+	
+	/**
+	 * @return WhereLearntAbout
+	 */
+	public function getWhereLearntEntity()
+	{
+		return WhereLearntAbout::getItem($this->whereLearnt);
+	}
 
 	public function getWhereLearntOther()
 	{
@@ -191,6 +234,11 @@ class EdkParticipant implements IdentifiableInterface, InsertableEntityInterface
 		return $this->ipAddress;
 	}
 
+	public function getSexText()
+	{
+		return ($this->sex == 1 ? 'SexMale' : 'SexFemale');
+	}
+	
 	public function setId($id)
 	{
 		$this->id = $id;

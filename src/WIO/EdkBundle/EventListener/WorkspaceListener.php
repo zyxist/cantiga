@@ -21,12 +21,23 @@ namespace WIO\EdkBundle\EventListener;
 use Cantiga\CoreBundle\Api\Workgroup;
 use Cantiga\CoreBundle\Api\WorkItem;
 use Cantiga\CoreBundle\Event\WorkspaceEvent;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @author Tomasz Jędrzejewski
  */
 class WorkspaceListener
 {
+	/**
+	 * @var AuthorizationCheckerInterface 
+	 */
+	private $authChecker;
+	
+	public function __construct(AuthorizationCheckerInterface $authChecker)
+	{
+		$this->authChecker = $authChecker;
+	}
+	
 	public function onProjectWorkspace(WorkspaceEvent $event)
 	{
 		$workspace = $event->getWorkspace();
@@ -63,6 +74,9 @@ class WorkspaceListener
 			
 			$workspace->addWorkItem('participants', new WorkItem('area_reg_settings_index', 'Registration settings'));
 			$workspace->addWorkItem('participants', new WorkItem('area_edk_message_index', 'Messages'));
+			if ($this->authChecker->isGranted('ROLE_AREA_PD_ADMIN')) {
+				$workspace->addWorkItem('participants', new WorkItem('area_edk_participant_index', 'Participants'));
+			}
 		}
 	}
 }

@@ -35,13 +35,13 @@ class EdkParticipantForm extends AbstractParticipantForm
 	const EDIT = 1;
 	
 	private $mode;
-	private $routeRepository;
+	private $settingsRepository;
 	
-	public function __construct($mode, EdkRegistrationSettings $settings, $routeRepository = null)
+	public function __construct($mode, EdkRegistrationSettings $settings, $settingsRepository = null)
 	{
 		parent::__construct($settings);
 		$this->mode = (int) $mode;
-		$this->routeRepository = $routeRepository;
+		$this->settingsRepository = $settingsRepository;
 	}
 
 	public function buildForm(FormBuilderInterface $builder, array $options)
@@ -49,8 +49,8 @@ class EdkParticipantForm extends AbstractParticipantForm
 		parent::buildForm($builder, $options);
 		if($this->mode == self::ADD) {
 			$builder->add('peopleNum', new IntegerType, ['label' => 'NumberRegisteredPeopleField']);
-			$builder->add('route', new ChoiceType, [ 'label' => 'Route', 'choices' => $this->routeRepository->getRouteChoicesWithOpenRegistration()]);
-			$builder->get('route')->addModelTransformer(new EntityTransformer($this->routeRepository));
+			$builder->add('registrationSettings', new ChoiceType, [ 'label' => 'Route', 'choices' => $this->settingsRepository->getFormChoices()]);
+			$builder->get('registrationSettings')->addModelTransformer(new EntityTransformer($this->settingsRepository));
 		}
 	}
 	

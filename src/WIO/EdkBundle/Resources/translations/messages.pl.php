@@ -79,5 +79,10 @@ return array(
 	'The extension of the uploaded map is invalid.' => 'Rozszerzenie wgranego pliku z mapą jest nieprawidłowe (używaj małych liter).',
 	'The extension of the uploaded description is invalid.' => 'Rozszerzenie wgranego pliku z opisem jest nieprawidłowe (używaj małych liter).',
 	
-	'The registration settings \'0\' have been updated.' => 'Ustawienia zapisów trasy "0" zostały zmienione.'
+	'The registration settings \'0\' have been updated.' => 'Ustawienia zapisów trasy "0" zostały zmienione.',
+	
+	'The participant \'0\' has been created.' => 'Uczestnik "0" został dodany.',
+	'The participant \'0\' has been updated.' => 'Dane uczestnika "0" zostały zmienione.',
+	'The participant \'0\' has been removed.' => 'Uczestnik "0" został usunięty.',
+	'Do you really want to remove the participant \'0\'?' => 'Czy naprawdę chcesz usunąć uczestnika "0"? Ślad po usuniętym zgłoszeniu zostanie zachowany, wraz z datą usunięcia oraz informacją o usuwającym.',
 );

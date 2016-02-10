@@ -25,12 +25,14 @@ use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\Metamodel\Capabilities\EditableRepositoryInterface;
 use Cantiga\Metamodel\Capabilities\MembershipEntityInterface;
 use Cantiga\Metamodel\DataTable;
+use Cantiga\Metamodel\Form\EntityTransformerInterface;
 use Cantiga\Metamodel\QueryBuilder;
 use Cantiga\Metamodel\QueryClause;
 use Cantiga\Metamodel\TimeFormatterInterface;
 use Cantiga\Metamodel\Transaction;
 use Doctrine\DBAL\Connection;
 use Exception;
+use PDO;
 use Symfony\Component\Translation\TranslatorInterface;
 use WIO\EdkBundle\EdkTables;
 use WIO\EdkBundle\Entity\EdkRegistrationSettings;
@@ -41,7 +43,7 @@ use WIO\EdkBundle\Entity\EdkRoute;
  *
  * @author Tomasz Jędrzejewski
  */
-class EdkRegistrationSettingsRepository implements EditableRepositoryInterface
+class EdkRegistrationSettingsRepository implements EditableRepositoryInterface, EntityTransformerInterface
 {
 	/**
 	 * @var Connection 
@@ -88,6 +90,7 @@ class EdkRegistrationSettingsRepository implements EditableRepositoryInterface
 			->searchableColumn('registrationType', 'r.registrationType')
 			->searchableColumn('startTime', 'r.startTime')
 			->column('endTime', 'r.endTime')
+			->column('participantLimit', 'r.participantLimit')
 			->column('participantNum', 'r.participantNum');
 		return $dt;
 	}
@@ -107,6 +110,7 @@ class EdkRegistrationSettingsRepository implements EditableRepositoryInterface
 			->field('r.registrationType', 'registrationType')
 			->field('r.startTime', 'startTime')
 			->field('r.endTime', 'endTime')
+			->field('r.participantLimit', 'participantLimit')
 			->field('r.participantNum', 'participantNum')
 			->from(EdkTables::ROUTE_TBL, 'i')
 			->leftJoin(EdkTables::REGISTRATION_SETTINGS_TBL, 'r', QueryClause::clause('r.routeId = i.id'))
@@ -175,5 +179,31 @@ class EdkRegistrationSettingsRepository implements EditableRepositoryInterface
 			$this->transaction->requestRollback();
 			throw $ex;
 		}
+	}
+	
+	public function getFormChoices()
+	{
+		$this->transaction->requestTransaction();
+		$stmt = $this->conn->prepare('SELECT r.`id`, r.`name` FROM `'.EdkTables::REGISTRATION_SETTINGS_TBL.'` s '
+			. 'INNER JOIN `'.EdkTables::ROUTE_TBL.'` r ON r.`id` = s.`routeId` '
+			. 'WHERE r.`areaId` = :areaId ORDER BY r.`name`');
+		$stmt->bindValue(':areaId', $this->area->getId());
+		$stmt->execute();
+		$result = array();
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			$result[$row['id']] = $row['name'];
+		}
+		$stmt->closeCursor();
+		return $result;
+	}
+
+	public function transformToEntity($key)
+	{
+		return $this->getItem($key);
+	}
+
+	public function transformToKey($entity)
+	{
+		return $entity->getId();
 	}
 }

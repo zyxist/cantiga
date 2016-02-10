@@ -1,0 +1,140 @@
+{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+
+{% block page_title %}
+	{{ 'Participant: 0' | trans([item.name], 'edk') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ pageSubtitle | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_content %}	
+<div class="row">
+	<div class="col-lg-8 col-md-12 col-xs-12">
+		<div class="box">			
+			<div class="box-body">
+				<fieldset>
+					<legend>{{ 'Personal information' | trans([], 'edk') }}</legend>
+					<table class="table table-hover">
+						<tbody>
+							<tr>
+								<td width="30%">{{ 'Name' | trans }}</td>
+								<td>{{ item.name }}</td>
+							</tr>
+							<tr>
+								<td width="30%">{{ 'E-mail' | trans([], 'edk') }}</td>
+								{% if item.email %}
+								<td><a href="mailto:{{ item.email }}">{{ item.email }}</a></td>
+								{% else %}
+								<td>---</td>
+								{% endif %}
+							</tr>
+							<tr>
+								<td width="30%">{{ 'Age' | trans([], 'edk') }}</td>
+								<td>{{ item.age }}</td>
+							</tr>
+							<tr>
+								<td width="30%">{{ 'Sex' | trans([], 'edk') }}</td>
+								<td>{{ item.getSexText() | trans([], 'edk') }}</td>
+							</tr>
+							<tr>
+								<td width="30%">{{ 'Created at' | trans([], 'edk') }}</td>
+								<td>{{ format_time(TimeFormatter.FORMAT_LONG, item.createdAt) }} ({{ ago(item.createdAt) }})</td>
+							</tr>
+							<tr>
+								<td width="30%">{{ 'Registered people' | trans([], 'edk') }}</td>
+								<td>{{ item.peopleNum | trans([], 'edk') }}</td>
+							</tr>
+						</tbody>
+					</table>
+				</fieldset>
+				<fieldset>
+					<legend>{{ 'About Extreme Way' | trans([], 'edk') }}</legend>
+					<table class="table table-hover">
+						<tbody>
+							<tr>
+								<td width="30%">{{ 'How many times participated' | trans([], 'edk') }}</td>
+								<td>{{ item.howManyTimes }}</td>
+							</tr>
+							<tr>
+								<td width="30%">{{ 'Where learnt about Extreme Way' | trans([], 'edk') }}</td>
+								{% if item.whereLearnt == 100 %}
+								<td>{{ 'Other' | trans([], 'general') }}: <em>{{ item.whereLearntOther }}</em></td>
+								{% else %}
+								<td>{{ item.getWhereLearntEntity().getName() | trans([], 'edk') }}</td>
+								{% endif %}
+							</tr>
+							<tr>
+								<td width="30%">{{ 'Reason to participate' | trans([], 'edk') }}</td>
+								<td>{{ item.whyParticipate }}</td>
+							</tr>
+							{% if item.registrationSettings.customQuestion %}
+							<tr>
+								<td width="30%">{{ item.registrationSettings.customQuestion }}</td>
+								<td>{{ item.customAnswer }}</td>
+							</tr>
+							{% else %}
+							<tr>
+								<td width="30%">{{ 'Additional information' | trans([], 'edk') }}</td>
+								<td>{{ item.customAnswer }}</td>
+							</tr>
+							{% endif %}
+						</tbody>
+					</table>
+				</fieldset>
+			</div>
+			<div class="box-footer">
+				<p>
+					<a href="{{ spath(indexPage) }}" class="btn btn-default btn-sm" role="button">{{ 'Back' | trans({}, 'general') }}</a>
+				</p>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-4 col-md-12 col-xs-12">
+		<div class="box">
+			<div class="box-header">
+				<h4>{{ 'Chosen route' | trans([], 'edk') }}</h4>
+			</div>			
+			<div class="box-body">
+				<table class="table table-hover">
+					<tbody>
+						<tr>
+							<td width="30%">{{ 'Name' | trans }}</td>
+							<td><a href="{{ spath('area_route_info', {'id': item.registrationSettings.route.id} ) }}">{{ item.registrationSettings.route.name }}</a></td>
+						</tr>
+						<tr>
+							<td width="30%">{{ 'Beginning' | trans([], 'edk') }}</td>
+							<td>{{ item.registrationSettings.route.routeFrom }}</td>
+						</tr>
+						<tr>
+							<td width="30%">{{ 'End' | trans([], 'edk') }}</td>
+							<td>{{ item.registrationSettings.route.routeTo }}</td>
+						</tr>
+						<tr>
+							<td width="30%">{{ 'Length' | trans([], 'edk') }}</td>
+							<td>{{ item.registrationSettings.route.routeLength }} km</td>
+						</tr>
+						<tr>
+							<td width="30%">{{ 'Ascent' | trans([], 'edk') }}</td>
+							<td>{{ item.registrationSettings.route.routeAscent }} m</td>
+						</tr>
+						<tr>
+							<td width="30%">{{ 'Expected number of participants' | trans([], 'edk') }}</td>
+							<td>{{ item.registrationSettings.participantLimit }}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+
+{% block box_body %}
+
+{% endblock %}
+
+{% block box_footer %}
+
+{% endblock %}

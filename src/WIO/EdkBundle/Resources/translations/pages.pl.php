@@ -12,4 +12,5 @@ return [
 	
 	'Messages' => 'Wiadomości',
 	'View messages sent you by the participants' => 'Oglądaj i zarządzaj wiadomościami od uczestników',
+	'Manage registered participants' => 'Zarządzaj zarejestrowanymi uczestnikami',
 ];
