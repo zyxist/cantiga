@@ -17,4 +17,7 @@ return [
 	'MaxAllowedPeopleErrMsg' => 'W jednym zgłoszeniu można zapisać maksymalnie 10 uczestników i minimalnie jednego.',
 	'MinimumParticipantLimitErrMsg' => 'Minimalna wartość to 10 uczestników.',
 	'InvalidRegistrationTypeErrMsg' => 'Nieprawidłowy rodzaj zapisów.',
+	
+	'MaxPeoplePerRecordRequired' => 'To pole jest wymagane przy tym typie zapisów - podaj liczbę z przedziału 1-10.',
+	'FieldRequiredErrMsg' => 'To pole jest wymagane przy tym typie zapisów.',
 ];

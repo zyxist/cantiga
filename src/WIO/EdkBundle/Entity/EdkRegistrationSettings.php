@@ -130,7 +130,8 @@ class EdkRegistrationSettings implements IdentifiableInterface, EditableEntityIn
 	 * 
 	 * @param \WIO\AppBundle\Entity\ExecutionContextInterface $context
 	 */
-	public function validate(ExecutionContextInterface $context) {
+	public function validate(ExecutionContextInterface $context)
+	{
 		if ($this->startTime > $this->endTime) {
 			$context->buildViolation('RegistrationTimeMismatchErrMsg')
 				->atPath('endTime')
@@ -140,6 +141,16 @@ class EdkRegistrationSettings implements IdentifiableInterface, EditableEntityIn
 			$this->checkUnsupportedFields($context, ['externalRegistrationUrl', 'participantLimit', 'maxPeoplePerRecord', 'customQuestion']);
 		} elseif ($this->registrationType == self::TYPE_EDK_WEBSITE) {
 			$this->checkUnsupportedFields($context, ['externalRegistrationUrl']);
+			if (empty($this->maxPeoplePerRecord)) {
+				$context->buildViolation('MaxPeoplePerRecordRequired')
+					->atPath('maxPeoplePerRecord')
+					->addViolation();
+			}
+			if (empty($this->participantLimit)) {
+				$context->buildViolation('FieldRequiredErrMsg')
+					->atPath('participantLimit')
+					->addViolation();
+			}
 		} elseif ($this->registrationType == self::TYPE_OTHER_WEBSITE) {
 			if (empty($this->externalRegistrationUrl)) {
 				$context->buildViolation('ExternalUrlMissingErrMsg')

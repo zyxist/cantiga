@@ -13,4 +13,7 @@ return [
 	'PleaseFillCustomAnswerErrorMsg' => 'This field is obligatory.',
 	'RegisteredPeopleNumInvalidErrorMsg' => 'The number of registered people must be from range 1 to %max%.',
 	'NoMorePlacesErrorMsg' => 'We are sorry, but we have already run out of places on this route...',
+	
+	'MaxPeoplePerRecordRequired' => 'This field is required with this registration type - please enter a number from 1 to 10.',
+	'FieldRequiredErrMsg' => 'This field is required with this registration type.',
 ];
