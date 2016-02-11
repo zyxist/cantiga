@@ -411,12 +411,12 @@ class EdkParticipant implements IdentifiableInterface, InsertableEntityInterface
 					->addViolation();
 				$ok = false;
 			}
-			if(!$this->getRegistrationSettings()->getAllowLimitExceed()) {
-				if($this->peopleNum + $this->getRegistrationSettings()->getParticipantNum() > $this->getRegistrationSettings()->getParticipantLimit()) {
-					$context->buildViolation('NoMorePlacesErrorMsg')
-						->addViolation();
-					$ok = false;
-				}
+		}
+		if(!$this->getRegistrationSettings()->getAllowLimitExceed()) {
+			if($this->peopleNum + $this->getRegistrationSettings()->getParticipantNum() > $this->getRegistrationSettings()->getParticipantLimit()) {
+				$context->buildViolation('NoMorePlacesErrorMsg')
+					->addViolation();
+				$ok = false;
 			}
 		}
 		return $ok;
