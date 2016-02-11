@@ -404,7 +404,6 @@ class EdkParticipant implements IdentifiableInterface, InsertableEntityInterface
 		
 		$mpps = $this->getRegistrationSettings()->getMaxPeoplePerRecord();
 		if($mpps != 1) {
-			var_dump($this->peopleNum);
 			if($this->peopleNum > $mpps || $this->peopleNum < 1) {
 				$context->buildViolation('RegisteredPeopleNumInvalidErrorMsg')
 					->setParameter('%max%', $mpps)
