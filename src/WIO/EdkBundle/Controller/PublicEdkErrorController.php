@@ -29,7 +29,7 @@ use Symfony\Component\HttpFoundation\Request;
 class PublicEdkErrorController extends PublicPageController
 {
 	/**
-	 * @Route("/blad", name="public_edk_error")
+	 * @Route("/blad", name="public_edk_error", defaults={"_localeFromQuery" = true})
 	 */
 	public function completedAction(Request $request)
 	{

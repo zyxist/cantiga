@@ -34,7 +34,7 @@ class PublicMessageFormController extends PublicEdkController
 	const PUBLISHED_REPO_NAME = 'wio.edk.repo.published_data';
 	
 	/**
-	 * @Route("/formularz", name="public_edk_write_msg")
+	 * @Route("/formularz", name="public_edk_write_msg", defaults={"_localeFromQuery" = true})
 	 */
 	public function indexAction(Request $request)
 	{
@@ -75,7 +75,7 @@ class PublicMessageFormController extends PublicEdkController
 	}
 	
 	/**
-	 * @Route("/potwierdzenie", name="public_edk_msg_sent")
+	 * @Route("/potwierdzenie", name="public_edk_msg_sent", defaults={"_localeFromQuery" = true})
 	 */
 	public function completedAction(Request $request)
 	{

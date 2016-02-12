@@ -38,7 +38,7 @@ class PublicRegistrationFormController extends PublicEdkController
 	const REPOSITORY_NAME = 'wio.edk.repo.participant';
 	
 	/**
-	 * @Route("/formularz", name="public_edk_register")
+	 * @Route("/formularz", name="public_edk_register", defaults={"_localeFromQuery" = true})
 	 */
 	public function indexAction($slug, Request $request)
 	{
@@ -62,7 +62,7 @@ class PublicRegistrationFormController extends PublicEdkController
 	}
 	
 	/**
-	 * @Route("/sprawdz", name="public_edk_check")
+	 * @Route("/sprawdz", name="public_edk_check", defaults={"_localeFromQuery" = true})
 	 */
 	public function checkAction(Request $request)
 	{
@@ -85,7 +85,7 @@ class PublicRegistrationFormController extends PublicEdkController
 	}
 	
 	/**
-	 * @Route("/potwierdzenie/{accessKey}", name="public_edk_registration_completed")
+	 * @Route("/potwierdzenie/{accessKey}", name="public_edk_registration_completed", defaults={"_localeFromQuery" = true})
 	 */
 	public function completedAction($accessKey, Request $request)
 	{
@@ -96,7 +96,7 @@ class PublicRegistrationFormController extends PublicEdkController
 	}
 	
 	/**
-	 * @Route("/api/data", name="public_edk_registration_data")
+	 * @Route("/api/data", name="public_edk_registration_data", defaults={"_localeFromQuery" = true})
 	 */
 	public function registrationsAction(Request $request)
 	{
