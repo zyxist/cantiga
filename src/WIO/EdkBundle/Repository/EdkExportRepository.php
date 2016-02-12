@@ -73,8 +73,9 @@ class EdkExportRepository
 	public function exportRoutes($lastExport, $areaIds, $updatedAreaIds)
 	{
 		$block = new ExportBlock();
+		$participantBlock = new ExportBlock();
 		if (sizeof ($areaIds) > 0) {
-			$stmt = $this->conn->query('SELECT r.*, a.territoryId, x.registrationType, x.startTime, x.endTime, x.externalRegistrationUrl FROM `'.EdkTables::ROUTE_TBL.'` r '
+			$stmt = $this->conn->query('SELECT r.*, a.territoryId, x.registrationType, x.startTime, x.endTime, x.externalRegistrationUrl, x.participantNum FROM `'.EdkTables::ROUTE_TBL.'` r '
 				. 'INNER JOIN `'.CoreTables::AREA_TBL.'` a ON a.`id` = r.`areaId` '
 				. 'LEFT JOIN `'.EdkTables::REGISTRATION_SETTINGS_TBL.'` x ON x.`routeId` = r.`id` '
 				. 'WHERE r.`areaId` IN ('.implode(',', $areaIds).') AND r.`approved` = 1');
@@ -84,10 +85,11 @@ class EdkExportRepository
 					$block->addUpdatedId($row['id']);
 					$block->addUpdate($row);
 				}
+				$participantBlock->addUpdate(['id' => $row['id'], 'n' => $row['participantNum']]);
 			}
 			$stmt->closeCursor();
 		}
-		return $block;
+		return array($block, $participantBlock);
 	}
 	
 	public function exportRouteDescriptions($lastExport, $routeIds, $updatedRouteIds)

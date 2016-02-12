@@ -49,7 +49,7 @@ class ExportListener
 		$areaBlock = $event->getBlock('area');
 		
 		$territoryBlock = $this->repo->exportTerritories($event->getProjectId());
-		$routeBlock = $this->repo->exportRoutes($event->getLastExportAt(), $areaBlock->getIds(), $areaBlock->getUpdatedIds());
+		list($routeBlock, $participantBlock) = $this->repo->exportRoutes($event->getLastExportAt(), $areaBlock->getIds(), $areaBlock->getUpdatedIds());
 		$areaDescBlock = $this->repo->exportAreaDescriptions($event->getLastExportAt(), $areaBlock->getIds(), $areaBlock->getUpdatedIds());
 		$routeDescBlock = $this->repo->exportRouteDescriptions($event->getLastExportAt(), $routeBlock->getIds(), $routeBlock->getUpdatedIds());
 		
@@ -57,5 +57,6 @@ class ExportListener
 		$event->addBlock('route', $routeBlock);
 		$event->addBlock('areaDesc', $areaDescBlock);
 		$event->addBlock('routeDesc', $routeDescBlock);
+		$event->addBlock('participants', $participantBlock);
 	}
 }
