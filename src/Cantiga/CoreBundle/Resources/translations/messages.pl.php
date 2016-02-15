@@ -186,6 +186,9 @@ return array(
 	'The area profile \'0\' has been updated.' => 'Profil rejonu "0" został zmieniony.',
 	'AreaProfileSaved' => 'Profil Twojego rejonu został zapisany.',
 	
+	// Project buttons
+	'Invalid button implementation' => 'Nieprawidłowa implementacja przycisku.',
+	
 	// Project settings
 	'The project settings have been saved.' => 'Ustawienia projektu zostały zapisane.',
 	

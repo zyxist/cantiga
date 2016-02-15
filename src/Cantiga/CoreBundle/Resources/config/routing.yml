@@ -90,6 +90,9 @@ _group_area_controller:
 _project_dashboard_controller:
     resource: "@CantigaCoreBundle/Controller/ProjectDashboardController.php"
     type:     annotation
+_project_button_controller:
+    resource: "@CantigaCoreBundle/Controller/ProjectButtonController.php"
+    type:     annotation
 _project_memberlist_controller:
     resource: "@CantigaCoreBundle/Controller/ProjectMemberListController.php"
     type:     annotation

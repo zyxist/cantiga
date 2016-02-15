@@ -30,6 +30,8 @@ class CoreExtensions
 	const AREA_FORM = 'core.form.area';
 	const AREA_STATS = 'core.stats.area';
 	
+	const MAGIC_BUTTON = 'core.magic-button';
+	
 	const AREA_INFORMATION = 'core.page.area.info';
 	const PROJECT_GROUP_INFORMATION = 'core.page.group.info';
 	

@@ -1,0 +1,19 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ 'Magic buttons' | trans([], 'pages') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ 'They give you the fast access to the most commonly used data and actions' | trans([], 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+	<div class="box">
+		<div class="box-body">
+			{% for svc, button in buttons %}
+			<a href="{{ spath('project_buttons_activate', {'button': svc })}}" class="btn btn-lg btn-primary btn-flat" style="width: 350px">{{ button | trans }}</a>
+			{% endfor %}
+		</div>
+	</div>
+{% endblock %}

@@ -57,6 +57,7 @@ return array(
 	'Area members' => 'Członkowie rejonu',
 	'Area statistics' => 'Statystyki rejonów',
 	'Territories' => 'Terytoria',
+	'Magic buttons' => 'Magiczne przyciski',
 	
 	// Admin workspace menu items
 	'Administration' => 'Administracja',
@@ -112,6 +113,7 @@ return array(
 	'Manage the areas in this project' => 'Zarządzaj rejonami w tym projekcie',
 	'Analyze the data through charts' => 'Analizuj informacje w postaci wykresów',
 	'Manage the territories the areas can be assigned to' => 'Zarządzaj terytoriami, do których mogą być przypisane rejony',
+	'They give you the fast access to the most commonly used data and actions' => 'Dają Ci szybki dostęp do najczęściej potrzebnych funkcji i danych',
 	
 	// Supplementary texts for admin
 	'Control panel' => 'Panel sterowania',
