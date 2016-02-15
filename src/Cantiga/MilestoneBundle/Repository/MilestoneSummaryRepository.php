@@ -21,9 +21,11 @@ namespace Cantiga\MilestoneBundle\Repository;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Group;
 use Cantiga\CoreBundle\Entity\Project;
+use Cantiga\Metamodel\Capabilities\MembershipEntityInterface;
 use Cantiga\Metamodel\Transaction;
 use Cantiga\MilestoneBundle\MilestoneTables;
 use Doctrine\DBAL\Connection;
+use PDO;
 
 /**
  * @author Tomasz Jędrzejewski
@@ -85,6 +87,52 @@ class MilestoneSummaryRepository
 			$this->processResult($totalMilestones, $result);
 		}
 		return $results;
+	}
+	
+	/**
+	 * Shows all the areas and the completeness of all the milestones in a simple grid.
+	 * 
+	 * @param MembershipEntityInterface $parent
+	 */
+	public function findTotalAreaCompleteness(MembershipEntityInterface $parent)
+	{
+		$whereExtras = '';
+		if ($parent instanceof Project) {
+			$whereExtras = ' AND a.`projectId` = :itemId ';
+		} else {
+			$whereExtras = ' AND a.`groupId` = :itemId ';
+		}
+		
+		$stmt = $this->conn->prepare('SELECT a.`id`, a.`entityId`, a.`name`, t.`name` AS `statusName`, t.`label` AS `statusLabel`, m.`id` AS `milestoneId`, m.`name` AS `milestoneName`, s.`progress` '
+			. 'FROM `'.CoreTables::AREA_TBL.'` a '
+			. 'INNER JOIN `'.CoreTables::AREA_STATUS_TBL.'` t ON t.`id` = a.`statusId` '
+			. 'INNER JOIN `'.MilestoneTables::MILESTONE_STATUS_TBL.'` s ON s.`entityId` = a.`entityId` '
+			. 'INNER JOIN `'.MilestoneTables::MILESTONE_TBL.'` m ON m.`id` = s.`milestoneId` '
+			. 'WHERE m.`entityType` = \'Area\' '.$whereExtras
+			. 'ORDER BY a.`name`, m.`id` ');
+		$stmt->bindValue(':itemId', $parent->getId());
+		$stmt->execute();
+		
+		$milestones = array();
+		$results = array();
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			if (!isset($results[$row['id']])) {
+				$results[$row['id']] = [
+					'id' => $row['id'],
+					'entityId' => $row['entityId'],
+					'name' => $row['name'],
+					'status' => $row['statusName'],
+					'label' => $row['statusLabel'],
+					'milestones' => [0 => $row['progress']],
+				];
+			} else {
+				$results[$row['id']]['milestones'][] = $row['progress'];
+			}
+			$milestones[$row['milestoneId']] = $row['milestoneName'];
+		}
+		$stmt->closeCursor();
+		
+		return [$milestones, $results];
 	}
 	
 	private function processResult($totalMilestones, array &$result)

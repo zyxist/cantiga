@@ -28,4 +28,8 @@ return [
 	'Previous status' => 'Poprzedni status',
 	'Required milestones' => 'Wymagane kamienie milowe',
 	'Activation order' => 'Kolejność aktywacji',
+	
+	'Overall summary of completed milestones in areas' => 'Zbiorcze zestawienie ukończonych kamieni w rejonach',
+	'Ranking' => 'Ranking',
+	'Overall summary' => 'Zbiorcze zestawienie',
 ];

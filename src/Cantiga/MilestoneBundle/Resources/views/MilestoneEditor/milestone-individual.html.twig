@@ -13,10 +13,9 @@
 		<div class="col-lg-12">
 			<div class="box">
 				<div class="box-header">
-					<h3>{{ 'Ranking' | trans([], 'milestone') }}</h3>
+					<h3>{{ 'Overall summary of completed milestones in areas' | trans([], 'milestone') }}</h3>
 				</div>
 				<div class="box-body">
-					
 					<div class="btn-group" role="group" aria-label="...">
 						{% if showTypeSelector %}
 						{% if type == 0 %}
@@ -43,15 +42,15 @@
 						{% endif %}
 					</div>
 					<hr>
-								
 					<table class="table table-hover">
 						<thead>
 							<tr>
 								<th width="40">#</th>
 								<th>{{ 'Place' | trans([], 'milestone') }}</th>
-								<th width="200">{{ 'Progress' | trans([], 'milestone') }}</th>
-								<th width="40"></th>
-								<th width="200" class="text-center">{{ 'Completed milestones' | trans([], 'milestone') }}</th>
+								<th width="120">{{ 'Status' | trans }}</th>
+								{% for milestone in milestones %}
+								<th width="150">{{ milestone | truncate(20, true) }}</th>
+								{% endfor %}
 							</tr>
 						</thead>
 						<tbody>
@@ -59,9 +58,16 @@
 							<tr>
 								<td><a href="{{ spath(editPage, {'i': item.entityId })}}"><span class="fa fa-pencil"></span></a></td>
 								<td><a href="{{ spath(areaInfoPage, { 'id': item.id }) }}">{{ item.name }}</a></td>
-								<td><div class="progress progress-xs"><div class="progress-bar progress-bar-{{ item.progressColor }}" style="width: {{item.progress}}%"></div></div></td>
-								<td><span class="badge bg-{{item.badgeColor}}">{{item.progress}}%</span></td>
-								<td class="text-center">{{item.completedNum}}</td>
+								<td class="text-center"><span class="label label-{{item.label}}">{{item.status}}</span></td>
+								{% for progress in item.milestones %}
+								{% if progress == 100 %}
+								<td class="text-center success">{{ progress }}%</td>	
+								{% elseif progress > 0 %}
+								<td class="text-center warning">{{ progress }}%</td>
+								{% else %}
+								<td class="text-center danger">{{ progress }}%</td>
+								{% endif %}
+								{% endfor %}
 							</tr>
 							{% endfor %}
 						</tbody>
@@ -71,3 +77,4 @@
 		</div>
 	</div>
 {% endblock page_content %}
+

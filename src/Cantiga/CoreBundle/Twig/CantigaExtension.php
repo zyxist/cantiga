@@ -33,7 +33,9 @@ use ReflectionClass;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\Exception\LogicException;
+use Twig_Environment;
 use Twig_Extension;
+use Twig_SimpleFilter;
 use Twig_SimpleFunction;
 
 /**
@@ -118,6 +120,13 @@ class CantigaExtension extends Twig_Extension
 				$module = Modules::get($id);
 				return $module['name'];
 			}),
+		);
+	}
+	
+	public function getFilters()
+	{
+		return array(
+			new Twig_SimpleFilter('truncate', [$this, 'truncate'], array('needs_environment' => true)),
 		);
 	}
 
@@ -309,5 +318,30 @@ class CantigaExtension extends Twig_Extension
 			return '/ph/default.gif';
 		}
 	}
-
+	
+	/**
+	 * Adapted from Twig Extensions project, author: Henrik Bjornskov, (c) 2009 Fabien Potencier
+	 * 
+	 * @see <a href="https://github.com/twigphp/Twig-extensions/blob/master/lib/Twig/Extensions/Extension/Text.php">https://github.com/twigphp/Twig-extensions/blob/master/lib/Twig/Extensions/Extension/Text.php</a>
+	 * @param \Cantiga\CoreBundle\Twig\Twig_Environment $env
+	 * @param string $value
+	 * @param int $length
+	 * @param boolean $preserve
+	 * @param string $separator
+	 * @return string
+	 */
+	public function truncate(Twig_Environment $env, $value, $length = 30, $preserve = false, $separator = '...')
+	{
+		if (mb_strlen($value, $env->getCharset()) > $length) {
+			if ($preserve) {
+				// If breakpoint is on the last word, return the value without separator.
+				if (false === ($breakpoint = mb_strpos($value, ' ', $length, $env->getCharset()))) {
+					return $value;
+				}
+				$length = $breakpoint;
+			}
+			return rtrim(mb_substr($value, 0, $length, $env->getCharset())) . $separator;
+		}
+		return $value;
+	}
 }

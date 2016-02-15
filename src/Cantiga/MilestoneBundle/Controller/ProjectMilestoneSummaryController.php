@@ -33,6 +33,7 @@ class ProjectMilestoneSummaryController extends ProjectPageController
 {
 	const REPOSITORY_NAME = 'cantiga.milestone.repo.summary';
 	const MILESTONE_TEMPLATE = 'CantigaMilestoneBundle:MilestoneEditor:milestone-summary.html.twig';
+	const MILESTONE_INDIVIDUAL_TEMPLATE = 'CantigaMilestoneBundle:MilestoneEditor:milestone-individual.html.twig';
 	/**
 	 * @var MilestoneSummaryRepository
 	 */
@@ -60,9 +61,31 @@ class ProjectMilestoneSummaryController extends ProjectPageController
 			'pageTitle' => 'Milestones',
 			'pageSubtitle' => 'View the progress of areas and groups',
 			'viewPage' => 'project_milestone_summary',
-			'showTypeSelector' => true,
+			'individualPage' => 'project_milestone_summary_individual_areas',
 			'editPage' => 'project_milestone_editor',
+			'areaInfoPage' => 'project_area_info',
+			'showTypeSelector' => true,			
 			'type' => $type,
+			'items' => $items,
+		));
+	}
+	
+	/**
+	 * @Route("/individual/areas", name="project_milestone_summary_individual_areas")
+	 */
+	public function individualListAction(Request $request)
+	{
+		list($milestones, $items) = $this->repository->findTotalAreaCompleteness($this->getMembership()->getItem());
+		return $this->render(self::MILESTONE_INDIVIDUAL_TEMPLATE, array(
+			'pageTitle' => 'Milestones',
+			'pageSubtitle' => 'See which milestones are completed in each area',
+			'viewPage' => 'project_milestone_summary',
+			'individualPage' => 'project_milestone_summary_individual_areas',
+			'editPage' => 'project_milestone_editor',
+			'areaInfoPage' => 'project_area_info',
+			'showTypeSelector' => true,
+			'type' => 2,
+			'milestones' => $milestones,
 			'items' => $items,
 		));
 	}
