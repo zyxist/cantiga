@@ -85,4 +85,6 @@ return array(
 	'The participant \'0\' has been updated.' => 'Dane uczestnika "0" zostały zmienione.',
 	'The participant \'0\' has been removed.' => 'Uczestnik "0" został usunięty.',
 	'Do you really want to remove the participant \'0\'?' => 'Czy naprawdę chcesz usunąć uczestnika "0"? Ślad po usuniętym zgłoszeniu zostanie zachowany, wraz z datą usunięcia oraz informacją o usuwającym.',
+
+	'Get contacts to area leaders' => 'Pobierz kontakty do liderów rejonów',
 );

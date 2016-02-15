@@ -82,6 +82,11 @@ services:
             - { name: cantiga.extension, point: core.dashboard.project.top, module: edk }
             - { name: cantiga.extension, point: core.dashboard.group.top, module: edk }
             - { name: cantiga.extension, point: core.dashboard.area.top, module: edk }
+    wio.edk.button.area_contact_grabber:
+         class: WIO\EdkBundle\Extension\AreaContactGrabberButton
+         arguments: ["@database_connection"]
+         tags:
+            - { name: cantiga.extension, point: core.magic-button, module: edk, description: "Get contacts to area leaders" }
     wio.edk.stats.route_length:
         class: WIO\EdkBundle\Statistics\RouteLengthHistogram
         arguments: ["@database_connection"]
