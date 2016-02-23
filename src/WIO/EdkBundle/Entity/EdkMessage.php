@@ -66,11 +66,11 @@ class EdkMessage implements IdentifiableInterface, InsertableEntityInterface
 		} elseif ($root instanceof Group) {
 			$data = $conn->fetchAssoc('SELECT m.* FROM `'.EdkTables::MESSAGE_TBL.'` m '
 				. 'INNER JOIN `'.CoreTables::AREA_TBL.'` a ON a.`id` = m.`areaId` '
-				. 'WHERE a.`groupId` = :rootId', [':id' => $root->getId()]);
+				. 'WHERE m.`id` = :id AND a.`groupId` = :rootId', [':id' => $id, ':rootId' => $root->getId()]);
 		} elseif ($root instanceof Project) {
 			$data = $conn->fetchAssoc('SELECT m.* FROM `'.EdkTables::MESSAGE_TBL.'` m '
 				. 'INNER JOIN `'.CoreTables::AREA_TBL.'` a ON a.`id` = m.`areaId` '
-				. 'WHERE a.`projectId` = :rootId', [':id' => $root->getId()]);
+				. 'WHERE m.`id` = :id AND a.`projectId` = :rootId', [':id' => $id, ':rootId' => $root->getId()]);
 		}
 		if (false === $data) {
 			return false;
