@@ -62,15 +62,15 @@ class EdkMessage implements IdentifiableInterface, InsertableEntityInterface
 	public static function fetchByRoot(Connection $conn, $id, MembershipEntityInterface $root)
 	{
 		if ($root instanceof Area) {
-			$data = $conn->fetchAssoc('SELECT * FROM `'.EdkTables::MESSAGE_TBL.'` WHERE `areaId` = :id', [':id' => $root->getId()]);
+			$data = $conn->fetchAssoc('SELECT * FROM `'.EdkTables::MESSAGE_TBL.'` WHERE `id` = :id AND `areaId` = :rootId', [':id' => $id, ':rootId' => $root->getId()]);
 		} elseif ($root instanceof Group) {
 			$data = $conn->fetchAssoc('SELECT m.* FROM `'.EdkTables::MESSAGE_TBL.'` m '
 				. 'INNER JOIN `'.CoreTables::AREA_TBL.'` a ON a.`id` = m.`areaId` '
-				. 'WHERE a.`groupId` = :id', [':id' => $root->getId()]);
+				. 'WHERE a.`groupId` = :rootId', [':id' => $root->getId()]);
 		} elseif ($root instanceof Project) {
 			$data = $conn->fetchAssoc('SELECT m.* FROM `'.EdkTables::MESSAGE_TBL.'` m '
 				. 'INNER JOIN `'.CoreTables::AREA_TBL.'` a ON a.`id` = m.`areaId` '
-				. 'WHERE a.`projectId` = :id', [':id' => $root->getId()]);
+				. 'WHERE a.`projectId` = :rootId', [':id' => $root->getId()]);
 		}
 		if (false === $data) {
 			return false;
