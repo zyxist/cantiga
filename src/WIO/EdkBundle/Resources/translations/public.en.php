@@ -36,6 +36,7 @@ return [
 	'NumberRegisteredPeopleField' => 'Number of registered people',
 	'NumberRegisteredPeopleHintText' => 'From 1 to the maximum number of people per record specified for this route.',
 	
-	
 	'BeginningInformationNotPublishedYet' => 'This area has published no information yet about the beginning of Extreme Way of the Cross.',
+	'GuidesAreVerifiedText' => 'The guides are being verified. We recommend to download them not earlier than three days before Extreme Way of the Cross.',
+	'AreaNotPublishedFilesText' => 'This area has not published any map and guide for this route yet. Please stay tuned!',
 ];

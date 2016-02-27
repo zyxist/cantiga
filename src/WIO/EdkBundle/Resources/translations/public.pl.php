@@ -112,4 +112,12 @@ return [
 	'BeginningInformationNotPublishedYet' => 'Ten rejon nie opublikował jeszcze żadnych informacji na temat rozpoczęcia EDK.',
 	'Add participant' => 'Dodaj uczestnika',
 	'Change data' => 'Zmień dane',
+	
+	'Files to download:' => 'Pliki do pobrania:',
+	'Route guide PDF' => 'Opis trasy PDF',
+	'Map PDF' => 'Mapa PDF',
+	'KML Track' => 'Ślad KML',
+	
+	'GuidesAreVerifiedText' => 'Opisy są w trakcie weryfikacji i doprecyzowywania, najlepiej pobrać je nie wcześniej niż trzy dni przed wyruszeniem na EDK.',
+	'AreaNotPublishedFilesText' => 'Ten rejon nie opublikował jeszcze mapy i opisu dla tej trasy. Prosimy jeszcze o chwilę cierpliwości!',
 ];

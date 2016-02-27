@@ -165,12 +165,14 @@ class PublicRegistrationFormController extends PublicEdkController
 		try {
 			$repository = $this->get(self::REPOSITORY_NAME);
 			list($item, $notes) = $repository->getItemByKey($key, $this->getProjectSettings()->get(EdkSettings::PUBLISHED_AREA_STATUS)->getValue());
-			return $this->render('WioEdkBundle:Public:check-result.html.twig', [
+			$response = $this->render('WioEdkBundle:Public:check-result.html.twig', [
 				'item' => $item,
 				'beginningNote' => $notes->getEditableNote(1),
 				'slug' => $this->project->getSlug(),
-				'currentPage' => self::CURRENT_PAGE,
+				'showDescAndMap' => $item->getRegistrationSettings()->getRoute()->areExtraFilesPublished(),
+				'currentPage' => 'public_edk_check',
 			]);
+			return $response;
 		} catch(ItemNotFoundException $exception) {
 			return $this->showErrorMessage('ParticipantNotFoundErrMsg');
 		}
@@ -184,7 +186,7 @@ class PublicRegistrationFormController extends PublicEdkController
 			return $this->render('WioEdkBundle:Public:public-message.html.twig', [
 				'message' => $this->trans('RequestRemovedMsg', [], 'public'),
 				'slug' => $this->project->getSlug(),
-				'currentPage' => self::CURRENT_PAGE,
+				'currentPage' => 'public_edk_check',
 			]);
 		} catch(ItemNotFoundException $exception) {
 			return $this->showErrorMessage('ParticipantNotFoundErrMsg');

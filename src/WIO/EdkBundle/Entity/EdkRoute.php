@@ -486,6 +486,11 @@ class EdkRoute implements IdentifiableInterface, InsertableEntityInterface, Edit
 		return $result;
 	}
 	
+	public function areExtraFilesPublished()
+	{
+		return !empty($this->descriptionFile) && !empty($this->mapFile);
+	}
+	
 	/**
 	 * @param Connection $conn Database connection
 	 * @param int $type Note type (numbers from 1 to 4)

@@ -21,7 +21,7 @@
 		</tr>
 		<tr>
 			<td width="30%">{{ 'Route' | trans([], 'public') }}</td>
-			<td width="70%">{{ item.registrationSettings.route.name }}</td>
+			<td width="70%"><a href="http://www.edk.org.pl/trasa-edk/{{ item.registrationSettings.route.id }}.html">{{ item.registrationSettings.route.name }}</a></td>
 		</tr>
 		<tr>
 			<td width="30%">{{ 'Area' | trans([], 'public') }}</td>
@@ -44,5 +44,22 @@
 	{% else %}
 	<p class="text-muted">{{ 'BeginningInformationNotPublishedYet' | trans([], 'public') }}</p>
 	{% endif %}
+	
+	<div class="col-md-6 col-md-offset-3 main">
+		<h3>{{ 'Files to download:' | trans([], 'public') }}</h3>
+		<ul class="route-map list-inline text-center list-unstyled">
+			{% if showDescAndMap %}
+			<li class="desc-file"><a href="{{ path('public_edk_download_description', { 'slug': item.registrationSettings.route.publicAccessSlug} ) }}">{{ 'Route guide PDF' | trans([], 'public') }}</a></li>
+			<li class="map-file"><a href="{{ path('public_edk_download_map', { 'slug': item.registrationSettings.route.publicAccessSlug} ) }}">{{ 'Map PDF' | trans([], 'public') }}</a></li>
+			{% endif %}
+			<li class="gps-file"><a href="{{ path('public_edk_download_gps', { 'slug': item.registrationSettings.route.publicAccessSlug} ) }}">{{ 'KML Track' | trans([], 'public') }}</a></li>
+		</ul>
+		
+		{% if not showDescAndMap %}
+			<p class="center">{{'AreaNotPublishedFilesText' | trans([], 'public') }}</p>
+		{% else %}
+			<p class="center">{{'GuidesAreVerifiedText' | trans([], 'public') }}</p>
+		{% endif %}
+	</div>
 </div>
 {% endblock %}
