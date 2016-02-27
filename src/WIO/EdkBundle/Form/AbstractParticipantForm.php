@@ -80,7 +80,7 @@ abstract class AbstractParticipantForm extends AbstractType
 			])
 			->add('whereLearntOther', new TextType, array('label' => 'WhereHaveYouLearntAboutContField', 'required' => false))
 			->add('whyParticipate', new TextareaType, array('label' => 'WhyParticipateField', 'required' => false))
-			->add('save', new SubmitType, array('label' => 'Register'));
+			->add('save', new SubmitType, array('label' => $this->getRegisterButtonText()));
 		$builder->add('customAnswer', new TextareaType, array(
 			'label' => $this->getCustomQuestion(), 'required' => $this->isCustomQuestionRequired()
 		));
@@ -112,5 +112,10 @@ abstract class AbstractParticipantForm extends AbstractType
 			return (!empty($value));
 		}
 		return false;
+	}
+	
+	public function getRegisterButtonText()
+	{
+		return 'Register';
 	}
 }

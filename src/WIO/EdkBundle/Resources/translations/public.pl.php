@@ -110,4 +110,6 @@ return [
 	'ParticipantNotFoundErrMsg' => 'Przepraszamy, ale podane zgłoszenie nie zostało znalezione.',
 	
 	'BeginningInformationNotPublishedYet' => 'Ten rejon nie opublikował jeszcze żadnych informacji na temat rozpoczęcia EDK.',
+	'Add participant' => 'Dodaj uczestnika',
+	'Change data' => 'Zmień dane',
 ];
