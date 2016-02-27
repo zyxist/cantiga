@@ -25,6 +25,7 @@ use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\Metamodel\Capabilities\EditableRepositoryInterface;
 use Cantiga\Metamodel\Capabilities\MembershipEntityInterface;
 use Cantiga\Metamodel\DataTable;
+use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Form\EntityTransformerInterface;
 use Cantiga\Metamodel\QueryBuilder;
 use Cantiga\Metamodel\QueryClause;
@@ -32,7 +33,6 @@ use Cantiga\Metamodel\TimeFormatterInterface;
 use Cantiga\Metamodel\Transaction;
 use Doctrine\DBAL\Connection;
 use Exception;
-use PDO;
 use Symfony\Component\Translation\TranslatorInterface;
 use WIO\EdkBundle\EdkTables;
 use WIO\EdkBundle\Entity\EdkRegistrationSettings;
@@ -163,6 +163,11 @@ class EdkRegistrationSettingsRepository implements EditableRepositoryInterface, 
 		$this->transaction->requestTransaction();
 		try {
 			$route = EdkRoute::fetchByRoot($this->conn, $id, $this->root);
+			
+			if (empty($route)) {
+				throw new ItemNotFoundException('The specified route has not been found.');
+			}
+			
 			return EdkRegistrationSettings::fetchByRoute($this->conn, $route);
 		} catch(Exception $ex) {
 			$this->transaction->requestRollback();
@@ -206,30 +211,20 @@ class EdkRegistrationSettingsRepository implements EditableRepositoryInterface, 
 			return 'WHERE a.`projectId` = :itemId ';
 		}
 	}
-	
-	public function getFormChoices()
-	{
-		$this->transaction->requestTransaction();
-		$stmt = $this->conn->prepare('SELECT r.`id`, r.`name` FROM `'.EdkTables::REGISTRATION_SETTINGS_TBL.'` s '
-			. 'INNER JOIN `'.EdkTables::ROUTE_TBL.'` r ON r.`id` = s.`routeId` '
-			. 'WHERE r.`areaId` = :areaId ORDER BY r.`name`');
-		$stmt->bindValue(':areaId', $this->area->getId());
-		$stmt->execute();
-		$result = array();
-		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$result[$row['id']] = $row['name'];
-		}
-		$stmt->closeCursor();
-		return $result;
-	}
 
 	public function transformToEntity($key)
 	{
-		return $this->getItem($key);
+		if (null !== $key) {
+			return $this->getItem($key);
+		}
+		return null;
 	}
 
 	public function transformToKey($entity)
 	{
-		return $entity->getId();
+		if (!empty($entity)) {
+			return $entity->getId();
+		}
+		return null;
 	}
 }

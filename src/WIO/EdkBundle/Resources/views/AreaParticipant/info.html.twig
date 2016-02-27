@@ -59,7 +59,7 @@
 							<tr>
 								<td width="30%">{{ 'Where learnt about Extreme Way' | trans([], 'edk') }}</td>
 								{% if item.whereLearnt == 100 %}
-								<td>{{ 'Other' | trans([], 'general') }}: <em>{{ item.whereLearntOther }}</em></td>
+								<td>{{ 'OtherWLChoice' | trans([], 'edk') }}: <em>{{ item.whereLearntOther }}</em></td>
 								{% else %}
 								<td>{{ item.getWhereLearntEntity().getName() | trans([], 'edk') }}</td>
 								{% endif %}
@@ -107,7 +107,7 @@
 							<td>{{ item.registrationSettings.route.routeFrom }}</td>
 						</tr>
 						<tr>
-							<td width="30%">{{ 'End' | trans([], 'edk') }}</td>
+							<td width="30%">{{ 'Ending' | trans([], 'edk') }}</td>
 							<td>{{ item.registrationSettings.route.routeTo }}</td>
 						</tr>
 						<tr>
@@ -124,6 +124,10 @@
 						</tr>
 					</tbody>
 				</table>
+				<p>
+					<a href="{{ spath('area_route_info', {'id': item.registrationSettings.route.id} ) }}" class="btn btn-primary btn-sm" role="button">{{ 'Route information' | trans({}, 'edk') }}</a>
+					<a href="{{ spath('area_reg_settings_info', {'id': item.registrationSettings.route.id} ) }}" class="btn btn-primary btn-sm" role="button">{{ 'Registration settings' | trans({}, 'edk') }}</a>
+				</p>
 			</div>
 		</div>
 	</div>

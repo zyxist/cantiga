@@ -33,6 +33,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use WIO\EdkBundle\EdkEvents;
 use WIO\EdkBundle\EdkTables;
+use WIO\EdkBundle\Entity\EdkAreaNotes;
 use WIO\EdkBundle\Entity\EdkParticipant;
 use WIO\EdkBundle\Entity\EdkRegistrationSettings;
 use WIO\EdkBundle\Entity\WhereLearntAbout;
@@ -189,6 +190,16 @@ class EdkParticipantRepository implements InsertableRepositoryInterface
 		}
 	}
 	
+	/**
+	 * Fetches a pair of two objects: participant and area notes, where the participant is registered for the route.
+	 * The access key is used for finding the record.
+	 * 
+	 * @param string $accessKey Access key generated during registration
+	 * @param int $expectedAreaStatus Status of the published areas.
+	 * @return array
+	 * @throws \WIO\EdkBundle\Repository\Exception
+	 * @throws ItemNotFoundException
+	 */
 	public function getItemByKey($accessKey, $expectedAreaStatus)
 	{
 		$this->transaction->requestTransaction();
@@ -197,7 +208,8 @@ class EdkParticipantRepository implements InsertableRepositoryInterface
 			if (false === $item) {
 				throw new ItemNotFoundException('Participant not found.');
 			}
-			return $item;
+			$notes = EdkAreaNotes::fetchNotes($this->conn, $item->getRegistrationSettings()->getRoute()->getArea());
+			return [$item, $notes];
 		} catch (Exception $ex) {
 			$this->transaction->requestRollback();
 			throw $ex;

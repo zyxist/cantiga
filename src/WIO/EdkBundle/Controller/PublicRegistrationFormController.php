@@ -166,9 +166,10 @@ class PublicRegistrationFormController extends PublicEdkController
 	{
 		try {
 			$repository = $this->get(self::REPOSITORY_NAME);
-			$item = $repository->getItemByKey($key, $this->getProjectSettings()->get(EdkSettings::PUBLISHED_AREA_STATUS)->getValue());
+			list($item, $notes) = $repository->getItemByKey($key, $this->getProjectSettings()->get(EdkSettings::PUBLISHED_AREA_STATUS)->getValue());
 			return $this->render('WioEdkBundle:Public:check-result.html.twig', [
 				'item' => $item,
+				'beginningNote' => $notes->getEditableNote(1),
 				'slug' => $this->project->getSlug(),
 			]);
 		} catch(ItemNotFoundException $exception) {

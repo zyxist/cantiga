@@ -16,6 +16,10 @@
 			<td width="70%">{{ item.lastName }}</td>
 		</tr>
 		<tr>
+			<td width="30%">{{ 'E-mail' | trans([], 'public') }}</td>
+			<td width="70%"><a href="mailto:{{ item.email }}">{{ item.email }}</a></td>
+		</tr>
+		<tr>
 			<td width="30%">{{ 'Route' | trans([], 'public') }}</td>
 			<td width="70%">{{ item.registrationSettings.route.name }}</td>
 		</tr>
@@ -25,8 +29,20 @@
 		</tr>
 		<tr>
 			<td width="30%">{{ 'Registration date' | trans([], 'public') }}</td>
-			<td width="70%">{{ format_time(TimeFormatter.FORMAT_LONG, item.createdAt) }} ( {{ ago(item.createdAt) }})</td>
+			<td width="70%">{{ format_time(TimeFormatter.FORMAT_LONG, item.createdAt) }} ({{ ago(item.createdAt) }})</td>
+		</tr>
+		<tr>
+			<td width="30%">{{ 'Extreme Way date' | trans([], 'public') }}</td>
+			<td width="70%">{{ format_date(item.registrationSettings.route.area.get('ewcDate')) }}</td>
 		</tr>
 	</table>
+		
+	<h3>{{ 'EwcBeginningNote' | trans([], 'edk') }}</h3>
+	
+	{% if beginningNote %}
+	{{ beginningNote | raw }}
+	{% else %}
+	<p class="text-muted">{{ 'BeginningInformationNotPublishedYet' | trans([], 'public') }}</p>
+	{% endif %}
 </div>
 {% endblock %}

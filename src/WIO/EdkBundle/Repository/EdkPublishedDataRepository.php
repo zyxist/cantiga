@@ -20,7 +20,9 @@ namespace WIO\EdkBundle\Repository;
 
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Area;
+use Cantiga\CoreBundle\Entity\Group;
 use Cantiga\CoreBundle\Entity\Project;
+use Cantiga\Metamodel\Capabilities\MembershipEntityInterface;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Form\EntityTransformerInterface;
 use Cantiga\Metamodel\Transaction;
@@ -106,17 +108,25 @@ class EdkPublishedDataRepository implements EntityTransformerInterface
 		return $entity->getId();
 	}
 	
-	public function getOpenRegistrations(Project $project, $acceptedStatus)
+	public function getOpenRegistrations(MembershipEntityInterface $root, $acceptedStatus)
 	{
-		$stmt = $this->conn->prepare('SELECT r.`id` AS `routeId`, a.`id` AS `areaId`, t.`id` AS `territoryId`, r.`name` AS `routeName`, a.`name` AS `areaName`, t.`name` AS `territoryName`, s.`startTime`, s.`endTime`, s.`participantLimit`, s.`participantNum`, s.`allowLimitExceed`, s.`customQuestion`, r.`routeFrom`, r.`routeTo`, r.`routeLength`, r.`routeAscent`, r.`routeType` '
+		if ($root instanceof Project) {
+			$rootPart = 'a.`projectId` = :rootId';
+		} elseif ($root instanceof Group) {
+			$rootPart = 'a.`groupId` = :rootId';
+		} elseif ($root instanceof Area) {
+			$rootPart = 'a.`id` = :rootId';
+		}
+		
+		$stmt = $this->conn->prepare('SELECT r.`id` AS `routeId`, a.`id` AS `areaId`, t.`id` AS `territoryId`, r.`name` AS `routeName`, a.`name` AS `areaName`, t.`name` AS `territoryName`, s.`startTime`, s.`endTime`, s.`participantLimit`, s.`participantNum`, s.`allowLimitExceed`, s.`maxPeoplePerRecord`, s.`customQuestion`, r.`routeFrom`, r.`routeTo`, r.`routeLength`, r.`routeAscent`, r.`routeType` '
 			. 'FROM `'.EdkTables::ROUTE_TBL.'` r '
 			. 'INNER JOIN `'.CoreTables::AREA_TBL.'` a ON a.`id` = r.`areaId` '
 			. 'INNER JOIN `'.CoreTables::TERRITORY_TBL.'` t ON t.`id` = a.`territoryId` '
 			. 'INNER JOIN `'.EdkTables::REGISTRATION_SETTINGS_TBL.'` s ON s.`routeId` = r.`id` '
-			. 'WHERE a.`statusId` = :statusId AND a.`projectId` = :projectId AND r.`approved` = 1 AND s.`registrationType` = '.EdkRegistrationSettings::TYPE_EDK_WEBSITE.' '
+			. 'WHERE a.`statusId` = :statusId AND '.$rootPart.' AND r.`approved` = 1 AND s.`registrationType` = '.EdkRegistrationSettings::TYPE_EDK_WEBSITE.' '
 			. 'ORDER BY a.`name`, r.`name`');
 		$stmt->bindValue(':statusId', $acceptedStatus);
-		$stmt->bindValue(':projectId', $project->getId());
+		$stmt->bindValue(':rootId', $root->getId());
 		$stmt->execute();
 		
 		$results = array();
@@ -145,6 +155,7 @@ class EdkPublishedDataRepository implements EntityTransformerInterface
 					'q' => $row['customQuestion'],
 					'pn' => $row['participantNum'],
 					'pl' => $row['participantLimit'],
+					'ppr' => $row['maxPeoplePerRecord'],
 					't' => $row['routeType']];
 			}
 		}

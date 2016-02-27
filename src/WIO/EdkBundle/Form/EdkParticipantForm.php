@@ -18,10 +18,13 @@
  */
 namespace WIO\EdkBundle\Form;
 
+use Cantiga\CoreBundle\Form\Type\BooleanType;
 use Cantiga\Metamodel\Form\EntityTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use WIO\EdkBundle\Entity\EdkRegistrationSettings;
 
 /**
@@ -36,21 +39,29 @@ class EdkParticipantForm extends AbstractParticipantForm
 	
 	private $mode;
 	private $settingsRepository;
+	private $texts = [1 => '', 2 => '', 3 => ''];
 	
-	public function __construct($mode, EdkRegistrationSettings $settings, $settingsRepository = null)
+	public function __construct($mode, EdkRegistrationSettings $settings = null, $settingsRepository = null)
 	{
 		parent::__construct($settings);
 		$this->mode = (int) $mode;
 		$this->settingsRepository = $settingsRepository;
+	}
+	
+	public function setText($id, $text)
+	{
+		$this->texts[$id] = $text;
 	}
 
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		parent::buildForm($builder, $options);
 		if($this->mode == self::ADD) {
-			$builder->add('peopleNum', new IntegerType, ['label' => 'NumberRegisteredPeopleField']);
-			$builder->add('registrationSettings', new ChoiceType, [ 'label' => 'Route', 'choices' => $this->settingsRepository->getFormChoices()]);
-			$builder->get('registrationSettings')->addModelTransformer(new EntityTransformer($this->settingsRepository));
+			$builder->add('peopleNum', new IntegerType, ['label' => 'NumberRegisteredPeopleField', 'attr' => ['help_text' => 'NumberRegisteredPeopleHintText']]);
+//		/	$builder->add('registrationSettings', new ChoiceType, [ 'label' => 'Route', 'choices' => []]);
+			$builder->add('terms1Accepted', new BooleanType, ['label' => $this->texts[1]->getContent(), 'required' => true, 'disabled' => false]);
+			$builder->add('terms2Accepted', new BooleanType, ['label' => $this->texts[2]->getContent(), 'required' => true, 'disabled' => false]);
+			$builder->add('terms3Accepted', new BooleanType, ['label' => $this->texts[3]->getContent(), 'required' => true, 'disabled' => false]);
 		}
 	}
 	

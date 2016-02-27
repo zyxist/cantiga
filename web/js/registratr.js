@@ -45,6 +45,12 @@
 					'		<td width="30%">'+opts['participantNumText']+'</td>'+
 					'		<td>'+route.pn+'</td>'+
 					'	</tr>'+
+					( opts['maxPeoplePerRecordText'] ? 
+					'	<tr>'+
+					'		<td width="30%">'+opts['maxPeoplePerRecordText']+'</td>'+
+					'		<td>'+route.ppr+'</td>'+
+					'	</tr>'
+					: '')+
 					'</tbody>'+
 					'</table>'+inspired);
 					enableEverything(route.q);
@@ -106,7 +112,7 @@
 		}
 		
 		function renderSelector(result) {
-			var code = '<option>---</option>';
+			var code = '<option vaule="">---</option>';
 			for (i in result) {
 				code += '<optgroup label="'+result[i]['name']+'" class="wv">';
 				for (j in result[i]['areas']) {

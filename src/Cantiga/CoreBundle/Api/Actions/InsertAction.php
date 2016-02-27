@@ -40,16 +40,18 @@ class InsertAction extends AbstractAction
 	private $customForm;
 	private $entity;
 	
-	public function __construct(CRUDInfo $crudInfo, $entity, AbstractType $formType)
+	public function __construct(CRUDInfo $crudInfo, $entity, AbstractType $formType = null)
 	{
 		$this->info = $crudInfo;
 		$this->entity = $entity;
 		$this->insertOperation = function($repository, $item) {
 			return $repository->insert($item);
 		};
-		$this->formBuilder = function($controller, $item, $formType, $action) use($formType) {
-			return $controller->createForm($formType, $item, array('action' => $action));
-		};
+		if (null !== $formType) {
+			$this->formBuilder = function($controller, $item, $formType, $action) use($formType) {
+				return $controller->createForm($formType, $item, array('action' => $action));
+			};
+		}
 	}
 	
 	public function insert($callback)

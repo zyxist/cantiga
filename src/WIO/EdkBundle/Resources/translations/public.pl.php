@@ -30,6 +30,8 @@ return [
 	'Area' => 'Rejon',
 	'Beginning' => 'Początek',
 	'Ending' => 'Koniec',
+	'Extreme Way date' => 'Data EDK',
+	'Max people per record' => 'Max. osób w zgłoszeniu',
 	
 	'About you' => 'O Tobie',
 	'First name' => 'Imię',
@@ -43,6 +45,8 @@ return [
 	'HowManyTimesField' => 'Ile razy byłeś do tej pory na EDK?',
 	'WhyParticipateField' => 'Dlaczego chcesz wziąć udział w EDK?',
 	'Additional information' => 'Dodatkowe informacje',
+	'NumberRegisteredPeopleField' => 'Liczba zapisywanych osób',
+	'NumberRegisteredPeopleHintText' => 'Od 1 do maksymalnej ilości osób w zgłoszeniu ustawionej dla tej trasy.',
 	'Legal issues' => 'Zgody',
 	'Register' => 'Zapisz się!',
 	
@@ -104,4 +108,6 @@ return [
 	
 	'RequestRemovedMsg' => 'Twoje zgłoszenie zostało usunięte z listy zapisanych.',
 	'ParticipantNotFoundErrMsg' => 'Przepraszamy, ale podane zgłoszenie nie zostało znalezione.',
+	
+	'BeginningInformationNotPublishedYet' => 'Ten rejon nie opublikował jeszcze żadnych informacji na temat rozpoczęcia EDK.',
 ];

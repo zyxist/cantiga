@@ -21,8 +21,12 @@ namespace WIO\EdkBundle\Controller;
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
 use Cantiga\CoreBundle\Api\Actions\EditAction;
 use Cantiga\CoreBundle\Api\Actions\InfoAction;
+use Cantiga\CoreBundle\Api\Actions\InsertAction;
 use Cantiga\CoreBundle\Api\Actions\RemoveAction;
 use Cantiga\CoreBundle\Api\Controller\AreaPageController;
+use Cantiga\Metamodel\Exception\ItemNotFoundException;
+use DateInterval;
+use DateTime;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -30,7 +34,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use WIO\EdkBundle\EdkSettings;
 use WIO\EdkBundle\EdkTexts;
+use WIO\EdkBundle\Entity\EdkParticipant;
 use WIO\EdkBundle\Form\EdkParticipantForm;
 
 /**
@@ -57,6 +63,7 @@ class AreaParticipantController extends AreaPageController
 			->setPageSubtitle('Manage registered participants')
 			->setIndexPage('area_edk_participant_index')
 			->setInfoPage('area_edk_participant_info')
+			->setInsertPage('area_edk_participant_insert')
 			->setEditPage('area_edk_participant_edit')
 			->setRemovePage('area_edk_participant_remove')
 			->setItemCreatedMessage('The participant \'0\' has been created.')
@@ -104,6 +111,25 @@ class AreaParticipantController extends AreaPageController
 		$dataTable->process($request);
 		return new JsonResponse($routes->process($repository->listData($dataTable, $this->getTranslator())));
 	}
+	
+	/**
+	 * @Route("/ajax-routes", name="area_edk_participant_ajax_routes")
+	 */
+	public function ajaxRoutesAction(Request $request)
+	{
+		try {
+			$repository = $this->get('wio.edk.repo.published_data');
+			$registrations = $repository->getOpenRegistrations($this->getMembership()->getItem(), $this->getProjectSettings()->get(EdkSettings::PUBLISHED_AREA_STATUS)->getValue());
+			$response = new JsonResponse($registrations);
+			$response->setDate(new DateTime());
+			$exp = new DateTime();
+			$exp->add(new DateInterval('PT0H5M0S'));
+			$response->setExpires($exp);
+			return $response;
+		} catch(ItemNotFoundException $exception) {
+			return new JsonResponse(['success' => 0]);
+		}
+	}
 
 	/**
 	 * @Route("/{id}/info", name="area_edk_participant_info")
@@ -113,6 +139,40 @@ class AreaParticipantController extends AreaPageController
 		$action = new InfoAction($this->crudInfo);
 		$action->slug($this->getSlug());
 		return $action->run($this, $id);
+	}
+	
+	/**
+	 * @Route("/insert", name="area_edk_participant_insert")
+	 */
+	public function insertAction(Request $request)
+	{
+		try {
+			$area = $this->getMembership()->getItem();
+			$project = $area->getProject();
+			$settingsRepository = $this->get('wio.edk.repo.registration');
+			$settingsRepository->setRootEntity($area);
+
+			$entity = EdkParticipant::newParticipant();
+
+			if ($request->getMethod() == 'POST') {
+				$entity->setRegistrationSettings($settingsRepository->getItem($request->get('route', null)));
+				$entity->setIpAddress(ip2long($_SERVER['REMOTE_ADDR']));
+			}
+
+			$action = new InsertAction($this->crudInfo, $entity);
+			$action->slug($this->getSlug());
+			$action->form(function($controller, $item, $formType, $action) use($request, $project, $settingsRepository) {
+				$form = new EdkParticipantForm(EdkParticipantForm::ADD, null, $settingsRepository);
+				$form->setText(1, $this->getTextRepository()->getText(EdkTexts::REGISTRATION_TERMS1_TEXT, $request, $project));
+				$form->setText(2, $this->getTextRepository()->getText(EdkTexts::REGISTRATION_TERMS2_TEXT, $request, $project));
+				$form->setText(3, $this->getTextRepository()->getText(EdkTexts::REGISTRATION_TERMS3_TEXT, $request, $project));
+				return $controller->createForm($form, $item, array('action' => $action));
+			});
+			$action->set('ajaxRoutePage', 'area_edk_participant_ajax_routes');
+			return $action->run($this, $request);
+		} catch(ItemNotFoundException $exception) {
+			return $this->showPageWithError($this->trans($exception->getMessage(), [], 'edk'), 'area_edk_participant_index', ['slug' => $this->getSlug()]);
+		}
 	}
 	
 	/**

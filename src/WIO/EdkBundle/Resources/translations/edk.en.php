@@ -76,4 +76,6 @@ return [
 	'AdditionalInformationCol' => 'Additional information',
 	'WhyParticipateCol' => 'Reason to participate',
 	'RouteCol' => 'Route',
+	
+	'ParticipantMustExplicitelyAgreeNote' => 'According to the Polish Personal Data Protection Act, the participant must EXPLICITELY agree to the conditions below - if you are unsure whether he/she did it, you MUST NOT add the participant to the system!',
 ];

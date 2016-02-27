@@ -191,6 +191,9 @@ class EdkRegistrationSettings implements IdentifiableInterface, EditableEntityIn
 		return $this->route->getId();
 	}
 
+	/**
+	 * @return EdkRoute
+	 */
 	public function getRoute()
 	{
 		return $this->route;
@@ -358,13 +361,13 @@ class EdkRegistrationSettings implements IdentifiableInterface, EditableEntityIn
 	
 	public function registerParticipant(Connection $conn, EdkParticipant $participant)
 	{
-		$count = $conn->fetchColumn('SELECT COUNT(`id`) FROM `'.EdkTables::PARTICIPANT_TBL.'` WHERE `routeId` = :routeId', [':routeId' => $this->route->getId()]);
+		$count = $conn->fetchColumn('SELECT SUM(`peopleNum`) FROM `'.EdkTables::PARTICIPANT_TBL.'` WHERE `routeId` = :routeId', [':routeId' => $this->route->getId()]);
 		$conn->update(EdkTables::REGISTRATION_SETTINGS_TBL, ['participantNum' => $count], ['routeId' => $this->route->getId()]);
 	}
 	
 	public function unregisterParticipant(Connection $conn, EdkParticipant $participant)
 	{
-		$count = $conn->fetchColumn('SELECT COUNT(`id`) FROM `'.EdkTables::PARTICIPANT_TBL.'` WHERE `routeId` = :routeId', [':routeId' => $this->route->getId()]);
+		$count = $conn->fetchColumn('SELECT SUM(`peopleNum`) FROM `'.EdkTables::PARTICIPANT_TBL.'` WHERE `routeId` = :routeId', [':routeId' => $this->route->getId()]);
 		$conn->update(EdkTables::REGISTRATION_SETTINGS_TBL, ['participantNum' => $count], ['routeId' => $this->route->getId()]);
 	}
 }

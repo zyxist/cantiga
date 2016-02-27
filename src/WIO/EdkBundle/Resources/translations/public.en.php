@@ -32,5 +32,10 @@ return [
 	
 	'CheckYourRegistrationText' => 'If you have not received or lost the e-mail with the confirmation, you can still check the status of your registration by pasting here the access code that has been printed to you on the screen after the registration. You can also remove your request here.',
 	'RequestRemovedMsg' => 'Your registration has been removed.',
-	'ParticipantNotFoundErrMsg' => 'We are sorry, but we have not found your registration.',	
+	'ParticipantNotFoundErrMsg' => 'We are sorry, but we have not found your registration.',
+	'NumberRegisteredPeopleField' => 'Number of registered people',
+	'NumberRegisteredPeopleHintText' => 'From 1 to the maximum number of people per record specified for this route.',
+	
+	
+	'BeginningInformationNotPublishedYet' => 'This area has published no information yet about the beginning of Extreme Way of the Cross.',
 ];

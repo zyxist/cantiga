@@ -13,6 +13,7 @@ return [
 	'Additional notes' => 'Dodatkowe uwagi',
 	'Map' => 'Mapa',
 	'RouteAdditionalNoteInfoText' => 'Dodatkowe uwagi wyświetlane w podglądzie trasy na stronie EDK.org.pl',
+	'The specified route has not been found.' => 'Podana trasa nie została znaleziona.',
 	
 	'Basic information' => 'Podstawowe informacje',
 	'Course and properties' => 'Przebieg i parametry',
@@ -195,4 +196,8 @@ return [
 	'AdditionalInformationCol' => 'Dodatkowe informacje',
 	'WhyParticipateCol' => 'Dlaczego bierze udzial',
 	'RouteCol' => 'Trasa',
+	
+	'Add new participant' => 'Dodaj nowego uczestnika',
+	'Registration settings' => 'Ustawienia zapisów',
+	'ParticipantMustExplicitelyAgreeNote' => 'Zgodnie z wymaganiami ustawy o ochronie danych osobowych, dodawany uczestnik musi JAWNIE zgodzić się na poniższe warunki - jeśli nie wiesz czy się zgodził, NIE WOLNO DODAWAĆ ZGŁOSZENIA!',
 ];

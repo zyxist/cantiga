@@ -65,6 +65,16 @@ class EdkParticipant implements IdentifiableInterface, InsertableEntityInterface
 	private $ipAddress;
 	
 	/**
+	 * Creates a new participant that is registered via the area leaders.
+	 */
+	public static function newParticipant()
+	{
+		$item = new EdkParticipant();
+		$item->peopleNum = 1;
+		return $item;
+	}
+	
+	/**
 	 * Fetches the participant by his/her access key.
 	 * 
 	 * @param Connection $conn
