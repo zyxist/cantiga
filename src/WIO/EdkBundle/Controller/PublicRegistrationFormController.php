@@ -35,6 +35,7 @@ use WIO\EdkBundle\Form\PublicParticipantForm;
  */
 class PublicRegistrationFormController extends PublicEdkController
 {
+	const CURRENT_PAGE = 'public_edk_register';
 	const REPOSITORY_NAME = 'wio.edk.repo.participant';
 	
 	/**
@@ -78,7 +79,7 @@ class PublicRegistrationFormController extends PublicEdkController
 						return $this->removeRequest($k);
 				}
 			}
-			return $this->render('WioEdkBundle:Public:check-registration.html.twig', ['slug' => $this->project->getSlug()]);
+			return $this->render('WioEdkBundle:Public:check-registration.html.twig', ['slug' => $this->project->getSlug(), 'currentPage' => 'public_edk_check',]);
 		} catch (ModelException $exception) {
 			return $this->showErrorMessage($exception->getMessage());
 		}
@@ -91,7 +92,8 @@ class PublicRegistrationFormController extends PublicEdkController
 	{
 		return $this->render('WioEdkBundle:Public:registration-completed.html.twig', [
 			'accessKey' => $accessKey,
-			'slug' => $this->project->getSlug()
+			'slug' => $this->project->getSlug(),
+			'currentPage' => self::CURRENT_PAGE,
 		]);
 	}
 	
@@ -138,7 +140,7 @@ class PublicRegistrationFormController extends PublicEdkController
 				if ($recaptcha->verifyRecaptcha($request)) {
 					$participant->setIpAddress(ip2long($_SERVER['REMOTE_ADDR']));
 					$repository->register($participant, $_SERVER['REMOTE_ADDR'], $slug);
-					return $this->redirect($this->generateUrl('public_edk_registration_completed', ['slug' => $slug, 'accessKey' => $participant->getAccessKey()]));
+					return $this->redirect($this->generateUrl('public_edk_registration_completed', ['slug' => $slug, 'accessKey' => $participant->getAccessKey(), 'currentPage' => self::CURRENT_PAGE]));
 				} else {
 					return $this->showErrorMessage('You did not solve the CAPTCHA correctly, sorry.');
 				}
@@ -152,13 +154,9 @@ class PublicRegistrationFormController extends PublicEdkController
 			'route' => (null != $registrationSettings ? $registrationSettings->getRoute() : null),
 			'registrationSettings' => $registrationSettings,
 			'text' => $text,
-			'slug' => $this->project->getSlug()
+			'slug' => $this->project->getSlug(),
+			'currentPage' => self::CURRENT_PAGE,
 		));
-		if (null === $registrationSettings && $request->getMethod() == 'GET') {
-			$response->setPublic();
-			$response->setMaxAge(600);
-			$response->setSharedMaxAge(600);
-		}
 		return $response;
 	}
 	
@@ -171,6 +169,7 @@ class PublicRegistrationFormController extends PublicEdkController
 				'item' => $item,
 				'beginningNote' => $notes->getEditableNote(1),
 				'slug' => $this->project->getSlug(),
+				'currentPage' => self::CURRENT_PAGE,
 			]);
 		} catch(ItemNotFoundException $exception) {
 			return $this->showErrorMessage('ParticipantNotFoundErrMsg');
@@ -185,6 +184,7 @@ class PublicRegistrationFormController extends PublicEdkController
 			return $this->render('WioEdkBundle:Public:public-message.html.twig', [
 				'message' => $this->trans('RequestRemovedMsg', [], 'public'),
 				'slug' => $this->project->getSlug(),
+				'currentPage' => self::CURRENT_PAGE,
 			]);
 		} catch(ItemNotFoundException $exception) {
 			return $this->showErrorMessage('ParticipantNotFoundErrMsg');
@@ -196,6 +196,7 @@ class PublicRegistrationFormController extends PublicEdkController
 		return $this->render('WioEdkBundle:Public:public-error.html.twig', [
 			'message' => $this->trans($message, [], 'public'),
 			'slug' => $this->project->getSlug(),
+			'currentPage' => self::CURRENT_PAGE,
 		]);
 	}
 }

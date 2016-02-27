@@ -35,6 +35,7 @@ class PublicEdkErrorController extends PublicPageController
 	{
 		return $this->render('WioEdkBundle:Public:public-error.html.twig', [
 			'message' => $this->trans('We are sorry, but we cannot find the specified edition of Extreme Way of the Cross.', [], 'public'),
+			'currentPage' => 'public_edk_error',
 		]);
 	}
 }

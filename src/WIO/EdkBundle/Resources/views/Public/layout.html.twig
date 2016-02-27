@@ -28,9 +28,11 @@
 			  <div class="menu col-md-8">
 				  <ul class="list-inline">
 					  <li class="menuactive menuparent"><a class="menuactive menuparent" href="http://www.edk.org.pl">{{ 'Back to EDK home page' | trans([], 'public' ) }}</a></li>
+					  {% if slug is defined %}
 					  <li><a href="{{ path('public_edk_register', {'slug': slug }) }}">{{ 'Register' | trans([], 'public' ) }}</a></li>
 					  <li><a href="{{ path('public_edk_write_msg', {'slug': slug }) }}">{{ 'Contact with area' | trans([], 'public' ) }}</a></li>
 					  <li><a href="{{ path('public_edk_check', {'slug': slug }) }}">{{ 'Check registration' | trans([], 'public' ) }}</a></li>
+					  {% endif %}
 				  </ul>
 			  </div>
 		  </div>
@@ -38,6 +40,11 @@
 
 	{% include 'CantigaCoreBundle:layout:flash.html.twig' %}
 	<div class="container" style="margin-bottom: 20px">
+		{% if slug is defined %}
+		<div class="col-lg-2 col-lg-offset-10" style="margin-top: 10px; margin-bottom: 10px; text-align: right;">
+			<a href="{{ path(currentPage, {'slug': slug, '_locale': 'pl'}) }}">PL</a> <a href="{{ path(currentPage, {'slug': slug, '_locale': 'en'}) }}">EN</a>
+		</div>
+		{% endif %}
 		{% block page_content %}
 		{% endblock %}
 	</div>
@@ -47,9 +54,11 @@
 			<div class="col-md-2 bottom-menu">
 				<ul class="list-unstyled">
 					<li><a href="http://www.edk.org.pl/">{{ 'Home page' | trans([], 'public' ) }}</a></li>
+					{% if slug is defined %}
 					<li><a href="{{ path('public_edk_register', {'slug': slug }) }}">{{ 'Register' | trans([], 'public' ) }}</a></li>
 					<li><a href="{{ path('public_edk_write_msg', {'slug': slug }) }}">{{ 'Contact with area' | trans([], 'public' ) }}</a></li>
 					<li><a href="{{ path('public_edk_check', {'slug': slug }) }}">{{ 'Check registration' | trans([], 'public' ) }}</a></li>
+					{% endif %}
 				</ul>
 			</div>
 
