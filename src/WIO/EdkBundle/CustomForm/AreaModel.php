@@ -48,10 +48,10 @@ class AreaModel implements CustomFormModelInterface, CompletenessCalculatorInter
 	
 	public function constructForm(FormBuilderInterface $builder)
 	{
-		$builder->add('positionLat', new NumberType, array('label' => 'Area location (lattitude)*', 'required' => false, 'attr' => ['help_text' => 'LattitudeHintText'], 'constraints' => [
+		$builder->add('positionLat', new NumberType, array('label' => 'Area location (lattitude)*', 'required' => false, 'scale' => 6, 'attr' => ['help_text' => 'LattitudeHintText'], 'constraints' => [
 			new Range(['min' => -90, 'max' => 90])
 		]));
-		$builder->add('positionLng', new NumberType, array('label' => 'Area location (longitude)*', 'required' => false, 'attr' => ['help_text' => 'LongitudeHintText'], 'constraints' => [
+		$builder->add('positionLng', new NumberType, array('label' => 'Area location (longitude)*', 'required' => false, 'scale' => 6, 'attr' => ['help_text' => 'LongitudeHintText'], 'constraints' => [
 			new Range(['min' => -180, 'max' => 180])
 		]));
 		$builder->add('ewcDate', new DateType, array('label' => 'Date of Extreme Way of the Cross*', 'input' => 'array', 'required' => false, 'empty_value' => '-- none --', 'years' => $this->generateYears(), 'constraints' => [
