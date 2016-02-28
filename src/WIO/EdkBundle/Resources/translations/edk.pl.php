@@ -200,4 +200,14 @@ return [
 	'Add new participant' => 'Dodaj nowego uczestnika',
 	'Registration settings' => 'Ustawienia zapisów',
 	'ParticipantMustExplicitelyAgreeNote' => 'Zgodnie z wymaganiami ustawy o ochronie danych osobowych, dodawany uczestnik musi JAWNIE zgodzić się na poniższe warunki - jeśli nie wiesz czy się zgodził, NIE WOLNO DODAWAĆ ZGŁOSZENIA!',
+
+	'Number of participants' => 'Liczba uczestników',
+	'Distribution of participants on routes' => 'Rozłożenie uczestników na trasach',
+	'Where learnt about Extreme Way?' => 'Skąd dowiedział się o EDK?',
+	'Published route files' => 'Opublikowane pliki tras',
+	'0 biggest areas (by participants)' => '0 największych rejonów (wg liczby uczestników)',
+	'FileStatOnlyGPS' => 'Tylko ślad GPS',
+	'FileStatMapPresent' => 'GPS + mapa',
+	'FileStatGuidePresent' => 'GPS + opis',
+	'FileStatMapGuidePresent' => 'GPS + mapa + opis',
 ];

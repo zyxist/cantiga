@@ -3,6 +3,7 @@ return [
 	'Participants' => 'Uczestnicy',
 	'Routes' => 'Trasy',
 	'Route statistics' => 'Statystyki tras',
+	'Participant statistics' => 'Statystyki uczestników',
 	'Manage the routes of Extreme Way of the Cross' => 'Zarządzaj trasami Ekstremalnej Drogi Krzyżowej',
 	
 	'WWW: area information' => 'WWW: informacje o rejonie',

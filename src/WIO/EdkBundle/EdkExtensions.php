@@ -24,4 +24,6 @@ namespace WIO\EdkBundle;
 class EdkExtensions
 {
 	const ROUTE_STATS = 'edk.stats.route';
+	const PARTICIPANT_STATS = 'edk.stats.participant';
+	const AREA_PARTICIPANT_STATS = 'edk.stats.area_participant';
 }

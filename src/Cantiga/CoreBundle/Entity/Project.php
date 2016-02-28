@@ -52,6 +52,21 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 	
 	private $pendingArchivization = false;
 	
+	/**
+	 * Fetches an array of ID-s of the active projects.
+	 * 
+	 * @param Connection $conn
+	 * @return array
+	 */
+	public static function fetchActiveIds(Connection $conn)
+	{
+		$list = [];
+		foreach ($conn->fetchAll('SELECT `id` FROM `'.CoreTables::PROJECT_TBL.'` WHERE `archived` = 0') as $row) {
+			$list[] = $row['id'];
+		}
+		return $list;
+	}
+
 	public static function fetchActive(Connection $conn, $id)
 	{
 		$data = $conn->fetchAssoc('SELECT p.*, '

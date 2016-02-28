@@ -18,13 +18,17 @@
  */
 namespace WIO\EdkBundle\Repository;
 
+use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Area;
+use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\Metamodel\Capabilities\InsertableRepositoryInterface;
+use Cantiga\Metamodel\Capabilities\MembershipEntityInterface;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Exception\ModelException;
 use Cantiga\Metamodel\QueryBuilder;
 use Cantiga\Metamodel\QueryClause;
+use Cantiga\Metamodel\Statistics\StatDateDataset;
 use Cantiga\Metamodel\TimeFormatterInterface;
 use Cantiga\Metamodel\Transaction;
 use Doctrine\DBAL\Connection;
@@ -316,5 +320,130 @@ class EdkParticipantRepository implements InsertableRepositoryInterface
 		}
 		fclose($out);
 		$stmt->closeCursor();
+	}
+	
+	/**
+	 * Creates a dataset that contains information about participant numbers over time.
+	 * 
+	 * @param Project $project
+	 * @return StatDateDataset
+	 */
+	public function fetchParticipantsOverTime(Project $project)
+	{
+		$data = $this->conn->fetchAll('SELECT * FROM `'.EdkTables::STAT_PARTICIPANT_TIME_TBL.'` WHERE `projectId` = :projectId ORDER BY `datePoint`', [':projectId' => $project->getId()]);
+		$engine = new StatDateDataset(StatDateDataset::TYPE_PACKED);
+		return $engine->dataset('participantNum')
+			->process($data);
+	}
+	
+	public function countWhereLearntGrouped(MembershipEntityInterface $root)
+	{
+		$rootQuery = '';
+		if ($root instanceof Project) {
+			$rootQuery = 'a.projectId';
+		} elseif ($root instanceof Group) {
+			$rootQuery = 'a.groupId';
+		} else {
+			$rootQuery = 'a.id';
+		}
+		
+		$result = [];
+		$vals = $this->conn->fetchAll('SELECT SUM(`peopleNum`) AS `participants`, `whereLearnt` AS `id` '
+			. 'FROM `'.EdkTables::PARTICIPANT_TBL.'` p '
+			. 'INNER JOIN `'.CoreTables::AREA_TBL.'` a ON a.id = p.areaId '
+			. 'WHERE '.$rootQuery.' = :rootId '
+			. 'GROUP BY `whereLearnt`', [':rootId' => $root->getId()]);
+		foreach ($vals as $val) {
+			$result[$val['id']] = $val['participants'];
+		}
+		return $result;
+	}
+	
+	public function countParticipantsOnRoutes(Area $area)
+	{
+		return $this->conn->fetchAll('SELECT s.`participantNum`, r.`name` '
+			. 'FROM `'.EdkTables::REGISTRATION_SETTINGS_TBL.'` s '
+			. 'INNER JOIN `'.EdkTables::ROUTE_TBL.'` r ON r.id = s.routeId '
+			. 'WHERE r.areaId = :rootId '
+			. 'ORDER BY s.`participantNum`', [':rootId' => $area->getId()]);
+	}
+	
+	public function fetchBiggestAreasByParticipants(Project $project, $max)
+	{
+		$values = $this->conn->fetchAll('SELECT SUM(s.`participantNum`) AS `sum`, a.`id`, a.`name` '
+			. 'FROM `'.EdkTables::REGISTRATION_SETTINGS_TBL.'` s '
+			. 'INNER JOIN `'.EdkTables::ROUTE_TBL.'` r ON r.id = s.routeId '
+			. 'INNER JOIN `'.CoreTables::AREA_TBL.'` a ON a.id = r.areaId '
+			. 'WHERE a.projectId = :rootId '
+			. 'GROUP BY a.`id`, a.`name`', [':rootId' => $project->getId()]);
+		usort($values, function($a, $b) {
+			return $b['sum'] - $a['sum'];
+		});
+		$result = [];
+		$i = 1;
+		foreach ($values as $area) {
+			$result[] = $area;
+			if (++$i >= $max) {
+				break;
+			}
+		}
+		return $result;
+	}
+	
+	public function updateStatisticsForPreviousDay($now)
+	{
+		$when = getdate($now - 86400);
+		$upperBounds = mktime(23, 59, 59, $when['mon'], $when['mday'], $when['year']) + 1;
+		$sqlDate = $when['year'].'-'.$when['mon'].'-'.$when['mday'];
+		$projects = Project::fetchActiveIds($this->conn);
+		foreach ($projects as $projectId) {
+			$this->conn->beginTransaction();
+			$total = $this->conn->fetchColumn('SELECT SUM(`peopleNum`) '
+				. 'FROM `'.EdkTables::PARTICIPANT_TBL.'` p '
+				. 'INNER JOIN `'.CoreTables::AREA_TBL.'` a ON a.id = p.areaId '
+				. 'WHERE p.`createdAt` < :upperTime AND a.projectId = :projectId', [':upperTime' => $upperBounds, ':projectId' => $projectId]);
+			$this->updateStatsFor($projectId, $sqlDate, $total);
+			$this->conn->commit();
+		}
+	}
+	
+	public function updateStatisticsForAllDays()
+	{
+		$projects = Project::fetchActiveIds($this->conn);
+		foreach ($projects as $projectId) {
+			$participants = $this->conn->fetchAll('SELECT p.`peopleNum`, p.`createdAt` '
+				. 'FROM `'.EdkTables::PARTICIPANT_TBL.'` p '
+				. 'INNER JOIN `'.CoreTables::AREA_TBL.'` a ON a.id = p.areaId '
+				. 'WHERE a.projectId = :projectId ORDER BY p.`createdAt`', [':projectId' => $projectId]);
+			$total = 0;
+			$lastDay = null;
+			$first = true;
+			foreach ($participants as $participant) {
+				$when = getdate($participant['createdAt']);
+				$currentDay = $when['year'].'-'.$when['mon'].'-'.$when['mday'];
+				if (!$first && $lastDay != $currentDay) {
+					$this->updateStatsFor($projectId, $lastDay, $total);
+					$lastDay = $currentDay;
+				}
+				$total += $participant['peopleNum'];
+				if ($first) {
+					$first = false;
+					$lastDay = $currentDay;
+				}
+			}
+		}
+	}
+	
+	private function updateStatsFor($projectId, $datePoint, $total)
+	{
+		if (!empty($total)) {
+			$this->conn->executeQuery('INSERT INTO `'.EdkTables::STAT_PARTICIPANT_TIME_TBL.'` (`projectId`, `datePoint`, `participantNum`)'
+				. 'VALUES(:projectId, :datePoint, :pn1) ON DUPLICATE KEY UPDATE `participantNum` = :pn2', [
+					':projectId' => $projectId,
+					':datePoint' => $datePoint,
+					':pn1' => $total,
+					':pn2' => $total
+				]);
+		}
 	}
 }

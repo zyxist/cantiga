@@ -25,6 +25,9 @@ area_message_controller:
 area_participant_controller:
     resource: "@WioEdkBundle/Controller/AreaParticipantController.php"
     type:     annotation
+area_stats_participant_controller:
+    resource: "@WioEdkBundle/Controller/AreaStatsParticipantController.php"
+    type:     annotation
 group_route_controller:
     resource: "@WioEdkBundle/Controller/GroupRouteController.php"
     type:     annotation
@@ -36,6 +39,9 @@ project_route_controller:
     type:     annotation
 project_stats_route_controller:
     resource: "@WioEdkBundle/Controller/ProjectStatsRouteController.php"
+    type:     annotation
+project_stats_participant_controller:
+    resource: "@WioEdkBundle/Controller/ProjectStatsParticipantController.php"
     type:     annotation
 project_registration_controller:
     resource: "@WioEdkBundle/Controller/ProjectRegistrationSettingsController.php"

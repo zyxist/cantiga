@@ -355,6 +355,33 @@ class EdkRouteRepository
 		}
 	}
 	
+	public function countRouteFiles(Project $project)
+	{
+		$data = $this->conn->fetchAll('SELECT r.`descriptionFile`, r.`mapFile` '
+			. 'FROM `'.EdkTables::ROUTE_TBL.'` r '
+			. 'INNER JOIN `'.CoreTables::AREA_TBL.'` a ON a.`id` = r.`areaId` '
+			. 'WHERE a.projectId = :rootId AND r.`approved` = 1', [':rootId' => $project->getId()]);
+		
+		$types = [
+			0 => ['name' => 'FileStatOnlyGPS', 'value' => 0],
+			1 => ['name' => 'FileStatMapPresent', 'value' => 0],
+			2 => ['name' => 'FileStatGuidePresent', 'value' => 0],
+			3 => ['name' => 'FileStatMapGuidePresent', 'value' => 0],
+		];
+		foreach ($data as $route) {
+			if (!empty($route['mapFile']) && !empty($route['descriptionFile'])) {
+				$types[3]['value']++;
+			} elseif (!empty($route['mapFile'])) {
+				$types[1]['value']++;
+			} elseif (!empty($route['descriptionFile'])) {
+				$types[2]['value']++;
+			} else {
+				$types[0]['value']++;
+			}
+		}
+		return $types;
+	}
+	
 	private function getActivationFunc(EdkRoute $route)
 	{
 		$conn = $this->conn;

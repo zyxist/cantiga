@@ -28,25 +28,25 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use WIO\EdkBundle\EdkExtensions;
 
 /**
- * @Route("/project/{slug}/stats/routes")
+ * @Route("/project/{slug}/stats/participants")
  * @Security("has_role('ROLE_PROJECT_VISITOR')")
  */
-class ProjectStatsRouteController extends ProjectPageController
+class ProjectStatsParticipantController extends ProjectPageController
 {
 
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 		$this->breadcrumbs()
 			->workgroup('statistics')
-			->entryLink($this->trans('Route statistics', [], 'pages'), 'project_stats_route_index', ['slug' => $this->getSlug()]);
+			->entryLink($this->trans('Participant statistics', [], 'pages'), 'project_stats_participant_index', ['slug' => $this->getSlug()]);
 	}
 
 	/**
-	 * @Route("/index", name="project_stats_route_index")
+	 * @Route("/index", name="project_stats_participant_index")
 	 */
 	public function indexAction(Request $request)
 	{
-		$stats = $this->getExtensionPoints()->findImplementations(EdkExtensions::ROUTE_STATS, $this->getExtensionPointFilter());
+		$stats = $this->getExtensionPoints()->findImplementations(EdkExtensions::PARTICIPANT_STATS, $this->getExtensionPointFilter());
 		$project = $this->getActiveProject();
 		$tpl = $this->get('templating');
 		$output = [];
@@ -59,7 +59,7 @@ class ProjectStatsRouteController extends ProjectPageController
 				];
 			}
 		}
-		return $this->render('WioEdkBundle:ProjectStats:routes.html.twig', array('output' => $output));
+		return $this->render('WioEdkBundle:ProjectStats:participants.html.twig', array('output' => $output));
 	}
 
 }

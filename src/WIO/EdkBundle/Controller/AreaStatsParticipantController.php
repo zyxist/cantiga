@@ -20,7 +20,7 @@
 
 namespace WIO\EdkBundle\Controller;
 
-use Cantiga\CoreBundle\Api\Controller\ProjectPageController;
+use Cantiga\CoreBundle\Api\Controller\AreaPageController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,30 +28,30 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use WIO\EdkBundle\EdkExtensions;
 
 /**
- * @Route("/project/{slug}/stats/routes")
- * @Security("has_role('ROLE_PROJECT_VISITOR')")
+ * @Route("/area/{slug}/stats/participants")
+ * @Security("has_role('ROLE_AREA_MEMBER')")
  */
-class ProjectStatsRouteController extends ProjectPageController
+class AreaStatsParticipantController extends AreaPageController
 {
 
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 		$this->breadcrumbs()
-			->workgroup('statistics')
-			->entryLink($this->trans('Route statistics', [], 'pages'), 'project_stats_route_index', ['slug' => $this->getSlug()]);
+			->workgroup('participants')
+			->entryLink($this->trans('Participant statistics', [], 'pages'), 'area_stats_participant_index', ['slug' => $this->getSlug()]);
 	}
 
 	/**
-	 * @Route("/index", name="project_stats_route_index")
+	 * @Route("/index", name="area_stats_participant_index")
 	 */
 	public function indexAction(Request $request)
 	{
-		$stats = $this->getExtensionPoints()->findImplementations(EdkExtensions::ROUTE_STATS, $this->getExtensionPointFilter());
-		$project = $this->getActiveProject();
+		$stats = $this->getExtensionPoints()->findImplementations(EdkExtensions::AREA_PARTICIPANT_STATS, $this->getExtensionPointFilter());
+		$area = $this->getMembership()->getItem();
 		$tpl = $this->get('templating');
 		$output = [];
 		foreach ($stats as $stat) {
-			if ($stat->collectData($project)) {
+			if ($stat->collectData($area)) {
 				$output[] = [
 					'html' => $stat->renderPlaceholder($tpl),
 					'js' => $stat->renderStatistics($tpl),
@@ -59,7 +59,6 @@ class ProjectStatsRouteController extends ProjectPageController
 				];
 			}
 		}
-		return $this->render('WioEdkBundle:ProjectStats:routes.html.twig', array('output' => $output));
+		return $this->render('WioEdkBundle:ProjectStats:participants.html.twig', array('output' => $output));
 	}
-
 }
