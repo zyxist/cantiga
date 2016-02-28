@@ -119,5 +119,5 @@ return [
 	'KML Track' => 'Ślad KML',
 	
 	'GuidesAreVerifiedText' => 'Opisy są w trakcie weryfikacji i doprecyzowywania, najlepiej pobrać je nie wcześniej niż trzy dni przed wyruszeniem na EDK.',
-	'AreaNotPublishedFilesText' => 'Ten rejon nie opublikował jeszcze mapy i opisu dla tej trasy. Prosimy jeszcze o chwilę cierpliwości!',
+	'AreaNotPublishedGuideText' => 'Ten rejon nie opublikował jeszcze opisu dla tej trasy. Prosimy jeszcze o chwilę cierpliwości!',
 ];

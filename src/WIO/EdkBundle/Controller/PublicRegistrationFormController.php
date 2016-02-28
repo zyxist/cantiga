@@ -169,7 +169,8 @@ class PublicRegistrationFormController extends PublicEdkController
 				'item' => $item,
 				'beginningNote' => $notes->getEditableNote(1),
 				'slug' => $this->project->getSlug(),
-				'showDescAndMap' => $item->getRegistrationSettings()->getRoute()->areExtraFilesPublished(),
+				'showGuide' => $item->getRegistrationSettings()->getRoute()->isDescriptionFilePublished(),
+				'showMap' => $item->getRegistrationSettings()->getRoute()->isMapFilePublished(),
 				'currentPage' => 'public_edk_check',
 			]);
 			return $response;

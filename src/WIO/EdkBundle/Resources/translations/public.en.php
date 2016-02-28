@@ -38,5 +38,5 @@ return [
 	
 	'BeginningInformationNotPublishedYet' => 'This area has published no information yet about the beginning of Extreme Way of the Cross.',
 	'GuidesAreVerifiedText' => 'The guides are being verified. We recommend to download them not earlier than three days before Extreme Way of the Cross.',
-	'AreaNotPublishedFilesText' => 'This area has not published any map and guide for this route yet. Please stay tuned!',
+	'AreaNotPublishedGuideText' => 'This area has not published any guide for this route yet. Please stay tuned!',
 ];

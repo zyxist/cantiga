@@ -141,6 +141,9 @@ class EdkParticipant implements IdentifiableInterface, InsertableEntityInterface
 		return $this->id;
 	}
 
+	/**
+	 * @return EdkRegistrationSettings
+	 */
 	public function getRegistrationSettings()
 	{
 		return $this->registrationSettings;
