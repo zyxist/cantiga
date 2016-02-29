@@ -5,7 +5,7 @@ return [
 	'Home page' => 'Strona główna',
 	'Back to EDK home page' => 'Powrót do strony EDK',
 	'Partners' => 'Partnerzy',
-	
+
 	'Write to area' => 'Napisz do rejonu',
 	'Subject' => 'Temat',
 	'Content' => 'Treść',
@@ -17,12 +17,13 @@ return [
 	'Your phone number' => 'Twój telefon',
 	'Send message' => 'Wyślij wiadomość',
 	'Spam protection' => 'Zabezpieczenie przed spamem',
-	
+
 	'Error' => 'Błąd',
 	'Thank you, the message has been passed to the area. Please wait for the answer.' => 'Dziękujemy, wiadomość została przekazana do rejonu. Prosimy zaczekać na odpowiedź.',
 	'We are sorry, but we cannot find the specified edition of Extreme Way of the Cross.' => 'Przykro nam, ale nie możemy znaleźć wskazanej aktywnej edycji Ekstremalnej Drogi Krzyżowej.',
 	'You did not solve the CAPTCHA correctly, sorry.' => 'Nie rozwiązałeś poprawnie wyzwania CAPTCHA, zabezpieczenia przed spamem.',
-	
+	'The specified area has not been found.' => 'Podany rejon nie został znaleziony.',
+
 	'Register' => 'Zapisz się',
 	'Register to Extreme Way of the Cross' => 'Zapisz się na EDK',
 	'Chosen route: 0' => 'Wybrana trasa: 0',

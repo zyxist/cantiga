@@ -364,4 +364,7 @@ return array(
 	'Copenhagen' => 'Kopenhaga',
 	'Uzhgorod' => 'Użhorod',
 	'Zaporozhye' => 'Zaporoże',
+	
+	// Errors, etc.
+	'The specified area has not been found.' => 'Podany rejon nie został znaleziony.',
 );

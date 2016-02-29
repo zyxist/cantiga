@@ -74,7 +74,7 @@ class EdkPublishedDataRepository implements EntityTransformerInterface
 			$item = Area::fetchByProject($this->conn, $id, $this->project);
 			if(false === $item || $item->getStatus()->getId() != $this->publishedStatusId || $item->getProject()->getArchived()) {
 				$this->transaction->requestRollback();
-				throw new ItemNotFoundException('The specified item has not been found.', $id);
+				throw new ItemNotFoundException('The specified area has not been found.', $id);
 			}
 			return $item;
 		} catch(Exception $exception) {

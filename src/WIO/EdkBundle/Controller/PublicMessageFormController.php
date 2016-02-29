@@ -34,9 +34,9 @@ class PublicMessageFormController extends PublicEdkController
 	const PUBLISHED_REPO_NAME = 'wio.edk.repo.published_data';
 	
 	/**
-	 * @Route("/formularz", name="public_edk_write_msg", defaults={"_localeFromQuery" = true})
+	 * @Route("/formularz/{id}", name="public_edk_write_msg", defaults={"_localeFromQuery" = true, "id" = null})
 	 */
-	public function indexAction(Request $request)
+	public function indexAction($id, Request $request)
 	{
 		try {
 			$repository = $this->get(self::REPOSITORY_NAME);
@@ -46,6 +46,10 @@ class PublicMessageFormController extends PublicEdkController
 			$publishedRepository->setPublishedStatusId($this->getProjectSettings()->get(EdkSettings::PUBLISHED_AREA_STATUS)->getValue());
 			
 			$intent = new PostMessageIntent($repository);
+			if (null !== $id) {
+				$intent->area = $publishedRepository->getArea($id);
+			}
+			
 			$form = $this->createForm(new EdkMessageForm($publishedRepository), $intent, ['action' => $this->generateUrl('public_edk_write_msg', ['slug' => $this->getSlug()])]);
 			$form->handleRequest($request);
 			
