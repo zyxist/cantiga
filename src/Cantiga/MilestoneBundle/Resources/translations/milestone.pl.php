@@ -32,4 +32,5 @@ return [
 	'Overall summary of completed milestones in areas' => 'Zbiorcze zestawienie ukończonych kamieni w rejonach',
 	'Ranking' => 'Ranking',
 	'Overall summary' => 'Zbiorcze zestawienie',
+	'MilestoneTableScrollableText' => 'W przypadku dużej liczby kamieni tabelkę można przewijać w poziomie - sprawdź czy na dole strony nie ma paska przewijania.',
 ];
