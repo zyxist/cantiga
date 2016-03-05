@@ -336,6 +336,23 @@ class EdkParticipantRepository implements InsertableRepositoryInterface
 			->process($data);
 	}
 	
+	/**
+	 * Creates a dataset that contains information about participant numbers over time within a
+	 * single area.
+	 * 
+	 * @param Area $area
+	 * @return StatDateDataset
+	 */
+	public function fetchAreaParticipantsOverTime(Area $area)
+	{
+		$data = $this->conn->fetchAll('SELECT * FROM `'.EdkTables::STAT_AREA_PARTICIPANT_TIME_TBL.'` '
+				. 'WHERE `projectId` = :projectId AND `areaId` = :areaId '
+				. 'ORDER BY `datePoint`', [':projectId' => $area->getProject()->getId(), ':areaId' => $area->getId()]);
+		$engine = new StatDateDataset(StatDateDataset::TYPE_PACKED);
+		return $engine->dataset('participantNum')
+			->process($data);
+	}
+	
 	public function countWhereLearntGrouped(MembershipEntityInterface $root)
 	{
 		$rootQuery = '';
@@ -398,11 +415,20 @@ class EdkParticipantRepository implements InsertableRepositoryInterface
 		$projects = Project::fetchActiveIds($this->conn);
 		foreach ($projects as $projectId) {
 			$this->conn->beginTransaction();
-			$total = $this->conn->fetchColumn('SELECT SUM(`peopleNum`) '
+			$counters = $this->conn->fetchAll('SELECT SUM(`peopleNum`) AS `sum`, a.`id` AS `areaId` '
 				. 'FROM `'.EdkTables::PARTICIPANT_TBL.'` p '
 				. 'INNER JOIN `'.CoreTables::AREA_TBL.'` a ON a.id = p.areaId '
-				. 'WHERE p.`createdAt` < :upperTime AND a.projectId = :projectId', [':upperTime' => $upperBounds, ':projectId' => $projectId]);
+				. 'WHERE p.`createdAt` < :upperTime AND a.projectId = :projectId '
+				. 'GROUP BY a.`id`', [':upperTime' => $upperBounds, ':projectId' => $projectId]);
+			$areas = [];
+			$total = 0;
+			foreach ($counters as $row) {
+				$total += $row['sum'];
+				$areas[$row['areaId']] = $row['areaId'];
+			}
+			
 			$this->updateStatsFor($projectId, $sqlDate, $total);
+			$this->updateAreaStatsFor($projectId, $sqlDate, $areas);
 			$this->conn->commit();
 		}
 	}
@@ -411,21 +437,28 @@ class EdkParticipantRepository implements InsertableRepositoryInterface
 	{
 		$projects = Project::fetchActiveIds($this->conn);
 		foreach ($projects as $projectId) {
-			$participants = $this->conn->fetchAll('SELECT p.`peopleNum`, p.`createdAt` '
+			$participants = $this->conn->fetchAll('SELECT p.`peopleNum`, p.`createdAt`, a.`id` AS `areaId` '
 				. 'FROM `'.EdkTables::PARTICIPANT_TBL.'` p '
 				. 'INNER JOIN `'.CoreTables::AREA_TBL.'` a ON a.id = p.areaId '
 				. 'WHERE a.projectId = :projectId ORDER BY p.`createdAt`', [':projectId' => $projectId]);
 			$total = 0;
 			$lastDay = null;
 			$first = true;
+			$areas = [];
 			foreach ($participants as $participant) {
 				$when = getdate($participant['createdAt']);
 				$currentDay = $when['year'].'-'.$when['mon'].'-'.$when['mday'];
 				if (!$first && $lastDay != $currentDay) {
 					$this->updateStatsFor($projectId, $lastDay, $total);
+					$this->updateAreaStatsFor($projectId, $lastDay, $areas);
 					$lastDay = $currentDay;
 				}
+				if (!isset($areas[$participant['areaId']])) {
+					$areas[$participant['areaId']] = 0;
+				}
+				
 				$total += $participant['peopleNum'];
+				$areas[$participant['areaId']] += $participant['peopleNum'];
 				if ($first) {
 					$first = false;
 					$lastDay = $currentDay;
@@ -444,6 +477,22 @@ class EdkParticipantRepository implements InsertableRepositoryInterface
 					':pn1' => $total,
 					':pn2' => $total
 				]);
+		}
+	}
+	
+	private function updateAreaStatsFor($projectId, $datePoint, array $areas)
+	{
+		if (sizeof($areas) > 0) {
+			$stmt = $this->conn->prepare('INSERT INTO `'.EdkTables::STAT_AREA_PARTICIPANT_TIME_TBL.'` (`projectId`, `areaId`, `datePoint`, `participantNum`)'
+				. 'VALUES(:projectId, :areaId, :datePoint, :pn1) ON DUPLICATE KEY UPDATE `participantNum` = :pn2');
+			foreach ($areas as $id => $total) {
+				$stmt->bindValue(':projectId', $projectId);
+				$stmt->bindValue(':areaId', $id);
+				$stmt->bindValue(':datePoint', $datePoint);
+				$stmt->bindValue(':pn1', $total);
+				$stmt->bindValue(':pn2', $total);
+				$stmt->execute();
+			}
 		}
 	}
 }

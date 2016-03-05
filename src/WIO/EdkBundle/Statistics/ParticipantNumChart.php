@@ -18,6 +18,8 @@
  */
 namespace WIO\EdkBundle\Statistics;
 
+use Cantiga\CoreBundle\Entity\Area;
+use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Repository\CoreStatisticsRepository;
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
 use Cantiga\Metamodel\Capabilities\StatsInterface;
@@ -57,7 +59,11 @@ class ParticipantNumChart implements StatsInterface
 
 	public function collectData(IdentifiableInterface $root)
 	{
-		$this->data = $this->repo->fetchParticipantsOverTime($root);
+		if ($root instanceof Project) {
+			$this->data = $this->repo->fetchParticipantsOverTime($root);
+		} elseif ($root instanceof Area) {
+			$this->data = $this->repo->fetchAreaParticipantsOverTime($root);
+		}
 		return true;
 	}
 

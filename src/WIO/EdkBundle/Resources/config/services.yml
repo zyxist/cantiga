@@ -107,6 +107,7 @@ services:
         arguments: ["@database_connection", "@wio.edk.repo.participant", "@translator"]
         tags:
             - { name: cantiga.extension, point: edk.stats.participant, module: edk }
+            - { name: cantiga.extension, point: edk.stats.area_participant, module: edk }
     wio.edk.stats.biggest_areas:
         class: WIO\EdkBundle\Statistics\BiggestAreasParticipantChart
         arguments: ["@wio.edk.repo.participant", "@translator"]

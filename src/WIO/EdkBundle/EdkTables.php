@@ -34,4 +34,5 @@ class EdkTables
 	const REMOVED_PARTICIPANT_TBL = 'cantiga_edk_removed_participants';
 	
 	const STAT_PARTICIPANT_TIME_TBL = 'cantiga_stat_edk_participants';
+	const STAT_AREA_PARTICIPANT_TIME_TBL = 'cantiga_stat_edk_area_participants';
 }
