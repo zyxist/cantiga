@@ -26,6 +26,7 @@
 							<ul class="dropdown-menu" role="menu">
 								<li><a href="{{ spath('project_area_membership_index', {'id': item.id })}}">{{ 'Members' | trans({}, 'general') }}</a></li>
 								<li><a href="{{ spath('project_area_edit', {'id': item.id }) }}">{{ 'Edit' | trans({}, 'general') }}</a></li>
+								{{ macro.render_context_menu(custom.links) }}
 							</ul>
 						</div>
 						<a href="{{ spath('project_area_index') }}" class="btn btn-default btn-sm">{{ 'Back' | trans([], 'general') }}</a>

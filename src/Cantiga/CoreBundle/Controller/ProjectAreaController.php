@@ -28,6 +28,8 @@ use Cantiga\CoreBundle\Api\Controller\ProjectPageController;
 use Cantiga\CoreBundle\CoreExtensions;
 use Cantiga\CoreBundle\CoreSettings;
 use Cantiga\CoreBundle\Entity\Area;
+use Cantiga\CoreBundle\Event\CantigaEvents;
+use Cantiga\CoreBundle\Event\ContextMenuEvent;
 use Cantiga\CoreBundle\Form\ProjectAreaForm;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -135,11 +137,12 @@ class ProjectAreaController extends ProjectPageController
 	 * @Route("/{id}/info", name="project_area_info")
 	 */
 	public function infoAction($id, Request $request)
-	{
+	{		
 		$action = new InfoAction($this->crudInfo);
 		$action->slug($this->getSlug());
 		$action->set('ajaxMembersPage', 'project_area_ajax_members');
 		return $action->run($this, $id, function(Area $item) use($request) {
+				$event = $this->get('event_dispatcher')->dispatch(CantigaEvents::UI_CTXMENU_PROJECT_AREA, new ContextMenuEvent($item));
 				$html = $this->renderInformationExtensions(CoreExtensions::AREA_INFORMATION, $request, $item);
 				$formModel = $this->extensionPointFromSettings(CoreExtensions::AREA_FORM, CoreSettings::AREA_FORM);
 				return [
@@ -149,6 +152,7 @@ class ProjectAreaController extends ProjectPageController
 					),
 					'summary' => $formModel->createSummary(),
 					'extensions' => $html,
+					'links' => $event->getLinks()
 				];
 			});
 	}

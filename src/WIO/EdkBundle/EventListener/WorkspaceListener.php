@@ -20,6 +20,7 @@ namespace WIO\EdkBundle\EventListener;
 
 use Cantiga\CoreBundle\Api\Workgroup;
 use Cantiga\CoreBundle\Api\WorkItem;
+use Cantiga\CoreBundle\Event\ContextMenuEvent;
 use Cantiga\CoreBundle\Event\WorkspaceEvent;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -80,5 +81,10 @@ class WorkspaceListener
 				$workspace->addWorkItem('participants', new WorkItem('area_edk_participant_index', 'Participants'));
 			}
 		}
+	}
+	
+	public function onProjectAreaInfo(ContextMenuEvent $event)
+	{
+		$event->addLink('Participant statistics', 'project_area_stats', ['id' => $event->getEntity()->getId()]);
 	}
 }

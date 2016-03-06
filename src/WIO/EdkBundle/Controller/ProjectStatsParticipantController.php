@@ -21,6 +21,7 @@
 namespace WIO\EdkBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Controller\ProjectPageController;
+use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,24 +29,20 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use WIO\EdkBundle\EdkExtensions;
 
 /**
- * @Route("/project/{slug}/stats/participants")
  * @Security("has_role('ROLE_PROJECT_VISITOR')")
  */
 class ProjectStatsParticipantController extends ProjectPageController
 {
-
-	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
+	/**
+	 * @Route("/project/{slug}/stats/participants/index", name="project_stats_participant_index")
+	 */
+	public function indexAction(Request $request)
 	{
 		$this->breadcrumbs()
 			->workgroup('statistics')
 			->entryLink($this->trans('Participant statistics', [], 'pages'), 'project_stats_participant_index', ['slug' => $this->getSlug()]);
-	}
 
-	/**
-	 * @Route("/index", name="project_stats_participant_index")
-	 */
-	public function indexAction(Request $request)
-	{
+
 		$stats = $this->getExtensionPoints()->findImplementations(EdkExtensions::PARTICIPANT_STATS, $this->getExtensionPointFilter());
 		$project = $this->getActiveProject();
 		$tpl = $this->get('templating');
@@ -60,6 +57,39 @@ class ProjectStatsParticipantController extends ProjectPageController
 			}
 		}
 		return $this->render('WioEdkBundle:ProjectStats:participants.html.twig', array('output' => $output));
+	}
+	
+	/**
+	 * @Route("/project/{slug}/area/{id}/stats", name="project_area_stats")
+	 */
+	public function projectAreaStatsAction($id, Request $request)
+	{
+		try {
+			$repo = $this->get('cantiga.core.repo.project_area');
+			$repo->setActiveProject($this->getActiveProject());
+			$area = $repo->getItem($id);
+			
+			$stats = $this->getExtensionPoints()->findImplementations(EdkExtensions::AREA_PARTICIPANT_STATS, $this->getExtensionPointFilter());
+			$tpl = $this->get('templating');
+			$output = [];
+			foreach ($stats as $stat) {
+				if ($stat->collectData($area)) {
+					$output[] = [
+						'html' => $stat->renderPlaceholder($tpl),
+						'js' => $stat->renderStatistics($tpl),
+						'title' => $stat->getTitle()
+					];
+				}
+			}
+			$this->breadcrumbs()
+				->workgroup('data')
+				->entryLink($this->trans('Areas', [], 'pages'), 'project_area_index', ['slug' => $this->getSlug()])
+				->link($area->getName(), 'project_area_info', ['slug' => $this->getSlug(), 'id' => $area->getId()])
+				->link($this->trans('Participant statistics', [], 'pages'), 'project_area_stats', ['slug' => $this->getSlug(), 'id' => $area->getId()]);
+			return $this->render('WioEdkBundle:ProjectStats:participants.html.twig', array('output' => $output, 'name' => $area->getName()));
+		} catch(ItemNotFoundException $exception) {
+			return $this->showPageWithError($this->trans($exception->getMessage()), 'project_area_index', ['slug' => $this->getSlug()]);
+		}
 	}
 
 }

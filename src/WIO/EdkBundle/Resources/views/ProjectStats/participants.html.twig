@@ -1,11 +1,15 @@
 {% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
 
 {% block page_title %}
-	{{ 'Participant statistics' | trans({}, 'pages') }}
+	{% if name is defined %}
+	{{ 'Participant statistics: 0' | trans([name], 'pages') }}	
+	{% else %}
+	{{ 'Participant statistics' | trans([], 'pages') }}
+	{% endif %}
 {% endblock %}
 
 {% block page_subtitle %}
-	{{ 'Analyze the data through charts' | trans({}, 'pages') }}
+	{{ 'Analyze the data through charts' | trans([], 'pages') }}
 {% endblock %}
 
 {% block page_content %}

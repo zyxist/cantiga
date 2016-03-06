@@ -63,6 +63,7 @@ services:
             - { name: kernel.event_listener, event: cantiga.workspace.project, method: onProjectWorkspace }
             - { name: kernel.event_listener, event: cantiga.workspace.group, method: onGroupWorkspace }
             - { name: kernel.event_listener, event: cantiga.workspace.area, method: onAreaWorkspace }
+            - { name: kernel.event_listener, event: cantiga.ui.ctxmenu.project.area, method: onProjectAreaInfo }
     wio.edk.dashboard.recent_comments:
         class:     WIO\EdkBundle\Extension\DashboardChatExtension
         arguments: ["@wio.edk.repo.route"]

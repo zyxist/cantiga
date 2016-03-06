@@ -106,3 +106,12 @@
 			</div>
 		</div>
 {% endmacro %}
+
+{% macro render_context_menu(links) %}
+		{% if links %}
+		<li role="separator" class="divider"></li>
+		{% for link in links %}
+		<li><a href="{{ spath(link.route, link.args) }}">{{ link.name | trans([], 'pages') }}</a></li>
+		{% endfor %}
+		{% endif %}
+{% endmacro %}

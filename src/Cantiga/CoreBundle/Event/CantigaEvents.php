@@ -159,4 +159,12 @@ class CantigaEvents
 	 * Notification that an existing group has been removed.
 	 */
 	const GROUP_REMOVED = 'cantiga.group.removed';
+	/**
+	 * Context menu in the project area info page - allows adding new links to it.
+	 */
+	const UI_CTXMENU_PROJECT_AREA = 'cantiga.ui.ctxmenu.project.area';
+	/**
+	 * Context menu in the group area info page - allows adding new links to it.
+	 */
+	const UI_CTXMENU_GROUP_AREA = 'cantiga.ui.ctxmenu.group.area';
 }
