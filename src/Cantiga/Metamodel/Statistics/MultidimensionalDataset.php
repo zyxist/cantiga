@@ -101,7 +101,12 @@ class MultidimensionalDataset extends AbstractDataset
 			$this->processPacked($singleCategoryTimeline);
 		}
 		$this->removeNullValues();
-		return $this;		
+		$points = sizeof($this->temporalDimension);
+		uksort($this->categoryDimension, function($a, $b) use($points) {
+			return $this->data[$b][$points - 1] - $this->data[$a][$points - 1];
+		});
+		
+		return $this;
 	}
 	
 	protected function packageIntoDataset(array $datePoint, array $values)

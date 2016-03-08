@@ -104,7 +104,7 @@ class ProjectStatsParticipantController extends ProjectPageController
 		$repo = $this->get('wio.edk.repo.participant');
 		$dataset = $repo->fetchMultidimensionalAreaParticipantsOverTime($this->getActiveProject());
 		return $this->render('WioEdkBundle:ProjectStats:participant-summary.html.twig', [
-			'areaInfoPage' => 'project_area_info',
+			'areaInfoPage' => 'project_area_stats',
 			'dataset' => $dataset
 		]);
 	}
