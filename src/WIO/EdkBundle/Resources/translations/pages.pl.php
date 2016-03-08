@@ -15,4 +15,5 @@ return [
 	'Messages' => 'Wiadomości',
 	'View messages sent you by the participants' => 'Oglądaj i zarządzaj wiadomościami od uczestników',
 	'Manage registered participants' => 'Zarządzaj zarejestrowanymi uczestnikami',
+	'View participant progression per area summary' => 'Oglądaj zestawienie przyrostu uczestników w rejonach'
 ];

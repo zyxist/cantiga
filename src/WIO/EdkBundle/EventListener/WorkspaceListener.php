@@ -47,6 +47,7 @@ class WorkspaceListener
 			
 			$workspace->addWorkItem('statistics', new WorkItem('project_stats_route_index', 'Route statistics'));
 			$workspace->addWorkItem('statistics', new WorkItem('project_stats_participant_index', 'Participant statistics'));
+			$workspace->addWorkItem('summary', new WorkItem('project_participant_summary', 'Participants'));
 			$workspace->addWorkItem('data', new WorkItem('project_route_index', 'Routes'));
 			
 			$workspace->addWorkItem('participants', new WorkItem('project_reg_settings_index', 'Registration settings'));

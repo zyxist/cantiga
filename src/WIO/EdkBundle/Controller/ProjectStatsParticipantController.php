@@ -91,5 +91,22 @@ class ProjectStatsParticipantController extends ProjectPageController
 			return $this->showPageWithError($this->trans($exception->getMessage()), 'project_area_index', ['slug' => $this->getSlug()]);
 		}
 	}
+	
+	/**
+	 * @Route("/project/{slug}/participant_summary", name="project_participant_summary")
+	 */
+	public function projectTotalDailyParticipantSummaryAction(Request $request)
+	{
+		$this->breadcrumbs()
+			->workgroup('summary')
+			->entryLink($this->trans('Participants', [], 'pages'), 'project_participant_summary', ['slug' => $this->getSlug()]);
+		
+		$repo = $this->get('wio.edk.repo.participant');
+		$dataset = $repo->fetchMultidimensionalAreaParticipantsOverTime($this->getActiveProject());
+		return $this->render('WioEdkBundle:ProjectStats:participant-summary.html.twig', [
+			'areaInfoPage' => 'project_area_info',
+			'dataset' => $dataset
+		]);
+	}
 
 }

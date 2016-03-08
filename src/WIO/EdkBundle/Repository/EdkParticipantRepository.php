@@ -353,6 +353,30 @@ class EdkParticipantRepository implements InsertableRepositoryInterface
 			->process($data);
 	}
 	
+	/**
+	 * Creates a dataset that contains information about participant numbers over time within a
+	 * single area.
+	 * 
+	 * @param Project $project
+	 * @return MultidimensionalDataset
+	 */
+	public function fetchMultidimensionalAreaParticipantsOverTime(Project $project)
+	{
+		$data = $this->conn->fetchAll('SELECT s.*, a.name FROM `'.EdkTables::STAT_AREA_PARTICIPANT_TIME_TBL.'` s '
+				. 'INNER JOIN `'.CoreTables::AREA_TBL.'` a ON a.`id` = s.`areaId` '
+				. 'WHERE s.`projectId` = :projectId '
+				. 'ORDER BY `datePoint`', [':projectId' => $project->getId()]);
+		$engine = new \Cantiga\Metamodel\Statistics\MultidimensionalDataset('areaId', 'participantNum');
+		$areas = [];
+		foreach ($data as $row) {
+			$areas[$row['areaId']] = ['id' => $row['areaId'], 'name' => $row['name']];
+		}
+		foreach ($areas as $area) {
+			$engine->addCategory($area['id'], $area);
+		}
+		return $engine->process($data);
+	}
+	
 	public function countWhereLearntGrouped(MembershipEntityInterface $root)
 	{
 		$rootQuery = '';
