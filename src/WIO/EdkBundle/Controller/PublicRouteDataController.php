@@ -20,12 +20,10 @@ namespace WIO\EdkBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Controller\PublicPageController;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
-use DateInterval;
-use DateTime;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use WIO\EdkBundle\EdkSettings;
 
 /**
  * @Route("/api/edk/route-files")
@@ -41,9 +39,13 @@ class PublicRouteDataController extends PublicPageController
 	{
 		try {
 			$repository = $this->get(self::REPOSITORY_NAME);
-			$response = new Response();
-			$route = $repository->getItemBySlug($slug);
-			$route->downloadDescription($this->get('cantiga.files'), $response);
+			$fileInfo = $repository->getFileDownloadInformation($slug, 'descriptionFile', EdkSettings::GUIDE_MIRROR_URL);
+			$response = $this->redirectToMirror($fileInfo);
+			if (null === $response) {
+				$response = new Response();
+				$fileRepository = $this->get('cantiga.files');
+				$fileRepository->downloadFile($fileInfo['file'], 'edk-guide-route-' . $fileInfo['id'] . '.pdf', 'application/pdf', $response);
+			}
 			return $response;
 		} catch(ItemNotFoundException $exception) {
 			throw $this->createNotFoundException('Plik nie istnieje.');
@@ -57,9 +59,17 @@ class PublicRouteDataController extends PublicPageController
 	{
 		try {
 			$repository = $this->get(self::REPOSITORY_NAME);
-			$response = new Response();
-			$route = $repository->getItemBySlug($slug);
-			$route->downloadMap($this->get('cantiga.files'), $response);
+			$fileInfo = $repository->getFileDownloadInformation($slug, 'mapFile', EdkSettings::MAP_MIRROR_URL);
+			$response = $this->redirectToMirror($fileInfo);
+			if (null === $response) {
+				$response = new Response();
+				$fileRepository = $this->get('cantiga.files');
+				if(strpos($fileInfo['file'], '.jpg') !== false) {
+					$fileRepository->downloadFile($fileInfo['file'], 'edk-map-route-' . $fileInfo['id'] . '.jpg', 'image/jpeg', $response);
+				} else {
+					$fileRepository->downloadFile($fileInfo['file'], 'edk-map-route-' . $fileInfo['id'] . '.pdf', 'application/pdf', $response);
+				}
+			}
 			return $response;
 		} catch(ItemNotFoundException $exception) {
 			throw $this->createNotFoundException('Plik nie istnieje.');
@@ -73,12 +83,35 @@ class PublicRouteDataController extends PublicPageController
 	{
 		try {
 			$repository = $this->get(self::REPOSITORY_NAME);
-			$response = new Response();
-			$route = $repository->getItemBySlug($slug, false);
-			$route->downloadGpsTrack($this->get('cantiga.files'), $response);
+			$fileInfo = $repository->getFileDownloadInformation($slug, 'gpsTrackFile', EdkSettings::GPS_MIRROR_URL);
+			$response = $this->redirectToMirror($fileInfo);
+			if (null === $response) {
+				$response = new Response();
+				$fileRepository = $this->get('cantiga.files');
+				$fileRepository->downloadFile($fileInfo['file'], 'edk-gps-route-' . $fileInfo['id'] . '.kml', 'application/vnd.google-earth.kml+xml', $response);
+			}
 			return $response;
 		} catch(ItemNotFoundException $exception) {
 			throw $this->createNotFoundException('Plik nie istnieje.');
 		}
+	}
+	
+	/**
+	 * Handles the redirects to mirrors, that can be enabled by configuring the project settings.
+	 * If the method returns a NULL response, the file should be downloaded directly from the system.
+	 * 
+	 * @param array $fileInfo File information about the file and mirror settings
+	 * @return Response
+	 */
+	private function redirectToMirror($fileInfo)
+	{
+		$setting = trim($fileInfo['setting']);
+		if (empty($setting) || $setting == '---') {
+			return null;
+		}
+		
+		$ext = substr($fileInfo['file'], strrpos($fileInfo['file'], '.') + 1);
+		$url = str_replace(['%HASH%', '%ID%', '%EXT%'], [$fileInfo['publicAccessSlug'], $fileInfo['id'], $ext], $fileInfo['setting']);
+		return $this->redirect($url, 301);
 	}
 }

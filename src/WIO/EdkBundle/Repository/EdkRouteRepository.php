@@ -216,6 +216,31 @@ class EdkRouteRepository
 		}
 	}
 	
+	/**
+	 * Fetches minimal set of information required to download a file.
+	 * 
+	 * @return array
+	 */
+	public function getFileDownloadInformation($slug, $requestedFile, $requestedSetting)
+	{
+		$this->transaction->requestTransaction();
+		try {
+			$data = $this->conn->fetchAssoc('SELECT r.id, r.publicAccessSlug, r.'.$requestedFile.' AS `file`, s.value AS `setting` '
+				. 'FROM `'.EdkTables::ROUTE_TBL.'` r '
+				. 'INNER JOIN `'.CoreTables::AREA_TBL.'` a ON a.id = r.areaId '
+				. 'INNER JOIN `'.CoreTables::PROJECT_SETTINGS_TBL.'` s ON s.`projectId` = a.`projectId` '
+				. 'WHERE r.`publicAccessSlug` = :slug AND s.`key` = :key', [':slug' => $slug, ':key' => $requestedSetting]);
+			if(false === $data) {
+				$this->transaction->requestRollback();
+				throw new ItemNotFoundException('The specified item has not been found.', $id);
+			}
+			return $data;
+		} catch(Exception $ex) {
+			$this->transaction->requestRollback();
+			throw $ex;
+		}
+	}
+	
 	public function insert(EdkRoute $item)
 	{
 		$this->transaction->requestTransaction();
@@ -380,6 +405,11 @@ class EdkRouteRepository
 			}
 		}
 		return $types;
+	}
+	
+	public function quickSettingAccess(EdkRoute $route, $property)
+	{
+		
 	}
 	
 	private function getActivationFunc(EdkRoute $route)

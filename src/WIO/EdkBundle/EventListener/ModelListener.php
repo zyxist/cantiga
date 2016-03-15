@@ -51,6 +51,9 @@ class ModelListener
 	{
 		$settings = $event->getSettings();
 		$settings->create(new Setting(EdkSettings::PUBLISHED_AREA_STATUS, 'Published area status ID', 'edk', 0, Setting::TYPE_INTEGER));
+		$settings->create(new Setting(EdkSettings::GUIDE_MIRROR_URL, 'Guide mirror URL', 'edk', 0, Setting::TYPE_STRING));
+		$settings->create(new Setting(EdkSettings::MAP_MIRROR_URL, 'Map mirror URL', 'edk', 0, Setting::TYPE_STRING));
+		$settings->create(new Setting(EdkSettings::GPS_MIRROR_URL, 'GPS mirror URL', 'edk', 0, Setting::TYPE_STRING));
 	}
 
 	public function onAreaUpdated(AreaEvent $event)
