@@ -93,6 +93,7 @@
 				{% if item.registrationType == 1 or item.registrationType == 4 %}
 					<p>{{ 'Current number of participants' | trans([], 'edk') }}: <strong>{{ item.participantNum }}</strong></p>
 				{% endif %}
+				<p>{{ 'Participants registered externally' | trans([], 'edk') }}: <strong>{{ item.externalParticipantNum }}</strong></p>
 			{% endif %}
 			</div>
 		</div>

@@ -31,6 +31,7 @@ return [
 	'RegistrationTypeOther' => 'Other way',
 	'RegistrationTypeClosed' => 'Registration closed',
 	
+	'ExternalParticipantNumHint' => 'If you opened a registration not only via the EDK.org.pl registration system (but i.e. via your own), you can type here the number of participants registered in this way.',
 	'ExternalRegistrationUrlHint' => 'If you choose the registration via an external website, enter the FULL address to your custom registration form.',
 	'AllowLimitExceedHint' => 'If active, the participants can still register for this route even if the participant limit has been already exceeded.',
 	'MaxPeoplePerRecordHint' => 'Only for adding participants by the Area leader: you can register a group of participants, if you set this field to more than 1.',
@@ -78,4 +79,5 @@ return [
 	'RouteCol' => 'Route',
 	
 	'ParticipantMustExplicitelyAgreeNote' => 'According to the Polish Personal Data Protection Act, the participant must EXPLICITELY agree to the conditions below - if you are unsure whether he/she did it, you MUST NOT add the participant to the system!',
+	'ShowingOnlyRegisteredViaOurSystemText' => 'The chart shows only the people registed via Extreme Way registration system. The numbers of participants registered in a different way are not counted here.',
 ];

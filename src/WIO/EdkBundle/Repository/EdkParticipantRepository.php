@@ -402,16 +402,16 @@ class EdkParticipantRepository implements InsertableRepositoryInterface
 	
 	public function countParticipantsOnRoutes(Area $area)
 	{
-		return $this->conn->fetchAll('SELECT s.`participantNum`, r.`name` '
+		return $this->conn->fetchAll('SELECT s.`participantNum` + s.`externalParticipantNum` AS `participantNum`, r.`name` '
 			. 'FROM `'.EdkTables::REGISTRATION_SETTINGS_TBL.'` s '
 			. 'INNER JOIN `'.EdkTables::ROUTE_TBL.'` r ON r.id = s.routeId '
 			. 'WHERE r.areaId = :rootId '
-			. 'ORDER BY s.`participantNum`', [':rootId' => $area->getId()]);
+			. 'ORDER BY (s.`participantNum` + s.`externalParticipantNum`)', [':rootId' => $area->getId()]);
 	}
 	
 	public function fetchBiggestAreasByParticipants(Project $project, $max)
 	{
-		$values = $this->conn->fetchAll('SELECT SUM(s.`participantNum`) AS `sum`, a.`id`, a.`name` '
+		$values = $this->conn->fetchAll('SELECT (SUM(s.`participantNum`) + s.`externalParticipantNum`) AS `sum`, a.`id`, a.`name` '
 			. 'FROM `'.EdkTables::REGISTRATION_SETTINGS_TBL.'` s '
 			. 'INNER JOIN `'.EdkTables::ROUTE_TBL.'` r ON r.id = s.routeId '
 			. 'INNER JOIN `'.CoreTables::AREA_TBL.'` a ON a.id = r.areaId '

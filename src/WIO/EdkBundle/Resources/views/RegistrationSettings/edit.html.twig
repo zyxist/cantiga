@@ -10,7 +10,7 @@
 	<fieldset>
 		<legend>{{ 'Basic information' | trans([], 'edk') }}</legend>
 		<div class="row">
-			<div class="col-lg-4 col-md-12">
+			<div class="col-lg-4 col-md-6 col-md-12">
 				{{ form_row(form.registrationType) }}
 			</div>
 			<div class="col-lg-4 col-md-6 col-xs-12">
@@ -18,6 +18,9 @@
 			</div>
 			<div class="col-lg-4 col-md-6 col-xs-12">
 				{{ form_row(form.endTime) }}
+			</div>
+			<div class="col-lg-6 col-md-12">
+				{{ form_row(form.externalParticipantNum) }}
 			</div>
 		</div>
 	</fieldset>

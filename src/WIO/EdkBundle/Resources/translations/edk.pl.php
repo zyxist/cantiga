@@ -83,15 +83,18 @@ return [
 	'Registration via external website' => 'Zapisy przez zewnętrzną stronę WWW',
 	
 	'Participants' => 'Uczestnicy',
-	'Current number of participants' => 'Obecnie zapisanych',
+	'Current number of participants' => 'Obecnie zapisanych przez stronę EDK',
+	'Participants registered externally' => 'Zapisanych przez zewnętrzne zapisy',
 	'Beginning of registration' => 'Początek zapisów',
 	'End of registration' => 'Koniec zapisów',
 	'External registration URL' => 'Zewnętrzny adres URL do zapisów',
+	'Number of participants registered externally' => 'Liczba uczestników zapisanych przez zewnętrzne zapisy',
 	'Expected number of participants' => 'Spodziewana liczba uczestników',
 	'Allow exceeding the participant limit' => 'Dopuść przekroczenie limitu uczestników',
 	'Max. number of people in the record' => 'Max. liczba ludzi na jedno zgłoszenie',
 	'Custom question' => 'Dowolne pytanie',
 	
+	'ExternalParticipantNumHint' => 'Jeśli prowadziłeś zapisy nie tylko przez formularz zapisów EDK (lecz np. przez własny system), możesz tutaj wpisać, ilu uczestników zapisało się na trasę w ten właśnie sposób.',
 	'ExternalRegistrationUrlHint' => 'Jeśli wybrałeś sposób zapisów przez zewnętrzną stronę WWW, podaj tutaj PEŁNY odnośnik do formularza zapisów.',
 	'AllowLimitExceedHint' => 'Jeśli włączysz tę opcję, uczestnicy będą mogli zapisywać się dalej nawet wtedy, gdy limit osób na danej trasie zostanie osiągnięty.',
 	'MaxPeoplePerRecordHint' => 'Tylko do dodawania uczestników przez Lidera Rejonów: możesz w jednym zgłoszeniu zapisywać grupę uczestników, jeśli ustawisz to na więcej niż 1',
@@ -210,4 +213,6 @@ return [
 	'FileStatMapPresent' => 'GPS + mapa',
 	'FileStatGuidePresent' => 'GPS + opis',
 	'FileStatMapGuidePresent' => 'GPS + mapa + opis',
+	
+	'ShowingOnlyRegisteredViaOurSystemText' => 'Wykres pokazuje tylko ludzi zapisanych przez system zapisów EDK. Liczby uczestników zapisanych innymi kanałami nie są tu uwzględniane.',
 ];

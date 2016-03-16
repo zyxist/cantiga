@@ -53,6 +53,7 @@ class EdkRegistrationSettings implements IdentifiableInterface, EditableEntityIn
 	private $allowLimitExceed;
 	private $maxPeoplePerRecord;
 	private $participantNum;
+	private $externalParticipantNum;
 	private $customQuestion;
 	
 	private $isNew = false;
@@ -161,6 +162,14 @@ class EdkRegistrationSettings implements IdentifiableInterface, EditableEntityIn
 		} elseif ($this->registrationType == self::TYPE_OTHER) {
 			$this->checkUnsupportedFields($context, ['externalRegistrationUrl', 'participantLimit', 'maxPeoplePerRecord', 'customQuestion']);
 		}
+		if ($this->registrationType != self::TYPE_NO) {
+			$this->externalParticipantNum = (int) $this->externalParticipantNum;
+			if ($this->externalParticipantNum < 0) {
+				$context->buildViolation('ExternalParticipantNumInvalidErrMsg')
+					->atPath('externalParticipantNum')
+					->addViolation();
+			}
+		}
 	}
 	
 	private function checkUnsupportedFields(ExecutionContextInterface $context, array $fields)
@@ -248,6 +257,11 @@ class EdkRegistrationSettings implements IdentifiableInterface, EditableEntityIn
 	{
 		return $this->participantNum;
 	}
+	
+	public function getExternalParticipantNum()
+	{
+		return $this->externalParticipantNum;
+	}
 
 	public function getCustomQuestion()
 	{
@@ -307,6 +321,12 @@ class EdkRegistrationSettings implements IdentifiableInterface, EditableEntityIn
 		$this->participantNum = $participantNum;
 		return $this;
 	}
+	
+	public function setExternalParticipantNum($participantNum)
+	{
+		$this->externalParticipantNum = $participantNum;
+		return $this;
+	}
 
 	public function setCustomQuestion($customQuestion)
 	{
@@ -344,14 +364,14 @@ class EdkRegistrationSettings implements IdentifiableInterface, EditableEntityIn
 		if ($this->isNew) {
 			$conn->insert(
 				EdkTables::REGISTRATION_SETTINGS_TBL,
-				DataMappers::pick($this, ['route', 'registrationType', 'startTime', 'endTime', 'externalRegistrationUrl', 'participantLimit', 'allowLimitExceed', 'maxPeoplePerRecord', 'customQuestion'], [
+				DataMappers::pick($this, ['route', 'registrationType', 'startTime', 'endTime', 'externalRegistrationUrl', 'participantLimit', 'allowLimitExceed', 'maxPeoplePerRecord', 'externalParticipantNum', 'customQuestion'], [
 					'areaId' => $this->route->getArea()->getId()
 				])
 			);
 		} else {
 			$conn->update(
 				EdkTables::REGISTRATION_SETTINGS_TBL,
-				DataMappers::pick($this, ['registrationType', 'startTime', 'endTime', 'externalRegistrationUrl', 'participantLimit', 'allowLimitExceed', 'maxPeoplePerRecord', 'customQuestion']),
+				DataMappers::pick($this, ['registrationType', 'startTime', 'endTime', 'externalRegistrationUrl', 'participantLimit', 'allowLimitExceed', 'maxPeoplePerRecord', 'externalParticipantNum', 'customQuestion']),
 				['routeId' => $this->route->getId()]
 			);
 		}

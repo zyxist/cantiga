@@ -5,6 +5,7 @@ return [
 	'RegistrationTimeMismatchErrMsg' => 'Początek zapisów musi być wcześniej niż ich koniec.',
 	'ExternalUrlMissingErrMsg' => 'Jeśli wybrałeś zapisy przez zewnętrzną stronę WWW, proszę podać adres URL do formularza zapisów.',
 	'FieldNotValidWithThisTypeErrMsg' => 'Tego pola nie wypełniasz, jeśli wybrałeś podany sposób zapisów.',
+	'ExternalParticipantNumInvalidErrMsg' => 'Proszę podać prawidłową liczbę uczestników.',
 	
 	'TermsNotAcceptedErrorMsg' => 'Należy zaznaczyć to pole, aby móc wziąć udział w EDK',
 	'HowManyTimesWrongNumberErrorMsg' => 'Wartość tego pola musi być większa lub równa 0.',

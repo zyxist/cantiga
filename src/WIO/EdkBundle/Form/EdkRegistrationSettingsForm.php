@@ -75,6 +75,7 @@ class EdkRegistrationSettingsForm extends AbstractType
 				'required' => false
 			))
 			->add('externalRegistrationUrl', new UrlType, ['label' => 'External registration URL', 'attr' => ['help_text' => 'ExternalRegistrationUrlHint'], 'required' => false])
+			->add('externalParticipantNum', new NumberType, ['label' => 'Number of participants registered externally', 'attr' => ['help_text' => 'ExternalParticipantNumHint'], 'required' => false])
 			->add('participantLimit', new NumberType, array('label' => 'Expected number of participants', 'required' => false))
 			->add('allowLimitExceed', new BooleanType, array('label' => 'Allow exceeding the participant limit', 'attr' => array('help_text' => 'AllowLimitExceedHint'), 'required' => false))
 			->add('maxPeoplePerRecord', new NumberType, array('label' => 'Max. number of people in the record', 'attr' => array('help_text' => 'MaxPeoplePerRecordHint'), 'required' => false))
