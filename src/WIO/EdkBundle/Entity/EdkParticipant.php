@@ -30,6 +30,7 @@ use Symfony\Component\Validator\Constraints\Choice;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\ExecutionContextInterface;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use WIO\EdkBundle\EdkTables;
@@ -447,6 +448,8 @@ class EdkParticipant implements IdentifiableInterface, InsertableEntityInterface
 		$metadata->addPropertyConstraint('age', new NotBlank());
 		$metadata->addPropertyConstraint('email', new Email());
 		$metadata->addPropertyConstraint('whyParticipate', new Length(array('min' => 2, 'max' => 200)));
+		$metadata->addPropertyConstraint('howManyTimes', new NotBlank());
+		$metadata->addPropertyConstraint('howManyTimes', new Range(['min' => 0]));
 	}
 	
 	public function insert(Connection $conn)
