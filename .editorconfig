@@ -1,0 +1,25 @@
+root = true
+
+[*]
+end_of_line = LF
+charset = utf-8
+
+[src/*.php]
+indent_style = tab
+indent_size = 4
+insert_final_newline = true
+
+[*.yml]
+indent_style = space
+indent_size = 4
+
+[*.json]
+indent_style = space
+indent_size = 4
+
+[*.twig]
+indent_style = tab
+indent_size = 4
+
+[*.md]
+trim_trailing_whitespace = false
