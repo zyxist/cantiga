@@ -28,25 +28,19 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use WIO\EdkBundle\Entity\EdkRoute;
 
 class EdkRouteForm extends AbstractType
 {
 	const ADD = 0;
 	const EDIT = 1;
-	
-	private $mode;
-	private $areaRepository;
-		
-	public function __construct($mode, AreaRepositoryInterface $areaRepository = null)
+
+	public function configureOptions(OptionsResolver $resolver)
 	{
-		$this->mode = $mode;
-		$this->areaRepository = $areaRepository;
-	}
-	
-	public function setDefaultOptions(OptionsResolverInterface $resolver)
-	{    
+		$resolver->setDefined(['mode', 'areaRepository']);
+		$resolver->setRequired(['mode']);
+		
 		$resolver->setDefaults(array(
 			'translation_domain' => 'edk'
 		));
@@ -54,34 +48,34 @@ class EdkRouteForm extends AbstractType
 	
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		if (!empty($this->areaRepository)) {
-			$builder->add('area', new ChoiceType, ['label' => 'Area', 'choices' => $this->areaRepository->getFormChoices()]);
-			$builder->get('area')->addModelTransformer(new EntityTransformer($this->areaRepository));
+		if (!empty($options['areaRepository'])) {
+			$builder->add('area', ChoiceType::class, ['label' => 'Area', 'choices' => $options['areaRepository']->getFormChoices()]);
+			$builder->get('area')->addModelTransformer(new EntityTransformer($options['areaRepository']));
 		}
 		
 		$builder
-			->add('routeType', new ChoiceType, ['label' => 'Route type', 'choices' => [EdkRoute::TYPE_FULL => 'FullRoute', EdkRoute::TYPE_INSPIRED => 'RouteInspiredByEWC']])
-			->add('name', new TextType, array('label' => 'Route name'))
-			->add('routeCourse', new TextareaType, array('label' => 'Route course', 'attr' => array('help_text' => 'RouteCourseInfoText')))
-			->add('routeFrom', new TextType, 
+			->add('routeType', ChoiceType::class, ['label' => 'Route type', 'choices' => array_flip([EdkRoute::TYPE_FULL => 'FullRoute', EdkRoute::TYPE_INSPIRED => 'RouteInspiredByEWC'])])
+			->add('name', TextType::class, array('label' => 'Route name'))
+			->add('routeCourse', TextareaType::class, array('label' => 'Route course', 'attr' => array('help_text' => 'RouteCourseInfoText')))
+			->add('routeFrom', TextType::class, 
 				array('label' => 'Route beginning', 'attr' => array('help_text' => '(settlement)'))
 			)
-			->add('routeTo', new TextType, 
+			->add('routeTo', TextType::class, 
 				array('label' => 'Route end', 'attr' => array('help_text' => '(settlement)'))
 			)
-			->add('routeLength', new IntegerType, 
+			->add('routeLength', IntegerType::class, 
 				array('label' => 'Route length (km)')
 			)
-			->add('routeAscent', new IntegerType, 
+			->add('routeAscent', IntegerType::class, 
 				array('label' => 'Route ascent (m)', 'attr' => array('help_text' => 'RouteAscentInfoText'))
 			)
-			->add('routeObstacles', new TextType, 
+			->add('routeObstacles', TextType::class, 
 				array('label' => 'Additional obstacles', 'required' => false)
 			)
-			->add('descriptionFileUpload', new FileType, array('label' => 'RouteDescriptionFileUpload', 'required' => false))
-			->add('mapFileUpload', new FileType, array('label' => 'RouteMapFileUpload', 'required' => false, 'attr' => array('help_text' => 'RouteMapCopyrightInformationText')))
-			->add('gpsTrackFileUpload', new FileType, array('label' => 'RouteGPSTraceFileUpload', 'required' => $this->mode == self::ADD))
-			->add('save', new SubmitType, array('label' => 'Save'));
+			->add('descriptionFileUpload', FileType::class, array('label' => 'RouteDescriptionFileUpload', 'required' => false))
+			->add('mapFileUpload', FileType::class, array('label' => 'RouteMapFileUpload', 'required' => false, 'attr' => array('help_text' => 'RouteMapCopyrightInformationText')))
+			->add('gpsTrackFileUpload', FileType::class, array('label' => 'RouteGPSTraceFileUpload', 'required' => $options['mode'] == self::ADD))
+			->add('save', SubmitType::class, array('label' => 'Save'));
 	}
 	
 	public function getName() {

@@ -38,7 +38,7 @@ security:
             pattern:  ^(/$|/user/|/admin/|/project/|/group/|/area/|/auth/check|/auth/logout)
             provider: default_cantiga_provider
             form_login:
-                csrf_provider: form.csrf_provider
+                csrf_token_generator: security.csrf.token_manager
                 login_path:    cantiga_auth_login
                 check_path:    cantiga_auth_check
                 default_target_path: cantiga_home_page
@@ -46,7 +46,7 @@ security:
                 path:   cantiga_auth_logout
                 target: cantiga_home_page
             remember_me:
-                key:      "%secret%"
+                secret:  "%secret%"
                 lifetime: 604800
                 path:     /
 

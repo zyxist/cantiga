@@ -128,7 +128,7 @@ class ProjectCourseController extends ProjectPageController
 		$entity = new Course();
 		$entity->setProject($this->getActiveProject());
 
-		$action = new InsertAction($this->crudInfo, $entity, new CourseForm());
+		$action = new InsertAction($this->crudInfo, $entity, CourseForm::class);
 		$action->slug($this->getSlug());
 		return $action->run($this, $request);
 	}
@@ -138,7 +138,7 @@ class ProjectCourseController extends ProjectPageController
 	 */
 	public function editAction($id, Request $request)
 	{
-		$action = new EditAction($this->crudInfo, new CourseForm());
+		$action = new EditAction($this->crudInfo, CourseForm::class);
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
 	}
@@ -161,7 +161,7 @@ class ProjectCourseController extends ProjectPageController
 		try {
 			$repository = $this->crudInfo->getRepository();
 			$item = $repository->getItem($id);
-			$form = $this->createForm(new CourseTestUploadForm());
+			$form = $this->createForm(CourseTestUploadForm::class);
 			$form->handleRequest($request);
 
 			if ($form->isValid()) {

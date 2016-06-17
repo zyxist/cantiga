@@ -26,14 +26,20 @@ use Cantiga\CoreBundle\Repository\AppTextRepository;
 use Cantiga\CoreBundle\Repository\ProjectFormRepository;
 use Cantiga\CoreBundle\Settings\ProjectSettings;
 use Cantiga\Metamodel\DataRoutes;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Extends the default Symfony controller with additional useful methods and shortcuts for
- * the most common operations.
+ * the most common operations. Also, provides a compatibility layer for methods that were
+ * public in Symfony 2.x, but are protected since Symfony 3.0. A lot of our code relies
+ * on that, and until we develop a different solution, this must remain in the old way.
  *
  * @author Tomasz Jędrzejewski
  */
@@ -167,16 +173,112 @@ class CantigaController extends Controller
 		return $this->get('security.authorization_checker')->isGranted($role) === true;
 	}
 	
-	public function isGranted($attribute, $entity = null)
-	{
-		return $this->get('security.authorization_checker')->isGranted($attribute, $entity);
-	}
-	
 	/**
 	 * @return ExtensionPointFilter
 	 */
 	public function getExtensionPointFilter()
 	{
 		return new ExtensionPointFilter();
+	}
+	
+	// ----------------------
+	// All the methods below come from the default Symfony controller, but we change
+	// the access to public, like in Symfony 2.x, because a lot of actions rely on this.
+	// Until we find and develop a better way to handle this, let's use the old way.
+	// ----------------------
+	
+	public function generateUrl($route, $parameters = array(), $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
+	{
+		return parent::generateUrl($route, $parameters, $referenceType);
+	}
+	
+	public function forward($controller, array $path = array(), array $query = array())
+	{
+		return parent::forward($controller, $path, $query);
+	}
+	
+	public function redirect($url, $status = 302)
+	{
+		return parent::redirect($url, $status);
+	}
+
+	public function redirectToRoute($route, array $parameters = array(), $status = 302)
+	{
+		return parent::redirectToRoute($route, $parameters, $status);
+	}
+	
+	public function addFlash($type, $message)
+	{
+		return parent::addFlash($type, $message);
+	}
+	
+	public function isGranted($attributes, $object = null)
+	{
+		return parent::isGranted($attributes, $object);
+	}
+	
+	public function denyAccessUnlessGranted($attributes, $object = null, $message = 'Access Denied.')
+	{
+		return parent::denyAccessUnlessGranted($attributes, $object, $message);
+	}
+	
+	public function renderView($view, array $parameters = array())
+	{
+		return parent::renderView($view, $parameters);
+	}
+	
+	public function render($view, array $parameters = array(), Response $response = null)
+	{
+		return parent::render($view, $parameters, $response);
+	}
+	
+	public function stream($view, array $parameters = array(), StreamedResponse $response = null)
+	{
+		return parent::stream($view, $parameters, $response);
+	}
+	
+	public function createNotFoundException($message = 'Not Found', Exception $previous = null)
+	{
+		return parent::createNotFoundException($message, $previous);
+	}
+	
+	public function createAccessDeniedException($message = 'Access Denied.', Exception $previous = null)
+	{
+		return parent::createAccessDeniedException($message, $previous);
+	}
+	
+	public function createForm($type, $data = null, array $options = array())
+	{
+		return parent::createForm($type, $data, $options);
+	}
+	
+	public function createFormBuilder($data = null, array $options = array())
+	{
+		return parent::createFormBuilder($data, $options);
+	}
+	
+	public function getUser()
+	{
+		return parent::getUser();
+	}
+	
+	public function has($id)
+	{
+		return parent::has($id);
+	}
+	
+	public function get($id)
+	{
+		return parent::get($id);
+	}
+	
+	public function getParameter($name)
+	{
+		return parent::getParameter($name);
+	}
+	
+	public function isCsrfTokenValid($id, $token)
+	{
+		return parent::isCsrfTokenValid($id, $token);
 	}
 }

@@ -164,7 +164,11 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 		$item = new Project;
 		DataMappers::fromArray($item, $array, $prefix);
 		if (is_string($item->modules)) {
-			$item->modules = explode(',', $item->modules);
+			if ($item->modules === '') {
+				$item->modules = [];
+			} else {
+				$item->modules = explode(',', $item->modules);
+			}
 		}
 		return $item;
 	}

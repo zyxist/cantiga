@@ -18,23 +18,26 @@
  */
 namespace Cantiga\CoreBundle\Form;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Cantiga\CoreBundle\Entity\User;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
 
 class UserProfileForm extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add('location', 'text', array('label' => 'Location', 'required' => false))
-			->add('telephone', 'text', array('label' => 'Telephone', 'required' => false))
-			->add('publicMail', 'text', array('label' => 'Public e-mail', 'required' => false))
-			->add('notes', 'text', array('label' => 'Notes', 'required' => false))
-			->add('privShowTelephone', 'choice', array('label' => 'Who can see my phone number?', 'choices' => User::getPrivacySettings()))
-			->add('privShowPublicMail', 'choice', array('label' => 'Who can see my public e-mail?', 'choices' => User::getPrivacySettings()))
-			->add('privShowNotes', 'choice', array('label' => 'Who can see my notes?', 'choices' => User::getPrivacySettings()))
-			->add('save', 'submit', array('label' => 'Save'));
+			->add('location', TextType::class, ['label' => 'Location', 'required' => false])
+			->add('telephone', TextType::class, ['label' => 'Telephone', 'required' => false])
+			->add('publicMail', TextType::class, ['label' => 'Public e-mail', 'required' => false])
+			->add('notes', TextType::class, ['label' => 'Notes', 'required' => false])
+			->add('privShowTelephone', ChoiceType::class, ['label' => 'Who can see my phone number?', 'choices' => User::getPrivacySettings()])
+			->add('privShowPublicMail', ChoiceType::class, ['label' => 'Who can see my public e-mail?', 'choices' => User::getPrivacySettings()])
+			->add('privShowNotes', ChoiceType::class, ['label' => 'Who can see my notes?', 'choices' => User::getPrivacySettings()])
+			->add('save', SubmitType::class, ['label' => 'Save']);
 	}
 
 	public function getName()

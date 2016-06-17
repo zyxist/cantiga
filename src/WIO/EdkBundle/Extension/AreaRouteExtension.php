@@ -24,6 +24,7 @@ use Cantiga\CoreBundle\Api\Controller\ProjectPageController;
 use Cantiga\CoreBundle\Entity\Area;
 use Cantiga\CoreBundle\Extension\AreaInformationExtensionInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Templating\EngineInterface;
 use WIO\EdkBundle\Repository\EdkRouteRepository;
 
 /**
@@ -32,10 +33,15 @@ use WIO\EdkBundle\Repository\EdkRouteRepository;
 class AreaRouteExtension implements AreaInformationExtensionInterface
 {
 	private $repository;
+	/**
+	 * @var EngineInterface
+	 */
+	private $templating;
 	
-	public function __construct(EdkRouteRepository $repository)
+	public function __construct(EdkRouteRepository $repository, EngineInterface $templating)
 	{
 		$this->repository = $repository;
+		$this->templating = $templating;
 	}
 	
 	public function getPriority()
@@ -52,7 +58,7 @@ class AreaRouteExtension implements AreaInformationExtensionInterface
 		}
 		
 		$routes = $this->repository->findRouteSummary($area);
-		return $controller->renderView('WioEdkBundle:Extension:area-routes.html.twig', [
+		return $this->templating->render('WioEdkBundle:Extension:area-routes.html.twig', [
 			'routes' => $routes,
 			'routeLink' => $routeLink,
 		]);

@@ -118,7 +118,7 @@ class AdminUserController extends AdminPageController
 	 */
 	public function editAction($id, Request $request)
 	{
-		$action = new EditAction($this->crudInfo, new AdminUserForm());
+		$action = new EditAction($this->crudInfo, AdminUserForm::class);
 		return $action->run($this, $id, $request);
 	}
 	

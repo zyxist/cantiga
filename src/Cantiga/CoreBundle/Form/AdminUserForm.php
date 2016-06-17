@@ -30,11 +30,11 @@ class AdminUserForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add('name', new TextType, array('label' => 'Name'))
-			->add('email', new EmailType, array('label' => 'E-mail'))
-			->add('active', new BooleanType, array('label' => 'Active?'))
-			->add('admin', new BooleanType, array('label' => 'Is admin?'))
-			->add('save', new SubmitType, array('label' => 'Save'));
+			->add('name', TextType::class, array('label' => 'Name'))
+			->add('email', EmailType::class, array('label' => 'E-mail'))
+			->add('active', BooleanType::class, array('label' => 'Active?'))
+			->add('admin', BooleanType::class, array('label' => 'Is admin?'))
+			->add('save', SubmitType::class, array('label' => 'Save'));
 	}
 
 	public function getName()

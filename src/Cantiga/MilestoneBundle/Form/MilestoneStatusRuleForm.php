@@ -18,28 +18,22 @@
  */
 namespace Cantiga\MilestoneBundle\Form;
 
-use Cantiga\CoreBundle\Repository\ProjectAreaStatusRepository;
 use Cantiga\Metamodel\Form\EntityTransformer;
-use Cantiga\MilestoneBundle\Repository\ProjectMilestoneRepository;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class MilestoneStatusRuleForm extends AbstractType
 {
-	private $statusRepository;
-	private $milestoneRepository;
-	
-	public function __construct(ProjectAreaStatusRepository $statusRepository, ProjectMilestoneRepository $milestoneRepository)
-	{
-		$this->statusRepository = $statusRepository;
-		$this->milestoneRepository = $milestoneRepository;
-	}
-	
 	public function configureOptions(OptionsResolver $resolver)
 	{
+		$resolver->setDefined(['statusRepository', 'milestoneRepository']);
+		$resolver->setRequired(['statusRepository', 'milestoneRepository']);
+		
 		$resolver->setDefaults(array(
 			'translation_domain' => 'milestone'
 		));
@@ -47,19 +41,19 @@ class MilestoneStatusRuleForm extends AbstractType
 	
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$statusChoices = $this->statusRepository->getFormChoices();
-		$milestoneChoices = $this->milestoneRepository->getFormChoices('Area');
+		$statusChoices = $options['statusRepository']->getFormChoices();
+		$milestoneChoices = $options['milestoneRepository']->getFormChoices('Area');
 		
 		$builder
-			->add('name', new TextType, array('label' => 'Name'))
-			->add('newStatus', 'choice', array('label' => 'New status', 'required' => true, 'choices' => $statusChoices))
-			->add('prevStatus', 'choice', array('label' => 'Previous status', 'required' => true, 'choices' => $statusChoices))
-			->add('milestoneMap', 'choice', array('label' => 'Required milestones', 'expanded' => true, 'multiple' => true, 'choices' => $milestoneChoices))
-			->add('activationOrder', new NumberType, array('label' => 'Activation order'))
-			->add('save', 'submit', array('label' => 'Save'));
+			->add('name', TextType::class, array('label' => 'Name'))
+			->add('newStatus', ChoiceType::class, array('label' => 'New status', 'required' => true, 'choices' => $statusChoices))
+			->add('prevStatus', ChoiceType::class, array('label' => 'Previous status', 'required' => true, 'choices' => $statusChoices))
+			->add('milestoneMap', ChoiceType::class, array('label' => 'Required milestones', 'expanded' => true, 'multiple' => true, 'choices' => $milestoneChoices))
+			->add('activationOrder', NumberType::class, array('label' => 'Activation order'))
+			->add('save', SubmitType::class, array('label' => 'Save'));
 		
-		$builder->get('newStatus')->addModelTransformer(new EntityTransformer($this->statusRepository));
-		$builder->get('prevStatus')->addModelTransformer(new EntityTransformer($this->statusRepository));
+		$builder->get('newStatus')->addModelTransformer(new EntityTransformer($options['statusRepository']));
+		$builder->get('prevStatus')->addModelTransformer(new EntityTransformer($options['statusRepository']));
 	}
 	
 	public function getName()

@@ -47,48 +47,48 @@ class AreaRequestModel implements CustomFormModelInterface
 	
 	public function constructForm(FormBuilderInterface $builder)
 	{
-		$builder->add('ewcType', new ChoiceType, array('label' => 'Type of the way you wish to create', 'choices' => $this->ewcTypes()));
+		$builder->add('ewcType', ChoiceType::class, array('label' => 'Type of the way you wish to create', 'choices' => array_flip($this->ewcTypes())));
 		
-		$builder->add('routeFrom', new TextType, array('label' => 'Beginning of the route', 'constraints' => [
+		$builder->add('routeFrom', TextType::class, array('label' => 'Beginning of the route', 'constraints' => [
 			new NotNull,
 			new Length(['min' => 2, 'max' => 50])
 		]));
-		$builder->add('routeTo', new TextType, array('label' => 'End of the route', 'constraints' => [
+		$builder->add('routeTo', TextType::class, array('label' => 'End of the route', 'constraints' => [
 			new NotNull,
 			new Length(['min' => 2, 'max' => 50])
 		]));
-		$builder->add('routeLength', new NumberType, array('label' => 'Route length', 'attr' => ['help_text' => 'In kilometres'], 'constraints' => [
+		$builder->add('routeLength', NumberType::class, array('label' => 'Route length', 'attr' => ['help_text' => 'In kilometres'], 'constraints' => [
 			new Range(['min' => 20, 'max' => 100])
 		]));
-		$builder->add('routeAscent', new NumberType, array('label' => 'Route ascent', 'attr' => ['help_text' => 'In metres'], 'constraints' => [
+		$builder->add('routeAscent', NumberType::class, array('label' => 'Route ascent', 'attr' => ['help_text' => 'In metres'], 'constraints' => [
 			new Range(['min' => 0, 'max' => 5000])
 		]));
 		
-		$builder->add('whyCreatingArea', new TextareaType, array('label' => 'WhyCreatingAreaFormLabel', 'attr' => ['help_text' => 'Max400Chars'], 'constraints' => [
+		$builder->add('whyCreatingArea', TextareaType::class, array('label' => 'WhyCreatingAreaFormLabel', 'attr' => ['help_text' => 'Max400Chars'], 'constraints' => [
 			new NotNull,
 			new Length(['min' => 10, 'max' => 400])
 		]));
-		$builder->add('intersectionPoint', new TextareaType, array('label' => 'IntersectionPointFormLabel', 'attr' => ['help_text' => 'Max400Chars'], 'constraints' => [
+		$builder->add('intersectionPoint', TextareaType::class, array('label' => 'IntersectionPointFormLabel', 'attr' => ['help_text' => 'Max400Chars'], 'constraints' => [
 			new NotNull,
 			new Length(['min' => 10, 'max' => 400])
 		]));
-		$builder->add('leaderGoals', new TextareaType, array('label' => 'LeaderGoalsFormLabel', 'attr' => ['help_text' => 'Max400Chars'], 'constraints' => [
+		$builder->add('leaderGoals', TextareaType::class, array('label' => 'LeaderGoalsFormLabel', 'attr' => ['help_text' => 'Max400Chars'], 'constraints' => [
 			new NotNull,
 			new Length(['min' => 10, 'max' => 400])
 		]));
-		$builder->add('particiaptionDetails', new TextareaType, array('label' => 'ParticipationDetailsFormLabel', 'attr' => ['help_text' => 'Max400Chars'], 'constraints' => [
+		$builder->add('particiaptionDetails', TextareaType::class, array('label' => 'ParticipationDetailsFormLabel', 'attr' => ['help_text' => 'Max400Chars'], 'constraints' => [
 			new NotNull,
 			new Length(['min' => 3, 'max' => 400])
 		]));
-		$builder->add('projectMgmtExperiences', new TextareaType, array('label' => 'ProjectMgmtExperienceFormLabel', 'attr' => ['help_text' => 'ProjectMgmtExperiencesHelp'], 'constraints' => [
+		$builder->add('projectMgmtExperiences', TextareaType::class, array('label' => 'ProjectMgmtExperienceFormLabel', 'attr' => ['help_text' => 'ProjectMgmtExperiencesHelp'], 'constraints' => [
 			new NotNull,
 			new Length(['min' => 3, 'max' => 400])
 		]));
-		$builder->add('threeBiggestSuccesses', new TextareaType, array('label' => 'ThreeBiggestSuccessesFormLabel', 'attr' => ['help_text' => 'Max400Chars'], 'constraints' => [
+		$builder->add('threeBiggestSuccesses', TextareaType::class, array('label' => 'ThreeBiggestSuccessesFormLabel', 'attr' => ['help_text' => 'Max400Chars'], 'constraints' => [
 			new NotNull,
 			new Length(['min' => 10, 'max' => 400])
 		]));
-		$builder->add('stationaryCourse', new ChoiceType, ['label' => 'StationaryCoursePreferenceLabel', 'choices' => $this->stationaryCourseTypes(), 'multiple' => true, 'expanded' => true, 'constraints' => new Count(
+		$builder->add('stationaryCourse', ChoiceType::class, ['label' => 'StationaryCoursePreferenceLabel', 'choices' => array_flip($this->stationaryCourseTypes()), 'multiple' => true, 'expanded' => true, 'constraints' => new Count(
 				['min' => 1, 'minMessage' => 'Please select at least one option']
 			)]);
 	}

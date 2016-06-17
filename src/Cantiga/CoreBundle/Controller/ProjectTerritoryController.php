@@ -119,7 +119,7 @@ class ProjectTerritoryController extends ProjectPageController
 		$entity = new Territory();
 		$entity->setProject($this->getActiveProject());
 
-		$action = new InsertAction($this->crudInfo, $entity, new ProjectTerritoryForm());
+		$action = new InsertAction($this->crudInfo, $entity, ProjectTerritoryForm::class);
 		$action->slug($this->getSlug());
 		return $action->run($this, $request);
 	}
@@ -129,7 +129,7 @@ class ProjectTerritoryController extends ProjectPageController
 	 */
 	public function editAction($id, Request $request)
 	{
-		$action = new EditAction($this->crudInfo, new ProjectTerritoryForm());
+		$action = new EditAction($this->crudInfo, ProjectTerritoryForm::class);
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
 	}

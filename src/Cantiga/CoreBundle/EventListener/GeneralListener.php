@@ -21,6 +21,7 @@
 namespace Cantiga\CoreBundle\EventListener;
 
 use Cantiga\CoreBundle\Api\Controller\CantigaController;
+use Cantiga\Metamodel\LocaleProvider;
 use Cantiga\Metamodel\TimeFormatter;
 use Cantiga\Metamodel\Transaction;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -31,6 +32,7 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * @author Tomasz Jędrzejewski
@@ -67,14 +69,24 @@ class GeneralListener
 	 * @var TimeFormatter
 	 */
 	private $timeFormatter;
-
-	public function __construct(AuthorizationCheckerInterface $authChecker, TokenStorageInterface $tokenStorage, Transaction $transaction, Session $session, TimeFormatter $timeFormatter)
+	/**
+	 * @var TranslatorInterface
+	 */
+	private $translator;
+	/**
+	 * @var LocaleProvider
+	 */
+	private $localeProvider;
+	
+	public function __construct(AuthorizationCheckerInterface $authChecker, TokenStorageInterface $tokenStorage, Transaction $transaction, Session $session, TimeFormatter $timeFormatter, TranslatorInterface $translator, LocaleProvider $localeProvider)
 	{
 		$this->authChecker = $authChecker;
 		$this->tokenStorage = $tokenStorage;
 		$this->transaction = $transaction;
 		$this->session = $session;
 		$this->timeFormatter = $timeFormatter;
+		$this->translator = $translator;
+		$this->localeProvider = $localeProvider;
 	}
 
 	public function onKernelRequest(GetResponseEvent $event)
@@ -105,9 +117,9 @@ class GeneralListener
 		$controllerObject = $controller[0];
 		if ($controllerObject instanceof CantigaController) {
 			// set the time formatting settings
-			$controllerObject->get('translator')->setLocale($event->getRequest()->getLocale());
-			$this->timeFormatter->configure($controllerObject->get('translator'), $event->getRequest()->getLocale(), $event->getRequest()->getSession()->get('timezone'));
-			$controllerObject->get('cantiga.locale')->setLocale($event->getRequest()->getLocale());
+			$this->translator->setLocale($event->getRequest()->getLocale());
+			$this->timeFormatter->configure($this->translator, $event->getRequest()->getLocale(), $event->getRequest()->getSession()->get('timezone'));
+			$this->localeProvider->setLocale($event->getRequest()->getLocale());
 
 			// initialize the controller
 			$potentialResponse = $controllerObject->initialize($event->getRequest(), $this->authChecker);

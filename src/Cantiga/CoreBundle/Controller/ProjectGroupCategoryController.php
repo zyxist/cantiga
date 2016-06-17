@@ -122,7 +122,7 @@ class ProjectGroupCategoryController extends ProjectPageController
 		$entity = new GroupCategory();
 		$entity->setProject($this->getActiveProject());
 
-		$action = new InsertAction($this->crudInfo, $entity, new ProjectGroupCategoryForm());
+		$action = new InsertAction($this->crudInfo, $entity, ProjectGroupCategoryForm::class);
 		$action->slug($this->getSlug());
 		return $action->run($this, $request);
 	}
@@ -132,7 +132,7 @@ class ProjectGroupCategoryController extends ProjectPageController
 	 */
 	public function editAction($id, Request $request)
 	{
-		$action = new EditAction($this->crudInfo, new ProjectGroupCategoryForm());
+		$action = new EditAction($this->crudInfo, ProjectGroupCategoryForm::class);
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
 	}

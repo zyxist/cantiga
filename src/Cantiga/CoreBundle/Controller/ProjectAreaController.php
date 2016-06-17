@@ -173,7 +173,7 @@ class ProjectAreaController extends ProjectPageController
 		$item = new Area();
 		$item->setReporter($this->getUser());
 		$item->setProject($this->getActiveProject());
-		$action = new InsertAction($this->crudInfo, $item, new ProjectAreaForm($formModel, $territoryRepo, $groupRepo, $statusRepo));
+		$action = new InsertAction($this->crudInfo, $item, ProjectAreaForm::class, ['customFormModel' => $formModel, 'territoryRepository' => $territoryRepo, 'groupRepository' => $groupRepo, 'statusRepository' => $statusRepo]);
 		$action->slug($this->getSlug());
 		$action->customForm($formModel);
 		return $action->run($this, $request);
@@ -192,7 +192,7 @@ class ProjectAreaController extends ProjectPageController
 		$groupRepo->setProject($this->getActiveProject());
 
 		$formModel = $this->extensionPointFromSettings(CoreExtensions::AREA_FORM, CoreSettings::AREA_FORM);
-		$action = new EditAction($this->crudInfo, new ProjectAreaForm($formModel, $territoryRepo, $groupRepo, $statusRepo));
+		$action = new EditAction($this->crudInfo, ProjectAreaForm::class, ['customFormModel' => $formModel, 'territoryRepository' => $territoryRepo, 'groupRepository' => $groupRepo, 'statusRepository' => $statusRepo]);
 		$action->slug($this->getSlug());
 		$action->customForm($formModel);
 		return $action->run($this, $id, $request);

@@ -35,15 +35,19 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Serializer\Exception\LogicException;
 use Twig_Environment;
 use Twig_Extension;
+use Twig_Extension_GlobalsInterface;
 use Twig_SimpleFilter;
 use Twig_SimpleFunction;
+use function mb_strlen;
+use function mb_strpos;
+use function mb_substr;
 
 /**
  * Exposes cantiga-specific helpers to Twig
  *
  * @author Tomasz Jędrzejewski
  */
-class CantigaExtension extends Twig_Extension
+class CantigaExtension extends Twig_Extension implements Twig_Extension_GlobalsInterface
 {
 
 	/**

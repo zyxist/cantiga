@@ -23,6 +23,7 @@ use Cantiga\CoreBundle\Api\Workspace;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Repository\CoreStatisticsRepository;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Templating\EngineInterface;
 
 /**
  * Displays a short numerical summary of the project on the dashboard.
@@ -35,10 +36,15 @@ class ProjectSummaryExtension implements DashboardExtensionInterface
 	 * @var CoreStatisticsRepository 
 	 */
 	private $repository;
+	/**
+	 * @var EngineInterface
+	 */
+	private $templating;
 	
-	public function __construct(CoreStatisticsRepository $repository)
+	public function __construct(CoreStatisticsRepository $repository, EngineInterface $templating)
 	{
 		$this->repository = $repository;
+		$this->templating = $templating;
 	}
 	
 	public function getPriority()
@@ -48,6 +54,6 @@ class ProjectSummaryExtension implements DashboardExtensionInterface
 
 	public function render(CantigaController $controller, Request $request, Workspace $workspace, Project $project = null)
 	{
-		return $controller->renderView('CantigaCoreBundle:Project:project-summary.html.twig', ['data' => $this->repository->fetchProjectSummary($project)]);
+		return $this->templating->render('CantigaCoreBundle:Project:project-summary.html.twig', ['data' => $this->repository->fetchProjectSummary($project)]);
 	}
 }

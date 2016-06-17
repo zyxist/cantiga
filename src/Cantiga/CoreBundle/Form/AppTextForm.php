@@ -31,11 +31,11 @@ class AppTextForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add('place', new ChoiceType, array('label' => 'Place', 'choices' => AppTexts::getNames(), 'attr' => array('help_text' => 'Place where the text is displayed.')))
-			->add('title', new TextType, array('label' => 'Title', 'attr' => array('help_text' => 'Some places do not need to show any title.')))
-			->add('content', new TextareaType, array('label' => 'Content', 'attr' => ['rows' => 20]))
-			->add('locale', new TextType, array('label' => 'Locale', 'attr' => array('help_text' => 'Must match one of the installed languages.')))
-			->add('save', new SubmitType, array('label' => 'Save'));
+			->add('place', ChoiceType::class, array('label' => 'Place', 'choices' => AppTexts::getNames(), 'attr' => array('help_text' => 'Place where the text is displayed.')))
+			->add('title', TextType::class, array('label' => 'Title', 'attr' => array('help_text' => 'Some places do not need to show any title.')))
+			->add('content', TextareaType::class, array('label' => 'Content', 'attr' => ['rows' => 20]))
+			->add('locale', TextType::class, array('label' => 'Locale', 'attr' => array('help_text' => 'Must match one of the installed languages.')))
+			->add('save', SubmitType::class, array('label' => 'Save'));
 	}
 
 	public function getName()

@@ -57,10 +57,10 @@ class EdkParticipantForm extends AbstractParticipantForm
 	{
 		parent::buildForm($builder, $options);
 		if($this->mode == self::ADD) {
-			$builder->add('peopleNum', new IntegerType, ['label' => 'NumberRegisteredPeopleField', 'attr' => ['help_text' => 'NumberRegisteredPeopleHintText']]);
-			$builder->add('terms1Accepted', new BooleanType, ['label' => $this->texts[1]->getContent(), 'required' => true, 'disabled' => false]);
-			$builder->add('terms2Accepted', new BooleanType, ['label' => $this->texts[2]->getContent(), 'required' => true, 'disabled' => false]);
-			$builder->add('terms3Accepted', new BooleanType, ['label' => $this->texts[3]->getContent(), 'required' => true, 'disabled' => false]);
+			$builder->add('peopleNum', IntegerType::class, ['label' => 'NumberRegisteredPeopleField', 'attr' => ['help_text' => 'NumberRegisteredPeopleHintText']]);
+			$builder->add('terms1Accepted', BooleanType::class, ['label' => $this->texts[1]->getContent(), 'required' => true, 'disabled' => false]);
+			$builder->add('terms2Accepted', BooleanType::class, ['label' => $this->texts[2]->getContent(), 'required' => true, 'disabled' => false]);
+			$builder->add('terms3Accepted', BooleanType::class, ['label' => $this->texts[3]->getContent(), 'required' => true, 'disabled' => false]);
 		}
 	}
 	

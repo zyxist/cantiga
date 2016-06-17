@@ -25,43 +25,38 @@ use Cantiga\Metamodel\CustomForm\CustomFormEventSubscriber;
 use Cantiga\Metamodel\CustomForm\CustomFormModelInterface;
 use Cantiga\Metamodel\Form\EntityTransformer;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AreaProfileForm extends AbstractType
-{
-	/**
-	 * @var ProjectSettings 
-	 */
-	private $projectSettings;
-	/**
-	 * @var CustomFormModelInterface
-	 */
-	private $customFormModel;
-	private $territoryRepository;
-	
-	public function __construct(ProjectSettings $settings, CustomFormModelInterface $customFormModel, $territoryRepository)
+{	
+	public function configureOptions(OptionsResolver $resolver)
 	{
-		$this->customFormModel = $customFormModel;
-		$this->territoryRepository = $territoryRepository;
-		$this->projectSettings = $settings;
+		$resolver->setDefined(['customFormModel', 'territoryRepository', 'projectSettings']);
+		$resolver->setRequired(['customFormModel', 'territoryRepository', 'projectSettings']);
+		$resolver->addAllowedTypes('customFormModel', CustomFormModelInterface::class);
+		$resolver->addAllowedTypes('projectSettings', ProjectSettings::class);
 	}
 	
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$hint = $this->projectSettings->get(CoreSettings::AREA_NAME_HINT)->getValue();
+		$hint = $options['projectSettings']->get(CoreSettings::AREA_NAME_HINT)->getValue();
 		
 		$builder
-			->add('name', 'text', array('label' => 'Area name', 'attr' => ['help_text' => $hint]))
-			->add('territory', 'choice', array('label' => 'Territory', 'choices' => $this->territoryRepository->getFormChoices()))
-			->add('save', 'submit', array('label' => 'Save'));
-		$builder->get('territory')->addModelTransformer(new EntityTransformer($this->territoryRepository));
-		$builder->addEventSubscriber(new CustomFormEventSubscriber($this->customFormModel));
-		$builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
-			if ($this->customFormModel instanceof CompletenessCalculatorInterface) {
+			->add('name', TextType::class, array('label' => 'Area name', 'attr' => ['help_text' => $hint]))
+			->add('territory', ChoiceType::class, array('label' => 'Territory', 'choices' => $options['territoryRepository']->getFormChoices()))
+			->add('save', SubmitType::class, array('label' => 'Save'));
+		$builder->get('territory')->addModelTransformer(new EntityTransformer($options['territoryRepository']));
+		$builder->addEventSubscriber(new CustomFormEventSubscriber($options['customFormModel']));
+		$builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($options) {
+			if ($options['customFormModel'] instanceof CompletenessCalculatorInterface) {
 				$entity = $event->getData();
-				$entity->setPercentCompleteness($this->customFormModel->calculateCompleteness($entity->getCustomData()));
+				$entity->setPercentCompleteness($options['customFormModel']->calculateCompleteness($entity->getCustomData()));
 			}
 		});
 	}

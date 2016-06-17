@@ -25,6 +25,7 @@ use Cantiga\CoreBundle\Extension\DashboardExtensionInterface;
 use Cantiga\LinksBundle\Entity\Link;
 use Cantiga\LinksBundle\Repository\LinkRepository;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Templating\EngineInterface;
 
 /**
  * Displays the links on the given dashboard.
@@ -33,11 +34,19 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class DashboardExtension implements DashboardExtensionInterface
 {
+	/**
+	 * @var LinkRepository 
+	 */
 	private $linkRepository;
+	/**
+	 * @var EngineInterface
+	 */
+	private $templating;
 	
-	public function __construct(LinkRepository $repository)
+	public function __construct(LinkRepository $repository, EngineInterface $templating)
 	{
 		$this->linkRepository = $repository;
+		$this->templating = $templating;
 	}
 	
 	public function getPriority()
@@ -65,6 +74,6 @@ class DashboardExtension implements DashboardExtensionInterface
 		if (null === $presentationPlace) {
 			return '';
 		}
-		return $controller->renderView('CantigaLinksBundle:Links:dashboard-element.html.twig', array('links' => $this->linkRepository->findLinks($presentationPlace)));
+		return $this->templating->render('CantigaLinksBundle:Links:dashboard-element.html.twig', array('links' => $this->linkRepository->findLinks($presentationPlace)));
 	}
 }

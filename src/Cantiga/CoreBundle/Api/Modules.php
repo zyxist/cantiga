@@ -36,7 +36,7 @@ class Modules
 	public static function get($id)
 	{
 		if (!isset(self::$modules[$id])) {
-			throw new \RuntimeException('No such module.');
+			throw new \RuntimeException('No such module: '.$id);
 		}
 		return self::$modules[$id];
 	}
@@ -50,7 +50,7 @@ class Modules
 	{
 		$data = array();
 		foreach (self::$modules as $id => $w) {
-			$data[$id] = $w['name'];
+			$data[$w['name']] = $id;
 		}
 		return $data;
 	}

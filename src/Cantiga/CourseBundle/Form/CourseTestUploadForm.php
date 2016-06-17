@@ -19,14 +19,16 @@
 namespace Cantiga\CourseBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class CourseTestUploadForm extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('file', 'file', array('label' => 'XML file', 'required' => true))
-			->add('save', 'submit', array('label' => 'Upload questions'));
+		$builder->add('file', FileType::class, array('label' => 'XML file', 'required' => true))
+			->add('save', SubmitType::class, array('label' => 'Upload questions'));
 	}
 	
 	public function getName()

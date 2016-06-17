@@ -18,28 +18,31 @@
  */
 namespace Cantiga\CoreBundle\Form;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Cantiga\CoreBundle\Api\Workspaces;
 use Cantiga\CoreBundle\Repository\LanguageRepository;
 use Cantiga\Metamodel\Form\EntityTransformer;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserSettingsForm extends AbstractType
 {
-	private $langRepo;
-	
-	public function __construct(LanguageRepository $langRepo)
+	public function configureOptions(OptionsResolver $resolver)
 	{
-		$this->langRepo = $langRepo;
+		$resolver->setDefined(['languageRepository']);
+		$resolver->setRequired(['languageRepository']);
+		$resolver->addAllowedTypes('languageRepository', LanguageRepository::class);
 	}
 	
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add('settingsLanguage', 'choice', array('label' => 'Site language', 'choices' => $this->langRepo->getFormChoices()))
-			->add('settingsTimezone', 'timezone', array('label' => 'Timezone'))
-			->add('save', 'submit', array('label' => 'Save'));
-		$builder->get('settingsLanguage')->addModelTransformer(new EntityTransformer($this->langRepo));
+			->add('settingsLanguage', ChoiceType::class, array('label' => 'Site language', 'choices' => $options['languageRepository']->getFormChoices()))
+			->add('settingsTimezone', TimezoneType::class, array('label' => 'Timezone'))
+			->add('save', SubmitType::class, array('label' => 'Save'));
+		$builder->get('settingsLanguage')->addModelTransformer(new EntityTransformer($options['languageRepository']));
 	}
 
 	public function getName()

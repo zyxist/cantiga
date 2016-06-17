@@ -24,6 +24,7 @@ use Cantiga\CoreBundle\CoreSettings;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Repository\ProjectAreaRequestRepository;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Templating\EngineInterface;
 
 /**
  * Shows the most recent chat activity in the area requests.
@@ -37,9 +38,10 @@ class DashboardChatExtension implements DashboardExtensionInterface
 	 */
 	private $repository;
 	
-	public function __construct(ProjectAreaRequestRepository $repository)
+	public function __construct(ProjectAreaRequestRepository $repository, EngineInterface $templating)
 	{
 		$this->repository = $repository;
+		$this->templating = $templating;
 	}
 	
 	public function getPriority()
@@ -51,7 +53,7 @@ class DashboardChatExtension implements DashboardExtensionInterface
 	{
 		if ($controller->getProjectSettings()->get(CoreSettings::DASHBOARD_SHOW_CHAT)->getValue()) {
 			$this->repository->setActiveProject($project);
-			return $controller->renderView('CantigaCoreBundle:Project:recent-comments.html.twig', ['comments' => $this->repository->getRecentFeedbackActivity(8)]);
+			return $this->templating->render('CantigaCoreBundle:Project:recent-comments.html.twig', ['comments' => $this->repository->getRecentFeedbackActivity(8)]);
 		}
 		return '';
 	}

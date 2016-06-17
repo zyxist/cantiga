@@ -22,6 +22,9 @@ use Cantiga\CoreBundle\Api\ExtensionPoints\ExtensionPointFilter;
 use Cantiga\CoreBundle\Api\ExtensionPoints\ExtensionPointsInterface;
 use Cantiga\CoreBundle\Api\ModuleAwareInterface;
 use Cantiga\CoreBundle\Form\Type\BooleanType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
@@ -118,16 +121,16 @@ class Setting implements ModuleAwareInterface
 	{
 		switch ($this->type) {
 			case self::TYPE_STRING:
-				$builder->add($this->key, 'text', array('label' => $this->name));
+				$builder->add($this->key, TextType::class, array('label' => $this->name));
 				break;
 			case self::TYPE_INTEGER:
-				$builder->add($this->key, 'integer', array('label' => $this->name));
+				$builder->add($this->key, IntegerType::class, array('label' => $this->name));
 				break;
 			case self::TYPE_BOOLEAN:
-				$builder->add($this->key, new BooleanType(), array('label' => $this->name));
+				$builder->add($this->key, BooleanType::class, array('label' => $this->name));
 				break;
 			case self::TYPE_EXTENSION_POINT:
-				$builder->add($this->key, 'choice', array('label' => $this->name, 'choices' =>
+				$builder->add($this->key, ChoiceType::class, array('label' => $this->name, 'choices' =>
 					$extensionPoints->describeImplementations($this->extensionPoint, $filter)
 				));
 				break;

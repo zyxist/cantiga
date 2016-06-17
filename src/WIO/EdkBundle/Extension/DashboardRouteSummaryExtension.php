@@ -23,6 +23,7 @@ use Cantiga\CoreBundle\Api\Workspace;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Extension\DashboardExtensionInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Templating\EngineInterface;
 use WIO\EdkBundle\Repository\EdkRegistrationSettingsRepository;
 use WIO\EdkBundle\Repository\EdkRouteRepository;
 
@@ -41,11 +42,16 @@ class DashboardRouteSummaryExtension implements DashboardExtensionInterface
 	 * @var EdkRegistrationSettingsRepository 
 	 */
 	private $settingsRepository;
+	/**
+	 * @var EngineInterface
+	 */
+	private $templating;
 	
-	public function __construct(EdkRouteRepository $repository, EdkRegistrationSettingsRepository $settingsRepository)
+	public function __construct(EdkRouteRepository $repository, EdkRegistrationSettingsRepository $settingsRepository, EngineInterface $templating)
 	{
 		$this->repository = $repository;
 		$this->settingsRepository = $settingsRepository;
+		$this->templating = $templating;
 	}
 	
 	public function getPriority()
@@ -58,7 +64,7 @@ class DashboardRouteSummaryExtension implements DashboardExtensionInterface
 		$rootEntity = $controller->getMembership()->getItem();
 		$this->repository->setRootEntity($rootEntity);
 		$this->settingsRepository->setRootEntity($rootEntity);
-		return $controller->renderView('WioEdkBundle:Extension:route-summary.html.twig', [
+		return $this->templating->render('WioEdkBundle:Extension:route-summary.html.twig', [
 			'routeNum' => $this->repository->countRoutes(),
 			'participantNum' => $this->settingsRepository->countParticipants()
 		]);

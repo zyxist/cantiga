@@ -45,9 +45,9 @@ class PublicParticipantForm extends AbstractParticipantForm
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		parent::buildForm($builder, $options);
-		$builder->add('terms1Accepted', new BooleanType, ['label' => $this->terms1AcceptedText, 'required' => true]);
-		$builder->add('terms2Accepted', new BooleanType, ['label' => $this->terms2AcceptedText, 'required' => true]);
-		$builder->add('terms3Accepted', new BooleanType, ['label' => $this->terms3AcceptedText, 'required' => true]);
+		$builder->add('terms1Accepted', BooleanType::class, ['label' => $this->terms1AcceptedText, 'required' => true]);
+		$builder->add('terms2Accepted', BooleanType::class, ['label' => $this->terms2AcceptedText, 'required' => true]);
+		$builder->add('terms3Accepted', BooleanType::class, ['label' => $this->terms3AcceptedText, 'required' => true]);
 	}
 	
 	protected function isMailRequired()

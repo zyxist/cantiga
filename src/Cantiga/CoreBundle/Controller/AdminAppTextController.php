@@ -117,7 +117,7 @@ class AdminAppTextController extends AdminPageController
 	 */
 	public function insertAction(Request $request)
 	{
-		$action = new InsertAction($this->crudInfo, new AppText(), new AppTextForm());
+		$action = new InsertAction($this->crudInfo, new AppText(), AppTextForm::class);
 		return $action->run($this, $request);
 	}
 
@@ -126,7 +126,7 @@ class AdminAppTextController extends AdminPageController
 	 */
 	public function editAction($id, Request $request)
 	{
-		$action = new EditAction($this->crudInfo, new AppTextForm());
+		$action = new EditAction($this->crudInfo, AppTextForm::class);
 		return $action->run($this, $id, $request);
 	}
 

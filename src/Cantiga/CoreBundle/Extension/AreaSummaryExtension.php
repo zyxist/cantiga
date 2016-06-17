@@ -20,9 +20,10 @@ namespace Cantiga\CoreBundle\Extension;
 
 use Cantiga\CoreBundle\Api\Controller\CantigaController;
 use Cantiga\CoreBundle\Api\Workspace;
-use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Entity\Area;
+use Cantiga\CoreBundle\Entity\Project;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Templating\EngineInterface;
 
 /**
  * Displays a short information about the current area status.
@@ -30,7 +31,17 @@ use Symfony\Component\HttpFoundation\Request;
  * @author Tomasz Jędrzeewski
  */
 class AreaSummaryExtension implements DashboardExtensionInterface
-{	
+{
+	/**
+	 * @var EngineInterface
+	 */
+	private $templating;
+	
+	public function __construct(EngineInterface $templating)
+	{
+		$this->templating = $templating;
+	}
+	
 	public function getPriority()
 	{
 		return self::PRIORITY_LOW;
@@ -39,7 +50,7 @@ class AreaSummaryExtension implements DashboardExtensionInterface
 	public function render(CantigaController $controller, Request $request, Workspace $workspace, Project $project = null)
 	{
 		$area = $controller->getMembership()->getItem();
-		return $controller->renderView('CantigaCoreBundle:Area:area-summary.html.twig', ['area' => $area, 'bgcolor' => $this->translateColor($area)]);
+		return $this->templating->render('CantigaCoreBundle:Area:area-summary.html.twig', ['area' => $area, 'bgcolor' => $this->translateColor($area)]);
 	}
 	
 	private function translateColor(Area $area)

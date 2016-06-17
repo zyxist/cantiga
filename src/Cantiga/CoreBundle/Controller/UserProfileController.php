@@ -54,7 +54,7 @@ class UserProfileController extends UserPageController
 	{
 		$this->breadcrumbs()->entryLink($this->trans('Personal information', [], 'pages'), 'user_profile_personal_info');
 		$repo = $this->get(self::REPOSITORY);
-		$action = new FormAction($this->getUser(), new UserProfileForm());
+		$action = new FormAction($this->getUser(), UserProfileForm::class);
 		return $action->action($this->generateUrl('user_profile_personal_info'))
 			->template('CantigaCoreBundle:UserProfile:personal-information.html.twig')
 			->redirect($this->generateUrl('user_profile_personal_info'))
@@ -72,7 +72,7 @@ class UserProfileController extends UserPageController
 	{
 		$this->breadcrumbs()->entryLink($this->trans('Settings', [], 'pages'), 'user_profile_settings');
 		$repo = $this->get(self::REPOSITORY);
-		$action = new FormAction($this->getUser(), new UserSettingsForm($this->get('cantiga.core.repo.language')));
+		$action = new FormAction($this->getUser(), UserSettingsForm::class, ['languageRepository' => $this->get('cantiga.core.repo.language')]);
 		return $action->action($this->generateUrl('user_profile_settings'))
 			->template('CantigaCoreBundle:UserProfile:settings.html.twig')
 			->redirect($this->generateUrl('user_profile_settings'))
@@ -94,7 +94,7 @@ class UserProfileController extends UserPageController
 		$this->breadcrumbs()->entryLink($this->trans('Change e-mail', [], 'pages'), 'user_profile_change_mail');
 		$repo = $this->get(self::REPOSITORY);
 		$intent = new EmailChangeIntent($repo, $this->get('event_dispatcher'), $this->get('security.encoder_factory'), $this->getUser());
-		$action = new FormAction($intent, new UserChangeEmailForm());
+		$action = new FormAction($intent, UserChangeEmailForm::class);
 		return $action->action($this->generateUrl('user_profile_change_mail'))
 			->template('CantigaCoreBundle:UserProfile:change-email.html.twig')
 			->redirect($this->generateUrl('user_profile_change_mail'))
@@ -113,7 +113,7 @@ class UserProfileController extends UserPageController
 		$this->breadcrumbs()->entryLink($this->trans('Change password', [], 'pages'), 'user_profile_change_password');
 		$repo = $this->get(self::REPOSITORY);
 		$intent = new PasswordChangeIntent($repo, $this->get('event_dispatcher'), $this->get('security.encoder_factory'), $this->getUser());
-		$action = new FormAction($intent, new UserChangePasswordForm());
+		$action = new FormAction($intent, UserChangePasswordForm::class);
 		return $action->action($this->generateUrl('user_profile_change_password'))
 			->template('CantigaCoreBundle:UserProfile:change-password.html.twig')
 			->redirect($this->generateUrl('user_profile_change_password'))
@@ -151,7 +151,7 @@ class UserProfileController extends UserPageController
 		$this->breadcrumbs()->entryLink($this->trans('Manage photo', [], 'pages'), 'user_profile_photo');
 		$repo = $this->get(self::REPOSITORY);
 		$intent = new UserProfilePhotoIntent($this->getUser(), $repo, $this->get('kernel')->getRootDir().'/../web/ph');
-		$action = new FormAction($intent, new UserPhotoUploadForm());
+		$action = new FormAction($intent, UserPhotoUploadForm::class);
 		return $action->action($this->generateUrl('user_profile_photo'))
 			->template('CantigaCoreBundle:UserProfile:photo.html.twig')
 			->redirect($this->generateUrl('user_profile_photo'))

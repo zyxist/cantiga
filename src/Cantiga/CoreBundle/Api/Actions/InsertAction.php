@@ -40,7 +40,7 @@ class InsertAction extends AbstractAction
 	private $customForm;
 	private $entity;
 	
-	public function __construct(CRUDInfo $crudInfo, $entity, AbstractType $formType = null)
+	public function __construct(CRUDInfo $crudInfo, $entity, $formType = null, array $options = [])
 	{
 		$this->info = $crudInfo;
 		$this->entity = $entity;
@@ -48,8 +48,8 @@ class InsertAction extends AbstractAction
 			return $repository->insert($item);
 		};
 		if (null !== $formType) {
-			$this->formBuilder = function($controller, $item, $formType, $action) use($formType) {
-				return $controller->createForm($formType, $item, array('action' => $action));
+			$this->formBuilder = function($controller, $item, $formType, $action) use($formType, $options) {
+				return $controller->createForm($formType, $item, array_merge(['action' => $action], $options));
 			};
 		}
 	}

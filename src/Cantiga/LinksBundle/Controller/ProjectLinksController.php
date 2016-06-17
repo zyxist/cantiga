@@ -121,7 +121,7 @@ class ProjectLinksController extends ProjectPageController
 		$entity = new Link();
 		$entity->setProject($this->getActiveProject());
 
-		$action = new InsertAction($this->crudInfo, $entity, new LinkForm(LinkForm::PROJECT_SPECIFIC));
+		$action = new InsertAction($this->crudInfo, $entity, LinkForm::class, ['type' => LinkForm::PROJECT_SPECIFIC]);
 		$action->slug($this->getSlug());
 		return $action->run($this, $request);
 	}
@@ -131,7 +131,7 @@ class ProjectLinksController extends ProjectPageController
 	 */
 	public function editAction($id, Request $request)
 	{
-		$action = new EditAction($this->crudInfo, new LinkForm(LinkForm::PROJECT_SPECIFIC));
+		$action = new EditAction($this->crudInfo, LinkForm::class, ['type' => LinkForm::PROJECT_SPECIFIC]);
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
 	}

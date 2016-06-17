@@ -65,7 +65,7 @@ class ExtensionPoints implements ExtensionPointsInterface
 		$results = array();
 		foreach ($this->extensionPoints[$extPointName] as $impl) {
 			if ($filter->matches($impl)) {
-				$results[$impl->getService()] = $impl->getName();
+				$results[$impl->getName()] = $impl->getService();
 			}
 		}
 		return $results;

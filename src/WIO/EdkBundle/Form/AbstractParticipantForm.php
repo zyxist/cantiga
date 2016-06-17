@@ -60,28 +60,28 @@ abstract class AbstractParticipantForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add('firstName', new TextType, ['label' => 'First name'])
-			->add('lastName', new TextType, ['label' => 'Last name'])
-			->add('email', new EmailType, ['label' => 'E-mail address', 'required' => $this->isMailRequired(), 'attr' => 
+			->add('firstName', TextType::class, ['label' => 'First name'])
+			->add('lastName', TextType::class, ['label' => 'Last name'])
+			->add('email', EmailType::class, ['label' => 'E-mail address', 'required' => $this->isMailRequired(), 'attr' => 
 				$this->isMailRequired() ? [] : ['help_text' => 'EmailNotRequiredHelpText']
 			])
-			->add('age', new IntegerType, ['label' => 'Age', 'attr' => ['help_text' => 'AgeHelpText']])
-			->add('sex', new ChoiceType, ['label' => 'Sex', 'choices' => [
+			->add('age', IntegerType::class, ['label' => 'Age', 'attr' => ['help_text' => 'AgeHelpText']])
+			->add('sex', ChoiceType::class, ['label' => 'Sex', 'choices' => [
 					1 => 'male',
 					2 => 'female'
 				], 'multiple' => false, 'expanded' => true]
 			)
-			->add('howManyTimes', new IntegerType, ['label' => 'HowManyTimesField'])
-			->add('whereLearnt', new ChoiceType, [
+			->add('howManyTimes', IntegerType::class, ['label' => 'HowManyTimesField'])
+			->add('whereLearnt', ChoiceType::class, [
 				'label' => 'WhereHaveYouLearntAboutField',
 				'empty_value' => '-- choose --',
 				'empty_data' => null,
 				'choices' => WhereLearntAbout::getFormChoices()
 			])
-			->add('whereLearntOther', new TextType, array('label' => 'WhereHaveYouLearntAboutContField', 'required' => false))
-			->add('whyParticipate', new TextareaType, array('label' => 'WhyParticipateField', 'required' => false))
-			->add('save', new SubmitType, array('label' => $this->getRegisterButtonText()));
-		$builder->add('customAnswer', new TextareaType, array(
+			->add('whereLearntOther', TextType::class, array('label' => 'WhereHaveYouLearntAboutContField', 'required' => false))
+			->add('whyParticipate', TextareaType::class, array('label' => 'WhyParticipateField', 'required' => false))
+			->add('save', SubmitType::class, array('label' => $this->getRegisterButtonText()));
+		$builder->add('customAnswer', TextareaType::class, array(
 			'label' => $this->getCustomQuestion(), 'required' => $this->isCustomQuestionRequired()
 		));
 	}

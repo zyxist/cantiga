@@ -147,7 +147,7 @@ class GroupAreaController extends GroupPageController
 		$statusRepo->setProject($this->getActiveProject());
 
 		$formModel = $this->extensionPointFromSettings(CoreExtensions::AREA_FORM, CoreSettings::AREA_FORM);
-		$action = new EditAction($this->crudInfo, new GroupAreaForm($formModel, $territoryRepo, $statusRepo));
+		$action = new EditAction($this->crudInfo, GroupAreaForm::class, ['customFormModel' => $formModel, 'territoryRepository' => $territoryRepo, 'statusRepository' => $statusRepo]);
 		$action->slug($this->getSlug());
 		$action->customForm($formModel);
 		return $action->run($this, $id, $request);

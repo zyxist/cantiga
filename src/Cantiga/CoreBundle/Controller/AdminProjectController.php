@@ -108,7 +108,7 @@ class AdminProjectController extends AdminPageController
 	 */
 	public function insertAction(Request $request)
 	{
-		$action = new InsertAction($this->crudInfo, new Project(), new AdminProjectForm($this->get('cantiga.core.repo.archived_project')));
+		$action = new InsertAction($this->crudInfo, new Project(), AdminProjectForm::class, ['projectRepo' => $this->get('cantiga.core.repo.archived_project')]);
 		return $action->run($this, $request);
 	}
 	
@@ -117,7 +117,7 @@ class AdminProjectController extends AdminPageController
 	 */
 	public function editAction($id, Request $request)
 	{
-		$action = new EditAction($this->crudInfo, new AdminProjectForm($this->get('cantiga.core.repo.archived_project')));
+		$action = new EditAction($this->crudInfo, AdminProjectForm::class, ['projectRepo' => $this->get('cantiga.core.repo.archived_project')]);
 		return $action->run($this, $id, $request);
 	}
 	

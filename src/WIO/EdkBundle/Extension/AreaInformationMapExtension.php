@@ -22,12 +22,23 @@ use Cantiga\CoreBundle\Api\Controller\CantigaController;
 use Cantiga\CoreBundle\Entity\Area;
 use Cantiga\CoreBundle\Extension\AreaInformationExtensionInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Templating\EngineInterface;
 
 /**
  * @author Tomasz Jędrzejewski
  */
 class AreaInformationMapExtension implements AreaInformationExtensionInterface
 {
+	/**
+	 * @var EngineInterface
+	 */
+	private $templating;
+	
+	public function __construct(EngineInterface $templating)
+	{
+		$this->templating = $templating;
+	}
+	
 	public function getPriority()
 	{
 		return self::PRIORITY_HIGH;
@@ -37,7 +48,7 @@ class AreaInformationMapExtension implements AreaInformationExtensionInterface
 	{
 		$data = $area->getCustomData();
 		if (!empty($data['positionLat']) && !empty($data['positionLng'])) {
-			return $controller->renderView('WioEdkBundle:Extension:area-information-map.html.twig', [
+			return $this->templating->render('WioEdkBundle:Extension:area-information-map.html.twig', [
 				'positionLat' => $data['positionLat'],
 				'positionLng' => $data['positionLng']
 			]);

@@ -22,30 +22,31 @@ use Cantiga\LinksBundle\Entity\Link;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LinkForm extends AbstractType
 {
 	const PROJECT_SPECIFIC = 0;
 	const GENERAL = 1;
 	
-	private $type;
-	
-	public function __construct($type)
+	public function configureOptions(OptionsResolver $resolver)
 	{
-		$this->type = $type;
+		$resolver->setDefined(['type']);
+		$resolver->setRequired(['type']);
 	}
 	
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add('name', new TextType, array('label' => 'Name'))
-			->add('url', new UrlType, array('label' => 'Url'))
-			->add('presentedTo', new ChoiceType, array('label' => 'Presentation place', 'choices' => $this->createChoices()))
-			->add('listOrder', new NumberType, array('label' => 'Order'))
-			->add('save', 'submit', array('label' => 'Save'));
+			->add('name', TextType::class, array('label' => 'Name'))
+			->add('url', UrlType::class, array('label' => 'Url'))
+			->add('presentedTo', ChoiceType::class, array('label' => 'Presentation place', 'choices' => array_flip($this->createChoices($options['type']))))
+			->add('listOrder', NumberType::class, array('label' => 'Order'))
+			->add('save', SubmitType::class, array('label' => 'Save'));
 	}
 
 	public function getName()
@@ -53,9 +54,9 @@ class LinkForm extends AbstractType
 		return 'Link';
 	}
 	
-	private function createChoices()
+	private function createChoices($type)
 	{
-		if ($this->type == self::PROJECT_SPECIFIC) {
+		if ($type == self::PROJECT_SPECIFIC) {
 			return [
 				Link::PRESENT_PROJECT => Link::presentedToText(Link::PRESENT_PROJECT),
 				Link::PRESENT_GROUP => Link::presentedToText(Link::PRESENT_GROUP),

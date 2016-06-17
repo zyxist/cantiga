@@ -18,20 +18,24 @@
  */
 namespace Cantiga\CoreBundle\Form;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Cantiga\CoreBundle\Api\AppMails;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
 
 class AdminAppMailForm extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add('place', 'choice', array('label' => 'Place', 'choices' => AppMails::getNames(), 'attr' => array('help_text' => 'Place where the message is sent.')))
-			->add('subject', 'text', array('label' => 'Subject'))
-			->add('content', 'textarea', array('label' => 'Content', 'attr' => ['rows' => 20]))
-			->add('locale', 'text', array('label' => 'Locale', 'attr' => array('help_text' => 'Must match one of the installed languages.')))
-			->add('save', 'submit', array('label' => 'Save'));
+			->add('place', ChoiceType::class, array('label' => 'Place', 'choices' => AppMails::getNames(), 'attr' => array('help_text' => 'Place where the message is sent.')))
+			->add('subject', TextType::class, array('label' => 'Subject'))
+			->add('content', TextareaType::class, array('label' => 'Content', 'attr' => ['rows' => 20]))
+			->add('locale', TextType::class, array('label' => 'Locale', 'attr' => array('help_text' => 'Must match one of the installed languages.')))
+			->add('save', SubmitType::class, array('label' => 'Save'));
 	}
 
 	public function getName()

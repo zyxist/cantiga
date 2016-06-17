@@ -112,7 +112,7 @@ class AdminAppMailController extends AdminPageController
 	 */
 	public function insertAction(Request $request)
 	{
-		$action = new InsertAction($this->crudInfo, new AppMail(), new AdminAppMailForm());
+		$action = new InsertAction($this->crudInfo, new AppMail(), AdminAppMailForm::class);
 		return $action->run($this, $request);
 	}
 
@@ -121,7 +121,7 @@ class AdminAppMailController extends AdminPageController
 	 */
 	public function editAction($id, Request $request)
 	{
-		$action = new EditAction($this->crudInfo, new AdminAppMailForm());
+		$action = new EditAction($this->crudInfo, AdminAppMailForm::class);
 		return $action->run($this, $id, $request);
 	}
 

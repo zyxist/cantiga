@@ -24,6 +24,7 @@ use Cantiga\CoreBundle\Api\ExtensionPoints\ExtensionPointFilter;
 use Cantiga\CoreBundle\Api\ExtensionPoints\ExtensionPointsInterface;
 use Cantiga\CoreBundle\Settings\ProjectSettings;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -35,31 +36,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ProjectSettingsForm extends AbstractType
 {
-
-	/**
-	 * @var ProjectSettings
-	 */
-	private $settings;
-
-	/**
-	 * @var ExtensionPointsInterface 
-	 */
-	private $extensionPoints;
-
-	/**
-	 * @var ExtensionPointFilter
-	 */
-	private $filter;
-
-	public function __construct(ProjectSettings $settings, ExtensionPointsInterface $extensionPoints, ExtensionPointFilter $filter)
-	{
-		$this->settings = $settings;
-		$this->extensionPoints = $extensionPoints;
-		$this->filter = $filter;
-	}
-
 	public function configureOptions(OptionsResolver $resolver)
 	{
+		$resolver->setDefined(['settings', 'extensionPoints', 'filter']);
+		$resolver->setRequired(['settings', 'extensionPoints', 'filter']);
+		
 		$resolver->setDefaults(array(
 			'translation_domain' => 'settings'
 		));
@@ -67,10 +48,10 @@ class ProjectSettingsForm extends AbstractType
 
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		foreach ($this->settings as $setting) {
-			$setting->createEditor($builder, $this->extensionPoints, $this->filter);
+		foreach ($options['settings'] as $setting) {
+			$setting->createEditor($builder, $options['extensionPoints'], $options['filter']);
 		}
-		$builder->add('save', 'submit', array('label' => 'Save'));
+		$builder->add('save', SubmitType::class, ['label' => 'Save']);
 	}
 
 	public function getName()

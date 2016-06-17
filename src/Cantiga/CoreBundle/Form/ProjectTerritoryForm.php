@@ -28,9 +28,9 @@ class ProjectTerritoryForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add('name', new TextType, ['label' => 'Name'])
-			->add('locale', new TextType, ['label' => 'Locale', 'attr' => ['help_text' => 'TerritoryLocaleHelpText']])
-			->add('save', new SubmitType, ['label' => 'Save']);
+			->add('name', TextType::class, ['label' => 'Name'])
+			->add('locale', TextType::class, ['label' => 'Locale', 'attr' => ['help_text' => 'TerritoryLocaleHelpText']])
+			->add('save', SubmitType::class, ['label' => 'Save']);
 	}
 
 	public function getName()

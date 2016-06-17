@@ -215,7 +215,7 @@ services:
             - { name: cantiga.extension, point: core.stats.area }
     cantiga.core.dashboard.text:
         class:     Cantiga\CoreBundle\Extension\DashboardTextExtension
-        arguments: ["@cantiga.core.repo.text"]
+        arguments: ["@cantiga.core.repo.text", "@templating"]
         tags:
             - { name: cantiga.extension, point: core.dashboard.user.right }
             - { name: cantiga.extension, point: core.dashboard.admin.right }
@@ -224,26 +224,27 @@ services:
             - { name: cantiga.extension, point: core.dashboard.area.right }
     cantiga.core.dashboard.recent_comments:
         class:     Cantiga\CoreBundle\Extension\DashboardChatExtension
-        arguments: ["@cantiga.core.repo.project_area_request"]
+        arguments: ["@cantiga.core.repo.project_area_request", "@templating"]
         tags:
             - { name: cantiga.extension, point: core.dashboard.project.central }
     cantiga.core.dashboard.recent_requests:
         class:     Cantiga\CoreBundle\Extension\DashboardRequestExtension
-        arguments: ["@cantiga.core.repo.project_area_request"]
+        arguments: ["@cantiga.core.repo.project_area_request", "@templating"]
         tags:
             - { name: cantiga.extension, point: core.dashboard.project.central }
     cantiga.core.dashboard.area_summary:
         class: Cantiga\CoreBundle\Extension\AreaSummaryExtension
+        arguments: ["@templating"]
         tags:
             - { name: cantiga.extension, point: core.dashboard.area.top }
     cantiga.core.dashboard.project_summary:
         class: Cantiga\CoreBundle\Extension\ProjectSummaryExtension
-        arguments: ["@cantiga.core.repo.statistics"]
+        arguments: ["@cantiga.core.repo.statistics", "@templating"]
         tags:
             - { name: cantiga.extension, point: core.dashboard.project.top }
     cantiga.core.dashboard.admin_summary:
         class: Cantiga\CoreBundle\Extension\AdminSummaryExtension
-        arguments: ["@cantiga.core.repo.statistics"]
+        arguments: ["@cantiga.core.repo.statistics", "@templating"]
         tags:
             - { name: cantiga.extension, point: core.dashboard.admin.top }
     cantiga.theme_listener:
@@ -259,7 +260,7 @@ services:
             - { name: kernel.event_listener, event: cantiga.workspace.general, method: showMenu }
     cantiga.workspace_listener:
         class: Cantiga\CoreBundle\EventListener\WorkspaceListener
-        arguments: ["@security.authorization_checker", "@security.token_storage", "@cantiga.extensions"]
+        arguments: ["@security.authorization_checker", "@security.token_storage", "@cantiga.extensions", "@cantiga.project.settings"]
         tags:
             - { name: kernel.event_listener, event: kernel.controller, method: onControllerSelected }
             - { name: kernel.event_listener, event: cantiga.workspace.user, method: onUserWorkspace }
@@ -270,7 +271,7 @@ services:
             - { name: kernel.event_listener, event: cantiga.ui.projects, method: onProjectList }
     cantiga.general_listener:
         class: Cantiga\CoreBundle\EventListener\GeneralListener
-        arguments: ["@security.authorization_checker", "@security.token_storage", "@cantiga.transaction", "@session", "@cantiga.time"]
+        arguments: ["@security.authorization_checker", "@security.token_storage", "@cantiga.transaction", "@session", "@cantiga.time", "@translator", "@cantiga.locale"]
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
             - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }

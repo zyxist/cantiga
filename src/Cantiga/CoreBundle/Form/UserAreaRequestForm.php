@@ -25,40 +25,33 @@ use Cantiga\Metamodel\CustomForm\CustomFormEventSubscriber;
 use Cantiga\Metamodel\CustomForm\CustomFormModelInterface;
 use Cantiga\Metamodel\Form\EntityTransformer;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserAreaRequestForm extends AbstractType
 {
-	/**
-	 * @var ProjectSettings 
-	 */
-	private $projectSettings;
-	/**
-	 * @var CustomFormModelInterface
-	 */
-	private $customFormModel;
-	/**
-	 * @var ProjectTerritoryRepository
-	 */
-	private $territoryRepository;
-	
-	public function __construct(ProjectSettings $settings, CustomFormModelInterface $customFormModel, ProjectTerritoryRepository $territoryRepository)
+	public function configureOptions(OptionsResolver $resolver)
 	{
-		$this->projectSettings = $settings;
-		$this->customFormModel = $customFormModel;
-		$this->territoryRepository = $territoryRepository;
+		$resolver->setDefined(['customFormModel', 'territoryRepository', 'projectSettings']);
+		$resolver->setRequired(['customFormModel', 'territoryRepository', 'projectSettings']);
+		$resolver->addAllowedTypes('customFormModel', CustomFormModelInterface::class);
+		$resolver->addAllowedTypes('projectSettings', ProjectSettings::class);
+		$resolver->addAllowedTypes('territoryRepository', ProjectTerritoryRepository::class);
 	}
 
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$hint = $this->projectSettings->get(CoreSettings::AREA_NAME_HINT)->getValue();
+		$hint = $options['projectSettings']->get(CoreSettings::AREA_NAME_HINT)->getValue();
 		
 		$builder
-			->add('name', 'text', array('label' => 'Area name', 'attr' => ['help_text' => $hint]))
-			->add('territory', 'choice', array('label' => 'Territory', 'choices' => $this->territoryRepository->getFormChoices()))
-			->add('save', 'submit', array('label' => 'Submit request'));
-		$builder->get('territory')->addModelTransformer(new EntityTransformer($this->territoryRepository));
-		$builder->addEventSubscriber(new CustomFormEventSubscriber($this->customFormModel));
+			->add('name', TextType::class, ['label' => 'Area name', 'attr' => ['help_text' => $hint]])
+			->add('territory', ChoiceType::class, ['label' => 'Territory', 'choices' => $options['territoryRepository']->getFormChoices()])
+			->add('save', SubmitType::class, ['label' => 'Submit request']);
+		$builder->get('territory')->addModelTransformer(new EntityTransformer($options['territoryRepository']));
+		$builder->addEventSubscriber(new CustomFormEventSubscriber($options['customFormModel']));
 	}
 
 	public function getName()

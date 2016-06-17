@@ -18,7 +18,10 @@
  */
 namespace Cantiga\CoreBundle\Form;
 
+use Cantiga\CoreBundle\Form\Type\BooleanType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class ProjectAreaStatusForm extends AbstractType
@@ -26,10 +29,10 @@ class ProjectAreaStatusForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add('name', 'text', array('label' => 'Name'))
-			->add('label', 'text', array('label' => 'CSS Label'))
-			->add('isDefault', new Type\BooleanType(), array('label' => 'Is default?'))
-			->add('save', 'submit', array('label' => 'Save'));
+			->add('name', TextType::class, ['label' => 'Name'])
+			->add('label', TextType::class, ['label' => 'CSS Label'])
+			->add('isDefault', BooleanType::class, ['label' => 'Is default?'])
+			->add('save', SubmitType::class, ['label' => 'Save']);
 	}
 
 	public function getName()

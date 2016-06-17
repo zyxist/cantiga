@@ -18,31 +18,36 @@
  */
 namespace Cantiga\CoreBundle\Form;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Cantiga\CoreBundle\Api\Modules;
 use Cantiga\CoreBundle\Form\Type\BooleanType;
 use Cantiga\CoreBundle\Repository\ArchivedProjectRepository;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AdminProjectForm extends AbstractType
 {
-	private $projectRepo;
-	
-	public function __construct(ArchivedProjectRepository $projectRepo)
+	public function configureOptions(OptionsResolver $resolver)
 	{
-		$this->projectRepo = $projectRepo;
+		$resolver->setDefined('projectRepo');
+		$resolver->setRequired('projectRepo');
+		$resolver->addAllowedTypes('projectRepo', ArchivedProjectRepository::class);
 	}
 	
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add('name', 'text', array('label' => 'Name'))
-			->add('description', 'textarea', array('label' => 'Description'))
-			->add('parentProject', 'choice', array('label' => 'Parent project', 'required' => false, 'choices' => $this->projectRepo->getFormChoices()))
-			->add('modules', 'choice', array('label' => 'Modules', 'expanded' => true, 'multiple' => true, 'choices' => Modules::getFormEntries()))
-			->add('areasAllowed', new BooleanType(), array('label' => 'Areas allowed?'))
-			->add('areaRegistrationAllowed', new BooleanType(), array('label' => 'Area registration allowed?'))
-			->add('save', 'submit', array('label' => 'Save'));
+			->add('name', TextType::class, array('label' => 'Name'))
+			->add('description', TextareaType::class, array('label' => 'Description'))
+			->add('parentProject', ChoiceType::class, array('label' => 'Parent project', 'required' => false, 'choices' => $options['projectRepo']->getFormChoices()))
+			->add('modules', ChoiceType::class, array('label' => 'Modules', 'expanded' => true, 'multiple' => true, 'choices' => Modules::getFormEntries()))
+			->add('areasAllowed', BooleanType::class, array('label' => 'Areas allowed?'))
+			->add('areaRegistrationAllowed', BooleanType::class, array('label' => 'Area registration allowed?'))
+			->add('save', SubmitType::class, array('label' => 'Save'));
 	}
 
 	public function getName()

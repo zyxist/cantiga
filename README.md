@@ -1,32 +1,70 @@
 Cantiga Project
 ===============
 
-A collaboration tool for managing distributed social projects. Originally, we have developed it to manage one of our biggest social projects
-that originated in our community, with more than 60 local editions in whole country. We decided to make it an open-source project to boost
-its development and allow the leaders of those editions to join the development process (if they know PHP, of course).
+Cantiga Project is an open-source membership management software. Its primary target are non-profit organizations which not only organize
+various social projects/events, but also offer them to other local communities as a franchise. The software provides tools for the franchise management:
+
+ * registration and moderation of local editions,
+ * on-line trainings for leaders of local editions,
+ * progress monitoring,
+ * membership management,
+ * collaboration tools,
+ * statistics.
+
+Cantiga was originally written to support the coordination of a big, nationwide social project with more than 100 local editions,
+and 30 000 participants. Now it is available for everyone who needs to run such a project, and we are adding new features to cover
+new use cases.
 
 How it works?
 -------------
 
-Cantiga allows creating multiple social projects, which can have their local editions, called *areas*. In addition, the areas can be
-combined into groups. Each project, group and area, has its own *workspace*, where the members can perform different activities and
-communicate one with another. The membership is granted by area/group/project managers through sending an invitation. The newly
-registered users can also request creating a new area in the given project.
+In Cantiga, you can define social projects which can have their local editions, called *areas*, as the local edition is usually held
+for a local community in certain geographical area. The local leaders who are interested in running such an area in their neighbourhood,
+can register and send an area creation request. Project members moderate the request and approve it or reject. Once approved, the leader
+gets an access to the collaboration tools, on-line trainings, and other tools necessary to manage the area. At the same time, project
+members can manage the project as a whole, and track the progress. If your project is too big to manage the areas directly, you can
+combine several areas into groups. Each group has a designated local leader who is responsible for the areas assigned to it.
 
-Different functionalities are being built around this model. Right now the project is in the early development phase, but we are
-constantly extending it to meet our needs.
+If your event is held on a recurring basis (i.e. once a year), Cantiga assumes creating separate projects for each occurrence,
+and archiving the old data. This allows a greater flexibility in adjusting the project structure to the changing needs, as you do not
+have to take care of archived data. The leaders who are interested in participating again, can import the previously created area
+to the new project.
+
+Different features are being designed around the collaboration model presented above. In addition, we are preparing to provide
+a support for projects that consist of groups only and do not use the area functionality.
 
 Technical details
 -----------------
 
-The project requires at least PHP 5.6 in order to work, and is written in Symfony 2.7. In the near future, we are planning to migrate
-to Symfony 3.0, and test the compatibility with PHP 7.
+Currently, the project requires at least PHP 7.0 and MySQL/MariaDB database in order to work. Originally written in Symfony 2.7, now
+runs on Symfony 3.0, with planned migration to Symfony 3.1. The user interface is built on Bootstrap 3 and AdminLTE admin theme with
+some additional customizations.
 
-Cantiga is designed to be extensible. You can create new Symfony bundles that hook into various extension points, so that it is possible
-to add new functionality without the need to hack the core. Actually, you can find the bundles specific to our community here, in this
-repository as well, together with generic bundles.
+Extensions are first-class citizens in Cantiga ecosystem. The core provides only the basic project-group-area model, and user management,
+whereas all the other features are provided as separate modules. You can create new Symfony bundles with new features which hook into
+the existing extension points without the need to hack the core. In addition, the modules can be enabled and disabled for each project
+independently.
 
 Once you clone the repository, don't forget to populate the `vendor` directory using Composer!
+
+Features and roadmap
+--------------------
+
+Working features:
+ - project/area/group management,
+ - user management and registration,
+ - user invitations to projects, groups and areas,
+ - progress tracking via milestones,
+ - on-line trainings,
+ - statistical and chart engine,
+ - exporting the data via REST to external web services.
+
+Planned features:
+ - discussion board,
+ - event management,
+ - user activity tracking,
+ - task management,
+ - mass mailing tools.
 
 Contributing
 ------------
@@ -39,7 +77,7 @@ Contributing
 License and copyright
 ---------------------
 
-The project is distributed under the terms of GNU General Public License v3. You can find the full text of the license
+The project is distributed under the terms of GNU General Public License 3. You can find the full text of the license
 in `license/CANTIGA-LICENSE` file.
 
 Put simply, *there's more happiness in giving than in getting*. We give you a nice software (at least we think so), with the right to use it
@@ -51,4 +89,4 @@ Practically:
  - if you want to allow the others to install the original or modified version, you must give them the full source code, too,
    and you must not change the licensing terms.
 
-Copyright 2015 Tomasz Jędrzejewski
+Copyright 2015-2016 Tomasz Jędrzejewski

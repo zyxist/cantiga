@@ -22,12 +22,12 @@ services:
         arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher", "@cantiga.time"]
     wio.edk.extension.area_information_map:
         class:     WIO\EdkBundle\Extension\AreaInformationMapExtension
-        arguments: ["@translator"]
+        arguments: ["@templating"]
         tags:
             - { name: cantiga.extension, point: core.page.area.info, module: edk }
     wio.edk.extension.area_routes:
         class:     WIO\EdkBundle\Extension\AreaRouteExtension
-        arguments: ["@wio.edk.repo.route"]
+        arguments: ["@wio.edk.repo.route", "@templating"]
         tags:
             - { name: cantiga.extension, point: core.page.area.info, module: edk }
     wio.edk.form.area_request:
@@ -66,19 +66,19 @@ services:
             - { name: kernel.event_listener, event: cantiga.ui.ctxmenu.project.area, method: onProjectAreaInfo }
     wio.edk.dashboard.recent_comments:
         class:     WIO\EdkBundle\Extension\DashboardChatExtension
-        arguments: ["@wio.edk.repo.route"]
+        arguments: ["@wio.edk.repo.route", "@templating"]
         tags:
             - { name: cantiga.extension, point: core.dashboard.area.central, module: edk }
             - { name: cantiga.extension, point: core.dashboard.group.central, module: edk }
     wio.edk.dashboard.recent_routes:
         class:     WIO\EdkBundle\Extension\DashboardRouteExtension
-        arguments: ["@wio.edk.repo.route"]
+        arguments: ["@wio.edk.repo.route", "@templating"]
         tags:
             - { name: cantiga.extension, point: core.dashboard.area.central, module: edk }
             - { name: cantiga.extension, point: core.dashboard.group.central, module: edk }
     wio.edk.dashboard.route_summary:
         class: WIO\EdkBundle\Extension\DashboardRouteSummaryExtension
-        arguments: ["@wio.edk.repo.route", "@wio.edk.repo.registration"]
+        arguments: ["@wio.edk.repo.route", "@wio.edk.repo.registration", "@templating"]
         tags:
             - { name: cantiga.extension, point: core.dashboard.project.top, module: edk }
             - { name: cantiga.extension, point: core.dashboard.group.top, module: edk }

@@ -18,35 +18,38 @@
  */
 namespace Cantiga\CoreBundle\Form;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Cantiga\CoreBundle\Repository\LanguageRepository;
 use Cantiga\Metamodel\Form\EntityTransformer;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserRegistrationForm extends AbstractType
 {
-	/**
-	 * @var LanguageRepository
-	 */
-	private $languageRepository;
-	
-	public function __construct(LanguageRepository $repository)
+	public function configureOptions(OptionsResolver $resolver)
 	{
-		$this->languageRepository = $repository;
+		$resolver->setDefined(['languageRepository']);
+		$resolver->setRequired(['languageRepository']);
+		$resolver->addAllowedTypes('languageRepository', LanguageRepository::class);
 	}
 	
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add('name', 'text', array('label' => 'Full name', 'attr' => ['placeholder' => 'Full name']))
-			->add('login', 'text', array('label' => 'Login', 'attr' => ['placeholder' => 'Login']))
-			->add('password', 'password', array('label' => 'Password', 'attr' => ['placeholder' => 'Password']))
-			->add('repeatPassword', 'password', array('label' => 'Repeat password', 'attr' => ['placeholder' => 'Repeat password']))
-			->add('email', 'email', array('label' => 'E-mail address', 'attr' => ['placeholder' => 'E-mail']))
-			->add('language', 'choice', array('label' => 'Language', 'choices' => $this->languageRepository->getFormChoices()))
-			->add('acceptRules', 'checkbox');
+			->add('name', TextType::class, array('label' => 'Full name', 'attr' => ['placeholder' => 'Full name']))
+			->add('login', TextType::class, array('label' => 'Login', 'attr' => ['placeholder' => 'Login']))
+			->add('password', PasswordType::class, array('label' => 'Password', 'attr' => ['placeholder' => 'Password']))
+			->add('repeatPassword', PasswordType::class, array('label' => 'Repeat password', 'attr' => ['placeholder' => 'Repeat password']))
+			->add('email', EmailType::class, array('label' => 'E-mail address', 'attr' => ['placeholder' => 'E-mail']))
+			->add('language', ChoiceType::class, array('label' => 'Language', 'choices' => $options['languageRepository']->getFormChoices()))
+			->add('acceptRules', CheckboxType::class);
 		
-		$builder->get('language')->addModelTransformer(new EntityTransformer($this->languageRepository));
+		$builder->get('language')->addModelTransformer(new EntityTransformer($options['languageRepository']));
 	}
 
 	public function getName()

@@ -20,19 +20,19 @@
 
 namespace Cantiga\MilestoneBundle\Controller;
 
+use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
+use Cantiga\CoreBundle\Api\Actions\EditAction;
+use Cantiga\CoreBundle\Api\Actions\InfoAction;
+use Cantiga\CoreBundle\Api\Actions\InsertAction;
+use Cantiga\CoreBundle\Api\Actions\RemoveAction;
+use Cantiga\CoreBundle\Api\Controller\ProjectPageController;
+use Cantiga\MilestoneBundle\Entity\Milestone;
+use Cantiga\MilestoneBundle\Form\MilestoneForm;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
-use Cantiga\CoreBundle\Api\Actions\RemoveAction;
-use Cantiga\CoreBundle\Api\Actions\InsertAction;
-use Cantiga\CoreBundle\Api\Actions\EditAction;
-use Cantiga\CoreBundle\Api\Actions\InfoAction;
-use Cantiga\CoreBundle\Api\Controller\ProjectPageController;
-use Cantiga\MilestoneBundle\Form\MilestoneForm;
-use Cantiga\MilestoneBundle\Entity\Milestone;
 
 /**
  * @Route("/project/{slug}/milestone")
@@ -122,7 +122,7 @@ class ProjectMilestoneController extends ProjectPageController
 		$entity = new Milestone();
 		$entity->setProject($this->getActiveProject());
 
-		$action = new InsertAction($this->crudInfo, $entity, new MilestoneForm(true));
+		$action = new InsertAction($this->crudInfo, $entity, MilestoneForm::class, ['isNew' => true]);
 		$action->slug($this->getSlug());
 		return $action->run($this, $request);
 	}
@@ -132,7 +132,7 @@ class ProjectMilestoneController extends ProjectPageController
 	 */
 	public function editAction($id, Request $request)
 	{
-		$action = new EditAction($this->crudInfo, new MilestoneForm(false));
+		$action = new EditAction($this->crudInfo, MilestoneForm::class, ['isNew' => false]);
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
 	}

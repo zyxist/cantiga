@@ -25,24 +25,24 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProjectGroupForm extends AbstractType
 {
-	private $categoryRepository;
-	
-	public function __construct($repository)
+	public function configureOptions(OptionsResolver $resolver)
 	{
-		$this->categoryRepository = $repository;
+		$resolver->setDefined(['categoryRepository']);
+		$resolver->setRequired(['categoryRepository']);
 	}
 	
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add('name', new TextType, array('label' => 'Name'))
-			->add('category', new ChoiceType, ['label' => 'Category', 'choices' => $this->categoryRepository->getFormChoices(), 'required' => false])
-			->add('notes', new TextareaType, ['label' => 'Notes', 'required' => false])
-			->add('save', new SubmitType, array('label' => 'Save'));
-		$builder->get('category')->addModelTransformer(new EntityTransformer($this->categoryRepository));
+			->add('name', TextType::class, array('label' => 'Name'))
+			->add('category', ChoiceType::class, ['label' => 'Category', 'choices' => $options['categoryRepository']->getFormChoices(), 'required' => false])
+			->add('notes', TextareaType::class, ['label' => 'Notes', 'required' => false])
+			->add('save', SubmitType::class, array('label' => 'Save'));
+		$builder->get('category')->addModelTransformer(new EntityTransformer($options['categoryRepository']));
 	}
 
 	public function getName()

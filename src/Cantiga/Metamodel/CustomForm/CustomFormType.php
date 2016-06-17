@@ -20,7 +20,7 @@ namespace Cantiga\Metamodel\CustomForm;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Callback;
 
 /**
@@ -30,25 +30,24 @@ use Symfony\Component\Validator\Constraints\Callback;
  */
 class CustomFormType extends AbstractType
 {
-	private $callback;
-	private $validationCallback;
-	
-	public function __construct($callback, $validationCallback)
+	public function configureOptions(OptionsResolver $resolver)
 	{
-		$this->callback = $callback;
-		$this->validationCallback = $validationCallback;
+		$resolver->setDefined(['callback', 'validationCallback']);
+		$resolver->setRequired(['callback', 'validationCallback']);
 	}
 	
-	public function setDefaultOptions(OptionsResolverInterface $resolver)
+	public function setDefaultOptions(OptionsResolver $resolver)
 	{
 		$resolver->setDefaults(
-			array('constraints' => array(new Callback(array('methods' => array($this->validationCallback)))))
+			array('constraints' => function(Options $options) {
+				return array(new Callback(array('methods' => $options['validationCallback'])));
+			})
 		);
 	}
 	
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$callback = $this->callback;
+		$callback = $options['callback'];
 		$callback($builder);
 	}
 

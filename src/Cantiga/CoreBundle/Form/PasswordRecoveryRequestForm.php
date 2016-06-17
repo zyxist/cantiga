@@ -19,6 +19,8 @@
 namespace Cantiga\CoreBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 /**
@@ -29,8 +31,8 @@ class PasswordRecoveryRequestForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add('login', 'text', array('label' => 'Your login', 'attr' => ['placeholder' => 'Your login']))
-			->add('email', 'email', array('label' => 'E-mail used for registration', 'attr' => ['placeholder' => 'E-mail used for registration']));
+			->add('login', TextType::class, ['label' => 'Your login', 'attr' => ['placeholder' => 'Your login']])
+			->add('email', EmailType::class, ['label' => 'E-mail used for registration', 'attr' => ['placeholder' => 'E-mail used for registration']]);
 	}
 
 	public function getName()

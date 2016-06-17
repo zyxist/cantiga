@@ -25,7 +25,7 @@ services:
             - { name: kernel.event_listener, event: cantiga.workspace.area, method: onAreaWorkspace }
     cantiga.milestone.dashboard.progress:
         class:     Cantiga\MilestoneBundle\Extension\DashboardMilestoneExtension
-        arguments: ["@cantiga.milestone.repo.status"]
+        arguments: ["@cantiga.milestone.repo.status", "@templating"]
         tags:
             - { name: cantiga.extension, point: core.dashboard.project.top, module: milestone }
             - { name: cantiga.extension, point: core.dashboard.group.top, module: milestone }

@@ -23,6 +23,7 @@ use Cantiga\CoreBundle\Api\Workspace;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Repository\AppTextRepository;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Templating\EngineInterface;
 
 /**
  * Displays a custom static text on a dashboard, if such a text is defined in the currently selected language.
@@ -35,10 +36,15 @@ class DashboardTextExtension implements DashboardExtensionInterface
 	 * @var AppTextRepository 
 	 */
 	private $textRepository;
+	/**
+	 * @var EngineInterface
+	 */
+	private $templating;
 	
-	public function __construct(AppTextRepository $repository)
+	public function __construct(AppTextRepository $repository, EngineInterface $templating)
 	{
 		$this->textRepository = $repository;
+		$this->templating = $templating;
 	}
 	
 	public function getPriority()
@@ -52,6 +58,6 @@ class DashboardTextExtension implements DashboardExtensionInterface
 		if (false === $text) {
 			return '';
 		}
-		return $controller->renderView('CantigaCoreBundle:AppText:dashboard-element.html.twig', ['text' => $text]);
+		return $this->templating->render('CantigaCoreBundle:AppText:dashboard-element.html.twig', ['text' => $text]);
 	}
 }

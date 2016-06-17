@@ -21,6 +21,7 @@ namespace WIO\EdkBundle\Form;
 use Cantiga\Metamodel\Form\EntityTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -50,16 +51,16 @@ class EdkMessageForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add('area', new ChoiceType, [
+			->add('area', ChoiceType::class, [
 				'label' => 'Choose an area',
 				'choices' => $this->repository->getFormChoices()
 			])
-			->add('subject', new TextType, ['label' => 'Subject'])
-			->add('content', new TextareaType, array('label' => 'Content', 'attr' => ['rows' => 20]))
-			->add('authorName', new TextType, array('label' => 'What is your name?'))
-			->add('authorEmail', new TextType, array('label' => 'Your e-mail', 'required' => false))
-			->add('authorPhone', new TextType, array('label' => 'Your phone number', 'required' => false))
-			->add('save', 'submit', array('label' => 'Send message'));
+			->add('subject', TextType::class, ['label' => 'Subject'])
+			->add('content', TextareaType::class, array('label' => 'Content', 'attr' => ['rows' => 20]))
+			->add('authorName', TextType::class, array('label' => 'What is your name?'))
+			->add('authorEmail', TextType::class, array('label' => 'Your e-mail', 'required' => false))
+			->add('authorPhone', TextType::class, array('label' => 'Your phone number', 'required' => false))
+			->add('save', SubmitType::class, array('label' => 'Send message'));
 		$builder->get('area')->addModelTransformer(new EntityTransformer($this->repository));
 	}
 

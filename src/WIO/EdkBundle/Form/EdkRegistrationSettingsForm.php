@@ -26,6 +26,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -54,11 +55,11 @@ class EdkRegistrationSettingsForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add('registrationType', new ChoiceType, [
+			->add('registrationType', ChoiceType::class, [
 				'label' => 'Registration type',
 				'choices' => EdkRegistrationSettings::getRegistrationTypes()
 			])
-			->add('startTime', new DateTimeType, array(
+			->add('startTime', DateTimeType::class, array(
 				'label' => 'Beginning of registration',
 				'years' => $this->currentYears(),
 				'input' => 'timestamp',
@@ -66,7 +67,7 @@ class EdkRegistrationSettingsForm extends AbstractType
 				'view_timezone' => $this->timezone->getName(),
 				'required' => false,
 			))
-			->add('endTime', new DateTimeType, array(
+			->add('endTime', DateTimeType::class, array(
 				'label' => 'End of registration',
 				'years' => $this->currentYears(),
 				'input' => 'timestamp',
@@ -74,13 +75,13 @@ class EdkRegistrationSettingsForm extends AbstractType
 				'view_timezone' => $this->timezone->getName(),
 				'required' => false
 			))
-			->add('externalRegistrationUrl', new UrlType, ['label' => 'External registration URL', 'attr' => ['help_text' => 'ExternalRegistrationUrlHint'], 'required' => false])
-			->add('externalParticipantNum', new NumberType, ['label' => 'Number of participants registered externally', 'attr' => ['help_text' => 'ExternalParticipantNumHint'], 'required' => false])
-			->add('participantLimit', new NumberType, array('label' => 'Expected number of participants', 'required' => false))
-			->add('allowLimitExceed', new BooleanType, array('label' => 'Allow exceeding the participant limit', 'attr' => array('help_text' => 'AllowLimitExceedHint'), 'required' => false))
-			->add('maxPeoplePerRecord', new NumberType, array('label' => 'Max. number of people in the record', 'attr' => array('help_text' => 'MaxPeoplePerRecordHint'), 'required' => false))
-			->add('customQuestion', new TextType, array('label' => 'Custom question', 'attr' => array('help_text' => 'CustomQuestionHint'), 'required' => false))
-			->add('save', 'submit', array('label' => 'Save'));
+			->add('externalRegistrationUrl', UrlType::class, ['label' => 'External registration URL', 'attr' => ['help_text' => 'ExternalRegistrationUrlHint'], 'required' => false])
+			->add('externalParticipantNum', NumberType::class, ['label' => 'Number of participants registered externally', 'attr' => ['help_text' => 'ExternalParticipantNumHint'], 'required' => false])
+			->add('participantLimit', NumberType::class, array('label' => 'Expected number of participants', 'required' => false))
+			->add('allowLimitExceed', BooleanType::class, array('label' => 'Allow exceeding the participant limit', 'attr' => array('help_text' => 'AllowLimitExceedHint'), 'required' => false))
+			->add('maxPeoplePerRecord', NumberType::class, array('label' => 'Max. number of people in the record', 'attr' => array('help_text' => 'MaxPeoplePerRecordHint'), 'required' => false))
+			->add('customQuestion', TextType::class, array('label' => 'Custom question', 'attr' => array('help_text' => 'CustomQuestionHint'), 'required' => false))
+			->add('save', SubmitType::class, array('label' => 'Save'));
 	}
 
 	public function getName()

@@ -19,35 +19,39 @@
 namespace Cantiga\CoreBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 
 class InvitationForm extends AbstractType
 {
-	private $roles = array();
-	
-	public function __construct(array $roles)
+	public function configureOptions(OptionsResolver $resolver)
 	{
-		$this->roles = $roles;
+		$resolver->setDefined(['roles']);
+		$resolver->setRequired(['roles']);
 	}
 	
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add('email', 'email', array('label' => 'E-mail', 'attr' => array('help_text' => 'The invited person does not have to have an account.')))
-			->add('role', 'choice', array('label' => 'Role', 'choices' => $this->asChoices($this->roles)))
-			->add('note', 'text', array('label' => 'Note', 
+			->add('email', EmailType::class, array('label' => 'E-mail', 'attr' => array('help_text' => 'The invited person does not have to have an account.')))
+			->add('role', ChoiceType::class, array('label' => 'Role', 'choices' => $this->asChoices($options['roles'])))
+			->add('note', TextType::class, array('label' => 'Note', 
 				'constraints' => array(new Length(['min' => 0, 'max' => 30])),
 				'attr' => array('help_text' => 'NoteHintText'))
 			)
-			->add('save', 'submit', array('label' => 'Submit invitation'));
+			->add('save', SubmitType::class, array('label' => 'Submit invitation'));
 	}
 	
 	private function asChoices(array $roles)
 	{
 		$results = array();
 		foreach ($roles as $role) {
-			$results[$role->getId()] = $role->getName();
+			$results[$role->getName()] = $role->getId();
 		}
 		return $results;
 	}

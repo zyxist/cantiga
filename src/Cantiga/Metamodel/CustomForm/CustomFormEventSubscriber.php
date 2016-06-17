@@ -50,9 +50,9 @@ class CustomFormEventSubscriber implements EventSubscriberInterface
 	public function preSetData(FormEvent $event)
 	{
 		$form = $event->getForm();
-		$form->add('customData', new CustomFormType(function(FormBuilderInterface $builder) {
-			$this->customFormModel->constructForm($builder);
-		}, [$this->customFormModel, 'validateForm']));
+		$form->add('customData', CustomFormType::class, ['callback' => function(FormBuilderInterface $builder) {
+			return $this->customFormModel->constructForm($builder);
+		}, 'validationCallback' => 'validateForm']);
 	}
 
 }

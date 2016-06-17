@@ -20,19 +20,19 @@
 
 namespace Cantiga\CoreBundle\Controller;
 
+use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
+use Cantiga\CoreBundle\Api\Actions\EditAction;
+use Cantiga\CoreBundle\Api\Actions\InfoAction;
+use Cantiga\CoreBundle\Api\Actions\InsertAction;
+use Cantiga\CoreBundle\Api\Actions\RemoveAction;
+use Cantiga\CoreBundle\Api\Controller\ProjectPageController;
+use Cantiga\CoreBundle\Entity\AreaStatus;
+use Cantiga\CoreBundle\Form\ProjectAreaStatusForm;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
-use Cantiga\CoreBundle\Api\Actions\RemoveAction;
-use Cantiga\CoreBundle\Api\Actions\InsertAction;
-use Cantiga\CoreBundle\Api\Actions\EditAction;
-use Cantiga\CoreBundle\Api\Actions\InfoAction;
-use Cantiga\CoreBundle\Api\Controller\ProjectPageController;
-use Cantiga\CoreBundle\Form\ProjectAreaStatusForm;
-use Cantiga\CoreBundle\Entity\AreaStatus;
 
 /**
  * @Route("/project/{slug}/area-status")
@@ -117,7 +117,7 @@ class ProjectAreaStatusController extends ProjectPageController
 		$entity = new AreaStatus();
 		$entity->setProject($this->getActiveProject());
 
-		$action = new InsertAction($this->crudInfo, $entity, new ProjectAreaStatusForm());
+		$action = new InsertAction($this->crudInfo, $entity, ProjectAreaStatusForm::class);
 		$action->slug($this->getSlug());
 		return $action->run($this, $request);
 	}
@@ -127,7 +127,7 @@ class ProjectAreaStatusController extends ProjectPageController
 	 */
 	public function editAction($id, Request $request)
 	{
-		$action = new EditAction($this->crudInfo, new ProjectAreaStatusForm());
+		$action = new EditAction($this->crudInfo, ProjectAreaStatusForm::class);
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
 	}

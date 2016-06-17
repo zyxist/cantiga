@@ -58,7 +58,10 @@ class AreaProfileController extends AreaPageController
 		$text = $this->getTextRepository()->getTextOrFalse(CoreTexts::AREA_PROFILE_EDITOR_TEXT, $request, $this->getActiveProject());
 		
 		$intent = new AreaProfileIntent($area, $repo);
-		$action = new FormAction($intent, new AreaProfileForm($this->getProjectSettings(), $formModel, $territoryRepo));
+		$action = new FormAction($intent, AreaProfileForm::class, [
+			'projectSettings' => $this->getProjectSettings(),
+			'customFormModel' => $formModel,
+			'territoryRepository' => $territoryRepo]);
 		$action->slug($this->getSlug());
 		return $action->action($this->generateUrl('area_profile_editor', ['slug' => $this->getSlug()]))
 			->template('CantigaCoreBundle:AreaProfile:editor.html.twig')

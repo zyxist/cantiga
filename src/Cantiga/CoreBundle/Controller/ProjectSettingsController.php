@@ -46,9 +46,14 @@ class ProjectSettingsController extends ProjectPageController
 	{
 		$settings = $this->get('cantiga.project.settings');
 		$form = $this->createForm(
-			new ProjectSettingsForm($settings, $this->getExtensionPoints(), $this->getExtensionPointFilter()),
+			ProjectSettingsForm::class,
 			$settings->toArray(),
-			array('action' => $this->generateUrl('project_settings_index', ['slug' => $this->getSlug()]))
+			[
+				'action' => $this->generateUrl('project_settings_index', ['slug' => $this->getSlug()]),
+				'settings' => $settings,
+				'extensionPoints' => $this->getExtensionPoints(),
+				'filter' => $this->getExtensionPointFilter()
+			]
 		);
 		
 		$form->handleRequest($request);

@@ -23,6 +23,7 @@ use Cantiga\CoreBundle\Api\Workspace;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Extension\DashboardExtensionInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Templating\EngineInterface;
 use WIO\EdkBundle\Repository\EdkRouteRepository;
 
 /**
@@ -36,10 +37,15 @@ class DashboardChatExtension implements DashboardExtensionInterface
 	 * @var EdkRouteRepository
 	 */
 	private $repository;
+	/**
+	 * @var EngineInterface
+	 */
+	private $templating;
 	
-	public function __construct(EdkRouteRepository $repository)
+	public function __construct(EdkRouteRepository $repository, EngineInterface $templating)
 	{
 		$this->repository = $repository;
+		$this->templating = $templating;
 	}
 	
 	public function getPriority()
@@ -51,6 +57,6 @@ class DashboardChatExtension implements DashboardExtensionInterface
 	{
 		$item = $controller->getMembership()->getItem();
 		$this->repository->setRootEntity($item);
-		return $controller->renderView('WioEdkBundle:Extension:recent-comments.html.twig', ['routeInfoPath' => lcfirst($item->getEntity()->getType()).'_route_info', 'comments' => $this->repository->getRecentCommentActivity(8)]);
+		return $this->templating->render('WioEdkBundle:Extension:recent-comments.html.twig', ['routeInfoPath' => lcfirst($item->getEntity()->getType()).'_route_info', 'comments' => $this->repository->getRecentCommentActivity(8)]);
 	}
 }

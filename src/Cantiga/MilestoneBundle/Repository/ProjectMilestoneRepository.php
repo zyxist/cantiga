@@ -158,7 +158,7 @@ class ProjectMilestoneRepository implements EntityTransformerInterface
 		$stmt->execute();
 		$result = array();
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$result[$row['id']] = $row['name'];
+			$result[$row['name']] = $row['id'];
 		}
 		$stmt->closeCursor();
 		return $result;

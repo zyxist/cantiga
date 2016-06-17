@@ -27,6 +27,7 @@ use Cantiga\CoreBundle\Repository\ProjectRepository;
 use Cantiga\Metamodel\Form\EntityTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
@@ -53,13 +54,13 @@ class DataExportForm extends AbstractType
 		$first = key($projects);		
 		
 		$builder
-			->add('name', new TextType, array('label' => 'Name'))
-			->add('project', new ChoiceType, array('label' => 'Project', 'choices' => $projects))
-			->add('url', new UrlType, array('label' => 'Export URL'))
-			->add('encryptionKey', new TextType, ['label' => 'Encryption key'])
-			->add('active', new BooleanType, ['label' => 'Active'])
-			->add('notes', new TextareaType, ['label' => 'Notes'])
-			->add('save', 'submit', array('label' => 'Save'));
+			->add('name', TextType::class, array('label' => 'Name'))
+			->add('project', ChoiceType::class, array('label' => 'Project', 'choices' => $projects))
+			->add('url', UrlType::class, array('label' => 'Export URL'))
+			->add('encryptionKey', TextType::class, ['label' => 'Encryption key'])
+			->add('active', BooleanType::class, ['label' => 'Active'])
+			->add('notes', TextareaType::class, ['label' => 'Notes'])
+			->add('save', SubmitType::class, array('label' => 'Save'));
 
 		$builder->get('project')->addModelTransformer(new EntityTransformer($this->projectRepository));
 

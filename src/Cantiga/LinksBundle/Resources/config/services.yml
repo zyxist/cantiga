@@ -7,7 +7,7 @@ services:
         arguments: ["@database_connection", "@cantiga.transaction"]
     cantiga.links.dashboard:
         class:     Cantiga\LinksBundle\Extension\DashboardExtension
-        arguments: ["@cantiga.links.repo.links"]
+        arguments: ["@cantiga.links.repo.links", "@templating"]
         tags:
             - { name: cantiga.extension, point: core.dashboard.user.right }
             - { name: cantiga.extension, point: core.dashboard.admin.right }

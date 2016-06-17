@@ -90,7 +90,7 @@ trait RouteTrait
 	protected function performInsert(Request $request)
 	{
 		$entity = new EdkRoute();
-		$action = new InsertAction($this->crudInfo, $entity, new EdkRouteForm(EdkRouteForm::ADD, $this->findAreaRepository()));
+		$action = new InsertAction($this->crudInfo, $entity, EdkRouteForm::class, ['mode' => EdkRouteForm::ADD, 'areaRepository' => $this->findAreaRepository()]);
 		$action->slug($this->getSlug());
 		$action->set('isArea', $this->isArea());
 		return $action->run($this, $request);
@@ -98,7 +98,7 @@ trait RouteTrait
 
 	protected function performEdit($id, Request $request)
 	{
-		$action = new EditAction($this->crudInfo, new EdkRouteForm(EdkRouteForm::EDIT, $this->findAreaRepository()));
+		$action = new EditAction($this->crudInfo, EdkRouteForm::class, ['mode' => EdkRouteForm::EDIT, 'areaRepository' => $this->findAreaRepository()]);
 		$action->slug($this->getSlug());
 		$action->set('isArea', $this->isArea());
 		return $action->run($this, $id, $request);

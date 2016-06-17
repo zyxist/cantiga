@@ -48,43 +48,43 @@ class AreaModel implements CustomFormModelInterface, CompletenessCalculatorInter
 	
 	public function constructForm(FormBuilderInterface $builder)
 	{
-		$builder->add('positionLat', new NumberType, array('label' => 'Area location (lattitude)*', 'required' => false, 'scale' => 6, 'attr' => ['help_text' => 'LattitudeHintText'], 'constraints' => [
+		$builder->add('positionLat', NumberType::class, array('label' => 'Area location (lattitude)*', 'required' => false, 'scale' => 6, 'attr' => ['help_text' => 'LattitudeHintText'], 'constraints' => [
 			new Range(['min' => -90, 'max' => 90])
 		]));
-		$builder->add('positionLng', new NumberType, array('label' => 'Area location (longitude)*', 'required' => false, 'scale' => 6, 'attr' => ['help_text' => 'LongitudeHintText'], 'constraints' => [
+		$builder->add('positionLng', NumberType::class, array('label' => 'Area location (longitude)*', 'required' => false, 'scale' => 6, 'attr' => ['help_text' => 'LongitudeHintText'], 'constraints' => [
 			new Range(['min' => -180, 'max' => 180])
 		]));
-		$builder->add('ewcDate', new DateType, array('label' => 'Date of Extreme Way of the Cross*', 'input' => 'array', 'required' => false, 'empty_value' => '-- none --', 'years' => $this->generateYears(), 'constraints' => [
+		$builder->add('ewcDate', DateType::class, array('label' => 'Date of Extreme Way of the Cross*', 'input' => 'array', 'required' => false, 'years' => $this->generateYears(), 'constraints' => [
 		]));
 		
-		$builder->add('parishName', new TextType, array('label' => 'Parish name', 'required' => false, 'constraints' => [
+		$builder->add('parishName', TextType::class, array('label' => 'Parish name', 'required' => false, 'constraints' => [
 			new Length(array('min' => 2, 'max' => 50))
 		]));
-		$builder->add('parishAddress', new TextType, array('label' => 'Parish address', 'required' => false, 'constraints' => [
+		$builder->add('parishAddress', TextType::class, array('label' => 'Parish address', 'required' => false, 'constraints' => [
 			new Length(array('min' => 2, 'max' => 100))
 		]));
-		$builder->add('parishPostal', new TextType, array('label' => 'Postal code', 'required' => false, 'constraints' => [
+		$builder->add('parishPostal', TextType::class, array('label' => 'Postal code', 'required' => false, 'constraints' => [
 			new Length(array('min' => 2, 'max' => 12))
 		]));
-		$builder->add('parishCity', new TextType, array('label' => 'Parish city', 'required' => false, 'constraints' => [
+		$builder->add('parishCity', TextType::class, array('label' => 'Parish city', 'required' => false, 'constraints' => [
 			new Length(array('min' => 2, 'max' => 50))
 		]));
-		$builder->add('parishWebsite', new UrlType, array('label' => 'Parish website', 'required' => false, 'constraints' => [
+		$builder->add('parishWebsite', UrlType::class, array('label' => 'Parish website', 'required' => false, 'constraints' => [
 			new Url(array('message' => $this->translator->trans('ParishWebsiteUrlInvalidText')))
 		]));
-		$builder->add('responsiblePriest', new TextType, array('label' => 'Priest', 'required' => false, 'constraints' => [
+		$builder->add('responsiblePriest', TextType::class, array('label' => 'Priest', 'required' => false, 'constraints' => [
 			new Length(array('min' => 2, 'max' => 60))
 		]));
-		$builder->add('responsibleCoordinator', new TextType, array('label' => 'Area coordinator', 'required' => false, 'constraints' => [
+		$builder->add('responsibleCoordinator', TextType::class, array('label' => 'Area coordinator', 'required' => false, 'constraints' => [
 			new Length(array('min' => 2, 'max' => 60))
 		]));
-		$builder->add('contactPhone', new TextType, array('label' => 'Contact telephone', 'required' => false, 'attr' => ['help_text' => 'ContactPhoneHintText'], 'constraints' => [
+		$builder->add('contactPhone', TextType::class, array('label' => 'Contact telephone', 'required' => false, 'attr' => ['help_text' => 'ContactPhoneHintText'], 'constraints' => [
 			new Regex(array('pattern' => '/^[0-9\-\+ ]{9,16}$/', 'htmlPattern' => '^[0-9\-\+ ]{9,16}$', 'message' => $this->translator->trans('ContactPhoneNumberInvalidText')))
 		]));
-		$builder->add('areaWebsite', new UrlType, array('label' => 'Area website', 'required' => false, 'constraints' => [
+		$builder->add('areaWebsite', UrlType::class, array('label' => 'Area website', 'required' => false, 'constraints' => [
 			new Url(array('message' => $this->translator->trans('AreaWebsiteUrlInvalidText')))
 		]));
-		$builder->add('facebookProfile', new TextType, array('label' => 'Facebook profile', 'required' => false, 'attr' => ['help_text' => 'FacebookProfileHintText'], 'constraints' => [
+		$builder->add('facebookProfile', TextType::class, array('label' => 'Facebook profile', 'required' => false, 'attr' => ['help_text' => 'FacebookProfileHintText'], 'constraints' => [
 			new Regex(array('pattern' => '/^[A-Za-z0-9\\.\\-]+$/', 'htmlPattern' => '^[A-Za-z0-9\\.\\-]+$', 'message' => $this->translator->trans('AreaFacebookProfileInvalidText')))
 		]));
 	}

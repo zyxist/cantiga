@@ -129,7 +129,7 @@ class ProjectMilestoneStatusRuleController extends ProjectPageController
 		$entity = new MilestoneStatusRule();
 		$entity->setProject($this->getActiveProject());
 
-		$action = new InsertAction($this->crudInfo, $entity, new MilestoneStatusRuleForm($statusRepo, $milestoneRepo));
+		$action = new InsertAction($this->crudInfo, $entity, MilestoneStatusRuleForm::class, ['statusRepository' => $statusRepo, 'milestoneRepository' => $milestoneRepo]);
 		$action->slug($this->getSlug());
 		return $action->run($this, $request);
 	}
@@ -144,7 +144,7 @@ class ProjectMilestoneStatusRuleController extends ProjectPageController
 		$statusRepo->setProject($this->getActiveProject());
 		$milestoneRepo->setProject($this->getActiveProject());
 		
-		$action = new EditAction($this->crudInfo, new MilestoneStatusRuleForm($statusRepo, $milestoneRepo));
+		$action = new EditAction($this->crudInfo, MilestoneStatusRuleForm::class, ['statusRepository' => $statusRepo, 'milestoneRepository' => $milestoneRepo]);
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
 	}

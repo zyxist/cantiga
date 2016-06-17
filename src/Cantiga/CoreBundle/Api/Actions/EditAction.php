@@ -22,14 +22,14 @@ class EditAction extends AbstractAction
 	private $customForm;
 	private $formBuilder;
 	
-	public function __construct(CRUDInfo $crudInfo, AbstractType $formType = null)
+	public function __construct(CRUDInfo $crudInfo, $formType = null, array $options = [])
 	{
 		$this->info = $crudInfo;
 		$this->updateOperation = function($repository, $item) {
 			$repository->update($item);
 		};
-		$this->formBuilder = function($controller, $item, $formType, $action) use($formType) {
-			return $controller->createForm($formType, $item, array('action' => $action));
+		$this->formBuilder = function($controller, $item, $formType, $action) use($formType, $options) {
+			return $controller->createForm($formType, $item, array_merge(['action' => $action], $options));
 		};
 	}
 	

@@ -23,6 +23,7 @@ use Cantiga\CoreBundle\Api\Workspace;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Repository\CoreStatisticsRepository;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Templating\EngineInterface;
 
 /**
  * Displays a short numerical summary of the system on the admin dashboard.
@@ -35,10 +36,15 @@ class AdminSummaryExtension implements DashboardExtensionInterface
 	 * @var CoreStatisticsRepository 
 	 */
 	private $repository;
+	/**
+	 * @var EngineInterface
+	 */
+	private $templating;
 	
-	public function __construct(CoreStatisticsRepository $repository)
+	public function __construct(CoreStatisticsRepository $repository, EngineInterface $templating)
 	{
 		$this->repository = $repository;
+		$this->templating = $templating;
 	}
 	
 	public function getPriority()
@@ -48,6 +54,6 @@ class AdminSummaryExtension implements DashboardExtensionInterface
 
 	public function render(CantigaController $controller, Request $request, Workspace $workspace, Project $project = null)
 	{
-		return $controller->renderView('CantigaCoreBundle:Admin:admin-summary.html.twig', ['data' => $this->repository->fetchAdminSummary()]);
+		return $this->templating->render('CantigaCoreBundle:Admin:admin-summary.html.twig', ['data' => $this->repository->fetchAdminSummary()]);
 	}
 }

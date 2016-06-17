@@ -23,44 +23,39 @@ use Cantiga\Metamodel\CustomForm\CustomFormEventSubscriber;
 use Cantiga\Metamodel\CustomForm\CustomFormModelInterface;
 use Cantiga\Metamodel\Form\EntityTransformer;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProjectAreaForm extends AbstractType
 {
-	/**
-	 * @var CustomFormModelInterface
-	 */
-	private $customFormModel;
-	private $territoryRepository;
-	private $groupRepository;
-	private $statusRepository;
-	
-	public function __construct(CustomFormModelInterface $customFormModel, $territoryRepository, $groupRepository, $statusRepository)
+	public function configureOptions(OptionsResolver $resolver)
 	{
-		$this->customFormModel = $customFormModel;
-		$this->territoryRepository = $territoryRepository;
-		$this->groupRepository = $groupRepository;
-		$this->statusRepository = $statusRepository;
+		$resolver->setDefined(['customFormModel', 'territoryRepository', 'groupRepository', 'statusRepository']);
+		$resolver->setRequired(['customFormModel', 'territoryRepository', 'groupRepository', 'statusRepository']);
+		$resolver->addAllowedTypes('customFormModel', CustomFormModelInterface::class);
 	}
 	
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add('name', 'text', array('label' => 'Name'))
-			->add('territory', 'choice', array('label' => 'Territory', 'choices' => $this->territoryRepository->getFormChoices()))
-			->add('group', 'choice', array('label' => 'Group', 'choices' => $this->groupRepository->getFormChoices()))
-			->add('status', 'choice', array('label' => 'Status', 'choices' => $this->statusRepository->getFormChoices()))
-			->add('save', 'submit', array('label' => 'Save'));
-		$builder->get('territory')->addModelTransformer(new EntityTransformer($this->territoryRepository));
-		$builder->get('group')->addModelTransformer(new EntityTransformer($this->groupRepository));
-		$builder->get('status')->addModelTransformer(new EntityTransformer($this->statusRepository));
-		$builder->addEventSubscriber(new CustomFormEventSubscriber($this->customFormModel));
-		$builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
-			if ($this->customFormModel instanceof CompletenessCalculatorInterface) {
+			->add('name', TextType::class, ['label' => 'Name'])
+			->add('territory', ChoiceType::class, ['label' => 'Territory', 'choices' => $options['territoryRepository']->getFormChoices()])
+			->add('group', ChoiceType::class, ['label' => 'Group', 'choices' => $options['groupRepository']->getFormChoices()])
+			->add('status', ChoiceType::class, ['label' => 'Status', 'choices' => $options['statusRepository']->getFormChoices()])
+			->add('save', SubmitType::class, ['label' => 'Save']);
+		$builder->get('territory')->addModelTransformer(new EntityTransformer($options['territoryRepository']));
+		$builder->get('group')->addModelTransformer(new EntityTransformer($options['groupRepository']));
+		$builder->get('status')->addModelTransformer(new EntityTransformer($options['statusRepository']));
+		$builder->addEventSubscriber(new CustomFormEventSubscriber($options['customFormModel']));
+		$builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use($options) {
+			if ($options['customFormModel'] instanceof CompletenessCalculatorInterface) {
 				$entity = $event->getData();
-				$entity->setPercentCompleteness($this->customFormModel->calculateCompleteness($entity->getCustomData()));
+				$entity->setPercentCompleteness($options['customFormModel']->calculateCompleteness($entity->getCustomData()));
 			}
 		});
 	}

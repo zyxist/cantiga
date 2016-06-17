@@ -132,7 +132,7 @@ class LanguageRepository implements EntityTransformerInterface
 		$stmt = $this->conn->query('SELECT `id`, `name` FROM `'.CoreTables::LANGUAGE_TBL.'` ORDER BY `name`');
 		$result = array();
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$result[$row['id']] = $row['name'];
+			$result[$row['name']] = $row['id'];
 		}
 		$stmt->closeCursor();
 		return $result;

@@ -19,6 +19,9 @@
 namespace Cantiga\CoreBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class UserChangeEmailForm extends AbstractType
@@ -26,9 +29,9 @@ class UserChangeEmailForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add('password', 'password', array('label' => 'Password', 'attr' => ['placeholder' => 'Your current password']))
-			->add('email', 'email', array('label' => 'E-mail', 'attr' => ['placeholder' => 'New e-mail address']))
-			->add('save', 'submit', array('label' => 'Save'));
+			->add('password', PasswordType::class, ['label' => 'Password', 'attr' => ['placeholder' => 'Your current password']])
+			->add('email', EmailType::class, ['label' => 'E-mail', 'attr' => ['placeholder' => 'New e-mail address']])
+			->add('save', SubmitType::class, ['label' => 'Save']);
 
 	}
 

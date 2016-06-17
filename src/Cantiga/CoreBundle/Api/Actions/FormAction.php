@@ -43,11 +43,11 @@ class FormAction extends AbstractAction
 	private $formSubmittedMessage;
 	private $template;
 	
-	public function __construct($item, AbstractType $formType)
+	public function __construct($item, $formType, array $options = array())
 	{
 		$this->item = $item;
-		$this->formBuilder = function($controller, $item, $action) use($formType) {
-			return $controller->createForm($formType, $item, array('action' => $action));
+		$this->formBuilder = function($controller, $item, $action) use($formType, $options) {
+			return $controller->createForm($formType, $item, array_merge(['action' => $action], $options));
 		};
 	}
 	

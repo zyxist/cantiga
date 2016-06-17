@@ -118,7 +118,7 @@ class AdminLinksController extends AdminPageController
 	public function insertAction(Request $request)
 	{
 		$entity = new Link();
-		$action = new InsertAction($this->crudInfo, $entity, new LinkForm(LinkForm::GENERAL));
+		$action = new InsertAction($this->crudInfo, $entity, LinkForm::class, ['type' => LinkForm::GENERAL]);
 		return $action->run($this, $request);
 	}
 
@@ -127,7 +127,7 @@ class AdminLinksController extends AdminPageController
 	 */
 	public function editAction($id, Request $request)
 	{
-		$action = new EditAction($this->crudInfo, new LinkForm(LinkForm::GENERAL));
+		$action = new EditAction($this->crudInfo, LinkForm::class, ['type' => LinkForm::GENERAL]);
 		return $action->run($this, $id, $request);
 	}
 

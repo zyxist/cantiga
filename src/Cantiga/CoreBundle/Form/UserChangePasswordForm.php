@@ -19,6 +19,8 @@
 namespace Cantiga\CoreBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class UserChangePasswordForm extends AbstractType
@@ -26,10 +28,10 @@ class UserChangePasswordForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add('oldPassword', 'password', array('label' => 'Current password', 'attr' => ['placeholder' => 'Your current password']))
-			->add('password', 'password', array('label' => 'New password', 'attr' => ['placeholder' => 'New password']))
-			->add('repeatPassword', 'password', array('label' => 'Repeat password', 'attr' => ['placeholder' => 'Repeat password']))
-			->add('save', 'submit', array('label' => 'Save'));
+			->add('oldPassword', PasswordType::class, ['label' => 'Current password', 'attr' => ['placeholder' => 'Your current password']])
+			->add('password', PasswordType::class, ['label' => 'New password', 'attr' => ['placeholder' => 'New password']])
+			->add('repeatPassword', PasswordType::class, ['label' => 'Repeat password', 'attr' => ['placeholder' => 'Repeat password']])
+			->add('save', SubmitType::class, ['label' => 'Save']);
 
 	}
 

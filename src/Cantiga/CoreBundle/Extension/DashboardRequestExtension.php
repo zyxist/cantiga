@@ -24,6 +24,7 @@ use Cantiga\CoreBundle\CoreSettings;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Repository\ProjectAreaRequestRepository;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Templating\EngineInterface;
 
 /**
  * Shows the most recent area requests.
@@ -36,10 +37,15 @@ class DashboardRequestExtension implements DashboardExtensionInterface
 	 * @var ProjectAreaRequestRepository
 	 */
 	private $repository;
+	/**
+	 * @var EngineInterface
+	 */
+	private $templating;
 	
-	public function __construct(ProjectAreaRequestRepository $repository)
+	public function __construct(ProjectAreaRequestRepository $repository, EngineInterface $templating)
 	{
 		$this->repository = $repository;
+		$this->templating = $templating;
 	}
 	
 	public function getPriority()
@@ -51,7 +57,7 @@ class DashboardRequestExtension implements DashboardExtensionInterface
 	{
 		if ($controller->getProjectSettings()->get(CoreSettings::DASHOBARD_SHOW_REQUESTS)->getValue()) {
 			$this->repository->setActiveProject($project);
-			return $controller->renderView('CantigaCoreBundle:Project:recent-area-requests.html.twig', ['requests' => $this->repository->getRecentRequests(5)]);
+			return $this->templating->render('CantigaCoreBundle:Project:recent-area-requests.html.twig', ['requests' => $this->repository->getRecentRequests(5)]);
 		}
 		return '';
 	}

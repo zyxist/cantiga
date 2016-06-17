@@ -29,6 +29,7 @@ use Cantiga\CoreBundle\CoreExtensions;
 use Cantiga\CoreBundle\Entity\User;
 use Cantiga\CoreBundle\Event\ShowProjectsEvent;
 use Cantiga\CoreBundle\Event\WorkspaceEvent;
+use Cantiga\CoreBundle\Settings\ProjectSettings;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Membership;
 use Cantiga\Metamodel\MembershipToken;
@@ -66,12 +67,17 @@ class WorkspaceListener implements WorkspaceSourceInterface
 	 * @var ExtensionPointsInterface
 	 */
 	private $extensionPoints;
+	/**
+	 * @var ProjectSettings 
+	 */
+	private $projectSettings;
 	
-	public function __construct(AuthorizationCheckerInterface $authChecker, TokenStorageInterface $tokenStorage, ExtensionPointsInterface $extensionPoints)
+	public function __construct(AuthorizationCheckerInterface $authChecker, TokenStorageInterface $tokenStorage, ExtensionPointsInterface $extensionPoints, ProjectSettings $settings)
 	{
 		$this->authChecker = $authChecker;
 		$this->tokenStorage = $tokenStorage;
 		$this->extensionPoints = $extensionPoints;
+		$this->projectSettings = $settings;
 	}
 	
 	public function onControllerSelected(FilterControllerEvent $event)
@@ -101,7 +107,7 @@ class WorkspaceListener implements WorkspaceSourceInterface
 					
 					$user->addRole($membership->getRole()->getAuthRole());
 					User::installMembershipInformation($user, $membership);
-					$ctrl->get('cantiga.project.settings')->setProject($project);
+					$this->projectSettings->setProject($project);
 					$this->tokenStorage->setToken(new MembershipToken($this->tokenStorage->getToken(), $membership, $project));
 				} catch(ItemNotFoundException $exception) {
 					throw new AccessDeniedHttpException($exception->getMessage(), $exception);

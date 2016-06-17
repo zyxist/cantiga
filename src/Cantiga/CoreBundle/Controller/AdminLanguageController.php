@@ -110,7 +110,7 @@ class AdminLanguageController extends AdminPageController
 	 */
 	public function insertAction(Request $request)
 	{
-		$action = new InsertAction($this->crudInfo, new Language(), new AdminLanguageForm());
+		$action = new InsertAction($this->crudInfo, new Language(), AdminLanguageForm::class);
 		return $action->run($this, $request);
 	}
 
@@ -119,7 +119,7 @@ class AdminLanguageController extends AdminPageController
 	 */
 	public function editAction($id, Request $request)
 	{
-		$action = new EditAction($this->crudInfo, new AdminLanguageForm());
+		$action = new EditAction($this->crudInfo, AdminLanguageForm::class);
 		return $action->run($this, $id, $request);
 	}
 

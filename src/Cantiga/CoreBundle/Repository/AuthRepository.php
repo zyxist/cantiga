@@ -41,6 +41,8 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
  */
 class AuthRepository implements UserProviderInterface
 {
+	const LASTVISIT_UPDATE_THRESHOLD_SEC = 60;
+	
 	/**
 	 * @var Connection
 	 */
@@ -71,7 +73,9 @@ class AuthRepository implements UserProviderInterface
 			throw new UsernameNotFoundException(sprintf('Username "%s" not found.', $original->getUsername()));
 		}
 		
-		$this->conn->update(CoreTables::USER_TBL, ['lastVisit' => time()], ['id' => $user->getId()]);
+		if ($user->getLastVisit() < (time() - self::LASTVISIT_UPDATE_THRESHOLD_SEC)) {
+			$this->conn->update(CoreTables::USER_TBL, ['lastVisit' => time()], ['id' => $user->getId()]);
+		}
 
 		return $user;
 	}

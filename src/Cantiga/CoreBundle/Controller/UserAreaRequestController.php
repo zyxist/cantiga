@@ -45,7 +45,7 @@ class UserAreaRequestController extends UserPageController
 {
 
 	const REPOSITORY_NAME = 'cantiga.core.repo.user_area_request';
-
+	
 	/**
 	 * @var CRUDInfo
 	 */
@@ -84,7 +84,7 @@ class UserAreaRequestController extends UserPageController
 	public function indexAction(Request $request)
 	{
 		$repository = $this->get(self::REPOSITORY_NAME);
-		return $this->render('CantigaCoreBundle:UserAreaRequest:index.html.twig', array(
+		return $this->render($this->crudInfo->getTemplateLocation().'index.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'requests' => $repository->findUserRequests(),
@@ -149,7 +149,7 @@ class UserAreaRequestController extends UserPageController
 		$this->breadcrumbs()->entryLink($this->trans('Request a new area', [], 'pages'), $this->crudInfo->getInsertPage());
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$text = $this->getTextRepository()->getText(CoreTexts::AREA_REQUEST_CREATION_STEP1_TEXT, $request);
-		return $this->render('CantigaCoreBundle:UserAreaRequest:insert-step1.html.twig', array(
+		return $this->render($this->crudInfo->getTemplateLocation().'insert-step1.html.twig', array(
 				'text' => $text,
 				'availableProjects' => $repository->getAvailableProjects(),
 		));
@@ -174,7 +174,12 @@ class UserAreaRequestController extends UserPageController
 			$this->territoryRepository->setProject($project);
 
 			$form = $this->createForm(
-				new UserAreaRequestForm($settings, $formModel, $this->territoryRepository), $item, array('action' => $this->generateUrl('user_area_request_insert_cont', ['projectId' => $projectId]))
+				UserAreaRequestForm::class, $item, [
+					'action' => $this->generateUrl('user_area_request_insert_cont', ['projectId' => $projectId]),
+					'customFormModel' => $formModel,
+					'projectSettings' => $settings,
+					'territoryRepository' => $this->territoryRepository
+				]
 			);
 
 			$form->handleRequest($request);
@@ -187,7 +192,7 @@ class UserAreaRequestController extends UserPageController
 			$text = $this->getTextRepository()->getText(CoreTexts::AREA_REQUEST_CREATION_STEP2_TEXT, $request, $project);
 			$projectSpecificText = $settings->get(CoreSettings::AREA_REQUEST_INFO_TEXT)->getValue();
 			$this->breadcrumbs()->entryLink($this->trans('Request a new area', [], 'pages'), $this->crudInfo->getInsertPage());
-			return $this->render('CantigaCoreBundle:UserAreaRequest:insert-step2.html.twig', array(
+			return $this->render($this->crudInfo->getTemplateLocation().'insert-step2.html.twig', array(
 					'text' => $text,
 					'projectSpecificText' => $projectSpecificText,
 					'form' => $form->createView(),
@@ -215,7 +220,12 @@ class UserAreaRequestController extends UserPageController
 			$this->territoryRepository->setProject($item->getProject());
 
 			$form = $this->createForm(
-				new UserAreaRequestForm($settings, $formModel, $this->territoryRepository), $item, array('action' => $this->generateUrl($this->crudInfo->getEditPage(), ['id' => $id]))
+				UserAreaRequestForm::class, $item, [
+					'action' => $this->generateUrl($this->crudInfo->getEditPage(), ['id' => $id]),
+					'customFormModel' => $formModel,
+					'projectSettings' => $settings,
+					'territoryRepository' => $this->territoryRepository
+				]
 			);
 
 			$form->handleRequest($request);
@@ -226,7 +236,7 @@ class UserAreaRequestController extends UserPageController
 			}
 			$this->breadcrumbs()->link($item->getName(), $this->crudInfo->getInfoPage(), ['id' => $id]);
 			$this->breadcrumbs()->link($this->trans('Edit', [], 'pages'), $this->crudInfo->getEditPage(), ['id' => $id]);
-			return $this->render('CantigaCoreBundle:UserAreaRequest:edit.html.twig', array(
+			return $this->render($this->crudInfo->getTemplateLocation().'edit.html.twig', array(
 					'item' => $item,
 					'pageTitle' => $this->crudInfo->getPageTitle(),
 					'pageSubtitle' => $this->crudInfo->getPageSubtitle(),

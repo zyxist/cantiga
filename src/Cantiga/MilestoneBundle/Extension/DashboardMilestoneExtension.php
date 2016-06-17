@@ -24,6 +24,7 @@ use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Extension\DashboardExtensionInterface;
 use Cantiga\MilestoneBundle\Repository\MilestoneStatusRepository;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Templating\EngineInterface;
 /**
  * @author Tomasz Jędrzejewski
  */
@@ -33,10 +34,15 @@ class DashboardMilestoneExtension implements DashboardExtensionInterface
 	 * @var MilestoneStatusRepository
 	 */
 	private $repository;
+	/**
+	 * @var EngineInterface
+	 */
+	private $templating;
 	
-	public function __construct(MilestoneStatusRepository $repository)
+	public function __construct(MilestoneStatusRepository $repository, EngineInterface $templating)
 	{
 		$this->repository = $repository;
+		$this->templating = $templating;
 	}
 	
 	public function getPriority()
@@ -47,7 +53,7 @@ class DashboardMilestoneExtension implements DashboardExtensionInterface
 	public function render(CantigaController $controller, Request $request, Workspace $workspace, Project $project = null)
 	{
 		$entity = $controller->getMembership()->getItem()->getEntity();
-		return $controller->renderView('CantigaMilestoneBundle:Dashboard:milestone-progress.html.twig', [
+		return $this->templating->render('CantigaMilestoneBundle:Dashboard:milestone-progress.html.twig', [
 			'progress' => $this->repository->computeTotalProgress($entity, $project),
 			'incomingDeadline' => $this->repository->findClosestDeadline($entity, $project),
 			'milestoneEditorPage' => lcfirst($entity->getType()).'_milestone_editor',
