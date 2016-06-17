@@ -31,7 +31,10 @@ use Cantiga\Metamodel\QueryClause;
 use Cantiga\Metamodel\Statistics\StatDateDataset;
 use Cantiga\Metamodel\TimeFormatterInterface;
 use Cantiga\Metamodel\Transaction;
+use Cantiga\Metamodel\CsvExporter;
+use Cantiga\Metamodel\CsvFeedInterface;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Statement;
 use PDO;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -292,33 +295,49 @@ class EdkParticipantRepository implements InsertableRepositoryInterface
 			$stmt->bindValue(':routeId', $route->getId());
 		}
 		$stmt->execute();
-		$out = fopen('php://output', 'w');
-		$i = 0;
-		fputcsv($out, array(
-			$trans->trans('FirstNameCol', [], 'edk'),
-			$trans->trans('LastNameCol', [], 'edk'),
-			$trans->trans('SexCol', [], 'edk'),
-			$trans->trans('AgeCol', [], 'edk'),
-			$trans->trans('EmailCol', [], 'edk'),
-			$trans->trans('RegisteredPeopleCol', [], 'edk'),
-			$trans->trans('HowManyTimesCol', [], 'edk'),
-			$trans->trans('WhereLearntCol', [], 'edk'),
-			$trans->trans('WhereLearntOtherCol', [], 'edk'),
-			$trans->trans('CreatedAtCol', [], 'edk'),
-			$trans->trans('AdditionalInformationCol', [], 'edk'),
-			$trans->trans('WhyParticipateCol', [], 'edk'),
-			$trans->trans('RouteCol', [], 'edk')
-		));
-		while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$row['createdAt'] = date('Y-m-d, H:i:s', $row['createdAt']);
-			$row['sex'] = ($row['sex'] == 1 ? 'M' : 'F');
-			$row['whereLearnt'] = WhereLearntAbout::getItem($row['whereLearnt'])->getName();
-			fputcsv($out, $row);
-			if(($i++) % 5 == 0) {
-				fflush($out);
+		
+		$exporter = new CsvExporter(new class($trans, $stmt) implements CsvFeedInterface {
+			private $trans;
+			private $stmt;
+			
+			public function __construct(TranslatorInterface $trans, Statement $stmt)
+			{
+				$this->trans = $trans;
+				$this->stmt = $stmt;
 			}
-		}
-		fclose($out);
+			
+			public function createHeader() : array
+			{
+				return [
+					$this->trans->trans('FirstNameCol', [], 'edk'),
+					$this->trans->trans('LastNameCol', [], 'edk'),
+					$this->trans->trans('SexCol', [], 'edk'),
+					$this->trans->trans('AgeCol', [], 'edk'),
+					$this->trans->trans('EmailCol', [], 'edk'),
+					$this->trans->trans('RegisteredPeopleCol', [], 'edk'),
+					$this->trans->trans('HowManyTimesCol', [], 'edk'),
+					$this->trans->trans('WhereLearntCol', [], 'edk'),
+					$this->trans->trans('WhereLearntOtherCol', [], 'edk'),
+					$this->trans->trans('CreatedAtCol', [], 'edk'),
+					$this->trans->trans('AdditionalInformationCol', [], 'edk'),
+					$this->trans->trans('WhyParticipateCol', [], 'edk'),
+					$this->trans->trans('RouteCol', [], 'edk')
+				];
+			}
+			
+			public function createRow()
+			{
+				$row = $this->stmt->fetch(PDO::FETCH_ASSOC);
+				if (empty($row)) {
+					return null;
+				}
+				$row['createdAt'] = date('Y-m-d, H:i:s', $row['createdAt']);
+				$row['sex'] = ($row['sex'] == 1 ? 'M' : 'F');
+				$row['whereLearnt'] = $this->trans->trans(WhereLearntAbout::getItem($row['whereLearnt'])->getName(), [], 'edk');
+				return $row;
+			}
+		});
+		$exporter->export();
 		$stmt->closeCursor();
 	}
 	
