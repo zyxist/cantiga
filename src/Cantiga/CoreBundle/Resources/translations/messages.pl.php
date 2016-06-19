@@ -251,6 +251,8 @@ return array(
 	'Administrator' => 'Administrator',
 	'E-mail' => 'E-mail',
 	'This user is not a member of any place.' => 'Ten użytkownik nie jest członkiem żadnego miejsca.',
+	'Jump to user' => 'Znajdź użytkownika',
+	'User with the specified login or e-mail not found.' => 'Nie znaleziono użytkownika o podanym loginie lub adresie e-mail.',
 	
 	// Admin dashboard
 	'Area' => 'Rejon',

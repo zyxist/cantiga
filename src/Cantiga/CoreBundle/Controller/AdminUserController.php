@@ -1,4 +1,5 @@
 <?php
+
 /*
  * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
  *
@@ -16,6 +17,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 namespace Cantiga\CoreBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
@@ -27,6 +29,7 @@ use Cantiga\CoreBundle\Api\ExtensionPoints\ExtensionPointFilter;
 use Cantiga\CoreBundle\CoreExtensions;
 use Cantiga\CoreBundle\Entity\User;
 use Cantiga\CoreBundle\Form\AdminUserForm;
+use Cantiga\CoreBundle\Form\UserJumpForm;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -39,12 +42,14 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class AdminUserController extends AdminPageController
 {
+
 	const REPOSITORY_NAME = 'cantiga.core.repo.admin_user';
+
 	/**
 	 * @var CRUDInfo
 	 */
 	private $crudInfo;
-	
+
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 		$this->crudInfo = $this->newCrudInfo(self::REPOSITORY_NAME)
@@ -58,27 +63,39 @@ class AdminUserController extends AdminPageController
 			->setEditPage('admin_user_edit')
 			->setRemovePage('admin_user_remove')
 			->setRemoveQuestion('UserRemovalQuestionText');
-		
+
 		$this->breadcrumbs()
 			->workgroup('access')
 			->entryLink($this->trans('Users', [], 'pages'), $this->crudInfo->getIndexPage());
 	}
-		
+
 	/**
 	 * @Route("/index", name="admin_user_index")
 	 */
 	public function indexAction(Request $request)
 	{
 		$repository = $this->get(self::REPOSITORY_NAME);
+		$jumpForm = $this->createForm(UserJumpForm::class, [], ['action' => $this->generateUrl($this->crudInfo->getIndexPage())]);
+		$jumpForm->handleRequest($request);
+		if ($jumpForm->isValid()) {
+			$data = $jumpForm->getData();
+			$userId = $repository->tryJumpToUser($data['login'], $data['email']);
+			if (!empty($userId)) {
+				return $this->redirect($this->generateUrl($this->crudInfo->getInfoPage(), ['id' => $userId]));
+			} else {
+				$this->addFlash('alert', $this->trans('User with the specified login or e-mail not found.'));
+			}
+		}
 		$dataTable = $repository->createDataTable();
-		return $this->render($this->crudInfo->getTemplateLocation().'index.html.twig', array(
+		return $this->render($this->crudInfo->getTemplateLocation() . 'index.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'dataTable' => $dataTable,
-			'locale' => $request->getLocale()
+			'locale' => $request->getLocale(),
+			'form' => $jumpForm->createView()
 		));
 	}
-	
+
 	/**
 	 * @Route("/ajax-list", name="admin_user_ajax_list")
 	 */
@@ -94,7 +111,7 @@ class AdminUserController extends AdminPageController
 		$dataTable->process($request);
 		return new JsonResponse($routes->process($repository->listData($dataTable)));
 	}
-	
+
 	/**
 	 * @Route("/{id}/info", name="admin_user_info")
 	 */
@@ -102,17 +119,17 @@ class AdminUserController extends AdminPageController
 	{
 		$action = new InfoAction($this->crudInfo);
 		return $action->run($this, $id, function(User $user) {
-			$loaders = $this->getExtensionPoints()->findImplementations(CoreExtensions::MEMBERSHIP_LOADER, new ExtensionPointFilter());
-			$places = [];
-			foreach ($loaders as $loader) {
-				foreach ($loader->loadProjectRepresentations($user) as $place) {
-					$places[] = $place;
+				$loaders = $this->getExtensionPoints()->findImplementations(CoreExtensions::MEMBERSHIP_LOADER, new ExtensionPointFilter());
+				$places = [];
+				foreach ($loaders as $loader) {
+					foreach ($loader->loadProjectRepresentations($user) as $place) {
+						$places[] = $place;
+					}
 				}
-			}
-			return ['places' => $places];
-		});
+				return ['places' => $places];
+			});
 	}
-	
+
 	/**
 	 * @Route("/{id}/edit", name="admin_user_edit")
 	 */
@@ -121,7 +138,7 @@ class AdminUserController extends AdminPageController
 		$action = new EditAction($this->crudInfo, AdminUserForm::class);
 		return $action->run($this, $id, $request);
 	}
-	
+
 	/**
 	 * @Route("/{id}/remove", name="admin_user_remove")
 	 */
@@ -130,4 +147,5 @@ class AdminUserController extends AdminPageController
 		$action = new RemoveAction($this->crudInfo);
 		return $action->run($this, $id, $request);
 	}
+
 }

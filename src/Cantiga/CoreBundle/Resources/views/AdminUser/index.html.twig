@@ -1,5 +1,14 @@
 {% extends 'CantigaCoreBundle:layout:list-layout.html.twig' %}
 
+{% block box_header %}
+	{{ form_start(form, {'style': 'inline'}) }}
+		<label>{{ 'Jump to user' | trans }}: </label>
+		{{ form_row(form.login) }}
+		{{ form_row(form.email) }}
+		{{ form_row(form.jump) }}
+	{{ form_end(form) }}	
+{% endblock %}
+
 {% block column_list %}
 <tr>
 	<th width="30">#</th>

@@ -113,10 +113,15 @@ class AdminUserRepository implements EntityTransformerInterface
 		);
 	}
 	
+	public function tryJumpToUser($login, $email)
+	{
+		return $this->conn->fetchColumn('SELECT `id` FROM `'.CoreTables::USER_TBL.'` WHERE `login` = :login OR `email` = :email', [':login' => $login, ':email' => $email]);
+	}
+	
 	/**
 	 * @return User
 	 */
-	public function getItem($id)
+	public function getItem($id): User
 	{
 		$this->transaction->requestTransaction();
 		$data = $this->conn->fetchAssoc('SELECT * FROM `'.CoreTables::USER_TBL.'` WHERE `id` = :id', [':id' => $id]);
