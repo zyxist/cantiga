@@ -1,0 +1,161 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ 'Discussion forums' | trans([], 'forums') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ '43 new posts since last visit' | trans({}, 'forums') }}
+{% endblock %}
+
+{% block page_content %}
+	<div class="row">
+<div class="col-md-12">
+	<p>
+	<a href="#" class="btn btn-danger btn-sm">Announcements</a>
+	<a href="#" class="btn btn-primary btn-sm">Observed topics</a>
+	<a href="#" class="btn btn-primary btn-sm">Recent topics</a>
+	<a href="#" class="btn btn-primary btn-sm">Recent posts</a>
+	</p>
+</div>
+<div class="forum-list">
+	<div class="forum-nav">
+		<ul class="cnav">
+			<li class="dropdown">
+				<a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+					Show <span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu pull-right">
+					<li role="presentation"><a role="menuitem" href="#">Observed topics</a></li>
+					<li role="presentation"><a role="menuitem" href="#">Recent topics</a></li>
+					<li role="presentation"><a role="menuitem" href="#">Recent posts</a></li>
+				</ul>
+			</li>
+			<li class="header"><i class="fa fa-th"></i> Category 1</li>
+		</ul>
+		<table class="table table-hover table-striped table-forum-list">
+			<thead>
+				<tr>
+					<th width="30"></th>
+					<th>Forum</th>
+					<th width="100" class="forum-numeric">Topics</th>
+					<th width="100" class="forum-numeric">Replies</th>
+					<th width="250">Last post</th>
+				</tr>
+			</thead>
+				<tbody>
+					<tr>
+						<td><span class="forum-activity fa fa-circle"></span></td>
+						<td>
+							<a href="{{ spath('project_forum_viewforum') }}" class="forum-title">Forum 1</a>
+							<span class="forum-desc">Some description of this form.</span>
+						</td>
+						<td class="forum-numeric">123</td>
+						<td class="forum-numeric">343</td>
+						<td>
+							<span class="forum-lastpost"><a href="#">Sample topic</a> by <a href="#">peanockio</a> <a href="#" class="fa fa-arrow-right"></a></span>
+							<span class="forum-lastpost-when">1 day ago</span>
+						</td>
+					</tr>
+					<tr>
+						<td><span class="forum-activity fa fa-circle"></span></td>
+						<td>
+							<a href="{{ spath('project_forum_viewforum') }}" class="forum-title">Forum 2</a>
+							<span class="forum-desc">Yet another forum.</span>
+						</td>
+						<td class="forum-numeric">123</td>
+						<td class="forum-numeric">343</td>
+						<td>
+							<span class="forum-lastpost"><a href="#">Another topic</a> by <a href="#">peanockio</a> <a href="#" class="fa fa-arrow-right"></a></span>
+							<span class="forum-lastpost-when">1 day ago</span>
+						</td>
+					</tr>
+					<tr>
+						<td><span class="forum-activity fa fa-circle"></span></td>
+						<td>
+							<a href="{{ spath('project_forum_viewforum') }}" class="forum-title">Forum 3</a>
+							<span class="forum-desc">Again, more forums.</span>
+						</td>
+						<td class="forum-numeric">123</td>
+						<td class="forum-numeric">343</td>
+						<td>---
+						</td>
+					</tr>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div class="forum-list">
+	<div class="forum-nav">
+		<ul class="cnav">
+			<li class="dropdown">
+				<a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+					Show <span class="caret"></span>
+				</a>
+				<ul class="dropdown-menu pull-right">
+					<li role="presentation"><a role="menuitem" href="#">Observed topics</a></li>
+					<li role="presentation"><a role="menuitem" href="#">Recent topics</a></li>
+					<li role="presentation"><a role="menuitem" href="#">Recent posts</a></li>
+				</ul>
+			</li>
+			<li class="header"><i class="fa fa-th"></i> Category 2</li>
+		</ul>
+		<table class="table table-hover table-striped table-forum-list">
+			<thead>
+				<tr>
+					<th width="30"></th>
+					<th>Forum</th>
+					<th width="100" class="forum-numeric">Topics</th>
+					<th width="100" class="forum-numeric">Replies</th>
+					<th width="250">Last post</th>
+				</tr>
+			</thead>
+				<tbody>
+					<tr>
+						<td><span class="forum-activity fa fa-circle"></span></td>
+						<td>
+							<a href="{{ spath('project_forum_viewforum') }}" class="forum-title">Forum 1</a>
+							<span class="forum-desc">Place for description.</span>
+						</td>
+						<td class="forum-numeric">123</td>
+						<td class="forum-numeric">343</td>
+						<td>
+							<span class="forum-lastpost"><a href="#">Topic topic</a> by <a href="#">peanockio</a> <a href="#" class="fa fa-arrow-right"></a></span>
+							<span class="forum-lastpost-when">1 day ago</span>
+						</td>
+					</tr>
+					<tr>
+						<td><span class="forum-activity fa fa-circle"></span></td>
+						<td>
+							<a href="{{ spath('project_forum_viewforum') }}" class="forum-title">Forum 2</a>
+							<span class="forum-desc">Place for description.</span>
+						</td>
+						<td class="forum-numeric">123</td>
+						<td class="forum-numeric">343</td>
+						<td>
+							<span class="forum-lastpost"><a href="#">Sample topic</a> by <a href="#">peanockio</a> <a href="#" class="fa fa-arrow-right"></a></span>
+							<span class="forum-lastpost-when">1 day ago</span>
+						</td>
+					</tr>
+					<tr>
+						<td><span class="forum-activity fa fa-circle"></span></td>
+						<td>
+							<a href="{{ spath('project_forum_viewforum') }}" class="forum-title">Forum 3</a>
+							<span class="forum-desc">Place for description.</span>
+						</td>
+						<td class="forum-numeric">123</td>
+						<td class="forum-numeric">343</td>
+						<td>---
+						</td>
+					</tr>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+	
+<p>4564 posts in 372 topics</p>
+	</div>
+{% endblock %}

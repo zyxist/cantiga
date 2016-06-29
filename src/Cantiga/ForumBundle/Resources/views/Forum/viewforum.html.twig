@@ -1,0 +1,202 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ 'Discussion forums' | trans([], 'forums') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ '43 new posts since last visit' | trans({}, 'forums') }}
+{% endblock %}
+
+{% block page_content %}
+<div class="row">
+	<div class="forum-title">
+		<h4>Forum 1</h4>
+	</div>
+	<div class="forum-list">
+		<div class="forum-nav">
+			<ul class="cnav">
+				<li class="dropdown">
+					<a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+						Show <span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu pull-right">
+						<li role="presentation"><a role="menuitem" href="#">Observed topics</a></li>
+						<li role="presentation"><a role="menuitem" href="#">Recent topics</a></li>
+						<li role="presentation"><a role="menuitem" href="#">Recent posts</a></li>
+					</ul>
+				</li>
+				<li class="header"><i class="fa fa-th"></i> Sub-Forums: Forum 1</li>
+			</ul>
+			<table class="table table-hover table-striped table-forum-list">
+				<thead>
+					<tr>
+						<th width="30"></th>
+						<th>Forum</th>
+						<th width="100" class="forum-numeric">Topics</th>
+						<th width="100" class="forum-numeric">Replies</th>
+						<th width="250">Last post</th>
+					</tr>
+				</thead>
+					<tbody>
+						<tr>
+							<td><span class="forum-activity fa fa-circle"></span></td>
+							<td>
+								<a href="{{ spath('project_forum_viewforum') }}" class="forum-title">Forum 1</a>
+								<span class="forum-desc">Lorem ipsum dolor sit amet.</span>
+							</td>
+							<td class="forum-numeric">123</td>
+							<td class="forum-numeric">343</td>
+							<td>
+								<span class="forum-lastpost"><a href="#">Couple of random...</a> by <a href="#">peanockio</a> <a href="#" class="fa fa-arrow-right"></a></span>
+								<span class="forum-lastpost-when">1 day ago</span>
+							</td>
+						</tr>
+						<tr>
+							<td><span class="forum-activity fa fa-circle"></span></td>
+							<td>
+								<a href="{{ spath('project_forum_viewforum') }}" class="forum-title">Forum 2</a>
+								<span class="forum-desc">Writing some text.</span>
+							</td>
+							<td class="forum-numeric">123</td>
+							<td class="forum-numeric">343</td>
+							<td>
+								<span class="forum-lastpost"><a href="#">Sample topic</a> by <a href="#">peanockio</a> <a href="#" class="fa fa-arrow-right"></a></span>
+								<span class="forum-lastpost-when">1 day ago</span>
+							</td>
+						</tr>
+						<tr>
+							<td><span class="forum-activity fa fa-circle"></span></td>
+							<td>
+								<a href="{{ spath('project_forum_viewforum') }}" class="forum-title">Forum 3</a>
+								<span class="forum-desc">Some description of the forum.</span>
+							</td>
+							<td class="forum-numeric">123</td>
+							<td class="forum-numeric">343</td>
+							<td>---
+							</td>
+						</tr>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="topic-list">
+		<div class="forum-nav">
+			<table class="table table-hover table-striped table-topic-list">
+				<thead>
+					<tr>
+						<th width="30"></th>
+						<th>Announcements</th>
+						<th width="100" class="topic-numeric">Topics</th>
+						<th width="100" class="topic-numeric">Replies</th>
+						<th width="250">Last post</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><span class="fa fa-circle"></span></td>
+						<td>
+							<span class="topic"><a href="{{ spath('project_forum_viewtopic') }}" class="an">Topic 1</a></span>
+							<span class="topic-author-note">author: <a href="#">monaide</a>, 2 days ago</span>
+						</td>
+						<td class="topic-numeric">123</td>
+						<td class="topic-numeric">343</td>
+						<td>
+							<span class="topic-lastpost-author">author: <a href="#">peanockio</a> <a href="#" class="fa fa-arrow-right"></a></span>
+							<span class="topic-lastpost-when">1 day ago</span>
+						</td>
+					</tr>
+					<tr>
+						<td><span class="fa fa-circle-o"></span></td>
+						<td>
+							<span class="topic"><a href="{{ spath('project_forum_viewtopic') }}" class="an">Topic 2</a></span>
+							<span class="topic-author-note">author: <a href="#">monaide</a>, 2 days ago</span>
+						</td>
+						<td class="topic-numeric">123</td>
+						<td class="topic-numeric">343</td>
+						<td>
+							<span class="topic-lastpost-author">author: <a href="#">peanockio</a> <a href="#" class="fa fa-arrow-right"></a></span>
+							<span class="topic-lastpost-when">1 day ago</span>
+						</td>
+					</tr>
+					<tr>
+						<td><span class="fa fa-circle"></span></td>
+						<td>
+							<span class="topic"><a href="{{ spath('project_forum_viewtopic') }}" class="an">Topic 3</a></span>
+							<span class="topic-author-note">author: <a href="#">monaide</a>, 2 days ago</span>
+						</td>
+						<td class="topic-numeric">123</td>
+						<td class="topic-numeric">343</td>
+						<td>
+							<span class="topic-lastpost-author">author: <a href="#">peanockio</a> <a href="#" class="fa fa-arrow-right"></a></span>
+							<span class="topic-lastpost-when">1 day ago</span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="forum-nav">
+			<table class="table table-hover table-striped table-topic-list">
+				<thead>
+					<tr>
+						<th width="30"></th>
+						<th>Topics</th>
+						<th width="100" class="topic-numeric">Topics</th>
+						<th width="100" class="topic-numeric">Replies</th>
+						<th width="250">Last post</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><span class="fa fa-circle"></span></td>
+						<td>
+							<span class="topic"><span class="fa fa-thumb-tack"></span> <a href="{{ spath('project_forum_viewtopic') }}" class="tn">Topic 3</a></span>
+							<span class="topic-author-note">author: <a href="#">monaide</a>, 2 days ago</span>
+							<ul class="topic-pages">
+								<li><a href="#">1</a></li>
+								<li><a href="#">2</a></li>
+								<li><a href="#">13</a></li>
+							</ul>
+						</td>
+						<td class="topic-numeric">123</td>
+						<td class="topic-numeric">343</td>
+						<td>
+							<span class="topic-lastpost-author">author: <a href="#">peanockio</a> <a href="#" class="fa fa-arrow-right"></a></span>
+							<span class="topic-lastpost-when">1 day ago</span>
+						</td>
+					</tr>
+					<tr>
+						<td><span class="fa fa-circle-o"></span></td>
+						<td>
+							<span class="topic"><span class="fa fa-lock"></span> <a href="#" class="tn">Topic 3</a></span>
+							<span class="topic-author-note">author: <a href="#">monaide</a>, 2 days ago</span>
+						</td>
+						<td class="topic-numeric">123</td>
+						<td class="topic-numeric">343</td>
+						<td>
+							<span class="topic-lastpost-author">author: <a href="#">peanockio</a> <a href="#" class="fa fa-arrow-right"></a></span>
+							<span class="topic-lastpost-when">1 day ago</span>
+						</td>
+					</tr>
+					<tr>
+						<td><span class="fa fa-circle"></span></td>
+						<td>
+							<span class="topic"><a href="#" class="tn">Topic 3</a></span>
+							<span class="topic-author-note">author: <a href="#">monaide</a>, 2 days ago</span>
+						</td>
+						<td class="topic-numeric">123</td>
+						<td class="topic-numeric">343</td>
+						<td>
+							<span class="topic-lastpost-author">author: <a href="#">peanockio</a> <a href="#" class="fa fa-arrow-right"></a></span>
+							<span class="topic-lastpost-when">1 day ago</span>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+	
+<p>4564 posts in 372 topics</p>
+{% endblock %}

@@ -1,0 +1,3 @@
+_forum_controller:                                                                                                                                                   
+    resource: "@CantigaForumBundle/Controller/ForumController.php"                                                                                                      
+    type:     annotation
