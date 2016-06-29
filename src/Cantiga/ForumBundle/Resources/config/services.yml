@@ -6,3 +6,6 @@ services:
         class: Cantiga\ForumBundle\EventListener\WorkspaceListener
         tags:
             - { name: kernel.event_listener, event: cantiga.workspace.project, method: onProjectWorkspace }
+    cantiga.forum.repo.forum_view:
+         class: Cantiga\ForumBundle\Repository\ForumViewRepository
+         arguments: ["@database_connection"]

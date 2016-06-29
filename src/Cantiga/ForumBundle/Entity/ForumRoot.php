@@ -18,23 +18,29 @@
  */
 namespace Cantiga\ForumBundle\Entity;
 
-use Cantiga\Metamodel\DataMappers;
+use Cantiga\CoreBundle\Entity\Project;
+use Cantiga\ForumBundle\ForumTables;
+use Doctrine\DBAL\Connection;
 
-class ForumView
+/**
+ * Experiment with loose coupling between projects and discussion forum.
+ * In the forum bounded domain, the forum has a root which currently is 
+ * an equivalent to a project, but may be extended in the future to something
+ * else.
+ */
+class ForumRoot
 {
 	private $id;
 	private $name;
-	private $parent;
-	private $description;
-	private $topicNum;
-	private $postNum;
 	
-	public function __construct(ForumRoot $root, ForumParentInterface $parent, array $data)
+	public static function fromProject(Project $project)
 	{
-		DataMappers::fromArray($this, $data);
-		$this->parent = $parent;
+		$root = new ForumRoot();
+		$root->id = $project->getId();
+		$root->name = $project->getName();
+		return $root;
 	}
-	
+
 	public function getId()
 	{
 		return $this->id;
@@ -45,53 +51,13 @@ class ForumView
 		return $this->name;
 	}
 
-	public function getDescription()
+	public function save(Connection $conn)
 	{
-		return $this->description;
-	}
-
-	public function getTopicNum()
-	{
-		return $this->topicNum;
-	}
-
-	public function getPostNum()
-	{
-		return $this->postNum;
-	}
-
-	public function setId($id)
-	{
-		$this->id = $id;
-		return $this;
-	}
-
-	public function setName($name)
-	{
-		$this->name = $name;
-		return $this;
-	}
-
-	public function setDescription($description)
-	{
-		$this->description = $description;
-		return $this;
-	}
-
-	public function setTopicNum($topicNum)
-	{
-		$this->topicNum = $topicNum;
-		return $this;
-	}
-
-	public function setPostNum($postNum)
-	{
-		$this->postNum = $postNum;
-		return $this;
-	}
-	
-	public function getParent()
-	{
-		return $this->parent;
+		$exists = $conn->fetchColumn('SELECT `id` FROM `'.ForumTables::FORUM_ROOT_TBL.'` WHERE `id` = :id', [':id' => $this->id]);
+		if (!empty($exists)) {
+			$conn->insert(ForumTables::FORUM_ROOT_TBL, ['id' => $id, 'name' => $name]);
+		} else {
+			$conn->update(ForumTables::FORUM_ROOT_TBL, ['id' => $id, 'name' => $name]);
+		}
 	}
 }

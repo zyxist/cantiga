@@ -20,19 +20,18 @@ namespace Cantiga\ForumBundle\Entity;
 
 use Cantiga\Metamodel\DataMappers;
 
-class ForumView
+class ForumCategoryView implements ForumParentInterface
 {
 	private $id;
 	private $name;
-	private $parent;
-	private $description;
-	private $topicNum;
-	private $postNum;
+	private $root;
+	private $forums = [];
 	
-	public function __construct(ForumRoot $root, ForumParentInterface $parent, array $data)
+	public function __construct(ForumRoot $root, array $categoryData)
 	{
-		DataMappers::fromArray($this, $data);
-		$this->parent = $parent;
+		$this->root = $root;
+		$this->id = $categoryData['id'];
+		$this->name = $categoryData['name'];
 	}
 	
 	public function getId()
@@ -45,53 +44,45 @@ class ForumView
 		return $this->name;
 	}
 
-	public function getDescription()
+	public function getRoot()
 	{
-		return $this->description;
-	}
-
-	public function getTopicNum()
-	{
-		return $this->topicNum;
-	}
-
-	public function getPostNum()
-	{
-		return $this->postNum;
-	}
-
-	public function setId($id)
-	{
-		$this->id = $id;
-		return $this;
-	}
-
-	public function setName($name)
-	{
-		$this->name = $name;
-		return $this;
-	}
-
-	public function setDescription($description)
-	{
-		$this->description = $description;
-		return $this;
-	}
-
-	public function setTopicNum($topicNum)
-	{
-		$this->topicNum = $topicNum;
-		return $this;
-	}
-
-	public function setPostNum($postNum)
-	{
-		$this->postNum = $postNum;
-		return $this;
+		return $this->root;
 	}
 	
+	public function appendForum(ForumView $view)
+	{
+		$this->forums[] = $view;
+	}
+
+	public function getForums()
+	{
+		return $this->forums;
+	}
+
+	public function isVisible()
+	{
+		return sizeof($this->forums) > 0;
+	}
+
 	public function getParent()
 	{
-		return $this->parent;
+		return null;
 	}
+	
+	public function sumTopics() {
+		$sum = 0;
+		foreach ($this->forums as $forum) {
+			$sum += $forum->getTopicNum();
+		}
+		return $sum;
+	}
+	
+	public function sumPosts() {
+		$sum = 0;
+		foreach ($this->forums as $forum) {
+			$sum += $forum->getPostNum();
+		}
+		return $sum;
+	}
+
 }

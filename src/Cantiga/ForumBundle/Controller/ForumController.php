@@ -20,6 +20,7 @@
 namespace Cantiga\ForumBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Controller\ProjectPageController;
+use Cantiga\ForumBundle\Entity\ForumRoot;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,6 +31,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ForumController extends ProjectPageController
 {
+	const VIEW_REPOSITORY = 'cantiga.forum.repo.forum_view';
 	const TEMPLATE_LOCATION = 'CantigaForumBundle:Forum:';
 	
 	/**
@@ -37,7 +39,22 @@ class ForumController extends ProjectPageController
 	 */
 	public function indexAction(Request $request)
 	{
-		return $this->render(self::TEMPLATE_LOCATION . 'index.html.twig');
+		$this->breadcrumbs()->entryLink('Forums', 'project_forum_index', ['slug' => $this->getSlug()]);
+		
+		$svc = $this->get(self::VIEW_REPOSITORY);
+		$categories = $svc->fetchMainPageData(ForumRoot::fromProject($this->getActiveProject()));
+		
+		$totalPosts = 0;
+		$totalTopics = 0;
+		foreach ($categories as $category) {
+			$totalPosts += $category->sumPosts();
+			$totalTopics += $category->sumTopics();
+		}
+		
+		return $this->render(self::TEMPLATE_LOCATION . 'index.html.twig', [
+			'categories' => $categories,
+			'totalTopics' => $totalTopics,
+			'totalPosts' => $totalPosts]);
 	}
 	
 	/**

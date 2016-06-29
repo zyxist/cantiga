@@ -16,17 +16,11 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-namespace Cantiga\ForumBundle;
+namespace Cantiga\ForumBundle\Entity;
 
-/**
- * @author Tomasz Jędrzejewski
- */
-class ForumTables
+interface ForumParentInterface
 {
-	const FORUM_ROOT_TBL = 'cantiga_forum_roots';
-	const FORUM_CATEGORY_TBL = 'cantiga_forum_categories';
-	const FORUM_TBL = 'cantiga_forums';
-	const TOPIC_TBL = 'cantiga_forum_topics';
-	const POST_TBL = 'cantiga_forum_posts';
-	const POST_BODY_TPL = 'cantiga_forum_post_bodies';
+	public function getId();
+	public function getName();
+	public function getParent();
 }
