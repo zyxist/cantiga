@@ -8,4 +8,7 @@ env:
 
 before_script:
   - if [[ "$DB" == "mysql" ]]; then mysql -e "create database IF NOT EXISTS cantiga_test;" -uroot; fi
+  - composer install
+  - cp ./app/config/parameters_test.yml.dist ./app/config/parameters_test.yml
+  - cp ./app/Branding.example.php ./app/Branding.php
 

@@ -4,4 +4,4 @@ parameters:
     test_database_port: null
     test_database_name: cantiga_test
     test_database_user: root
-    test_database_password: root
+    test_database_password: 
