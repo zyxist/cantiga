@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/zyxist/cantiga.svg?branch=master)](https://travis-ci.org/zyxist/cantiga)
+[![Gitter](https://badges.gitter.im/atoum/atoum.svg)](https://gitter.im/zyxist/cantiga?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 Cantiga Project
 ===============
