@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/zyxist/cantiga.svg?branch=master)](https://travis-ci.org/zyxist/cantiga)
+
 Cantiga Project
 ===============
 
