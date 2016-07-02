@@ -42,7 +42,7 @@ class ForumController extends ProjectPageController
 		$this->breadcrumbs()->entryLink($this->trans('Forums', [], 'pages'), 'project_forum_index', ['slug' => $this->getSlug()]);
 		
 		$svc = $this->get(self::VIEW_REPOSITORY);
-		$categories = $svc->fetchMainPageData(ForumRoot::fromProject($this->getActiveProject()));
+		$categories = $svc->fetchMainPageData($this->getForumRoot());
 		
 		$totalPosts = 0;
 		$totalTopics = 0;
@@ -58,11 +58,25 @@ class ForumController extends ProjectPageController
 	}
 	
 	/**
-	 * @Route("/viewforum", name="project_forum_viewforum")
+	 * @Route("/viewforum/{id}", name="project_forum_viewforum")
 	 */
-	public function viewForumAction(Request $request)
+	public function viewForumAction($id, Request $request)
 	{
-		return $this->render(self::TEMPLATE_LOCATION . 'viewforum.html.twig');
+		$repo = $this->get(self::VIEW_REPOSITORY);		
+		$forumView = $repo->fetchForumStructureFor($this->getForumRoot(), $id);
+		
+		$this->breadcrumbs()->entryLink($this->trans('Forums', [], 'pages'), 'project_forum_index', ['slug' => $this->getSlug()]);
+		foreach ($forumView->fetchTopDownParents() as $parent) {
+			if ($parent->isLinkable()) {
+				$this->breadcrumbs()->link($parent->getName(), 'project_forum_viewforum', ['slug' => $this->getSlug(), 'id' => $parent->getId()]);
+			} else {
+				$this->breadcrumbs()->staticItem($parent->getName());
+			}
+		}
+		
+		return $this->render(self::TEMPLATE_LOCATION . 'viewforum.html.twig', [
+			'forum' => $forumView
+		]);
 	}
 	
 	/**
@@ -71,5 +85,10 @@ class ForumController extends ProjectPageController
 	public function viewTopicAction(Request $request)
 	{
 		return $this->render(self::TEMPLATE_LOCATION . 'viewtopic.html.twig', ['user' => $this->getUser() ]);
+	}
+	
+	private function getForumRoot()
+	{
+		return ForumRoot::fromProject($this->getActiveProject());
 	}
 }

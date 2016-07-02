@@ -20,7 +20,7 @@ namespace Cantiga\ForumBundle\Entity;
 
 use Cantiga\Metamodel\DataMappers;
 
-class ForumCategoryView implements ForumParentInterface
+class ForumCategoryView implements ForumParentInterface, ForumContainerInterface
 {
 	private $id;
 	private $name;
@@ -67,6 +67,11 @@ class ForumCategoryView implements ForumParentInterface
 	public function getParent()
 	{
 		return null;
+	}
+	
+	public function isLinkable()
+	{
+		return false;
 	}
 	
 	public function sumTopics() {

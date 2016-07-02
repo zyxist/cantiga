@@ -50,7 +50,7 @@
 					<tr>
 						<td><span class="forum-activity fa fa-circle"></span></td>
 						<td>
-							<a href="{{ spath('project_forum_viewforum') }}" class="forum-title">{{ forum.name }}</a>
+							<a href="{{ spath('project_forum_viewforum', {'id': forum.id}) }}" class="forum-title">{{ forum.name }}</a>
 							<span class="forum-desc">{{ forum.description }}</span>
 						</td>
 						<td class="forum-numeric">{{ forum.topicNum }}</td>

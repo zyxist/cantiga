@@ -20,7 +20,7 @@ namespace Cantiga\ForumBundle\Entity;
 
 use Cantiga\Metamodel\DataMappers;
 
-class ForumView
+class ForumView implements ForumContainerInterface, ForumParentInterface
 {
 	private $id;
 	private $name;
@@ -28,6 +28,7 @@ class ForumView
 	private $description;
 	private $topicNum;
 	private $postNum;
+	private $forums;
 	
 	public function __construct(ForumRoot $root, ForumParentInterface $parent, array $data)
 	{
@@ -58,6 +59,11 @@ class ForumView
 	public function getPostNum()
 	{
 		return $this->postNum;
+	}
+	
+	public function isLinkable()
+	{
+		return true;
 	}
 
 	public function setId($id)
@@ -93,5 +99,27 @@ class ForumView
 	public function getParent()
 	{
 		return $this->parent;
+	}
+	
+	public function appendForum(ForumView $view)
+	{
+		$this->forums[] = $view;
+	}
+
+	public function getForums()
+	{
+		return $this->forums;
+	}
+	
+	public function fetchTopDownParents()
+	{
+		$parent = $this;
+		$list = [];
+		while (null != $parent) {
+			$list[] = $parent;
+			$parent = $parent->getParent();
+		}
+		$list = array_reverse($list);
+		return $list;
 	}
 }

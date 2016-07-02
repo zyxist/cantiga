@@ -9,4 +9,5 @@ return [
 	'Topics' => 'Topics',
 	'Posts' => 'Posts',
 	'Last post' => 'Last post',
+	'Sub-forums: 0' => 'Sub-forums: 0',
 ];

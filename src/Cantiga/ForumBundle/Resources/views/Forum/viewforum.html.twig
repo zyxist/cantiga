@@ -1,32 +1,33 @@
 {% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
 
 {% block page_title %}
-	{{ 'Discussion forums' | trans([], 'forums') }}
+	{{ 'Discussion forums' | trans([], 'pages') }}
 {% endblock %}
 
 {% block page_subtitle %}
-	{{ '43 new posts since last visit' | trans({}, 'forums') }}
+	{{ '{} new posts since last visit' | trans([0], 'forum') }}
 {% endblock %}
 
 {% block page_content %}
 <div class="row">
 	<div class="forum-title">
-		<h4>Forum 1</h4>
+		<h4>{{ forum.name }}</h4>
 	</div>
+	{% if forum.forums %}
 	<div class="forum-list">
 		<div class="forum-nav">
 			<ul class="cnav">
 				<li class="dropdown">
 					<a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
-						Show <span class="caret"></span>
+						{{ 'Show' | trans([], 'general') }} <span class="caret"></span>
 					</a>
 					<ul class="dropdown-menu pull-right">
-						<li role="presentation"><a role="menuitem" href="#">Observed topics</a></li>
-						<li role="presentation"><a role="menuitem" href="#">Recent topics</a></li>
-						<li role="presentation"><a role="menuitem" href="#">Recent posts</a></li>
+						<li role="presentation"><a role="menuitem" href="#">{{ 'Observed topics' | trans([], 'forum') }}</a></li>
+						<li role="presentation"><a role="menuitem" href="#">{{ 'Recent topics' | trans([], 'forum') }}</a></li>
+						<li role="presentation"><a role="menuitem" href="#">{{ 'Recent posts' | trans([], 'forum') }}</a></li>
 					</ul>
 				</li>
-				<li class="header"><i class="fa fa-th"></i> Sub-Forums: Forum 1</li>
+				<li class="header"><i class="fa fa-th"></i> {{ 'Sub-forums: 0' | trans([forum.name], 'forum') }}</li>
 			</ul>
 			<table class="table table-hover table-striped table-forum-list">
 				<thead>
@@ -38,49 +39,27 @@
 						<th width="250">Last post</th>
 					</tr>
 				</thead>
-					<tbody>
-						<tr>
-							<td><span class="forum-activity fa fa-circle"></span></td>
-							<td>
-								<a href="{{ spath('project_forum_viewforum') }}" class="forum-title">Forum 1</a>
-								<span class="forum-desc">Lorem ipsum dolor sit amet.</span>
-							</td>
-							<td class="forum-numeric">123</td>
-							<td class="forum-numeric">343</td>
-							<td>
-								<span class="forum-lastpost"><a href="#">Couple of random...</a> by <a href="#">peanockio</a> <a href="#" class="fa fa-arrow-right"></a></span>
-								<span class="forum-lastpost-when">1 day ago</span>
-							</td>
-						</tr>
-						<tr>
-							<td><span class="forum-activity fa fa-circle"></span></td>
-							<td>
-								<a href="{{ spath('project_forum_viewforum') }}" class="forum-title">Forum 2</a>
-								<span class="forum-desc">Writing some text.</span>
-							</td>
-							<td class="forum-numeric">123</td>
-							<td class="forum-numeric">343</td>
-							<td>
-								<span class="forum-lastpost"><a href="#">Sample topic</a> by <a href="#">peanockio</a> <a href="#" class="fa fa-arrow-right"></a></span>
-								<span class="forum-lastpost-when">1 day ago</span>
-							</td>
-						</tr>
-						<tr>
-							<td><span class="forum-activity fa fa-circle"></span></td>
-							<td>
-								<a href="{{ spath('project_forum_viewforum') }}" class="forum-title">Forum 3</a>
-								<span class="forum-desc">Some description of the forum.</span>
-							</td>
-							<td class="forum-numeric">123</td>
-							<td class="forum-numeric">343</td>
-							<td>---
-							</td>
-						</tr>
+				<tbody>
+				{% for subforum in forum.forums %}
+					<tr>
+						<td><span class="forum-activity fa fa-circle"></span></td>
+						<td>
+							<a href="{{ spath('project_forum_viewforum', {'id': subforum.id}) }}" class="forum-title">{{ subforum.name }}</a>
+							<span class="forum-desc">{{ subforum.description }}</span>
+						</td>
+						<td class="forum-numeric">{{ subforum.topicNum }}</td>
+						<td class="forum-numeric">{{ subforum.postNum }}</td>
+						<td>
+							<span class="forum-lastpost"><a href="#">Sample topic</a> by <a href="#">peanockio</a> <a href="#" class="fa fa-arrow-right"></a></span>
+							<span class="forum-lastpost-when">1 day ago</span>
+						</td>
 					</tr>
+				{% endfor %}
 				</tbody>
 			</table>
 		</div>
 	</div>
+	{% endif %}
 	<div class="topic-list">
 		<div class="forum-nav">
 			<table class="table table-hover table-striped table-topic-list">

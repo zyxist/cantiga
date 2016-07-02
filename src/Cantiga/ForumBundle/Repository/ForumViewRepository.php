@@ -19,6 +19,7 @@
 namespace Cantiga\ForumBundle\Repository;
 
 use Cantiga\ForumBundle\Entity\ForumCategoryView;
+use Cantiga\ForumBundle\Entity\ForumParent;
 use Cantiga\ForumBundle\Entity\ForumRoot;
 use Cantiga\ForumBundle\Entity\ForumView;
 use Cantiga\ForumBundle\ForumTables;
@@ -53,5 +54,28 @@ class ForumViewRepository
 			$category->appendForum(new ForumView($root, $category, $forum));
 		}
 		return $categories;
+	}
+	
+	public function fetchForumStructureFor(ForumRoot $root, $forumId)
+	{
+		$forumData = $this->conn->fetchAssoc('SELECT * FROM `'.ForumTables::FORUM_TBL.'` WHERE `id` = :id', [':id' => $forumId]);
+		$parentData = $this->conn->fetchAll('SELECT `id`, `name`, `categoryId` FROM `'.ForumTables::FORUM_TBL.'` WHERE `leftPosition` < :left AND `rightPosition` > :right ORDER BY `leftPosition`', [
+			':left' => $forumData['leftPosition'],
+			':right' => $forumData['rightPosition']]);
+		$categoryData = $this->conn->fetchAssoc('SELECT * FROM `'.ForumTables::FORUM_CATEGORY_TBL.'` WHERE `id` = :id', [':id' => $forumData['categoryId']]);
+		$childrenData = $this->conn->fetchAll('SELECT * FROM `'.ForumTables::FORUM_TBL.'` WHERE `parentId` = :parentId ORDER BY `leftPosition`', [':parentId' => $forumId]);
+		
+		$category = new ForumParent($categoryData['id'], $categoryData['name'], false, null);
+		$currentParent = $category;
+		foreach ($parentData as $p) {
+			$currentParent = new ForumParent($p['id'], $p['name'], true, $currentParent);
+		}
+		
+		$forumView = new ForumView($root, $currentParent, $forumData);
+		
+		foreach ($childrenData as $childData) {
+			$forumView->appendForum(new ForumView($root, $forumView, $childData));
+		}
+		return $forumView;
 	}
 }

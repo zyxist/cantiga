@@ -18,10 +18,8 @@
  */
 namespace Cantiga\ForumBundle\Entity;
 
-interface ForumParentInterface
+interface ForumContainerInterface
 {
-	public function getId();
-	public function getName();
-	public function getParent();
-	public function isLinkable();
+	public function appendForum(ForumView $view);
+	public function getForums();
 }
