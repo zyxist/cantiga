@@ -23,11 +23,10 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * @author Tomasz Jędrzejewski
- */
 class ExportCommand extends ContainerAwareCommand
 {
+	const ENCRYPTION_ALGORITHM = 'aes-256-cbc';
+	
 	protected function configure()
 	{
 		$this
@@ -64,9 +63,8 @@ class ExportCommand extends ContainerAwareCommand
 			throw new \RuntimeException('The key must have the length of 32 bytes!');
 		}
 		
-		$ivSize = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
-		$iv = mcrypt_create_iv($ivSize, MCRYPT_RAND);
-		return base64_encode($iv.mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, json_encode($output), MCRYPT_MODE_CBC, $iv));
+		$iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length(self::ENCRYPTION_ALGORITHM));
+		return base64_encode($iv.openssl_encrypt(json_encode($output), self::ENCRYPTION_ALGORITHM, $key, true, $iv));
 	}
 	
 	private function send($export, $encrypted, OutputInterface $output)
