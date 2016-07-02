@@ -1,21 +1,21 @@
 {% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
 
 {% block page_title %}
-	{{ 'Discussion forums' | trans([], 'forums') }}
+	{{ 'Discussion forums' | trans([], 'pages') }}
 {% endblock %}
 
 {% block page_subtitle %}
-	{{ '43 new posts since last visit' | trans({}, 'forums') }}
+	{{ '{} new posts since last visit' | trans([0], 'forum') }}
 {% endblock %}
 
 {% block page_content %}
 	<div class="row">
 <div class="col-md-12">
 	<p>
-	<a href="#" class="btn btn-danger btn-sm">Announcements</a>
-	<a href="#" class="btn btn-primary btn-sm">Observed topics</a>
-	<a href="#" class="btn btn-primary btn-sm">Recent topics</a>
-	<a href="#" class="btn btn-primary btn-sm">Recent posts</a>
+	<a href="#" class="btn btn-danger btn-sm">{{ 'Announcements' | trans([], 'forum') }}</a>
+	<a href="#" class="btn btn-primary btn-sm">{{ 'Observed topics' | trans([], 'forum') }}</a>
+	<a href="#" class="btn btn-primary btn-sm">{{ 'Recent topics' | trans([], 'forum') }}</a>
+	<a href="#" class="btn btn-primary btn-sm">{{ 'Recent posts' | trans([], 'forum') }}</a>
 	</p>
 </div>
 {% for category in categories %}
@@ -25,12 +25,12 @@
 		<ul class="cnav">
 			<li class="dropdown">
 				<a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
-					Show <span class="caret"></span>
+					{{ 'Show' | trans([], 'general') }} <span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu pull-right">
-					<li role="presentation"><a role="menuitem" href="#">Observed topics</a></li>
-					<li role="presentation"><a role="menuitem" href="#">Recent topics</a></li>
-					<li role="presentation"><a role="menuitem" href="#">Recent posts</a></li>
+					<li role="presentation"><a role="menuitem" href="#">{{ 'Observed topics' | trans([], 'forum') }}</a></li>
+					<li role="presentation"><a role="menuitem" href="#">{{ 'Recent topics' | trans([], 'forum') }}</a></li>
+					<li role="presentation"><a role="menuitem" href="#">{{ 'Recent posts' | trans([], 'forum') }}</a></li>
 				</ul>
 			</li>
 			<li class="header"><i class="fa fa-th"></i> {{ category.name }}</li>
@@ -39,10 +39,10 @@
 			<thead>
 				<tr>
 					<th width="30"></th>
-					<th>Forum</th>
-					<th width="100" class="forum-numeric">Topics</th>
-					<th width="100" class="forum-numeric">Replies</th>
-					<th width="250">Last post</th>
+					<th>{{ 'Forum' | trans([], 'forum') }}</th>
+					<th width="100" class="forum-numeric">{{ 'Topics' | trans([], 'forum') }}</th>
+					<th width="100" class="forum-numeric">{{ 'Posts' | trans([], 'forum') }}</th>
+					<th width="250">{{ 'Last post' | trans([], 'forum') }}</th>
 				</tr>
 			</thead>
 			<tbody>

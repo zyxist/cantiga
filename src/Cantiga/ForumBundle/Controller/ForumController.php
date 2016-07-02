@@ -39,7 +39,7 @@ class ForumController extends ProjectPageController
 	 */
 	public function indexAction(Request $request)
 	{
-		$this->breadcrumbs()->entryLink('Forums', 'project_forum_index', ['slug' => $this->getSlug()]);
+		$this->breadcrumbs()->entryLink($this->trans('Forums', [], 'pages'), 'project_forum_index', ['slug' => $this->getSlug()]);
 		
 		$svc = $this->get(self::VIEW_REPOSITORY);
 		$categories = $svc->fetchMainPageData(ForumRoot::fromProject($this->getActiveProject()));

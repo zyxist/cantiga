@@ -1,5 +1,6 @@
 <?php
 return array(
+	'Show' => 'Pokaż',
 	'Save' => 'Zapisz',
 	'Back' => 'Powrót',
 	'Edit' => 'Edytuj',
