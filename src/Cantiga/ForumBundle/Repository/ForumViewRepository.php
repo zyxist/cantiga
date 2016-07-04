@@ -22,6 +22,7 @@ use Cantiga\ForumBundle\Entity\ForumCategoryView;
 use Cantiga\ForumBundle\Entity\ForumParent;
 use Cantiga\ForumBundle\Entity\ForumRoot;
 use Cantiga\ForumBundle\Entity\ForumView;
+use Cantiga\ForumBundle\Entity\TopicView;
 use Cantiga\ForumBundle\ForumTables;
 use Doctrine\DBAL\Connection;
 
@@ -76,6 +77,25 @@ class ForumViewRepository
 		foreach ($childrenData as $childData) {
 			$forumView->appendForum(new ForumView($root, $forumView, $childData));
 		}
+		
+		$this->fetchTopicsAndAnnouncements($root, $forumView);
 		return $forumView;
+	}
+	
+	private function fetchTopicsAndAnnouncements(ForumRoot $root, ForumView $populatedForum)
+	{
+		$announcementData = $this->conn->fetchAll('SELECT * FROM `'.ForumTables::TOPIC_TBL.'` WHERE `rootId` = :rootId AND `type` = '.TopicView::TYPE_ANNOUNCEMENT.' ORDER BY `lastPostCreatedAt`', [
+				':rootId' => $root->getId()
+			]);
+		$topicData = $this->conn->fetchAll('SELECT * FROM `'.ForumTables::TOPIC_TBL.'` WHERE `forumId` = :forumId AND `type` <> '.TopicView::TYPE_ANNOUNCEMENT.' ORDER BY `lastPostCreatedAt` LIMIT 50', [
+				':forumId' => $populatedForum->getId()
+			]);
+		
+		foreach ($announcementData as $announcement) {
+			$populatedForum->appendAnnouncement(new TopicView($announcement));
+		}
+		foreach ($topicData as $topic) {
+			$populatedForum->appendTopic(new TopicView($topic));
+		}
 	}
 }

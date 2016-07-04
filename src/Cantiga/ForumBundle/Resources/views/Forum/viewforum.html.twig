@@ -61,121 +61,82 @@
 	</div>
 	{% endif %}
 	<div class="topic-list">
+		{% if forum.announcements %}
 		<div class="forum-nav">
 			<table class="table table-hover table-striped table-topic-list">
 				<thead>
 					<tr>
 						<th width="30"></th>
 						<th>Announcements</th>
-						<th width="100" class="topic-numeric">Topics</th>
 						<th width="100" class="topic-numeric">Replies</th>
+						<th width="100" class="topic-numeric">Views</th>
 						<th width="250">Last post</th>
 					</tr>
 				</thead>
 				<tbody>
+					{% for announcement in forum.announcements %}
 					<tr>
 						<td><span class="fa fa-circle"></span></td>
 						<td>
-							<span class="topic"><a href="{{ spath('project_forum_viewtopic') }}" class="an">Topic 1</a></span>
-							<span class="topic-author-note">author: <a href="#">monaide</a>, 2 days ago</span>
+							<span class="topic"><a href="{{ spath('project_forum_viewtopic') }}" class="an">{{ announcement.title }}</a> 
+								{% if announcement.closed %}
+								<span class="fa fa-lock"></span>
+								{% endif %}
+							</span>
+							<span class="topic-author-note">author: <a href="#">{{ announcement.author.name }}</a>, {{ ago(announcement.author.postTime) }}</span>
 						</td>
-						<td class="topic-numeric">123</td>
-						<td class="topic-numeric">343</td>
+						<td class="topic-numeric">{{ announcement.replyNum }}</td>
+						<td class="topic-numeric">{{ announcement.viewNum }}</td>
 						<td>
-							<span class="topic-lastpost-author">author: <a href="#">peanockio</a> <a href="#" class="fa fa-arrow-right"></a></span>
-							<span class="topic-lastpost-when">1 day ago</span>
+							<span class="topic-lastpost-author">author: <a href="#">{{ announcement.lastPoster.name }}</a> <a href="#" class="fa fa-arrow-right"></a></span>
+							<span class="topic-lastpost-when">{{ ago(announcement.lastPoster.postTime) }}</span>
 						</td>
 					</tr>
-					<tr>
-						<td><span class="fa fa-circle-o"></span></td>
-						<td>
-							<span class="topic"><a href="{{ spath('project_forum_viewtopic') }}" class="an">Topic 2</a></span>
-							<span class="topic-author-note">author: <a href="#">monaide</a>, 2 days ago</span>
-						</td>
-						<td class="topic-numeric">123</td>
-						<td class="topic-numeric">343</td>
-						<td>
-							<span class="topic-lastpost-author">author: <a href="#">peanockio</a> <a href="#" class="fa fa-arrow-right"></a></span>
-							<span class="topic-lastpost-when">1 day ago</span>
-						</td>
-					</tr>
-					<tr>
-						<td><span class="fa fa-circle"></span></td>
-						<td>
-							<span class="topic"><a href="{{ spath('project_forum_viewtopic') }}" class="an">Topic 3</a></span>
-							<span class="topic-author-note">author: <a href="#">monaide</a>, 2 days ago</span>
-						</td>
-						<td class="topic-numeric">123</td>
-						<td class="topic-numeric">343</td>
-						<td>
-							<span class="topic-lastpost-author">author: <a href="#">peanockio</a> <a href="#" class="fa fa-arrow-right"></a></span>
-							<span class="topic-lastpost-when">1 day ago</span>
-						</td>
-					</tr>
+					{% endfor %}
 				</tbody>
 			</table>
 		</div>
+		{% endif %}
+		{% if forum.topics %}
 		<div class="forum-nav">
 			<table class="table table-hover table-striped table-topic-list">
 				<thead>
 					<tr>
 						<th width="30"></th>
 						<th>Topics</th>
-						<th width="100" class="topic-numeric">Topics</th>
 						<th width="100" class="topic-numeric">Replies</th>
+						<th width="100" class="topic-numeric">Views</th>
 						<th width="250">Last post</th>
 					</tr>
 				</thead>
 				<tbody>
+					{% for topic in forum.topics %}
 					<tr>
 						<td><span class="fa fa-circle"></span></td>
 						<td>
-							<span class="topic"><span class="fa fa-thumb-tack"></span> <a href="{{ spath('project_forum_viewtopic') }}" class="tn">Topic 3</a></span>
-							<span class="topic-author-note">author: <a href="#">monaide</a>, 2 days ago</span>
-							<ul class="topic-pages">
-								<li><a href="#">1</a></li>
-								<li><a href="#">2</a></li>
-								<li><a href="#">13</a></li>
-							</ul>
+							<span class="topic"><a href="{{ spath('project_forum_viewtopic') }}" class="an">{{ topic.title }}</a> 
+								{% if topic.closed %}
+								<span class="fa fa-lock"></span>
+								{% endif %}
+							</span>
+							<span class="topic-author-note">author: <a href="#">{{ topic.author.name }}</a>, {{ ago(topic.author.postTime) }}</span>
 						</td>
-						<td class="topic-numeric">123</td>
-						<td class="topic-numeric">343</td>
+						<td class="topic-numeric">{{ topic.replyNum }}</td>
+						<td class="topic-numeric">{{ topic.viewNum }}</td>
 						<td>
-							<span class="topic-lastpost-author">author: <a href="#">peanockio</a> <a href="#" class="fa fa-arrow-right"></a></span>
-							<span class="topic-lastpost-when">1 day ago</span>
+							<span class="topic-lastpost-author">author: <a href="#">{{ topic.lastPoster.name }}</a> <a href="#" class="fa fa-arrow-right"></a></span>
+							<span class="topic-lastpost-when">{{ ago(topic.lastPoster.postTime) }}</span>
 						</td>
 					</tr>
-					<tr>
-						<td><span class="fa fa-circle-o"></span></td>
-						<td>
-							<span class="topic"><span class="fa fa-lock"></span> <a href="#" class="tn">Topic 3</a></span>
-							<span class="topic-author-note">author: <a href="#">monaide</a>, 2 days ago</span>
-						</td>
-						<td class="topic-numeric">123</td>
-						<td class="topic-numeric">343</td>
-						<td>
-							<span class="topic-lastpost-author">author: <a href="#">peanockio</a> <a href="#" class="fa fa-arrow-right"></a></span>
-							<span class="topic-lastpost-when">1 day ago</span>
-						</td>
-					</tr>
-					<tr>
-						<td><span class="fa fa-circle"></span></td>
-						<td>
-							<span class="topic"><a href="#" class="tn">Topic 3</a></span>
-							<span class="topic-author-note">author: <a href="#">monaide</a>, 2 days ago</span>
-						</td>
-						<td class="topic-numeric">123</td>
-						<td class="topic-numeric">343</td>
-						<td>
-							<span class="topic-lastpost-author">author: <a href="#">peanockio</a> <a href="#" class="fa fa-arrow-right"></a></span>
-							<span class="topic-lastpost-when">1 day ago</span>
-						</td>
-					</tr>
+					{% endfor %}
 				</tbody>
 			</table>
 		</div>
+		{% else %}
+		<div class="forum-nav">
+			<p>There are no topics in this forum.</p>
+		</div>
+		{% endif %}
 	</div>
 </div>
-	
-<p>4564 posts in 372 topics</p>
 {% endblock %}

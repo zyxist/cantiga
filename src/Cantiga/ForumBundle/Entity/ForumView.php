@@ -30,6 +30,9 @@ class ForumView implements ForumContainerInterface, ForumParentInterface
 	private $postNum;
 	private $forums;
 	
+	private $announcements = [];
+	private $topics = [];
+	
 	public function __construct(ForumRoot $root, ForumParentInterface $parent, array $data)
 	{
 		DataMappers::fromArray($this, $data);
@@ -121,5 +124,25 @@ class ForumView implements ForumContainerInterface, ForumParentInterface
 		}
 		$list = array_reverse($list);
 		return $list;
+	}
+	
+	public function appendAnnouncement(TopicView $announcement)
+	{
+		$this->announcements[] = $announcement;
+	}
+	
+	public function getAnnouncements()
+	{
+		return $this->announcements;
+	}
+	
+	public function appendTopic(TopicView $topic)
+	{
+		$this->topics[] = $topic;
+	}
+	
+	public function getTopics()
+	{
+		return $this->topics;
 	}
 }
