@@ -311,7 +311,7 @@ class CantigaExtension extends Twig_Extension implements Twig_Extension_GlobalsI
 	{
 		if (is_array($user)) {
 			$avatar = $user['avatar'];
-		} elseif ($user instanceof User) {
+		} elseif (is_object($user)) {
 			$avatar = $user->getAvatar();
 		}
 		if (!empty($avatar)) {
