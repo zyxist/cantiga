@@ -28,5 +28,5 @@ class ForumTables
 	const FORUM_TBL = 'cantiga_forums';
 	const TOPIC_TBL = 'cantiga_forum_topics';
 	const POST_TBL = 'cantiga_forum_posts';
-	const POST_BODY_TPL = 'cantiga_forum_post_bodies';
+	const POST_CONTENT_TPL = 'cantiga_forum_post_content';
 }

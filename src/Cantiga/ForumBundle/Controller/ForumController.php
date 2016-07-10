@@ -62,29 +62,38 @@ class ForumController extends ProjectPageController
 	 */
 	public function viewForumAction($id, Request $request)
 	{
-		$repo = $this->get(self::VIEW_REPOSITORY);		
+		$repo = $this->get(self::VIEW_REPOSITORY);
 		$forumView = $repo->fetchForumStructureFor($this->getForumRoot(), $id);
-		
-		$this->breadcrumbs()->entryLink($this->trans('Forums', [], 'pages'), 'project_forum_index', ['slug' => $this->getSlug()]);
-		foreach ($forumView->fetchTopDownParents() as $parent) {
-			if ($parent->isLinkable()) {
-				$this->breadcrumbs()->link($parent->getName(), 'project_forum_viewforum', ['slug' => $this->getSlug(), 'id' => $parent->getId()]);
-			} else {
-				$this->breadcrumbs()->staticItem($parent->getName());
-			}
-		}
-		
+		$this->renderBreadcrumbs($forumView->fetchTopDownParents());		
 		return $this->render(self::TEMPLATE_LOCATION . 'viewforum.html.twig', [
 			'forum' => $forumView
 		]);
 	}
 	
 	/**
-	 * @Route("/viewtopic", name="project_forum_viewtopic")
+	 * @Route("/viewtopic/{by}/{id}", name="project_forum_viewtopic")
 	 */
-	public function viewTopicAction(Request $request)
+	public function viewTopicAction(Request $request, $by, $id)
 	{
-		return $this->render(self::TEMPLATE_LOCATION . 'viewtopic.html.twig', ['user' => $this->getUser() ]);
+		$repo = $this->get(self::VIEW_REPOSITORY);
+		$topicFinder = (new \Cantiga\ForumBundle\Entity\TopicUtils\TopicFinderFactory())->createTopicFinder($by, $id);
+		$topicView = $repo->fetchTopicWithPosts($this->getForumRoot(), $topicFinder);
+		$this->renderBreadcrumbs($topicView->fetchTopDownParents());
+		$this->breadcrumbs()->link($topicView->getTitle(), 'project_forum_viewtopic', ['slug' => $this->getSlug(), 'by' => 't', 'id' => $topicView->getId()]);
+		
+		return $this->render(self::TEMPLATE_LOCATION . 'viewtopic.html.twig', ['user' => $this->getUser(), 'topic' => $topicView ]);
+	}
+	
+	private function renderBreadcrumbs(array $parentList)
+	{
+		$this->breadcrumbs()->entryLink($this->trans('Forums', [], 'pages'), 'project_forum_index', ['slug' => $this->getSlug()]);
+		foreach ($parentList as $parent) {
+			if ($parent->isLinkable()) {
+				$this->breadcrumbs()->link($parent->getName(), 'project_forum_viewforum', ['slug' => $this->getSlug(), 'id' => $parent->getId()]);
+			} else {
+				$this->breadcrumbs()->staticItem($parent->getName());
+			}
+		}
 	}
 	
 	private function getForumRoot()

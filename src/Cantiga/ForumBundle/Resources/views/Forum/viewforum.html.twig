@@ -78,7 +78,7 @@
 					<tr>
 						<td><span class="fa fa-circle"></span></td>
 						<td>
-							<span class="topic"><a href="{{ spath('project_forum_viewtopic') }}" class="an">{{ announcement.title }}</a> 
+							<span class="topic"><a href="{{ spath('project_forum_viewtopic', {'by' :'t' , 'id': announcement.id}) }}" class="an">{{ announcement.title }}</a> 
 								{% if announcement.closed %}
 								<span class="fa fa-lock"></span>
 								{% endif %}
@@ -114,7 +114,7 @@
 					<tr>
 						<td><span class="fa fa-circle"></span></td>
 						<td>
-							<span class="topic"><a href="{{ spath('project_forum_viewtopic') }}" class="an">{{ topic.title }}</a> 
+							<span class="topic"><a href="{{ spath('project_forum_viewtopic', {'by' :'t' , 'id': topic.id} ) }}" class="an">{{ topic.title }}</a> 
 								{% if topic.closed %}
 								<span class="fa fa-lock"></span>
 								{% endif %}

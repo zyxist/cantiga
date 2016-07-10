@@ -22,9 +22,10 @@ use Cantiga\Metamodel\DataMappers;
 
 class ForumView implements ForumContainerInterface, ForumParentInterface
 {
+	use ParentHolderTrait;
+	
 	private $id;
 	private $name;
-	private $parent;
 	private $description;
 	private $topicNum;
 	private $postNum;
@@ -36,7 +37,7 @@ class ForumView implements ForumContainerInterface, ForumParentInterface
 	public function __construct(ForumRoot $root, ForumParentInterface $parent, array $data)
 	{
 		DataMappers::fromArray($this, $data);
-		$this->parent = $parent;
+		$this->setParent($parent);
 	}
 	
 	public function getId()
@@ -99,11 +100,6 @@ class ForumView implements ForumContainerInterface, ForumParentInterface
 		return $this;
 	}
 	
-	public function getParent()
-	{
-		return $this->parent;
-	}
-	
 	public function appendForum(ForumView $view)
 	{
 		$this->forums[] = $view;
@@ -112,18 +108,6 @@ class ForumView implements ForumContainerInterface, ForumParentInterface
 	public function getForums()
 	{
 		return $this->forums;
-	}
-	
-	public function fetchTopDownParents()
-	{
-		$parent = $this;
-		$list = [];
-		while (null != $parent) {
-			$list[] = $parent;
-			$parent = $parent->getParent();
-		}
-		$list = array_reverse($list);
-		return $list;
 	}
 	
 	public function appendAnnouncement(TopicView $announcement)

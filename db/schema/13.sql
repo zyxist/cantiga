@@ -59,6 +59,32 @@ CREATE TABLE IF NOT EXISTS `cantiga_forum_topics` (
   KEY `rootId` (`rootId`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS `cantiga_forum_posts` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `topicId` int(11) NOT NULL,
+  `authorId` int(11) NOT NULL,
+  `authorIp` int(11) NOT NULL,
+  `createdAt` int(11) NOT NULL,
+  `postOrder` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `topicorder` (`topicId`,`postOrder`),
+  KEY `topicId` (`topicId`),
+  KEY `authorId` (`authorId`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `cantiga_forum_post_content` (
+  `postId` int(11) NOT NULL,
+  `content` text NOT NULL,
+  PRIMARY KEY (`postId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE `cantiga_forum_posts`
+  ADD CONSTRAINT `cantiga_forum_posts_ibfk_1` FOREIGN KEY (`topicId`) REFERENCES `cantiga_forum_topics` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `cantiga_forum_posts_ibfk_2` FOREIGN KEY (`authorId`) REFERENCES `cantiga_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `cantiga_forum_post_content`
+  ADD CONSTRAINT `cantiga_forum_post_content_ibfk_1` FOREIGN KEY (`postId`) REFERENCES `cantiga_forum_posts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
 ALTER TABLE `cantiga_forums`
   ADD CONSTRAINT `cantiga_forums_ibfk_1` FOREIGN KEY (`rootId`) REFERENCES `cantiga_forum_roots` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `cantiga_forums_ibfk_2` FOREIGN KEY (`categoryId`) REFERENCES `cantiga_forum_categories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;

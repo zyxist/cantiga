@@ -18,23 +18,21 @@
  */
 namespace Cantiga\ForumBundle\Entity;
 
-/**
- * Brief author information, typically displayed in the lists of topics
- * or forums.
- */
-class AuthorSummaryView
+class PostView
 {
 	private $id;
-	private $name;
-	private $postTime;
-	private $avatar;
+	private $author;
+	private $authorIp;
+	private $content;
+	private $order;
 	
-	public function __construct($id, $name, $postTime, $avatar = null)
+	public function __construct(array $data)
 	{
-		$this->id = $id;
-		$this->name = $name;
-		$this->postTime = $postTime;
-		$this->avatar = $avatar;
+		$this->id = $data['id'];
+		$this->author = new AuthorSummaryView($data['authorId'], $data['authorName'], $data['createdAt'], $data['authorAvatar']);
+		$this->authorIp = long2ip($data['authorIp']);
+		$this->content = $data['content'];
+		$this->order = $data['postOrder'];
 	}
 	
 	public function getId()
@@ -42,18 +40,23 @@ class AuthorSummaryView
 		return $this->id;
 	}
 
-	public function getName()
+	public function getAuthor()
 	{
-		return $this->name;
+		return $this->author;
+	}
+
+	public function getAuthorIp()
+	{
+		return $this->authorIp;
 	}
 	
-	public function getPostTime()
+	public function getContent()
 	{
-		return $this->postTime;
+		return $this->content;
 	}
-	
-	public function getAvatar()
+
+	public function getOrder()
 	{
-		return $this->avatar;
+		return $this->order;
 	}
 }

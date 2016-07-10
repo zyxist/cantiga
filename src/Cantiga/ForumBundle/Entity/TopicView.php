@@ -20,6 +20,8 @@ namespace Cantiga\ForumBundle\Entity;
 
 class TopicView
 {
+	use ParentHolderTrait;
+	
 	const TYPE_ANNOUNCEMENT = 2;
 	const TYPE_PINNED = 1;
 	const TYPE_NORMAL = 0;
@@ -35,6 +37,9 @@ class TopicView
 	private $replyNum;
 	private $viewNum;
 	
+	private $forumId = null;
+	private $posts = array();
+	
 	public function __construct(array $data)
 	{
 		$this->id = $data['id'];
@@ -47,6 +52,7 @@ class TopicView
 		$this->closed = $data['closed'];
 		$this->replyNum = $data['replyNum'];
 		$this->viewNum = $data['viewNum'];
+		$this->forumId = $data['forumId'];
 	}
 	
 	public function getId()
@@ -97,5 +103,25 @@ class TopicView
 	public function getViewNum()
 	{
 		return $this->viewNum;
+	}
+	
+	public function getForumId()
+	{
+		return $this->forumId;
+	}
+	
+	public function appendPost(PostView $post)
+	{
+		$this->posts[] = $post;
+	}
+	
+	public function getPosts()
+	{
+		return $this->posts;
+	}
+	
+	public function setParent(ForumParentInterface $parent)
+	{
+		$this->parent = $parent;
 	}
 }

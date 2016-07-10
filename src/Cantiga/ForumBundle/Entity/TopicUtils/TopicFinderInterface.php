@@ -16,44 +16,11 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-namespace Cantiga\ForumBundle\Entity;
+namespace Cantiga\ForumBundle\Entity\TopicUtils;
 
-/**
- * Brief author information, typically displayed in the lists of topics
- * or forums.
- */
-class AuthorSummaryView
+use Doctrine\DBAL\Connection;
+
+interface TopicFinderInterface
 {
-	private $id;
-	private $name;
-	private $postTime;
-	private $avatar;
-	
-	public function __construct($id, $name, $postTime, $avatar = null)
-	{
-		$this->id = $id;
-		$this->name = $name;
-		$this->postTime = $postTime;
-		$this->avatar = $avatar;
-	}
-	
-	public function getId()
-	{
-		return $this->id;
-	}
-
-	public function getName()
-	{
-		return $this->name;
-	}
-	
-	public function getPostTime()
-	{
-		return $this->postTime;
-	}
-	
-	public function getAvatar()
-	{
-		return $this->avatar;
-	}
+	public function findTopic(Connection $conn);
 }

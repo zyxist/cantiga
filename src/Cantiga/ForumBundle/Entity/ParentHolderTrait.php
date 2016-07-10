@@ -18,42 +18,33 @@
  */
 namespace Cantiga\ForumBundle\Entity;
 
-/**
- * Brief author information, typically displayed in the lists of topics
- * or forums.
- */
-class AuthorSummaryView
+trait ParentHolderTrait
 {
-	private $id;
-	private $name;
-	private $postTime;
-	private $avatar;
+	private $parent;
 	
-	public function __construct($id, $name, $postTime, $avatar = null)
+	protected function setParent(ForumParentInterface $parent)
 	{
-		$this->id = $id;
-		$this->name = $name;
-		$this->postTime = $postTime;
-		$this->avatar = $avatar;
+		$this->parent = $parent;
 	}
 	
-	public function getId()
+	public function getParent()
 	{
-		return $this->id;
-	}
-
-	public function getName()
-	{
-		return $this->name;
+		return $this->parent;
 	}
 	
-	public function getPostTime()
+	public function fetchTopDownParents()
 	{
-		return $this->postTime;
-	}
-	
-	public function getAvatar()
-	{
-		return $this->avatar;
+		if ($this instanceof ForumParentInterface) {
+			$parent = $this;
+		} else {
+			$parent = $this->parent;
+		}
+		$list = [];
+		while (null != $parent) {
+			$list[] = $parent;
+			$parent = $parent->getParent();
+		}
+		$list = array_reverse($list);
+		return $list;
 	}
 }

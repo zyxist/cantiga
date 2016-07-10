@@ -18,10 +18,13 @@
  */
 namespace Cantiga\ForumBundle\Repository;
 
+use Cantiga\CoreBundle\CoreTables;
 use Cantiga\ForumBundle\Entity\ForumCategoryView;
 use Cantiga\ForumBundle\Entity\ForumParent;
 use Cantiga\ForumBundle\Entity\ForumRoot;
 use Cantiga\ForumBundle\Entity\ForumView;
+use Cantiga\ForumBundle\Entity\PostView;
+use Cantiga\ForumBundle\Entity\TopicUtils\TopicFinderInterface;
 use Cantiga\ForumBundle\Entity\TopicView;
 use Cantiga\ForumBundle\ForumTables;
 use Doctrine\DBAL\Connection;
@@ -60,18 +63,8 @@ class ForumViewRepository
 	public function fetchForumStructureFor(ForumRoot $root, $forumId)
 	{
 		$forumData = $this->conn->fetchAssoc('SELECT * FROM `'.ForumTables::FORUM_TBL.'` WHERE `id` = :id', [':id' => $forumId]);
-		$parentData = $this->conn->fetchAll('SELECT `id`, `name`, `categoryId` FROM `'.ForumTables::FORUM_TBL.'` WHERE `leftPosition` < :left AND `rightPosition` > :right ORDER BY `leftPosition`', [
-			':left' => $forumData['leftPosition'],
-			':right' => $forumData['rightPosition']]);
-		$categoryData = $this->conn->fetchAssoc('SELECT * FROM `'.ForumTables::FORUM_CATEGORY_TBL.'` WHERE `id` = :id', [':id' => $forumData['categoryId']]);
-		$childrenData = $this->conn->fetchAll('SELECT * FROM `'.ForumTables::FORUM_TBL.'` WHERE `parentId` = :parentId ORDER BY `leftPosition`', [':parentId' => $forumId]);
-		
-		$category = new ForumParent($categoryData['id'], $categoryData['name'], false, null);
-		$currentParent = $category;
-		foreach ($parentData as $p) {
-			$currentParent = new ForumParent($p['id'], $p['name'], true, $currentParent);
-		}
-		
+		$childrenData = $this->conn->fetchAll('SELECT * FROM `'.ForumTables::FORUM_TBL.'` WHERE `parentId` = :parentId ORDER BY `leftPosition`', [':parentId' => $forumId]);		
+		$currentParent = $this->fetchParents($forumId);
 		$forumView = new ForumView($root, $currentParent, $forumData);
 		
 		foreach ($childrenData as $childData) {
@@ -80,6 +73,39 @@ class ForumViewRepository
 		
 		$this->fetchTopicsAndAnnouncements($root, $forumView);
 		return $forumView;
+	}
+	
+	public function fetchTopicWithPosts(ForumRoot $root, TopicFinderInterface $topicFinder)
+	{
+		$topic = $topicFinder->findTopic($this->conn);
+		$topic->setParent($this->fetchParents($topic->getForumId(), true));
+		$postData = $this->conn->fetchAll('SELECT p.*, u.name AS `authorName`, u.avatar AS `authorAvatar`, c.`content` '
+			. 'FROM '.ForumTables::POST_TBL.' p '
+			. 'INNER JOIN '.ForumTables::POST_CONTENT_TPL.' c ON c.`postId` = p.`id` '
+			. 'INNER JOIN '.CoreTables::USER_TBL.' u ON u.id = p.authorId '
+			. 'WHERE p.topicId = :topicId '
+			. 'ORDER BY p.postOrder LIMIT 10', [':topicId' => $topic->getId()]);
+		foreach ($postData as $postItem) {
+			$topic->appendPost(new PostView($postItem));
+		}
+		return $topic;
+	}
+	
+	private function fetchParents($forumId, $inclusive = false)
+	{
+		$leftOperator = $inclusive ? '<=' : '<';
+		$rightOperator = $inclusive ? '>=' : '>';
+		$parentData = $this->conn->fetchAll('SELECT f1.`id`, f1.`name`, f1.`categoryId` FROM `'.ForumTables::FORUM_TBL.'` f1 '
+			. 'INNER JOIN `'.ForumTables::FORUM_TBL.'` f2 ON f1.`leftPosition` '.$leftOperator.' f2.`leftPosition` AND f1.`rightPosition` '.$rightOperator.' f2.`rightPosition` '
+			. 'WHERE f2.`id` = :id '
+			. 'ORDER BY f1.`leftPosition`', [':id' => $forumId]);
+		$categoryData = $this->conn->fetchAssoc('SELECT * FROM `'.ForumTables::FORUM_CATEGORY_TBL.'` WHERE `id` = :id', [':id' => current($parentData)['categoryId']]);
+		$category = new ForumParent($categoryData['id'], $categoryData['name'], false, null);
+		$currentParent = $category;
+		foreach ($parentData as $p) {
+			$currentParent = new ForumParent($p['id'], $p['name'], true, $currentParent);
+		}
+		return $currentParent;
 	}
 	
 	private function fetchTopicsAndAnnouncements(ForumRoot $root, ForumView $populatedForum)
