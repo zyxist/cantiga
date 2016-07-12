@@ -28,16 +28,17 @@
 
 {% block stylesheets %}
 	{{ parent() }}
-	<link rel="stylesheet" href="{{ asset('css/bootstrap3-wysihtml5.min.css') }}" />
+	<link rel="stylesheet" href="{{ asset('css/summernote.css') }}" />
 {% endblock %}
 
 {% block javascripts %}
 	{{ parent() }}
-	<script src="{{ asset('js/bootstrap3-wysihtml5.all.min.js') }}"></script>
+	<script src="{{ asset('js/summernote.min.js') }}"></script>
+	<script src="{{ asset('js/lang/summernote-'~user.settingsLanguage.locale~'.js')}}"></script>
 {% endblock %}
 
 {% block javascripts_inline %}
 	<script>
-		$('#content').wysihtml5();
+		$('#content').summernote({ lang: '{{ user.settingsLanguage.locale }}' });
 	</script>
 {% endblock %}
