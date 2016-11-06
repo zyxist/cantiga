@@ -19,8 +19,10 @@
 namespace Cantiga\CoreBundle\Api\Controller;
 
 use Cantiga\CoreBundle\Api\Controller\CantigaController;
+use Cantiga\CoreBundle\Api\Workspace;
 use Cantiga\CoreBundle\Api\Workspace\UserWorkspace;
 use Cantiga\CoreBundle\Api\WorkspaceAwareInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * All the pages that work in the user workspace, shall use this controller.
@@ -31,7 +33,7 @@ class UserPageController extends CantigaController implements WorkspaceAwareInte
 {
 	private $workspace;
 	
-	public function createWorkspace()
+	public function createWorkspace(Request $request): Workspace
 	{
 		return $this->workspace = new UserWorkspace();
 	}

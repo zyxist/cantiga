@@ -18,19 +18,18 @@
  */
 namespace Cantiga\CoreBundle\Api;
 
+use Cantiga\CoreBundle\Api\Workspace;
+use Symfony\Component\HttpFoundation\Request;
+
 /**
- * Implemented by controllers that work in the context of a workspace. A single controller
- * is strictly tied to the given workspace and marks it by returning its instance. This
- * instance is further configured and used in rendering.
- * 
- * @author Tomasz Jędrzejewski
+ * Implemented by controllers that work in the context of a workspace. Upon the startup,
+ * the controller may choose its workspace, which must be returned by the method provided
+ * in this interface. This workspace instance is further configured and used in rendering.
  */
 interface WorkspaceAwareInterface
 {
 	/**
 	 * The method shall produce an instance of the concrete workspace.
-	 * 
-	 * @return Workspace
 	 */
-	public function createWorkspace();
+	public function createWorkspace(Request $request): Workspace;
 }

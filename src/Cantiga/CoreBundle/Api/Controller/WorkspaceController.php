@@ -18,24 +18,24 @@
  */
 namespace Cantiga\CoreBundle\Api\Controller;
 
+use Cantiga\CoreBundle\Api\Controller\CantigaController;
+use Cantiga\CoreBundle\Api\Controller\ProjectAwareControllerInterface;
 use Cantiga\CoreBundle\Api\ExtensionPoints\ExtensionPointFilter;
 use Cantiga\CoreBundle\Api\Workspace;
-use Cantiga\CoreBundle\Api\Workspace\GroupWorkspace;
 use Cantiga\CoreBundle\Api\WorkspaceAwareInterface;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\Metamodel\Membership;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-
 /**
- * This class shall be extended by all the controllers that work in the
- * group workspace.
+ * The controller that can dynamically choose a workspace (project, group or area), depending
+ * on the slug.
  */
-class GroupPageController extends CantigaController implements WorkspaceAwareInterface, ProjectAwareControllerInterface
+class WorkspaceController extends CantigaController implements WorkspaceAwareInterface, ProjectAwareControllerInterface
 {
 	/**
-	 * @var GroupWorkspace
+	 * @var Workspace
 	 */
 	private $workspace;
 	/**
@@ -49,13 +49,15 @@ class GroupPageController extends CantigaController implements WorkspaceAwareInt
 	
 	public function createWorkspace(Request $request): Workspace
 	{
+		$slug = $request->get('slug', NULL);
+		if (empty($slug)) {
+			throw new \RuntimeException('No slug specified');
+		}
+		
 		$this->tokenStorage = $this->get('security.token_storage');
-		return $this->workspace = new GroupWorkspace($this->get('cantiga.core.membership.group'));
+		return $this->workspace = $this->get('cantiga.workspace.finder')->findWorkspace($slug);
 	}
 	
-	/**
-	 * @return GroupWorkspace
-	 */
 	public function getWorkspace()
 	{
 		return $this->workspace;
@@ -65,7 +67,7 @@ class GroupPageController extends CantigaController implements WorkspaceAwareInt
 	{
 		return $this->tokenStorage->getToken()->getMembershipEntity()->getSlug();
 	}
-
+	
 	/**
 	 * @return Membership
 	 */
@@ -79,7 +81,7 @@ class GroupPageController extends CantigaController implements WorkspaceAwareInt
 	 */
 	public function getActiveProject()
 	{
-		return $this->tokenStorage->getToken()->getMasterProject();
+		return $this->tokenStorage->getToken()->getMembershipEntity();
 	}
 	
 	/**

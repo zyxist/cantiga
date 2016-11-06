@@ -19,18 +19,18 @@
 namespace Cantiga\CoreBundle\Api\Controller;
 
 use Cantiga\CoreBundle\Api\ExtensionPoints\ExtensionPointFilter;
+use Cantiga\CoreBundle\Api\Workspace;
 use Cantiga\CoreBundle\Api\Workspace\AreaWorkspace;
 use Cantiga\CoreBundle\Api\WorkspaceAwareInterface;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\Metamodel\Membership;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 
 /**
  * This class shall be extended by all the controllers that work in the
  * area workspace.
- *
- * @author Tomasz Jędrzejewski
  */
 class AreaPageController extends CantigaController implements WorkspaceAwareInterface, ProjectAwareControllerInterface
 {
@@ -47,7 +47,7 @@ class AreaPageController extends CantigaController implements WorkspaceAwareInte
 	 */
 	private $tokenStorage;
 	
-	public function createWorkspace()
+	public function createWorkspace(Request $request): Workspace
 	{
 		$this->tokenStorage = $this->get('security.token_storage');
 		return $this->workspace = new AreaWorkspace($this->get('cantiga.core.membership.area'));

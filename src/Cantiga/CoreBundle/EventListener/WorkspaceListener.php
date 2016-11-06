@@ -91,7 +91,7 @@ class WorkspaceListener implements WorkspaceSourceInterface
 		}
 		if ($ctrl instanceof WorkspaceAwareInterface) {
 			$this->workspaceController = $ctrl;
-			$this->workspace = $ctrl->createWorkspace();
+			$this->workspace = $ctrl->createWorkspace($event->getRequest());
 			$membershipLoader = $this->workspace->getMembershipLoader();
 			$membership = null;
 			

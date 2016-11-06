@@ -67,6 +67,9 @@ services:
         arguments: ["%targetFileDirectory%"]
     cantiga.roles:
         class:     "%role_resolver.class%"
+    cantiga.workspace.finder:
+        class:     Cantiga\CoreBundle\Api\WorkspaceFinder
+        arguments: ["@database_connection", "@cantiga.core.membership.project", "@cantiga.core.membership.group", "@cantiga.core.membership.area"]
     cantiga.security.recaptcha:
         class:     Cantiga\CoreBundle\Services\RecaptchaService
         arguments: ["@=container.getParameter('cantiga')['recaptcha']['siteKey']", "@=container.getParameter('cantiga')['recaptcha']['secretKey']"]

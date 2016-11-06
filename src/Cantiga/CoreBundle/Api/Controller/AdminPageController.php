@@ -18,19 +18,19 @@
  */
 namespace Cantiga\CoreBundle\Api\Controller;
 
+use Cantiga\CoreBundle\Api\Workspace;
 use Cantiga\CoreBundle\Api\Workspace\AdminWorkspace;
 use Cantiga\CoreBundle\Api\WorkspaceAwareInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Base class for all the controllers in the admin workspace.
- * 
- * @author Tomasz Jędrzejewski
  */
 class AdminPageController extends CantigaController implements WorkspaceAwareInterface
 {
 	private $workspace;
 	
-	public function createWorkspace()
+	public function createWorkspace(Request $request): Workspace
 	{
 		return $this->workspace = new AdminWorkspace();
 	}
