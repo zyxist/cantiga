@@ -122,7 +122,7 @@ class ProjectGroupMembershipController extends ProjectPageController
 			$repository = $this->get('cantiga.core.repo.invitation');
 			$invitation = new Invitation();
 			
-			$form = $this->createForm(InvitationForm::class, $invitation, ['action' => $this->generateUrl('project_group_membership_invite', ['slug' => $this->getSlug()]), 'roles' => $roleResolver->getRoles('Area')]);
+			$form = $this->createForm(InvitationForm::class, $invitation, ['action' => $this->generateUrl('project_group_membership_invite', ['slug' => $this->getSlug(), 'id' => $this->group->getId()]), 'roles' => $roleResolver->getRoles('Area')]);
 			$form->handleRequest($request);
 			if ($form->isValid()) {
 				$invitation->setInviter($this->getUser());
