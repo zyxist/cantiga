@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
+ * This file is part of Cantiga Project. Copyright 2016 Tomasz Jedrzejewski.
  *
  * Cantiga Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -316,9 +316,8 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 	 * Checks whether this project supports the given module.
 	 * 
 	 * @param string $moduleName
-	 * @return boolean
 	 */
-	public function supportsModule($moduleName)
+	public function supportsModule($moduleName): bool
 	{
 		if ($moduleName == 'core') {
 			return true;
@@ -329,10 +328,8 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 	/**
 	 * Builds an extension point filter that limits the available implementations to those
 	 * ones which belong to the modules activated for this project.
-	 * 
-	 * @return ExtensionPointFilter
 	 */
-	public function createExtensionPointFilter()
+	public function createExtensionPointFilter(): ExtensionPointFilter
 	{
 		$modules = $this->modules;
 		$modules[] = 'core';
@@ -355,10 +352,8 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 	
 	/**
 	 * Informs that the archivization operation has been performed on this project.
-	 * 
-	 * @return boolean
 	 */
-	public function isPendingArchivization()
+	public function isPendingArchivization(): bool
 	{
 		return $this->pendingArchivization;
 	}
@@ -370,6 +365,7 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 		$this->entity = new Entity();
 		$this->entity->setType('Project');
 		$this->entity->setName($this->name);
+		$this->entity->setSlug($this->slug);
 		$this->entity->insert($conn);
 		
 		$conn->insert(

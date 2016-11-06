@@ -399,6 +399,7 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		$this->entity = new Entity();
 		$this->entity->setType('Area');
 		$this->entity->setName($this->name);
+		$this->entity->setSlug($this->slug);
 		$this->entity->insert($conn);
 		
 		$this->createdAt = $this->lastUpdatedAt = time();

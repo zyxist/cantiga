@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
+ * This file is part of Cantiga Project. Copyright 2016 Tomasz Jedrzejewski.
  *
  * Cantiga Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,19 +32,27 @@ use Doctrine\DBAL\Connection;
  * For example, the task list can be bound both to group and area. Each entity that
  * should be managed in this way, should also deal with creating and managing such a
  * row.
- *
- * @author Tomasz Jędrzejewski
  */
 class Entity implements IdentifiableInterface, InsertableEntityInterface, EditableEntityInterface, RemovableEntityInterface
 {
 	private $id;
 	private $name;
+	private $slug;
 	private $type;
 	private $removedAt;
 	
 	public static function fetchById(Connection $conn, $id)
 	{
 		$data = $conn->fetchAssoc('SELECT * FROM `'.CoreTables::ENTITY_TBL.'` WHERE `id` = :id', [':id' => $id]);
+		if (false === $data) {
+			return false;
+		}
+		return Entity::fromArray($data);
+	}
+	
+	public static function fetchBySlug(Connection $conn, $slug)
+	{
+		$data = $conn->fetchAssoc('SELECT * FROM `'.CoreTables::ENTITY_TBL.'` WHERE `slug` = :slug', [':slug' => $slug]);
 		if (false === $data) {
 			return false;
 		}
@@ -63,12 +71,12 @@ class Entity implements IdentifiableInterface, InsertableEntityInterface, Editab
 		return $this->id;
 	}
 
-	public function getName()
+	public function getName(): string
 	{
 		return $this->name;
 	}
 
-	public function getType()
+	public function getType(): string
 	{
 		return $this->type;
 	}
@@ -83,6 +91,16 @@ class Entity implements IdentifiableInterface, InsertableEntityInterface, Editab
 	{
 		$this->name = $name;
 		return $this;
+	}
+	
+	function getSlug(): string
+	{
+		return $this->slug;
+	}
+
+	function setSlug($slug)
+	{
+		$this->slug = $slug;
 	}
 
 	public function setType($type)
@@ -111,7 +129,7 @@ class Entity implements IdentifiableInterface, InsertableEntityInterface, Editab
 	{
 		$conn->insert(
 			CoreTables::ENTITY_TBL,
-			DataMappers::pick($this, ['name', 'type'])
+			DataMappers::pick($this, ['name', 'slug', 'type'])
 		);
 		return $this->id = $conn->lastInsertId();
 	}

@@ -1,3 +1,5 @@
+ALTER TABLE  `cantiga_entities` ADD  `slug` VARCHAR( 12 ) NOT NULL AFTER  `name`, ADD UNIQUE (`slug`);
+
 CREATE TABLE IF NOT EXISTS `cantiga_forum_roots` (
   `id` int(11) NOT NULL,
   `name` varchar(30) NOT NULL,

@@ -242,6 +242,7 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 		$this->entity = new Entity();
 		$this->entity->setType('Group');
 		$this->entity->setName($this->name);
+		$this->entity->setSlug($this->slug);
 		$this->entity->insert($conn);
 		
 		$conn->insert(
