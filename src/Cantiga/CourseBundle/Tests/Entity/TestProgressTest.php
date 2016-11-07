@@ -46,6 +46,7 @@ class TestProgressTest extends DatabaseTestCase
 		$this->territory = Territory::fetchByProject(self::$conn, 1, $this->project);
 		
 		$this->area = Area::newArea($this->project, $this->territory, $this->status, 'Area1');
+		$this->area->setSlug('s3');
 		$this->area->insert(self::$conn);
 		
 		$pp = new CourseProgress($this->area);
@@ -57,6 +58,8 @@ class TestProgressTest extends DatabaseTestCase
 		self::$conn->executeUpdate('DELETE FROM `'.CourseTables::COURSE_RESULT_TBL.'`');
 		self::$conn->executeUpdate('DELETE FROM `'.CoreTables::USER_TBL.'`');
 		self::$conn->executeUpdate('DELETE FROM `'.CourseTables::COURSE_TBL.'`');
+		self::$conn->executeUpdate('DELETE FROM `'.CoreTables::AREA_TBL.'`');
+		self::$conn->executeUpdate('DELETE FROM `'.CoreTables::ENTITY_TBL.'` WHERE `id` <> 1');
 	}
 	
 	public function testUpdatingResultsFromIncompleteToPassed()

@@ -54,8 +54,10 @@ class CourseTest extends DatabaseTestCase {
 		$this->territory = Territory::fetchByProject(self::$conn, 1, $this->project);
 		
 		$this->area = Area::newArea($this->project, $this->territory, $this->status, 'Area1');
+		$this->area->setSlug('s1');
 		$this->area->insert(self::$conn);
 		$this->area2 = Area::newArea($this->project, $this->territory, $this->status, 'Area2');
+		$this->area2->setSlug('s2');
 		
 		$lang = new Language();
 		$lang->setId(1);
@@ -74,6 +76,7 @@ class CourseTest extends DatabaseTestCase {
 	{
 		self::$conn->executeUpdate('DELETE FROM `'.CourseTables::COURSE_RESULT_TBL.'`');
 		self::$conn->executeUpdate('DELETE FROM `'.CoreTables::AREA_TBL.'`');
+		self::$conn->executeUpdate('DELETE FROM `'.CoreTables::ENTITY_TBL.'` WHERE `id` <> 1');
 		self::$conn->executeUpdate('DELETE FROM `'.CoreTables::USER_TBL.'`');
 		self::$conn->executeUpdate('DELETE FROM `'.CourseTables::COURSE_TBL.'`');
 	}

@@ -64,6 +64,7 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		$item->setTerritory($territory);
 		$item->setStatus($status);
 		$item->setName($name);
+		$item->setSlug('');
 		return $item;
 	}
 

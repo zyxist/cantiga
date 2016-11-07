@@ -37,7 +37,7 @@ class Entity implements IdentifiableInterface, InsertableEntityInterface, Editab
 {
 	private $id;
 	private $name;
-	private $slug;
+	private $slug = '';
 	private $type;
 	private $removedAt;
 	
