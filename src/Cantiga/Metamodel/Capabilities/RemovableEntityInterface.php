@@ -28,7 +28,7 @@ interface RemovableEntityInterface
 	/**
 	 * Checks whether the entity can be removed.
 	 * 
-	 * @return boolean
+	 * @return bool
 	 */
 	public function canRemove();
 	/**

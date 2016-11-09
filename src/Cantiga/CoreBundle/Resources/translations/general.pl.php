@@ -19,6 +19,7 @@ return array(
 	'Actions' => 'Akcje',
 	'Indeed' => 'Zaiste',
 	'Enter' => 'Przejdź',
+	'More' => 'Więcej',
 	'Start review' => 'Zacznij weryfikację',
 	'Export CSV' => 'Eksportuj CSV',
 	'Not really' => 'Niezbyt',
