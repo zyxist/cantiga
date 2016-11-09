@@ -1,0 +1,89 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ 'Discussion: 0' | trans([channel.name], 'pages') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ 'View discussion' | trans([], 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+<p>{{ channel.description }}</p>
+<div class="row">
+	<div class="col-xs-12 col-lg-12">
+		<form role="form" id="discussion-form">
+			<div class="box">
+				<div class="box-body">
+					<div class="form-group">
+						<label>{{ 'Say something...' | trans([], 'discussion') }}</label>
+						<textarea id="discussion-content" class="form-control" cols="60" rows="6"></textarea>
+					</div>
+				</div>
+				<div class="box-footer">
+					<button type="submit" class="btn btn-info pull-left">{{ 'Send' | trans([], 'general') }}</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<div class="row">
+	<div class="col-xs-12">
+		<ul class="timeline" id="discussion-timeline">
+			{% for day in discussion %}
+				<li class="time-label">
+					<span class="bg-red">
+						{{ format_time(TimeFormatter.FORMAT_DATE_LONG, day.time) }}
+					</span>
+				</li>
+				{% for post in day.posts %}
+				<li>
+					<i class="fa fa-envelope bg-blue"></i>
+					<div class="timeline-item">
+						<span class="time"><i class="fa fa-clock-o"></i> {{ format_time(TimeFormatter.FORMAT_LONG, post.createdAt) }}</span>
+						<h3 class="timeline-header"><img src="{{ asset(avatar(post, 32)) }}" alt="av" width="24" class="img-circle" /> <a href="#">{{ post.userName }}</a></h3>
+
+						<div class="timeline-body">
+							{{ post.content | raw }}
+						</div>
+
+						<div class="timeline-footer">
+						</div>
+					</div>
+				</li>
+				{% endfor %}
+			{% endfor %}
+		</ul>
+		<button class="btn btn-primary" style="width: 100%" id="discussion-more">{{ 'More' | trans([], 'general') }}</button>
+	</div>
+</div>
+{% endblock page_content %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" href="{{ asset('css/summernote.css') }}" />
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script src="{{ asset('js/summernote.min.js') }}"></script>
+	<script src="{{ asset('js/lang/summernote-'~user.settingsLanguage.locale~'.js')}}"></script>
+	<script src="{{ asset('js/discussion.js') }}"></script>
+{% endblock %}
+
+{% block javascripts_inline %}
+	<script>
+		$('#discussion-content').summernote({ lang: '{{ user.settingsLanguage.locale }}' });
+		$(document).ready(function() {
+			$(document).discussion({
+				discussionMore: '#discussion-more',
+				discussionBody: '#discussion-timeline',
+				discussionForm: '#discussion-form',
+				discussionFeedUrl: '{{ spath('discussion_api_feed', {'id': channel.id} ) }}',
+				discussionPostUrl: '{{ spath('discussion_api_post', {'id': channel.id} ) }}',
+				avatars: '{{ asset('ph') }}',
+				lastPostTime: {{ lastPostTime }}
+			});
+		});
+	</script>
+{% endblock %}

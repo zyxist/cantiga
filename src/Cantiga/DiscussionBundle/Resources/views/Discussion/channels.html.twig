@@ -1,0 +1,32 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ 'Discussion' | trans}}
+{% endblock %}
+
+{% block page_content %}
+	<div class="row">
+		{% for channel in channels %}
+		<div class="col-lg-3 col-xs-6">
+			<div class="small-box bg-{{ channel.color }}">
+				<div class="inner">
+					<h3>{{ channel.name }}</h3>
+					{% if channel.lastPostTime %}
+					<p>{{ 'Activity: 0' | trans([ ago(channel.lastPostTime) ], 'discussion') }}</p>
+					{% else %}
+					<p>{{ 'No activity' | trans([], 'discussion') }}</p>
+					{% endif %}
+				</div>
+				<div class="icon">
+					<i class="ion ion-{{ channel.icon }}"></i>
+				</div>
+				<a href="{{ spath('discussion_channel', {'id': channel.id} ) }}" class="small-box-footer">
+					{{ 'Enter' | trans([], 'general') }} <i class="fa fa-arrow-circle-right"></i>
+				</a>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+{% endblock %}
+
+

@@ -1,0 +1,90 @@
+<?php
+/*
+ * This file is part of Cantiga Project. Copyright 2016 Tomasz Jedrzejewski.
+ *
+ * Cantiga Project is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Cantiga Project is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Foobar; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+namespace Cantiga\DiscussionBundle\Repository;
+
+use Cantiga\CoreBundle\Entity\Area;
+use Cantiga\CoreBundle\Entity\Group;
+use Cantiga\CoreBundle\Entity\Project;
+use Cantiga\CoreBundle\Entity\User;
+use Cantiga\DiscussionBundle\Database\DiscussionAdapter;
+use Cantiga\DiscussionBundle\Entity\Channel;
+use Cantiga\Metamodel\Capabilities\MembershipEntityInterface;
+use Cantiga\Metamodel\Exception\ItemNotFoundException;
+use Cantiga\Metamodel\Transaction;
+
+class ChannelRepository
+{
+	/**
+	 * @var DiscussionAdapter 
+	 */
+	private $adapter;
+	/**
+	 * @var Transaction
+	 */
+	private $transaction;
+	/**
+	 * @var Project
+	 */
+	private $project;
+	
+	public function __construct(DiscussionAdapter $adapter, Transaction $transaction)
+	{
+		$this->adapter = $adapter;
+		$this->transaction = $transaction;
+	}
+	
+	public function setProject(Project $project)
+	{
+		$this->project = $project;
+	}
+	
+	public function getItem(int $id): Channel
+	{
+		$this->transaction->requestTransaction();
+		$item = Channel::fetchByProject($this->adapter->getConnection(), $id, $this->project);		
+		if(false === $item) {
+			$this->transaction->requestRollback();
+			throw new ItemNotFoundException('The specified item has not been found.', $id);
+		}
+		return $item;
+	}
+	
+	public function publish(Channel $channel, $content, User $user)
+	{
+		$this->transaction->requestTransaction();
+		try {
+			$channel->publish($this->adapter, $content, $user);			
+		} catch (Exception $ex) {
+			$this->transaction->requestRollback();
+			throw $ex;
+		}
+	}
+	
+	public function findWorkspaceChannels(MembershipEntityInterface $entity): array
+	{
+		if ($entity instanceof Project) {
+			$visibility = 'projectVisible';
+		} elseif ($entity instanceof Group) {
+			$visibility = 'groupVisible';
+		} elseif ($entity instanceof Area) {
+			$visibility = 'areaVisible';
+		}
+		return $this->adapter->findVisibleChannels($this->project->getId(), $visibility);
+	}
+}

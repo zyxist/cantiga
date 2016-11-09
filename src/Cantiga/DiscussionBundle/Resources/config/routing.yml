@@ -1,0 +1,4 @@
+_discussion_controller:                                                                                                                                                   
+    resource: "@CantigaDiscussionBundle/Controller/DiscussionController.php"                                                                                                      
+    type:     annotation
+

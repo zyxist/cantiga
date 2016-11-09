@@ -35,7 +35,7 @@ security:
             pattern:   ^/auth/login$
             anonymous: ~
         cantiga_area:
-            pattern:  ^(/$|/user/|/admin/|/project/|/group/|/area/|/auth/check|/auth/logout)
+            pattern:  ^(/$|/user/|/admin/|/project/|/s/|/group/|/area/|/auth/check|/auth/logout)
             provider: default_cantiga_provider
             form_login:
                 csrf_token_generator: security.csrf.token_manager
@@ -53,8 +53,8 @@ security:
     access_control:
         - { path: ^/auth/(login|check)$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/(pub|api)/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/(user|project|group|area), roles: ROLE_USER }
-        - { path: ^/(user|project|group|area)/, roles: ROLE_USER }
+        - { path: ^/(user|project|group|area|s), roles: ROLE_USER }
+        - { path: ^/(user|project|group|area|s)/, roles: ROLE_USER }
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/admin/, roles: ROLE_ADMIN }
         - { path: ^/$, roles: ROLE_USER }

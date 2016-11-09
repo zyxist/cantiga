@@ -1,4 +1,4 @@
-INSERT INTO `cantiga_entities` (`id`, `name`, `type`) VALUES(1, 'Fixture', 'Project');
+INSERT INTO `cantiga_entities` (`id`, `name`, `slug`, `type`) VALUES(1, 'Fixture', 'p1', 'Project');
 
 INSERT INTO `cantiga_projects` (`id`, `name`, `slug`, `description`, `parentProjectId`, `modules`, `areasAllowed`, `areaRegistrationAllowed`, `archived`, `createdAt`, `archivedAt`, `memberNum`, `entityId`) VALUES
    (1, 'Fixture', 'fixture12345', '', NULL, '', '1', '1', '0', '1234567890', NULL, '0', 1);

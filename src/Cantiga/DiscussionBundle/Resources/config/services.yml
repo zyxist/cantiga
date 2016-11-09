@@ -1,0 +1,16 @@
+imports:
+    - { resource: ../../../../../app/config/parameters.yml }
+
+services:
+    cantiga.discussion.adapter:
+        class:     Cantiga\DiscussionBundle\Database\DiscussionAdapter
+        arguments: ["@database_connection"]
+    cantiga.discussion.repo.channel:
+        class:     Cantiga\DiscussionBundle\Repository\ChannelRepository
+        arguments: ["@cantiga.discussion.adapter", "@cantiga.transaction"]
+    cantiga.discussion.workspace_listener:
+        class: Cantiga\DiscussionBundle\EventListener\WorkspaceListener
+        tags:
+            - { name: kernel.event_listener, event: cantiga.workspace.project, method: onProjectWorkspace }
+            - { name: kernel.event_listener, event: cantiga.workspace.group, method: onGroupWorkspace }
+            - { name: kernel.event_listener, event: cantiga.workspace.area, method: onAreaWorkspace }
