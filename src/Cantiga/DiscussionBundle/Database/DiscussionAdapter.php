@@ -36,13 +36,13 @@ class DiscussionAdapter
 		return $this->conn;
 	}
 
-	public function findVisibleChannels($projectId, array $entityIds, $visibilityUnit, $minLevel)
+	public function findVisibleChannels($projectId, array $entityIds, $visibilityUnit, $maxLevel)
 	{
 		return $this->conn->fetchAll('SELECT c.`id`, c.`name`, s.`lastPostTime`, c.`color`, c.`icon` '
 			. 'FROM `'.DiscussionTables::DISCUSSION_CHANNEL_TBL.'` c '
 			. 'LEFT JOIN `'.DiscussionTables::DISCUSSION_SUBCHANNEL_TBL.'` s ON (s.`channelId` = c.`id` AND s.`entityId` IN ('.implode(',', $entityIds).')) '
-			. 'WHERE c.`projectId` = :projectId AND c.`'.$visibilityUnit.'` = 1 AND c.`subchannelLevel` >= :minLevel '
-			. 'ORDER BY `name`', [':projectId' => $projectId, ':minLevel' => $minLevel]);
+			. 'WHERE c.`projectId` = :projectId AND c.`'.$visibilityUnit.'` = 1 AND c.`subchannelLevel` <= :maxLevel '
+			. 'ORDER BY `name`', [':projectId' => $projectId, ':maxLevel' => $maxLevel]);
 	}
 	
 	public function selectRecentPosts(int $subchannelId, int $postNumber, int $sinceTime): array
