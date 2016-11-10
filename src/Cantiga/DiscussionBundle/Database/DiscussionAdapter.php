@@ -35,33 +35,38 @@ class DiscussionAdapter
 	{
 		return $this->conn;
 	}
-	
-	public function findVisibleChannels($projectId, $visibilityUnit)
+
+	public function findVisibleChannels($projectId, array $entityIds, $visibilityUnit, $minLevel)
 	{
-		return $this->conn->fetchAll('SELECT `id`, `name`, `lastPostTime`, `color`, `icon` '
-			. 'FROM `'.DiscussionTables::DISCUSSION_CHANNEL_TBL.'` '
-			. 'WHERE `projectId` = :projectId AND `'.$visibilityUnit.'` = 1 '
-			. 'ORDER BY `name`', [':projectId' => $projectId]);
+		return $this->conn->fetchAll('SELECT c.`id`, c.`name`, s.`lastPostTime`, c.`color`, c.`icon` '
+			. 'FROM `'.DiscussionTables::DISCUSSION_CHANNEL_TBL.'` c '
+			. 'LEFT JOIN `'.DiscussionTables::DISCUSSION_SUBCHANNEL_TBL.'` s ON (s.`channelId` = c.`id` AND s.`entityId` IN ('.implode(',', $entityIds).')) '
+			. 'WHERE c.`projectId` = :projectId AND c.`'.$visibilityUnit.'` = 1 AND c.`subchannelLevel` >= :minLevel '
+			. 'ORDER BY `name`', [':projectId' => $projectId, ':minLevel' => $minLevel]);
 	}
 	
-	public function selectRecentPostsByEntity(int $channelId, int $entityId, int $postNumber, int $sinceTime): array
-	{
-		return $this->conn->fetchAll('SELECT p.`id`, p.`createdAt`, p.`content`, u.`id`, u.`name`, u.`avatar` '
-			. 'FROM `'.DiscussionTables::DISCUSSION_POST_TBL.'` p '
-			. 'INNER JOIN `'.CoreTables::USER_TBL.'` u ON u.`id` = p.`authorId` '
-			. 'WHERE p.`channelId` = :channelId AND p.`entityId` = :entityId AND p.`createdAt` < :sinceTime '
-			. 'ORDER BY `createdAt` DESC '
-			. 'LIMIT '.$postNumber, [':channelId' => $channelId, ':entityId' => $entityId, ':sinceTime' => $sinceTime]);
-	}
-	
-	public function selectRecentPosts(int $channelId, int $postNumber, int $sinceTime): array
+	public function selectRecentPosts(int $subchannelId, int $postNumber, int $sinceTime): array
 	{
 		return $this->conn->fetchAll('SELECT p.`id`, p.`createdAt`, p.`content`, u.`id` AS `userId`, u.`name` AS `userName`, u.`avatar` AS `avatar` '
 			. 'FROM `'.DiscussionTables::DISCUSSION_POST_TBL.'` p '
 			. 'INNER JOIN `'.CoreTables::USER_TBL.'` u ON u.`id` = p.`authorId` '
-			. 'WHERE p.`channelId` = :channelId AND p.`createdAt` < :sinceTime '
+			. 'WHERE p.`subchannelId` = :subchannelId AND p.`createdAt` < :sinceTime '
 			. 'ORDER BY `createdAt` DESC '
-			. 'LIMIT '.$postNumber, [':channelId' => $channelId, ':sinceTime' => $sinceTime]);
+			. 'LIMIT '.$postNumber, [':subchannelId' => $subchannelId, ':sinceTime' => $sinceTime]);
+	}
+	
+	public function fetchSubchannel(int $channelId, int $entityId)
+	{
+		return $this->conn->fetchAssoc('SELECT * FROM `'.DiscussionTables::DISCUSSION_SUBCHANNEL_TBL.'` '
+			. 'WHERE `channelId` = :channelId AND `entityId` = :entityId', [':channelId' => $channelId, ':entityId' => $entityId]);
+	}
+	
+	public function createSubchannel(int $channelId, int $entityId): array
+	{
+		$values = ['channelId' => $channelId, 'entityId' => $entityId, 'lastPostTime' => null];
+		$this->conn->insert(DiscussionTables::DISCUSSION_SUBCHANNEL_TBL, $values);
+		$values['id'] = $this->conn->lastInsertId();
+		return $values;
 	}
 	
 	public function publishPost($data): int
@@ -70,8 +75,8 @@ class DiscussionAdapter
 		return $this->conn->lastInsertId();
 	}
 	
-	public function updateChannelActivity($channelId, $time)
+	public function updateSubchannelActivity($subchannelId, $time)
 	{
-		$this->conn->update(DiscussionTables::DISCUSSION_CHANNEL_TBL, ['lastPostTime' => $time], ['id' => $channelId]);
+		$this->conn->update(DiscussionTables::DISCUSSION_SUBCHANNEL_TBL, ['lastPostTime' => $time], ['id' => $subchannelId]);
 	}
 }

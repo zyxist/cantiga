@@ -47,7 +47,7 @@ class Channel implements IdentifiableInterface, InsertableEntityInterface, Edita
 	private $projectPosting;
 	private $groupPosting;
 	private $areaPosting;
-	private $separate;
+	private $subchannelLevel;
 	private $enabled;
 	
 	public static function fetchByProject(Connection $conn, $id, Project $project): Channel
@@ -123,9 +123,9 @@ class Channel implements IdentifiableInterface, InsertableEntityInterface, Edita
 		return $this->areaPosting;
 	}
 
-	function getSeparate()
+	function getSubchannelLevel()
 	{
-		return $this->separate;
+		return $this->subchannelLevel;
 	}
 
 	function getEnabled()
@@ -185,9 +185,9 @@ class Channel implements IdentifiableInterface, InsertableEntityInterface, Edita
 		$this->areaPosting = (bool) $areaPosting;
 	}
 
-	function setSeparate($separate)
+	function setSubchannelLevel($subchannelLevel)
 	{
-		$this->separate = (bool) $separate;
+		$this->subchannelLevel = (int) $subchannelLevel;
 	}
 
 	function setEnabled($enabled)
@@ -208,11 +208,6 @@ class Channel implements IdentifiableInterface, InsertableEntityInterface, Edita
 	function getIcon()
 	{
 		return $this->icon;
-	}
-
-	function setLastPostTime($lastPostTime)
-	{
-		$this->lastPostTime = $lastPostTime;
 	}
 
 	function setColor($color)
@@ -263,48 +258,5 @@ class Channel implements IdentifiableInterface, InsertableEntityInterface, Edita
 	public function remove(Connection $conn)
 	{
 		$conn->delete(DiscussionTables::DISCUSSION_CHANNEL_TBL, DataMappers::pick($this, ['id']));
-	}
-	
-	public function publish(DiscussionAdapter $adapter, $content, User $user)
-	{
-		$time = time();
-		$adapter->publishPost([
-			'channelId' => $this->getId(),
-			'authorId' => $user->getId(),
-			'entityId' => 1,
-			'content' => $content,
-			'createdAt' => $time
-		]);
-		$adapter->updateChannelActivity($this->getId(), $time);
-	}
-	
-	public function getRecentPostsSince(DiscussionAdapter $adapter, MembershipEntityInterface $entity, int $postNumber, int $sinceTime): array
-	{
-		if ($this->getSeparate()) {
-			$recentPosts = $adapter->selectRecentPostsByEntity($this->getId(), $this->findHighestEntity($entity)->getId(), $postNumber, $sinceTime);
-		} else {
-			$recentPosts = $adapter->selectRecentPosts($this->getId(), $postNumber, $sinceTime);
-		}
-		return $this->groupByDay($recentPosts);
-	}
-	
-	private function groupByDay(array $recentPosts) {
-		$results = [];
-		$i = 0;
-		foreach ($recentPosts as $postInfo) {
-			$currentDay = floor($postInfo['createdAt'] / 86400);
-			if (sizeof($results) > 0 && $currentDay != $results[$i]['day']) {
-				$i++;
-			}
-			if (!isset($results[$i])) {
-				$results[$i] = [
-					'time' => $postInfo['createdAt'],
-					'day' => $currentDay,
-					'posts' => []
-				];
-			}
-			$results[$i]['posts'][] = $postInfo;
-		}
-		return $results;
 	}
 }

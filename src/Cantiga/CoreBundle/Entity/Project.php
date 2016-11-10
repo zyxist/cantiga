@@ -18,9 +18,11 @@
  */
 namespace Cantiga\CoreBundle\Entity;
 
+use Cantiga\Components\Hierarchy\HierarchicalInterface;
 use Cantiga\CoreBundle\Api\ExtensionPoints\ExtensionPointFilter;
 use Cantiga\CoreBundle\Api\ModuleAwareInterface;
 use Cantiga\CoreBundle\CoreTables;
+use Cantiga\CoreBundle\Entity\Traits\EntityTrait;
 use Cantiga\Metamodel\Capabilities\EditableEntityInterface;
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
 use Cantiga\Metamodel\Capabilities\InsertableEntityInterface;
@@ -34,9 +36,9 @@ use Cantiga\Metamodel\QueryClause;
 use Doctrine\DBAL\Connection;
 use PDO;
 
-class Project implements IdentifiableInterface, InsertableEntityInterface, EditableEntityInterface, MembershipEntityInterface
+class Project implements IdentifiableInterface, InsertableEntityInterface, EditableEntityInterface, MembershipEntityInterface, HierarchicalInterface
 {
-	use Traits\EntityTrait;
+	use EntityTrait;
 	
 	private $id;
 	private $name;
@@ -472,4 +474,23 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 		}
 		return false;
 	}
+
+	public function getElementOfType(int $type)
+	{
+		if ($type == HierarchicalInterface::TYPE_PROJECT) {
+			return $this;
+		}
+		return null;
+	}
+
+	public function getParents(): array
+	{
+		return [];
+	}
+
+	public function getRootElement(): HierarchicalInterface
+	{
+		return $this;
+	}
+
 }

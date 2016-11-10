@@ -18,12 +18,14 @@
  */
 namespace Cantiga\DiscussionBundle\Repository;
 
+use Cantiga\Components\Hierarchy\HierarchicalInterface;
 use Cantiga\CoreBundle\Entity\Area;
 use Cantiga\CoreBundle\Entity\Group;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Entity\User;
 use Cantiga\DiscussionBundle\Database\DiscussionAdapter;
 use Cantiga\DiscussionBundle\Entity\Channel;
+use Cantiga\DiscussionBundle\Entity\Subchannel;
 use Cantiga\Metamodel\Capabilities\MembershipEntityInterface;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Transaction;
@@ -57,7 +59,7 @@ class ChannelRepository
 	public function getItem(int $id): Channel
 	{
 		$this->transaction->requestTransaction();
-		$item = Channel::fetchByProject($this->adapter->getConnection(), $id, $this->project);		
+		$item = Channel::fetchByProject($this->adapter->getConnection(), $id, $this->project);
 		if(false === $item) {
 			$this->transaction->requestRollback();
 			throw new ItemNotFoundException('The specified item has not been found.', $id);
@@ -65,11 +67,27 @@ class ChannelRepository
 		return $item;
 	}
 	
-	public function publish(Channel $channel, $content, User $user)
+	public function getSubchannel(int $channelId, HierarchicalInterface $hierarchical): Subchannel
 	{
 		$this->transaction->requestTransaction();
 		try {
-			$channel->publish($this->adapter, $content, $user);			
+			$channel = Channel::fetchByProject($this->adapter->getConnection(), $channelId, $this->project);
+			$subchannel = Subchannel::lazilyFetchByChannel($this->adapter, $channel, $hierarchical);
+			if (empty($subchannel)) {
+				throw new ItemNotFoundException('The specified item has not been found.', $channelId); 
+			}
+			return $subchannel;
+		} catch (Exception $ex) {
+			$this->transaction->requestRollback();
+			throw $ex;
+		}
+	}
+	
+	public function publish(Subchannel $subchannel, $content, User $user)
+	{
+		$this->transaction->requestTransaction();
+		try {
+			$subchannel->publish($this->adapter, $content, $user);			
 		} catch (Exception $ex) {
 			$this->transaction->requestRollback();
 			throw $ex;
@@ -78,13 +96,22 @@ class ChannelRepository
 	
 	public function findWorkspaceChannels(MembershipEntityInterface $entity): array
 	{
+		$entityIds = [$entity->getEntity()->getId()];
 		if ($entity instanceof Project) {
 			$visibility = 'projectVisible';
+			$minLevel = 0;
 		} elseif ($entity instanceof Group) {
 			$visibility = 'groupVisible';
+			$minLevel = 1;
+			$entityIds[] = $entity->getProject()->getEntity()->getId();
 		} elseif ($entity instanceof Area) {
 			$visibility = 'areaVisible';
+			$minLevel = 2;
+			$entityIds[] = $entity->getProject()->getEntity()->getId();
+			if (null !== $entity->getGroup()) {
+				$entityIds[] = $entity->getGroup()->getEntity()->getId();
+			}
 		}
-		return $this->adapter->findVisibleChannels($this->project->getId(), $visibility);
+		return $this->adapter->findVisibleChannels($this->project->getId(), $entityIds, $visibility, $minLevel);
 	}
 }

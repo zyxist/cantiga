@@ -19,7 +19,7 @@
 namespace Cantiga\DiscussionBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Controller\WorkspaceController;
-use Cantiga\DiscussionBundle\Entity\Channel;
+use Cantiga\DiscussionBundle\Entity\Subchannel;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Exception\ModelException;
 use Cantiga\Metamodel\TimeFormatter;
@@ -62,21 +62,22 @@ class DiscussionController extends WorkspaceController
 		try {		
 			$repository = $this->get(self::REPOSITORY);
 			$repository->setProject($this->getActiveProject());
+			$hierarchical = $this->getMembership()->getItem();
 			
-			$channel = $repository->getItem((int) $id);
+			$subchannel = $repository->getSubchannel((int) $id, $hierarchical);
 			
-			if (!$channel->isVisible($this->getMembership()->getItem())) {
+			if (!$subchannel->getChannel()->isVisible($hierarchical)) {
 				return $this->error('We are sorry, but you do not have an access to this channel.');
 			}
 			
-			$recentPosts = $channel->getRecentPostsSince($this->get('cantiga.discussion.adapter'), $this->getMembership()->getItem(), self::SERVED_PORTION, time());
+			$recentPosts = $subchannel->getRecentPostsSince($this->get('cantiga.discussion.adapter'), self::SERVED_PORTION, time());
 
 			$this->breadcrumbs()
 				->workgroup('community')
 				->entryLink($this->trans('Discussion', [], 'pages'), 'discussion_index', ['slug' => $this->getSlug()])
-				->link($channel->getName(), 'discussion_channel', ['slug' => $this->getSlug(), 'id' => $channel->getId()]);
+				->link($subchannel->getChannel()->getName(), 'discussion_channel', ['slug' => $this->getSlug(), 'id' => $subchannel->getChannel()->getId()]);
 			return $this->render(self::TEMPLATE_LOCATION . 'discussion.html.twig', [
-				'channel' => $channel,
+				'channel' => $subchannel->getChannel(),
 				'discussion' => $recentPosts,
 				'user' => $this->getUser(),
 				'lastPostTime' => $this->findLastPostTime($recentPosts)
@@ -97,12 +98,13 @@ class DiscussionController extends WorkspaceController
 			$lastPostTime = $request->get('lastPostTime');
 			$repository = $this->get(self::REPOSITORY);
 			$repository->setProject($this->getActiveProject());
+			$hierarchical = $this->getMembership()->getItem();
 			
-			$channel = $repository->getItem((int) $id);
-			if (!$channel->isVisible($this->getMembership()->getItem())) {
+			$subchannel = $repository->getSubchannel((int) $id, $hierarchical);
+			if (!$subchannel->getChannel()->isVisible($hierarchical)) {
 				return new JsonResponse(['success' => 0]);
 			}
-			return $this->prepareRecentPosts($channel, $lastPostTime);
+			return $this->prepareRecentPosts($subchannel, $lastPostTime);
 		} catch(ItemNotFoundException $exception) {
 			return new JsonResponse(['success' => 0, 'error' => $exception->getMessage()]);
 		} catch(ModelException $exception) {
@@ -116,16 +118,16 @@ class DiscussionController extends WorkspaceController
 	public function ajaxPostAction($id, Request $request)
 	{
 		try {
-			$lastPostTime = $request->get('lastPostTime');
 			$repository = $this->get(self::REPOSITORY);
 			$repository->setProject($this->getActiveProject());
+			$hierarchical = $this->getMembership()->getItem();
 			
-			$channel = $repository->getItem((int) $id);
-			if (!$channel->isVisible($this->getMembership()->getItem())) {
+			$subchannel = $repository->getSubchannel((int) $id, $hierarchical);
+			if (!$subchannel->getChannel()->isVisible($hierarchical)) {
 				return new JsonResponse(['success' => 0]);
 			}
-			$repository->publish($channel, $request->get('content'), $this->getUser());
-			return $this->prepareRecentPosts($channel, time() + 86400);
+			$repository->publish($subchannel, $request->get('content'), $this->getUser());
+			return $this->prepareRecentPosts($subchannel, time() + 86400);
 		} catch(ItemNotFoundException $exception) {
 			return new JsonResponse(['success' => 0, 'error' => $exception->getMessage()]);
 		} catch(ModelException $exception) {
@@ -133,11 +135,10 @@ class DiscussionController extends WorkspaceController
 		}
 	}
 	
-	private function prepareRecentPosts(Channel $channel, int $lastPostTime): JsonResponse
+	private function prepareRecentPosts(Subchannel $subchannel, int $lastPostTime): JsonResponse
 	{
-		$recentPosts = $channel->getRecentPostsSince(
+		$recentPosts = $subchannel->getRecentPostsSince(
 			$this->get('cantiga.discussion.adapter'),
-			$this->getMembership()->getItem(),
 			self::SERVED_PORTION,
 			$lastPostTime);
 
@@ -176,6 +177,6 @@ class DiscussionController extends WorkspaceController
 	
 	private function error(string $message)
 	{
-		return $this->showPageWithError($controller->trans($message), $this->generateUrl('discussion_index', ['slug' => $this->getSlug()]));
+		return $this->showPageWithError($this->trans($message), 'discussion_index', ['slug' => $this->getSlug()]);
 	}
 }

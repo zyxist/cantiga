@@ -18,7 +18,9 @@
  */
 namespace Cantiga\CoreBundle\Entity;
 
+use Cantiga\Components\Hierarchy\HierarchicalInterface;
 use Cantiga\CoreBundle\CoreTables;
+use Cantiga\CoreBundle\Entity\Traits\EntityTrait;
 use Cantiga\Metamodel\Capabilities\EditableEntityInterface;
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
 use Cantiga\Metamodel\Capabilities\InsertableEntityInterface;
@@ -36,9 +38,9 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
-class Group implements IdentifiableInterface, InsertableEntityInterface, EditableEntityInterface, RemovableEntityInterface, MembershipEntityInterface
+class Group implements IdentifiableInterface, InsertableEntityInterface, EditableEntityInterface, RemovableEntityInterface, MembershipEntityInterface, HierarchicalInterface
 {
-	use Traits\EntityTrait;
+	use EntityTrait;
 	
 	private $id;
 	private $name;
@@ -403,5 +405,25 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 			return true;
 		}
 		return false;
+	}
+
+	public function getElementOfType(int $type)
+	{
+		if ($type == HierarchicalInterface::TYPE_PROJECT) {
+			return $this->getProject();
+		} elseif ($type == HierarchicalInterface::TYPE_GROUP) {
+			return $this;
+		}
+		return null;
+	}
+
+	public function getParents(): array
+	{
+		return [$this->project];
+	}
+
+	public function getRootElement(): HierarchicalInterface
+	{
+		return $this->getProject();
 	}
 }

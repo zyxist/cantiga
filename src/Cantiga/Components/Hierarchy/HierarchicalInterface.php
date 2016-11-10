@@ -16,11 +16,18 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-namespace Cantiga\DiscussionBundle;
+namespace Cantiga\Components\Hierarchy;
 
-class DiscussionTables
+use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
+
+interface HierarchicalInterface extends IdentifiableInterface
 {
-	const DISCUSSION_CHANNEL_TBL = 'cantiga_discussion_channels';
-	const DISCUSSION_SUBCHANNEL_TBL = 'cantiga_discussion_subchannels';
-	const DISCUSSION_POST_TBL = 'cantiga_discussion_posts';
+	const TYPE_PROJECT = 0;
+	const TYPE_GROUP = 1;
+	const TYPE_AREA = 2;
+	
+	public function getName();
+	public function getParents(): array;
+	public function getRootElement(): HierarchicalInterface;
+	public function getElementOfType(int $type);
 }

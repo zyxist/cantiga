@@ -81,7 +81,7 @@ class WorkspaceController extends CantigaController implements WorkspaceAwareInt
 	 */
 	public function getActiveProject()
 	{
-		return $this->tokenStorage->getToken()->getMembershipEntity();
+		return $this->tokenStorage->getToken()->getMembershipEntity()->getRootElement();
 	}
 	
 	/**

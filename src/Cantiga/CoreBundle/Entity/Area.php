@@ -18,7 +18,9 @@
  */
 namespace Cantiga\CoreBundle\Entity;
 
+use Cantiga\Components\Hierarchy\HierarchicalInterface;
 use Cantiga\CoreBundle\CoreTables;
+use Cantiga\CoreBundle\Entity\Traits\EntityTrait;
 use Cantiga\Metamodel\Capabilities\EditableEntityInterface;
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
 use Cantiga\Metamodel\Capabilities\InsertableEntityInterface;
@@ -35,9 +37,9 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
-class Area implements IdentifiableInterface, InsertableEntityInterface, EditableEntityInterface, MembershipEntityInterface
+class Area implements IdentifiableInterface, InsertableEntityInterface, EditableEntityInterface, MembershipEntityInterface, HierarchicalInterface
 {
-	use Traits\EntityTrait;
+	use EntityTrait;
 	
 	private $id;
 	private $name;
@@ -98,7 +100,7 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 	/**
 	 * @param Connection $conn
 	 * @param int $id
-	 * @param \Cantiga\CoreBundle\Entity\Project $project
+	 * @param Project $project
 	 * @return Area
 	 */
 	public static function fetchByProject(Connection $conn, $id, Project $project)
@@ -519,4 +521,28 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		}
 		return false;
 	}
+
+	public function getElementOfType(int $type)
+	{
+		if ($type == HierarchicalInterface::TYPE_PROJECT) {
+			return $this->getProject();
+		} elseif ($type == HierarchicalInterface::TYPE_GROUP) {
+			return $this->getGroup();
+		}
+		return $this;
+	}
+
+	public function getParents(): array
+	{
+		if (null !== $this->group) {
+			return [$this->project, $this->group];
+		}
+		return [$this->project];
+	}
+
+	public function getRootElement(): HierarchicalInterface
+	{
+		return $this->project;
+	}
+
 }
