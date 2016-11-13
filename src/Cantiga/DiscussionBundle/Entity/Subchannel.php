@@ -40,7 +40,7 @@ class Subchannel implements IdentifiableInterface
 	
 	public static function lazilyFetchByChannel(DiscussionAdapter $adapter, Channel $channel, HierarchicalInterface $entity)
 	{
-		$normalizedEntity = self::chooseEntity($channel->getSubchannelLevel(), $entity);
+		$normalizedEntity = self::chooseEntity($channel->getDiscussionGrouping(), $entity);
 		if (null !== $normalizedEntity) {
 			$data = $adapter->fetchSubchannel($channel->getId(), $normalizedEntity->getId());
 			if (empty($data)) {
@@ -54,9 +54,9 @@ class Subchannel implements IdentifiableInterface
 		return null;
 	}
 	
-	public static function chooseEntity(int $subchannelLevel, HierarchicalInterface $entity)
+	public static function chooseEntity(int $discussionGrouping, HierarchicalInterface $entity)
 	{
-		switch ($subchannelLevel) {
+		switch ($discussionGrouping) {
 			case 0:
 				$normalizedEntity = $entity->getElementOfType(HierarchicalInterface::TYPE_PROJECT);
 				break;

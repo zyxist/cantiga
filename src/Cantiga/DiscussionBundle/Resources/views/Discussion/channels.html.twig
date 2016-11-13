@@ -18,7 +18,7 @@
 					{% endif %}
 				</div>
 				<div class="icon">
-					<i class="ion ion-{{ channel.icon }}"></i>
+					<i class="fa {{ channel.icon }}"></i>
 				</div>
 				<a href="{{ spath('discussion_channel', {'id': channel.id} ) }}" class="small-box-footer">
 					{{ 'Enter' | trans([], 'general') }} <i class="fa fa-arrow-circle-right"></i>

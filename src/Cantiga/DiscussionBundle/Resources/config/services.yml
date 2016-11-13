@@ -8,6 +8,9 @@ services:
     cantiga.discussion.repo.channel:
         class:     Cantiga\DiscussionBundle\Repository\ChannelRepository
         arguments: ["@cantiga.discussion.adapter", "@cantiga.transaction"]
+    cantiga.discussion.repo.management:
+        class:     Cantiga\DiscussionBundle\Repository\ManagementRepository
+        arguments: ["@database_connection", "@cantiga.transaction"]
     cantiga.discussion.workspace_listener:
         class: Cantiga\DiscussionBundle\EventListener\WorkspaceListener
         tags:

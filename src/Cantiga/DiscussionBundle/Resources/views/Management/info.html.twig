@@ -1,0 +1,71 @@
+{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+
+{% block box_header %}
+	<h4>{{ 'Details: 0' | trans([item.name], 'general') }}</h4>
+{% endblock %}
+
+{% block box_body %}
+<table class="table table-hover">
+	<tbody>
+		<tr>
+			<td width="30%">{{ 'Name' | trans }}</td>
+			<td>{{ item.name }}</td>
+		</tr>
+		<tr>
+			<td width="30%">{{ 'Description' | trans }}</td>
+			<td>{{ item.description }}</td>
+		</tr>
+		<tr>
+			<td width="30%">{{ 'Background color' | trans([], 'discussion') }}</td>
+			<td>{{ item.color }}</td>
+		</tr>
+		<tr>
+			<td width="30%">{{ 'Icon' | trans([], 'discussion') }}</td>
+			<td><span class="fa {{ item.icon }}"></span></td>
+		</tr>
+		<tr>
+			<td width="30%">{{ 'Discussion grouping' | trans([], 'discussion') }}</td>
+			<td>{{ item.discussionGroupingAsText }}</td>
+		</tr>
+		<tr>
+			<td width="30%">{{ 'Enabled' | trans([], 'discussion') }}</td>
+			<td>{{ boolean_mark(item.enabled) }}</td>
+		</tr>
+	</tbody>
+</table>
+<h3>{{ 'Permissions' | trans([], 'discussion') }}</h3>
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			<th width="10%"></th>
+			<th width="30%">{{ 'Project' | trans }}</th>
+			<th width="30%">{{ 'Group' | trans }}</th>
+			<th width="30%">{{ 'Area' | trans }}</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>{{ 'View' | trans([], 'discussion') }}</td>
+			<td>{{ empty_boolean_mark(item.projectVisible) }}</td>
+			<td>{{ empty_boolean_mark(item.groupVisible) }}</td>
+			<td>{{ empty_boolean_mark(item.areaVisible) }}</td>
+		</tr>
+		<tr>
+			<td>{{ 'Post' | trans([], 'discussion') }}</td>
+			<td>{{ empty_boolean_mark(item.projectPosting) }}</td>
+			<td>{{ empty_boolean_mark(item.groupPosting) }}</td>
+			<td>{{ empty_boolean_mark(item.areaPosting) }}</td>
+		</tr>
+	</tbody>
+</table>
+{% endblock %}
+
+{% block box_footer %}
+<p>
+	<a href="{{ spath(indexPage) }}" class="btn btn-default btn-sm" role="button">{{ 'Back' | trans({}, 'general') }}</a>
+	<a href="{{ spath(editPage, {'id': item.id }) }}" class="btn btn-warning btn-sm" role="button">{{ 'Edit' | trans({}, 'general') }}</a>
+	{% if item.canRemove() %}
+	<a href="{{ spath(removePage, {'id': item.id }) }}" class="btn btn-danger btn-sm" role="button">{{ 'Remove' | trans({}, 'general') }}</a>
+	{% endif %}
+</p>
+{% endblock %}

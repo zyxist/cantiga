@@ -34,6 +34,10 @@ use Doctrine\DBAL\Connection;
 
 class Channel implements IdentifiableInterface, InsertableEntityInterface, EditableEntityInterface, RemovableEntityInterface
 {
+	const BY_PROJECT = 0;
+	const BY_GROUP = 1;
+	const BY_AREA = 2;
+	
 	private $id;
 	private $project;
 	private $name;
@@ -47,7 +51,7 @@ class Channel implements IdentifiableInterface, InsertableEntityInterface, Edita
 	private $projectPosting;
 	private $groupPosting;
 	private $areaPosting;
-	private $subchannelLevel;
+	private $discussionGrouping;
 	private $enabled;
 	
 	public static function fetchByProject(Connection $conn, $id, Project $project): Channel
@@ -78,57 +82,62 @@ class Channel implements IdentifiableInterface, InsertableEntityInterface, Edita
 		return $this->id;
 	}
 	
-	function getProject()
+	public function getProject()
 	{
 		return $this->project;
 	}
 
-	function getName()
+	public function getName()
 	{
 		return $this->name;
 	}
 
-	function getDescription()
+	public function getDescription()
 	{
 		return $this->description;
 	}
 
-	function getProjectVisible()
+	public function getProjectVisible()
 	{
 		return $this->projectVisible;
 	}
 
-	function getGroupVisible()
+	public function getGroupVisible()
 	{
 		return $this->groupVisible;
 	}
 
-	function getAreaVisible()
+	public function getAreaVisible()
 	{
 		return $this->areaVisible;
 	}
 
-	function getProjectPosting()
+	public function getProjectPosting()
 	{
 		return $this->projectPosting;
 	}
 
-	function getGroupPosting()
+	public function getGroupPosting()
 	{
 		return $this->groupPosting;
 	}
 
-	function getAreaPosting()
+	public function getAreaPosting()
 	{
 		return $this->areaPosting;
 	}
 
-	function getSubchannelLevel()
+	public function getDiscussionGrouping()
 	{
-		return $this->subchannelLevel;
+		return $this->discussionGrouping;
+	}
+	
+	public function getDiscussionGroupingAsText(): string
+	{
+		return self::discussionGroupingText($this->discussionGrouping);
 	}
 
-	function getEnabled()
+	public function getEnabled()
 	{
 		return $this->enabled;
 	}
@@ -140,82 +149,82 @@ class Channel implements IdentifiableInterface, InsertableEntityInterface, Edita
 		return $this;
 	}
 	
-	function setProject($project)
+	public function setProject($project)
 	{
 		$this->project = $project;
 	}
 
-	function setName($name)
+	public function setName($name)
 	{
 		$this->name = $name;
 	}
 
-	function setDescription($description)
+	public function setDescription($description)
 	{
 		$this->description = $description;
 	}
 
-	function setProjectVisible($projectVisible)
+	public function setProjectVisible($projectVisible)
 	{
 		$this->projectVisible = (bool) $projectVisible;
 	}
 
-	function setGroupVisible($groupVisible)
+	public function setGroupVisible($groupVisible)
 	{
 		$this->groupVisible = (bool) $groupVisible;
 	}
 
-	function setAreaVisible($areaVisible)
+	public function setAreaVisible($areaVisible)
 	{
 		$this->areaVisible = (bool) $areaVisible;
 	}
 
-	function setProjectPosting($projectPosting)
+	public function setProjectPosting($projectPosting)
 	{
 		$this->projectPosting = (bool) $projectPosting;
 	}
 
-	function setGroupPosting($groupPosting)
+	public function setGroupPosting($groupPosting)
 	{
 		$this->groupPosting = (bool) $groupPosting;
 	}
 
-	function setAreaPosting($areaPosting)
+	public function setAreaPosting($areaPosting)
 	{
 		$this->areaPosting = (bool) $areaPosting;
 	}
 
-	function setSubchannelLevel($subchannelLevel)
+	public function setDiscussionGrouping($discussionGrouping)
 	{
-		$this->subchannelLevel = (int) $subchannelLevel;
+		$this->discussionGrouping = (int) $discussionGrouping;
 	}
 
-	function setEnabled($enabled)
+	public function setEnabled($enabled)
 	{
 		$this->enabled = (bool) $enabled;
 	}
 	
-	function getLastPostTime()
+	public function getLastPostTime()
 	{
 		return $this->lastPostTime;
 	}
 
-	function getColor()
+	public function getColor()
 	{
 		return $this->color;
 	}
 
-	function getIcon()
+	public function getIcon()
 	{
 		return $this->icon;
 	}
 
-	function setColor($color)
+	public function setColor($color)
 	{
 		$this->color = $color;
 	}
 
-	function setIcon($icon)
+	public function setIcon($icon)
 	{
 		$this->icon = $icon;
 	}
@@ -241,7 +250,7 @@ class Channel implements IdentifiableInterface, InsertableEntityInterface, Edita
 	{
 		$conn->insert(
 			DiscussionTables::DISCUSSION_CHANNEL_TBL,
-			DataMappers::pick($this, ['project', 'name', 'description', 'color', 'icon', 'projectVisible', 'groupVisible', 'areaVisible', 'projectPosting', 'groupPosting', 'areaPosting', 'separate', 'enabled'])
+			DataMappers::pick($this, ['project', 'name', 'description', 'color', 'icon', 'projectVisible', 'groupVisible', 'areaVisible', 'projectPosting', 'groupPosting', 'areaPosting', 'discussionGrouping', 'enabled'])
 		);
 		return $conn->lastInsertId();
 	}
@@ -250,7 +259,7 @@ class Channel implements IdentifiableInterface, InsertableEntityInterface, Edita
 	{
 		return $conn->update(
 			DiscussionTables::DISCUSSION_CHANNEL_TBL,
-			DataMappers::pick($this, ['name', 'description', 'color', 'icon', 'projectVisible', 'groupVisible', 'areaVisible', 'projectPosting', 'groupPosting', 'areaPosting', 'separate', 'enabled']),
+			DataMappers::pick($this, ['name', 'description', 'color', 'icon', 'projectVisible', 'groupVisible', 'areaVisible', 'projectPosting', 'groupPosting', 'areaPosting', 'enabled']),
 			DataMappers::pick($this, ['id'])
 		);
 	}
@@ -258,5 +267,18 @@ class Channel implements IdentifiableInterface, InsertableEntityInterface, Edita
 	public function remove(Connection $conn)
 	{
 		$conn->delete(DiscussionTables::DISCUSSION_CHANNEL_TBL, DataMappers::pick($this, ['id']));
+	}
+	
+	public static function discussionGroupingText($grouping)
+	{
+		switch($grouping) {
+			case self::BY_PROJECT:
+				return 'none';
+			case self::BY_GROUP:
+				return 'by group';
+			case self::BY_AREA:
+				return 'by area';
+		}
+		return '';
 	}
 }

@@ -1,0 +1,63 @@
+{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+
+{% block box_header %}
+	<h4>{{ 'Edit: 0' | trans([item.name], 'general') }}</h4>
+{% endblock %}
+
+{% block box_body %}
+
+	{{ form_start(form) }}
+	<fieldset>
+		<legend>{{ 'Appearance' | trans([], 'discussion') }}</legend>
+		<div class="row">
+			<div class="col-md-6 col-xs-12">
+				{{ form_row(form.name) }}
+			</div>
+			<div class="col-md-6 col-xs-12">
+				{{ form_row(form.description) }}
+			</div>
+			<div class="col-md-6 col-xs-12">
+				{{ form_row(form.color) }}
+			</div>
+			<div class="col-md-6 col-xs-12">
+				{{ form_row(form.icon) }}
+			</div>
+		</div>
+	</fieldset>
+	<fieldset>
+		<legend>{{ 'Settings' | trans([], 'discussion') }}</legend>
+		<div class="row">
+			<div class="col-md-6 col-xs-12">
+				{{ form_row(form.enabled) }}
+			</div>
+		</div>
+	</fieldset>
+	<fieldset>
+		<legend>{{ 'Permissions' | trans([], 'discussion') }}</legend>
+		<div class="row">
+			<div class="col-md-4 col-xs-12">
+				{{ form_row(form.projectVisible) }}
+			</div>
+			<div class="col-md-4 col-xs-12">
+				{{ form_row(form.groupVisible) }}
+			</div>
+			<div class="col-md-4 col-xs-12">
+				{{ form_row(form.areaVisible) }}
+			</div>
+			<div class="col-md-4 col-xs-12">
+				{{ form_row(form.projectPosting) }}
+			</div>
+			<div class="col-md-4 col-xs-12">
+				{{ form_row(form.groupPosting) }}
+			</div>
+			<div class="col-md-4 col-xs-12">
+				{{ form_row(form.areaPosting) }}
+			</div>
+		</div>
+	</fieldset>
+	{{ form_end(form) }}
+{% endblock %}
+
+{% block javascripts_inline %}
+{{ use_icheck() }}
+{% endblock %}

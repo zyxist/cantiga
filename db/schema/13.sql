@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `cantiga_discussion_channels` (
   `projectPosting` int(11) NOT NULL,
   `groupPosting` int(11) NOT NULL,
   `areaPosting` int(11) NOT NULL,
-  `subchannelLevel` tinyint(2) NOT NULL,
+  `discussionGrouping` tinyint(2) NOT NULL,
   `enabled` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `projectId` (`projectId`)
