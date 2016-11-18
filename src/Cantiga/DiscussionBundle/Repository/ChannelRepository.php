@@ -67,12 +67,12 @@ class ChannelRepository
 		return $item;
 	}
 	
-	public function getSubchannel(int $channelId, HierarchicalInterface $hierarchical): Subchannel
+	public function getSubchannel(int $channelId, HierarchicalInterface $context): Subchannel
 	{
 		$this->transaction->requestTransaction();
 		try {
 			$channel = Channel::fetchByProject($this->adapter->getConnection(), $channelId, $this->project);
-			$subchannel = Subchannel::lazilyFetchByChannel($this->adapter, $channel, $hierarchical);
+			$subchannel = Subchannel::lazilyFetchByChannel($this->adapter, $channel, $context);
 			if (empty($subchannel)) {
 				throw new ItemNotFoundException('The specified item has not been found.', $channelId); 
 			}
@@ -83,11 +83,11 @@ class ChannelRepository
 		}
 	}
 	
-	public function publish(Subchannel $subchannel, $content, User $user)
+	public function publish(Subchannel $subchannel, $content, User $user, HierarchicalInterface $context)
 	{
 		$this->transaction->requestTransaction();
 		try {
-			$subchannel->publish($this->adapter, $content, $user);			
+			return $subchannel->publish($this->adapter, $content, $user, $context);			
 		} catch (Exception $ex) {
 			$this->transaction->requestRollback();
 			throw $ex;

@@ -10,23 +10,14 @@
 
 {% block page_content %}
 <p>{{ channel.description }}</p>
-<div class="row">
-	<div class="col-xs-12 col-lg-12">
-		<form role="form" id="discussion-form">
-			<div class="box">
-				<div class="box-body">
-					<div class="form-group">
-						<label>{{ 'Say something...' | trans([], 'discussion') }}</label>
-						<textarea id="discussion-content" class="form-control" cols="60" rows="6"></textarea>
-					</div>
-				</div>
-				<div class="box-footer">
-					<button type="submit" class="btn btn-info pull-left">{{ 'Send' | trans([], 'general') }}</button>
-				</div>
-			</div>
-		</form>
-	</div>
-</div>
+{% if canPost %}
+<form role="form" id="discussion-form" style="margin-bottom: 5px; overflow: hidden; ">
+	<textarea id="discussion-content" class="form-control" style="width: 100%" rows="6"></textarea>
+	<p><button type="submit" class="btn btn-info pull-left" style="width: 100%">{{ 'Send' | trans([], 'general') }}</button></p>
+</form>
+{% else %}
+<p class="text-muted">{{ 'ReadOnlyDiscussionText' | trans([], 'discussion') }}</p>
+{% endif %}
 <div class="row">
 	<div class="col-xs-12">
 		<ul class="timeline" id="discussion-timeline">
@@ -81,6 +72,7 @@
 				discussionForm: '#discussion-form',
 				discussionFeedUrl: '{{ spath('discussion_api_feed', {'id': channel.id} ) }}',
 				discussionPostUrl: '{{ spath('discussion_api_post', {'id': channel.id} ) }}',
+				canPost: {{ canPost }},
 				avatars: '{{ asset('ph') }}',
 				lastPostTime: {{ lastPostTime }}
 			});

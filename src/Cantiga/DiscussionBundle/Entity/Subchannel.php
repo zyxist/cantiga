@@ -34,6 +34,9 @@ use Cantiga\Metamodel\DataMappers;
 class Subchannel implements IdentifiableInterface
 {
 	private $id;
+	/**
+	 * @var Channel
+	 */
 	private $channel;
 	private $entity;
 	private $lastPostTime;
@@ -120,16 +123,20 @@ class Subchannel implements IdentifiableInterface
 		$this->lastPostTime = $lastPostTime;
 	}
 	
-	public function publish(DiscussionAdapter $adapter, $content, User $user)
+	public function publish(DiscussionAdapter $adapter, $content, User $user, HierarchicalInterface $context)
 	{
-		$time = time();
-		$adapter->publishPost([
-			'subchannelId' => $this->getId(),
-			'authorId' => $user->getId(),
-			'content' => $content,
-			'createdAt' => $time
-		]);
-		$adapter->updateSubchannelActivity($this->getId(), $time);
+		if ($this->channel->canPost($context)) {
+			$time = time();
+			$adapter->publishPost([
+				'subchannelId' => $this->getId(),
+				'authorId' => $user->getId(),
+				'content' => $content,
+				'createdAt' => $time
+			]);
+			$adapter->updateSubchannelActivity($this->getId(), $time);
+			return true;
+		}
+		return false;
 	}
 	
 	public function getRecentPostsSince(DiscussionAdapter $adapter, int $postNumber, int $sinceTime): array

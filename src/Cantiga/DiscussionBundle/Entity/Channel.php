@@ -18,16 +18,14 @@
  */
 namespace Cantiga\DiscussionBundle\Entity;
 
+use Cantiga\Components\Hierarchy\HierarchicalInterface;
 use Cantiga\CoreBundle\Entity\Area;
 use Cantiga\CoreBundle\Entity\Group;
 use Cantiga\CoreBundle\Entity\Project;
-use Cantiga\CoreBundle\Entity\User;
-use Cantiga\DiscussionBundle\Database\DiscussionAdapter;
 use Cantiga\DiscussionBundle\DiscussionTables;
 use Cantiga\Metamodel\Capabilities\EditableEntityInterface;
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
 use Cantiga\Metamodel\Capabilities\InsertableEntityInterface;
-use Cantiga\Metamodel\Capabilities\MembershipEntityInterface;
 use Cantiga\Metamodel\Capabilities\RemovableEntityInterface;
 use Cantiga\Metamodel\DataMappers;
 use Doctrine\DBAL\Connection;
@@ -229,7 +227,7 @@ class Channel implements IdentifiableInterface, InsertableEntityInterface, Edita
 		$this->icon = $icon;
 	}
 	
-	public function isVisible(MembershipEntityInterface $entity): bool
+	public function isVisible(HierarchicalInterface $entity): bool
 	{
 		if ($entity instanceof Project) {
 			return (bool) $this->projectVisible;
@@ -237,6 +235,18 @@ class Channel implements IdentifiableInterface, InsertableEntityInterface, Edita
 			return (bool) $this->groupVisible;
 		} elseif ($entity instanceof Area) {
 			return (bool) $this->areaVisible;
+		}
+		return false;
+	}
+	
+	public function canPost(HierarchicalInterface $entity): bool
+	{
+		if ($entity instanceof Project) {
+			return (bool) $this->projectPosting;
+		} elseif ($entity instanceof Group) {
+			return (bool) $this->groupPosting;
+		} elseif ($entity instanceof Area) {
+			return (bool) $this->areaPosting;
 		}
 		return false;
 	}

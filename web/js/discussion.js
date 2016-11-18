@@ -43,21 +43,23 @@
 			renderMessages(data, discussionBody);
 		}
 
-		$(opts['discussionForm']).submit(function(event) {
-			$.ajax({
-				url: opts['discussionPostUrl'],
-				method: 'post',
-				dataType: "json",
-				data: {
-					'content': $(opts['discussionForm']).find('#discussion-content').summernote('code')
-				},
-				success: function (data) {
-					$(opts['discussionForm']).find('#discussion-content').summernote('reset');
-					render(data);
-				}
+		if (opts['canPost']) {
+			$(opts['discussionForm']).submit(function(event) {
+				$.ajax({
+					url: opts['discussionPostUrl'],
+					method: 'post',
+					dataType: "json",
+					data: {
+						'content': $(opts['discussionForm']).find('#discussion-content').summernote('code')
+					},
+					success: function (data) {
+						$(opts['discussionForm']).find('#discussion-content').summernote('reset');
+						render(data);
+					}
+				});
+				event.preventDefault();
 			});
-			event.preventDefault();
-		});
+		}
 		$(opts['discussionMore']).click(function(event) {
 			$.ajax({
 				url: opts['discussionFeedUrl'],
@@ -82,6 +84,7 @@
 		discussionForm: null,
 		discussionFeedUrl: null,
 		discussionPostUrl: null,
+		canPost: 1,
 		avatars: null,
 		lastPostTime: null,
 	};

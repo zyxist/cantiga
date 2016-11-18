@@ -38,6 +38,11 @@ class DiscussionController extends WorkspaceController
 	const REPOSITORY = 'cantiga.discussion.repo.channel';
 	const SERVED_PORTION = 20;
 	
+	const CODE_FAILURE = 0;
+	const CODE_SUCCESS = 1;
+	const CODE_END = 2;
+	const CODE_NOT_PUBLISHED = 3;
+	
 	/**
 	 * @Route("/index", name="discussion_index")
 	 */
@@ -79,6 +84,7 @@ class DiscussionController extends WorkspaceController
 			return $this->render(self::TEMPLATE_LOCATION . 'discussion.html.twig', [
 				'channel' => $subchannel->getChannel(),
 				'discussion' => $recentPosts,
+				'canPost' => $subchannel->getChannel()->canPost($hierarchical) ? 1 : 0,
 				'user' => $this->getUser(),
 				'lastPostTime' => $this->findLastPostTime($recentPosts)
 			]);
@@ -102,7 +108,7 @@ class DiscussionController extends WorkspaceController
 			
 			$subchannel = $repository->getSubchannel((int) $id, $hierarchical);
 			if (!$subchannel->getChannel()->isVisible($hierarchical)) {
-				return new JsonResponse(['success' => 0]);
+				return new JsonResponse(['success' => self::CODE_FAILURE]);
 			}
 			return $this->prepareRecentPosts($subchannel, $lastPostTime);
 		} catch(ItemNotFoundException $exception) {
@@ -124,9 +130,11 @@ class DiscussionController extends WorkspaceController
 			
 			$subchannel = $repository->getSubchannel((int) $id, $hierarchical);
 			if (!$subchannel->getChannel()->isVisible($hierarchical)) {
-				return new JsonResponse(['success' => 0]);
+				return new JsonResponse(['success' => self::CODE_FAILURE]);
 			}
-			$repository->publish($subchannel, $request->get('content'), $this->getUser());
+			if (!$repository->publish($subchannel, $request->get('content'), $this->getUser(), $hierarchical)) {
+				return new JsonResponse(['success' => self::CODE_FAILURE]);
+			}
 			return $this->prepareRecentPosts($subchannel, time() + 86400);
 		} catch(ItemNotFoundException $exception) {
 			return new JsonResponse(['success' => 0, 'error' => $exception->getMessage()]);
@@ -143,10 +151,10 @@ class DiscussionController extends WorkspaceController
 			$lastPostTime);
 
 		if (sizeof($recentPosts) == 0) {
-			return new JsonResponse(['success' => 2]);
+			return new JsonResponse(['success' => self::CODE_END]);
 		}
 		return new JsonResponse([
-			'success' => 1,
+			'success' => self::CODE_SUCCESS,
 			'days' => $this->formatResults($recentPosts)
 		]);
 	}
