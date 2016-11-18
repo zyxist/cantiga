@@ -17,7 +17,7 @@
 		</tr>
 		<tr>
 			<td width="30%">{{ 'Background color' | trans([], 'discussion') }}</td>
-			<td>{{ item.color }}</td>
+			<td><span class="label bg-{{item.color}}">{{ 'Sample' | trans([], 'discussion') }}</span></td>
 		</tr>
 		<tr>
 			<td width="30%">{{ 'Icon' | trans([], 'discussion') }}</td>
@@ -25,7 +25,7 @@
 		</tr>
 		<tr>
 			<td width="30%">{{ 'Discussion grouping' | trans([], 'discussion') }}</td>
-			<td>{{ item.discussionGroupingAsText }}</td>
+			<td>{{ item.discussionGroupingAsText | trans([], 'discussion') }}</td>
 		</tr>
 		<tr>
 			<td width="30%">{{ 'Enabled' | trans([], 'discussion') }}</td>

@@ -28,7 +28,7 @@ class WorkspaceListener
 		$workspace = $event->getWorkspace();
 		if ($workspace->getProject()->supportsModule('discussion')) {
 			$workspace->addWorkItem('community', new WorkItem('discussion_index', 'Discussion'));
-			$workspace->addWorkItem('manage', new WorkItem('manage_discussion_index', 'Channels', 'ROLE_PROJECT_ADMIN'));
+			$workspace->addWorkItem('manage', new WorkItem('manage_discussion_index', 'Discussion channels', 'ROLE_PROJECT_ADMIN'));
 		}
 	}
 	

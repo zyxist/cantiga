@@ -39,6 +39,7 @@ class ChannelForm extends AbstractType
 	{
 		$resolver->setDefined(['isNew']);
 		$resolver->setRequired(['isNew']);
+		$resolver->setDefault('translation_domain', 'discussion');
 	}
 	
 	public function buildForm(FormBuilderInterface $builder, array $options)

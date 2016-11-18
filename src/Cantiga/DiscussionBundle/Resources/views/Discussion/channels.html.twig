@@ -1,7 +1,11 @@
 {% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
 
 {% block page_title %}
-	{{ 'Discussion' | trans}}
+	{{ 'Discussion' | trans([], 'pages') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ 'Choose a discussion channel' | trans([], 'pages') }}
 {% endblock %}
 
 {% block page_content %}

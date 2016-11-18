@@ -52,7 +52,7 @@ class ManagementController extends ProjectPageController
 		$this->crudInfo = $this->newCrudInfo($repository)
 			->setTemplateLocation('CantigaDiscussionBundle:Management:')
 			->setItemNameProperty('name')
-			->setPageTitle('Channels')
+			->setPageTitle('Discussion channels')
 			->setPageSubtitle('Manage the discussion channels')
 			->setIndexPage('manage_discussion_index')
 			->setInfoPage('manage_discussion_info')
@@ -66,7 +66,7 @@ class ManagementController extends ProjectPageController
 
 		$this->breadcrumbs()
 			->workgroup('manage')
-			->entryLink($this->trans('Channels', [], 'pages'), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
+			->entryLink($this->trans('Discussion channels', [], 'pages'), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
 	}
 	
 	/**
