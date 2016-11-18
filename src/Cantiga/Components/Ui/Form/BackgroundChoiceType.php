@@ -34,9 +34,9 @@ class BackgroundChoiceType extends AbstractType
 			'choices' => array(
 				'Blue' => 'primary',
 				'Light blue' => 'info',
-				'Green' => 'success',
+				'Green' => 'green',
 				'Orange' => 'orange',
-				'Red' => 'danger',
+				'Red' => 'red',
 				'Gray' => 'gray',
 				'Navy' => 'navy',
 				'Teal' => 'teal',
