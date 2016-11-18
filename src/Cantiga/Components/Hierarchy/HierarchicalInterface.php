@@ -27,6 +27,7 @@ interface HierarchicalInterface extends IdentifiableInterface
 	const TYPE_AREA = 2;
 	
 	public function getName();
+	public function getTypeName(): string;
 	public function getParents(): array;
 	public function getRootElement(): HierarchicalInterface;
 	public function getElementOfType(int $type);

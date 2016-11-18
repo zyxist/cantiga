@@ -180,6 +180,11 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 		return ['parentProject'];
 	}
 	
+	public function getTypeName():string
+	{
+		return 'Project';
+	}
+	
 	public function getId()
 	{
 		return $this->id;

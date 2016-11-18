@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
+ * This file is part of Cantiga Project. Copyright 2016 Tomasz Jedrzejewski.
  *
  * Cantiga Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
  */
 namespace Cantiga\CoreBundle\Block;
 
+use Cantiga\CoreBundle\Api\Workspace;
 use Cantiga\CoreBundle\Api\Workspaces;
 use Cantiga\CoreBundle\Api\WorkspaceSourceInterface;
 use Cantiga\CoreBundle\Event\CantigaEvents;
@@ -28,14 +29,14 @@ use Cantiga\CoreBundle\Event\ShowTasksEvent;
 use Cantiga\CoreBundle\Event\ShowUserEvent;
 use Cantiga\CoreBundle\Event\ShowWorkspacesEvent;
 use Cantiga\CoreBundle\Event\WorkspaceEvent;
+use Cantiga\Metamodel\MembershipToken;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Twig_Environment;
 
 /**
  * Displays various UI gadgets related to Cantiga functionality.
- *
- * @author Tomasz Jędrzejewski
  */
 class UiBlock
 {
@@ -48,6 +49,10 @@ class UiBlock
 	 */
 	private $dispatcher;
 	/**
+	 * @var TokenStorageInterface
+	 */
+	private $tokenStorage;
+	/**
 	 * @var Twig_Environment
 	 */
 	private $tpl;
@@ -56,11 +61,12 @@ class UiBlock
 	 */
 	private $translator;
 	
-	public function __construct(WorkspaceSourceInterface $wsi, EventDispatcherInterface $eventDispatcher, Twig_Environment $twig, TranslatorInterface $translator)
+	public function __construct(WorkspaceSourceInterface $wsi, EventDispatcherInterface $eventDispatcher, Twig_Environment $twig, TokenStorageInterface $tokenStorage, TranslatorInterface $translator)
 	{
 		$this->workspaceSource = $wsi;
 		$this->dispatcher = $eventDispatcher;
 		$this->translator = $translator;
+		$this->tokenStorage = $tokenStorage;
 		$this->tpl = $twig;
 	}
 	
@@ -87,7 +93,7 @@ class UiBlock
 			'CantigaCoreBundle:Components:project-list.html.twig', array(
 			'hasProjects' => $listEvent->hasProjects(),
 			'active' => ($listEvent->hasActiveProject()
-				? $listEvent->getActiveProject()->getName()
+				? $this->translator->trans($listEvent->getActiveProject()->getTranslationKey(), [$listEvent->getActiveProject()->getName()])
 				: $this->translator->trans($workspace['title'], [], 'pages')),
 			'projects' => $listEvent->getProjects(),
 			'workspaces' => $workspaceEvent->getWorkspaces()
@@ -138,6 +144,7 @@ class UiBlock
 			'workspaceInfo' => Workspaces::get($workspace->getKey()),
 			'currentWorkgroup' => $event->getCurrentWorkgroup(),
 			'currentPage' => $event->getCurrentPage(),
+			'workspaceName' => $this->createFullWorkspaceName($workspace),
 		));
 	}
 	
@@ -149,5 +156,16 @@ class UiBlock
 			'hasBreadcrumbs' => $event->hasBreadcrumbs(),
 			'breadcrumbs' => $event->getBreadcrumbs()
 		));
+	}
+	
+	private function createFullWorkspaceName(Workspace $workspace): string
+	{
+		$token = $this->tokenStorage->getToken();
+		if ($token instanceof MembershipToken) {
+			$entity = $token->getMembership()->getItem();
+			return $this->translator->trans($entity->getTypeName().'Nominative: 0', [$entity->getName()]);
+		} else {
+			return $this->translator->trans(Workspaces::get($workspace->getKey())['title'], [], 'pages');
+		}
 	}
 }

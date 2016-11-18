@@ -232,9 +232,15 @@ class WorkspaceListener implements WorkspaceSourceInterface
 	public function onProjectList(ShowProjectsEvent $projects)
 	{
 		$loaders = $this->extensionPoints->findImplementations(CoreExtensions::MEMBERSHIP_LOADER, new ExtensionPointFilter());
-		$user = $this->tokenStorage->getToken()->getUser();
+		$token = $this->tokenStorage->getToken();
+		$user = $token->getUser();
 		foreach ($loaders as $loader) {
 			foreach ($loader->loadProjectRepresentations($user) as $proj) {
+				if ($token instanceof MembershipToken) {
+					if ($token->getMembership()->getItem()->getSlug() == $proj->getSlug()) {
+						$projects->setActiveProject($proj);
+					}
+				}
 				$projects->addProject($proj);
 			}
 		}

@@ -213,6 +213,11 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		$metadata->addPropertyConstraint('name', new Length(array('min' => 2, 'max' => 100)));
 	}
 	
+	public function getTypeName():string
+	{
+		return 'Area';
+	}
+	
 	public function getId()
 	{
 		return $this->id;

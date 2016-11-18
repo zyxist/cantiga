@@ -148,6 +148,11 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 		$metadata->addPropertyConstraint('notes', new Length(array('max' => 500)));
 	}
 	
+	public function getTypeName():string
+	{
+		return 'Group';
+	}
+	
 	public function getId()
 	{
 		return $this->id;

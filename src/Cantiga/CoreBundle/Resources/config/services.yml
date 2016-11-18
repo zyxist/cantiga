@@ -84,7 +84,7 @@ services:
         arguments: ["@twig", "%kernel.debug%"]
     cantiga.core.block.ui:
         class:     "%ui_block.class%"
-        arguments: ["@cantiga.workspace_listener", "@event_dispatcher", "@twig", "@translator"]
+        arguments: ["@cantiga.workspace_listener", "@event_dispatcher", "@twig", "@security.token_storage", "@translator"]
     cantiga.core.membership.project:
         class:     "%project_membership_loader.class%"
         arguments: ["@database_connection", "@cantiga.roles"]
