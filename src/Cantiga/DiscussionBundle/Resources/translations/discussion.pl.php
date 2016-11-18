@@ -30,4 +30,7 @@ return [
 	'Appearance' => 'Wygląd',
 	'Settings' => 'Ustawienia',
 	'Save' => 'Zapisz',
+	
+	'EnabledDiscussionText' => 'Na nieaktywnych kanałach nie można nic pisać, a one same pojawiają się na końcu listy kanałów.',
+	'Archived discussion' => 'Zarchiwizowana dyskusja',
 ];

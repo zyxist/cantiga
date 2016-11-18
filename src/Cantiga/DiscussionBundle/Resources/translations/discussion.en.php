@@ -30,4 +30,7 @@ return [
 	'Appearance' => 'Appearance',
 	'Settings' => 'Settings',
 	'Save' => 'Save',
+	
+	'EnabledDiscussionText' => 'Users cannot post in disabled channels, and they appear at the end of the channel list.',
+	'Archived discussion' => 'Archived discussion',
 ];

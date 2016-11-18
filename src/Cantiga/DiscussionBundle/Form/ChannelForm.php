@@ -63,7 +63,7 @@ class ChannelForm extends AbstractType
 			], 'attr' => ['help_text' => 'Create separate discussions for each group or area within the channel.']]);
 		}
 		$builder
-			->add('enabled', BooleanType::class, ['label' => 'Enabled?'])
+			->add('enabled', BooleanType::class, ['label' => 'Enabled?', 'attr' => ['help_text' => 'EnabledDiscussionText']])
 			->add('save', SubmitType::class, ['label' => 'Save']);
 	}
 

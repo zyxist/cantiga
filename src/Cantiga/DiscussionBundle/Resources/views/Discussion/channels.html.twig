@@ -15,10 +15,14 @@
 			<div class="small-box bg-{{ channel.color }}">
 				<div class="inner">
 					<h3>{{ channel.name }}</h3>
+					{% if channel.enabled %}
 					{% if channel.lastPostTime %}
 					<p>{{ 'Activity: 0' | trans([ ago(channel.lastPostTime) ], 'discussion') }}</p>
 					{% else %}
 					<p>{{ 'No activity' | trans([], 'discussion') }}</p>
+					{% endif %}
+					{% else %}
+					<p>{{ 'Archived discussion' | trans([], 'discussion') }}</p>
 					{% endif %}
 				</div>
 				<div class="icon">

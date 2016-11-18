@@ -241,6 +241,9 @@ class Channel implements IdentifiableInterface, InsertableEntityInterface, Edita
 	
 	public function canPost(HierarchicalInterface $entity): bool
 	{
+		if (!$this->enabled) {
+			return false;
+		}
 		if ($entity instanceof Project) {
 			return (bool) $this->projectPosting;
 		} elseif ($entity instanceof Group) {
