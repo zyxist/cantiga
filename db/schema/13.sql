@@ -40,6 +40,26 @@ CREATE TABLE IF NOT EXISTS `cantiga_discussion_subchannels` (
   KEY `entityId` (`entityId`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
+CREATE TABLE IF NOT EXISTS `cantiga_contacts` (
+  `userId` int(11) NOT NULL,
+  `projectId` int(11) NOT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `telephone` varchar(30) DEFAULT NULL,
+  `notes` varchar(250) DEFAULT NULL,
+  PRIMARY KEY (`userId`,`projectId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE `cantiga_user_profiles`
+  DROP `telephone`,
+  DROP `publicMail`,
+  DROP `notes`,
+  DROP `privShowTelephone`,
+  DROP `privShowPublicMail`,
+  DROP `privShowNotes`;
+
+ALTER TABLE `cantiga_contacts` ADD FOREIGN KEY (`userId`) REFERENCES  `cantiga_fresh`.`cantiga_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE ;
+ALTER TABLE `cantiga_contacts` ADD FOREIGN KEY (`projectId`) REFERENCES  `cantiga_fresh`.`cantiga_projects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE ;
+
 ALTER TABLE `cantiga_discussion_channels`
   ADD CONSTRAINT `cantiga_discussion_channels_ibfk_1` FOREIGN KEY (`projectId`) REFERENCES `cantiga_projects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 

@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
+ * This file is part of Cantiga Project. Copyright 2016 Tomasz Jedrzejewski.
  *
  * Cantiga Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,8 +42,6 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 /**
  * Represents an account of the user. Note that in the database, the account it split into two tables.
  * This entity masks this separation.
- *
- * @author Tomasz Jędrzejewski
  */
 class User implements UserInterface, IdentifiableInterface, InsertableEntityInterface, EditableEntityInterface, RemovableEntityInterface
 {
@@ -63,16 +61,8 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 	private $areaNum;
 
 	private $location;
-	private $telephone;
-	private $publicMail;
-	private $notes;
-
 	private $settingsLanguage;
 	private $settingsTimezone;
-
-	private $privShowTelephone = 0;
-	private $privShowPublicMail = 0;
-	private $privShowNotes = 0;
 	
 	private $afterLogin = null;
 	/**
@@ -321,42 +311,9 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 		return $this->location;
 	}
 
-	public function getTelephone()
-	{
-		return $this->telephone;
-	}
-
-	public function getPublicMail()
-	{
-		return $this->publicMail;
-	}
-
-	public function getNotes()
-	{
-		return $this->notes;
-	}
-
 	public function setLocation($location)
 	{
 		$this->location = $location;
-		return $this;
-	}
-
-	public function setTelephone($telephone)
-	{
-		$this->telephone = $telephone;
-		return $this;
-	}
-
-	public function setPublicMail($publicMail)
-	{
-		$this->publicMail = $publicMail;
-		return $this;
-	}
-
-	public function setNotes($notes)
-	{
-		$this->notes = $notes;
 		return $this;
 	}
 	
@@ -370,21 +327,6 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 		return $this->settingsTimezone;
 	}
 
-	public function getPrivShowTelephone()
-	{
-		return $this->privShowTelephone;
-	}
-
-	public function getPrivShowPublicMail()
-	{
-		return $this->privShowPublicMail;
-	}
-
-	public function getPrivShowNotes()
-	{
-		return $this->privShowNotes;
-	}
-
 	public function setSettingsLanguage($settingsLanguage)
 	{
 		$this->settingsLanguage = $settingsLanguage;
@@ -394,24 +336,6 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 	public function setSettingsTimezone($settingsTimezone)
 	{
 		$this->settingsTimezone = $settingsTimezone;
-		return $this;
-	}
-
-	public function setPrivShowTelephone($privShowTelephone)
-	{
-		$this->privShowTelephone = $privShowTelephone;
-		return $this;
-	}
-
-	public function setPrivShowPublicMail($privShowPublicMail)
-	{
-		$this->privShowPublicMail = $privShowPublicMail;
-		return $this;
-	}
-
-	public function setPrivShowNotes($privShowNotes)
-	{
-		$this->privShowNotes = $privShowNotes;
 		return $this;
 	}
 	
@@ -542,7 +466,7 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 			DataMappers::pick($this, ['login', 'name', 'email', 'password', 'salt', 'active', 'admin', 'avatar', 'registeredAt'])
 		);
 		$id = $conn->lastInsertId();
-		$data = DataMappers::pick($this, ['location', 'telephone', 'publicMail', 'notes', 'settingsLanguage', 'privShowTelephone', 'privShowPublicMail', 'privShowNotes']);
+		$data = DataMappers::pick($this, ['location', 'settingsLanguage', 'settingsTimezone']);
 		$data['userId'] = $id;
 		$conn->insert(CoreTables::USER_PROFILE_TBL, $data);
 		return $this->id = $id;
@@ -570,7 +494,7 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 	{
 		$conn->update(
 			CoreTables::USER_PROFILE_TBL,
-			DataMappers::pick($this, ['location', 'telephone', 'publicMail', 'notes', 'privShowTelephone', 'privShowPublicMail', 'privShowNotes']),
+			DataMappers::pick($this, ['location']),
 			['userId' => $this->getId()]
 		);
 	}
@@ -628,19 +552,5 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 			return $setting == 1 || $setting == 3 || $setting == 5 || $setting == 7;
 		}
 		return false;
-	}
-	
-	public static function getPrivacySettings()
-	{
-		return [
-			0 => 'Do not show',
-			1 => 'Only to other area members',
-			2 => 'Only to other group members',
-			3 => 'To group members and area members',
-			4 => 'Only to other project members',
-			5 => 'To project and area members',
-			6 => 'To project and group members',
-			7 => 'To project, group and area members'
-		];
 	}
 }

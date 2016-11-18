@@ -25,23 +25,6 @@
                 <div class="box-body">
 					<strong><i class="fa fa-map-marker margin-r-5"></i> {{ 'Location' | trans }}</strong>
 					<p class="text-muted">{% if not user.location %}<i>{{ 'Not specified' | trans({}, 'general')}}</i>{%else%}{{ user.location }}{%endif%}</p>
-					{% if user.canShowTelephone() %}
-					<hr>
-					<strong><i class="fa fa-phone margin-r-5"></i> {{ 'Telephone' | trans }}</strong>
-					<p class="text-muted">{% if not user.telephone %}<i>{{ 'Not specified' | trans({}, 'general')}}</i>{%else%}{{ user.telephone }}{%endif%}</p>
-					{% endif %}
-					{% if user.canShowPublicMail() %}
-					<hr>
-					
-					<strong><i class="fa fa-envelope margin-r-5"></i> {{ 'Public e-mail' | trans }}</strong>
-					<p class="text-muted">{% if not user.publicMail %}<i>{{ 'Not specified' | trans({}, 'general')}}</i>{%else%}<a href="mailto:{{ user.publicMail }}">{{ user.publicMail }}</a>{%endif%}</p>
-					{% endif %}
-					{% if user.canShowNotes() %}
-					<hr>
-
-					<strong><i class="fa fa-file-text-o margin-r-5"></i> {{ 'Notes' | trans }}</strong>
-					<p>{% if not user.notes %}<i>{{ 'Not specified' | trans({}, 'general')}}</i>{%else%}{{ user.notes }}{%endif%}</p>
-					{% endif %}
                 </div><!-- /.box-body -->
 			</div><!-- /.box -->
 {% endmacro %}

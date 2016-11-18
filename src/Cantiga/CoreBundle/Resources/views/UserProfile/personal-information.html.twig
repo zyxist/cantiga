@@ -22,29 +22,5 @@
 		<p class="text-muted">{{ 'Your location is visible to everyone who has access to your profile.' | trans }}</p>
 	</div>
 </div>
-<div class="row">
-	<div class="col-md-6">
-		{{ form_row(form.telephone, { 'label_col': 4, 'widget_col': 8}) }}
-	</div>
-	<div class="col-md-6">
-		{{ form_row(form.privShowTelephone, { 'label_col': 4, 'widget_col': 8}) }}
-	</div>
-</div>
-<div class="row">
-	<div class="col-md-6">
-		{{ form_row(form.publicMail, { 'label_col': 4, 'widget_col': 8}) }}
-	</div>
-	<div class="col-md-6">
-		{{ form_row(form.privShowPublicMail, { 'label_col': 4, 'widget_col': 8}) }}
-	</div>
-</div>
-<div class="row">
-	<div class="col-md-6">
-		{{ form_row(form.notes, { 'label_col': 4, 'widget_col': 8}) }}
-	</div>
-	<div class="col-md-6">
-		{{ form_row(form.privShowNotes, { 'label_col': 4, 'widget_col': 8}) }}
-	</div>
-</div>
 {{ form_end(form) }}
 {% endblock %}
