@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
+ * This file is part of Cantiga Project. Copyright 2015-2016 Tomasz Jedrzejewski.
  *
  * Cantiga Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,14 +27,11 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-/**
- * @author Tomasz Jędrzejewski
- */
 class DefaultAreaModel implements CustomFormModelInterface
 {
 	public function constructForm(FormBuilderInterface $builder)
 	{
-		$builder->add('description', new TextType, array('label' => 'Description', 'constraints' => [
+		$builder->add('description', TextType::class, array('label' => 'Description', 'constraints' => [
 			new NotNull,
 			new Length(['min' => 2, 'max' => 250])
 		]));
