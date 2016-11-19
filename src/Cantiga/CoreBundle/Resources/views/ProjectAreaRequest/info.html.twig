@@ -95,10 +95,6 @@
 										<td width="30%">{{ 'Location' | trans }}</td>
 										<td>{{ item.requestor.location }}</td>
 									</tr>
-									<tr>
-										<td width="30%">{{ 'Public e-mail' | trans }}</td>
-										<td>{% if not item.requestor.publicMail %}<i>{{ 'Not specified' | trans({}, 'general')}}</i>{%else%}<a href="mailto:{{ item.requestor.publicMail }}">{{ item.requestor.publicMail }}</a>{%endif%}</td>
-									</tr>
 								</tbody>								
 							</table>
 						</div>
