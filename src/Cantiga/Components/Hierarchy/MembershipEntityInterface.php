@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Cantiga Project. Copyright 2016 Tomasz Jedrzejewski.
+ * This file is part of Cantiga Project. Copyright 2016 Cantiga contributors.
  *
  * Cantiga Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,6 @@
 declare(strict_types=1);
 namespace Cantiga\Components\Hierarchy;
 
-use Cantiga\Components\Hierarchy\Entity\AbstractProfileView;
-use Cantiga\Components\Hierarchy\Entity\Member;
 use Cantiga\Components\Hierarchy\Entity\MembershipRole;
 use Cantiga\Components\Hierarchy\MembershipRoleResolverInterface;
 use Cantiga\CoreBundle\Entity\User;
