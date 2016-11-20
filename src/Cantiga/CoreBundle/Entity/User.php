@@ -18,6 +18,8 @@
  */
 namespace Cantiga\CoreBundle\Entity;
 
+use Cantiga\Components\Hierarchy\MembershipRoleResolverInterface;
+use Cantiga\Components\Hierarchy\User\CantigaUserRefInterface;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\Metamodel\Capabilities\EditableEntityInterface;
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
@@ -26,7 +28,6 @@ use Cantiga\Metamodel\Capabilities\RemovableEntityInterface;
 use Cantiga\Metamodel\DataMappers;
 use Cantiga\Metamodel\Join;
 use Cantiga\Metamodel\Membership;
-use Cantiga\Metamodel\MembershipRoleResolver;
 use Cantiga\Metamodel\QueryBuilder;
 use Cantiga\Metamodel\QueryClause;
 use Cantiga\Metamodel\QueryElement;
@@ -43,7 +44,7 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
  * Represents an account of the user. Note that in the database, the account it split into two tables.
  * This entity masks this separation.
  */
-class User implements UserInterface, IdentifiableInterface, InsertableEntityInterface, EditableEntityInterface, RemovableEntityInterface
+class User implements UserInterface, IdentifiableInterface, InsertableEntityInterface, EditableEntityInterface, RemovableEntityInterface, CantigaUserRefInterface
 {
 	private $id;
 	private $login;
@@ -132,7 +133,7 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 		return User::fromArray($data);
 	}
 
-	public static function fetchLinkedProfile(Connection $conn, MembershipRoleResolver $roleResolver, IdentifiableInterface $item, Join $join, QueryElement $element)
+	public static function fetchLinkedProfile(Connection $conn, MembershipRoleResolverInterface $roleResolver, IdentifiableInterface $item, Join $join, QueryElement $element)
 	{
 		$qb = QueryBuilder::select()
 			->field('u.*')
@@ -201,7 +202,7 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 		return $this->login;
 	}
 
-	public function getName()
+	public function getName(): string
 	{
 		return $this->name;
 	}

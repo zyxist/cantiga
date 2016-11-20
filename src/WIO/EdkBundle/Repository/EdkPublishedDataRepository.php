@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
+ * This file is part of Cantiga Project. Copyright 2016 Tomasz Jedrzejewski.
  *
  * Cantiga Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Area;
 use Cantiga\CoreBundle\Entity\Group;
 use Cantiga\CoreBundle\Entity\Project;
-use Cantiga\Metamodel\Capabilities\MembershipEntityInterface;
+use Cantiga\Components\Hierarchy\MembershipEntityInterface;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Form\EntityTransformerInterface;
 use Cantiga\Metamodel\Transaction;
@@ -32,9 +32,6 @@ use PDO;
 use WIO\EdkBundle\EdkTables;
 use WIO\EdkBundle\Entity\EdkRegistrationSettings;
 
-/**
- * @author Tomasz Jędrzejewski
- */
 class EdkPublishedDataRepository implements EntityTransformerInterface
 {
 	/**

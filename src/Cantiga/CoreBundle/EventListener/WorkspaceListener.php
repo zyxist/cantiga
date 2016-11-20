@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
+ * This file is part of Cantiga Project. Copyright 2016 Tomasz Jedrzejewski.
  *
  * Cantiga Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,9 +40,6 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-/**
- * @author Tomasz Jędrzejewski
- */
 class WorkspaceListener implements WorkspaceSourceInterface
 {
 	/**
@@ -156,8 +153,6 @@ class WorkspaceListener implements WorkspaceSourceInterface
 			$workspace->addWorkgroup(new Workgroup('manage', 'Manage', 'wrench', 10));
 		}
 		
-		$workspace->addWorkItem('community', new WorkItem('project_memberlist_index', 'Member list'));
-		
 		if ($project->getAreasAllowed()) {
 			$workspace->addWorkItem('statistics', new WorkItem('project_stats_area_index', 'Area statistics'));
 		}
@@ -187,8 +182,6 @@ class WorkspaceListener implements WorkspaceSourceInterface
 		$workspace->addWorkgroup(new Workgroup('community', 'Community', 'users', 1));
 		$workspace->addWorkgroup(new Workgroup('summary', 'Summary', 'table', 2));
 		$workspace->addWorkgroup(new Workgroup('data', 'Data', 'database', 3));
-		
-		$workspace->addWorkItem('community', new WorkItem('group_memberlist_index', 'Member list'));
 		if ($project->getAreasAllowed()) {
 			$workspace->addWorkItem('data', new WorkItem('group_area_index', 'Areas'));
 		}
@@ -203,8 +196,6 @@ class WorkspaceListener implements WorkspaceSourceInterface
 		if ($this->authChecker->isGranted('ROLE_AREA_MANAGER')) {
 			$workspace->addWorkgroup(new Workgroup('manage', 'Manage', 'wrench', 10));
 		}
-		
-		$workspace->addWorkItem('community', new WorkItem('area_memberlist_index', 'Member list'));
 		$workspace->addWorkItem('community', new WorkItem('area_my_group', 'My group'));
 		$workspace->addWorkItem('area', new WorkItem('area_profile_editor', 'Profile editor'));
 		

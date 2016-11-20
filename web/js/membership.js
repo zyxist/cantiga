@@ -127,7 +127,7 @@
 				var tr = $('<tr/>');
 				tr.append($('<td/>').append(data[i]['id']));
 				tr.append($('<td/>').append(data[i]['name']));
-				if (data[i]['role']) {
+				if (data[i]['role'] !== null) {
 					tr.append($('<td/>').append(opts['lang'][data[i]['roleName']]));
 				}
 				tr.append($('<td/>').append(data[i]['note']));

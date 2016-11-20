@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
+ * This file is part of Cantiga Project. Copyright 2016 Tomasz Jedrzejewski.
  *
  * Cantiga Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
 use Cantiga\Metamodel\Capabilities\InsertableEntityInterface;
 use Cantiga\Metamodel\Capabilities\RemovableEntityInterface;
 use Cantiga\Metamodel\DataMappers;
-use Cantiga\Metamodel\MembershipRoleResolver;
+use Cantiga\Components\Hierarchy\MembershipRoleResolverInterface;
 use Cantiga\Metamodel\QueryClause;
 use Cantiga\Metamodel\TimeFormatterInterface;
 use Doctrine\DBAL\Connection;
@@ -385,7 +385,7 @@ class AreaRequest implements IdentifiableInterface, InsertableEntityInterface, E
 		return false;
 	}
 	
-	public function approve(Connection $conn, MembershipRoleResolver $resolver)
+	public function approve(Connection $conn, MembershipRoleResolverInterface $resolver)
 	{
 		$this->status = $conn->fetchColumn('SELECT `status` FROM `'.CoreTables::AREA_REQUEST_TBL.'` WHERE `id` = :id', [':id' => $this->id]);
 		if ($this->status == self::STATUS_VERIFICATION) {

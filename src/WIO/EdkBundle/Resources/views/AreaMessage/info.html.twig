@@ -50,7 +50,7 @@
 					{% if item.responder %}
 					<div class="info-item">
 						<h4><i class="fa fa-bell"></i> {{ 'Assignee' | trans({}, 'edk') }}</h4>
-						<span class="value"><a href="{{ spath('area_memberlist_profile', {'id': item.responder.id }) }}">{{ item.responder.name }}</a></span>
+						<span class="value"><a href="{{ spath('memberlist_profile', {'id': item.responder.id }) }}">{{ item.responder.name }}</a></span>
 					</div>
 					{% else %}
 					<div class="info-item">

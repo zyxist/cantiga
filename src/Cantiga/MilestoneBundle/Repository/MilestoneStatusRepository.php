@@ -24,7 +24,7 @@ use Cantiga\CoreBundle\Entity\Entity;
 use Cantiga\CoreBundle\Entity\Group;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Settings\ProjectSettings;
-use Cantiga\Metamodel\Capabilities\MembershipEntityInterface;
+use Cantiga\Components\Hierarchy\MembershipEntityInterface;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Exception\ModelException;
 use Cantiga\Metamodel\TimeFormatterInterface;

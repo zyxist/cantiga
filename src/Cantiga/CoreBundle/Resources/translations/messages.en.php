@@ -17,15 +17,6 @@ return array(
 	'PasswordRecoverySuccessText' => 'Your password has been successfully changed. You can now log in with your new password.',
 	'PasswordRecoveryFailureText' => 'This password recovery request is invalid.',
 	
-	// User profile management
-	'ChangePasswordText' => 'To change the password, you must know your current password. In addition, a message is sent to your e-mail with the link to confirm the change.',
-	'PhotoUsageText' => 'Your photo is shown in many different places, usually next to your content..',
-	'PhotoUploadRulesText' => 'You can upload any image as big as 700x700 points in one of the following formats: JPG, PNG, GIF. The image is scaled down to sizes 128x128 px, 64x64 px, 32x32 px and 16x16 px. If the uploaded image is not a square, the central part is taken.',
-	'YourCurrentEmailText' => 'Your current e-mail address for the account is:',
-	'ChangeEmailText' => 'To change the e-mail address, you must enter your current password. In addition, a message is sent to your old e-mail with the link to confirm the change.',
-	'ConfirmationLinkChangePasswordSentText' => 'The confirmation link to change the password has been sent to your e-mail address. Please open the message and click on it without logging out from the application.',
-	'ConfirmationLinkChangeEmailSentText' => 'The confirmation link to change the e-mail has been sent to your old e-mail address. Please open the message and click on it without logging out from the application.',
-	
 	// Area group information
 	'AreaNotAssignedToGroupMsg' => 'This area is not assigned to any group yet. Once the assignment is done, you will find here the information about the group you are a member of.',
 	
@@ -33,6 +24,11 @@ return array(
 	'AreaProfileSaved' => 'The profile of your area has been saved.',
 	
 	// Project area request
+	'Member since' => 'Member since',
+	'Location' => 'Location',
+	'Last visit' => 'Last visit',
+	'E-mail' => 'E-mail',
+	'Phone number' => 'Phone number',
 	'CustomTextDisplayedToThisRequest' => 'Text displayed under the feedback box in the requests with this status:',
 	
 	// Project area

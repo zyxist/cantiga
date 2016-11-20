@@ -87,7 +87,7 @@ class AreaMessageController extends AreaPageController
 			->link('info_link', $this->crudInfo->getInfoPage(), ['id' => '::id', 'slug' => $this->getSlug()])
 			->linkGenerator('assignee_link', function(RouterInterface $router, array $row) {
 				if (!empty($row['responderId'])) {
-					return $router->generate('area_memberlist_profile', ['id' => $row['responderId'], 'slug' => $this->getSlug()]);
+					return $router->generate('memberlist_profile', ['id' => $row['responderId'], 'slug' => $this->getSlug()]);
 				}
 				return null;
 			});

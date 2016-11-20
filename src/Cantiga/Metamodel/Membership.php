@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
+ * This file is part of Cantiga Project. Copyright 2016 Tomasz Jedrzejewski.
  *
  * Cantiga Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,12 +18,11 @@
  */
 namespace Cantiga\Metamodel;
 
+use Cantiga\Components\Hierarchy\Entity\MembershipRole;
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
 
 /**
  * Represents information about the membership of some user in the given place.
- *
- * @author Tomasz Jędrzejewski
  */
 class Membership
 {

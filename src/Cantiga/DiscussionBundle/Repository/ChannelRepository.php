@@ -26,7 +26,7 @@ use Cantiga\CoreBundle\Entity\User;
 use Cantiga\DiscussionBundle\Database\DiscussionAdapter;
 use Cantiga\DiscussionBundle\Entity\Channel;
 use Cantiga\DiscussionBundle\Entity\Subchannel;
-use Cantiga\Metamodel\Capabilities\MembershipEntityInterface;
+use Cantiga\Components\Hierarchy\MembershipEntityInterface;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Transaction;
 

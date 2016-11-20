@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
+ * This file is part of Cantiga Project. Copyright 2016 Tomasz Jedrzejewski.
  *
  * Cantiga Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\Metamodel\Capabilities\EditableEntityInterface;
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
 use Cantiga\Metamodel\Capabilities\InsertableEntityInterface;
-use Cantiga\Metamodel\Capabilities\MembershipEntityInterface;
+use Cantiga\Components\Hierarchy\MembershipEntityInterface;
 use Cantiga\Metamodel\Capabilities\RemovableEntityInterface;
 use Cantiga\Metamodel\DataMappers;
 use Cantiga\Metamodel\Exception\DiskAssetException;
@@ -49,8 +49,6 @@ use WIO\EdkBundle\EdkTables;
 
 /**
  * Represents a single route of the Extreme Way of the Cross.
- *
- * @author Tomasz Jędrzejewski
  */
 class EdkRoute implements IdentifiableInterface, InsertableEntityInterface, EditableEntityInterface, RemovableEntityInterface
 {

@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
+ * This file is part of Cantiga Project. Copyright 2016 Tomasz Jedrzejewski.
  *
  * Cantiga Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ use Cantiga\CoreBundle\Event\CantigaEvents;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Exception\ModelException;
-use Cantiga\Metamodel\MembershipRoleResolver;
+use Cantiga\Components\Hierarchy\MembershipRoleResolverInterface;
 use Cantiga\Metamodel\QueryBuilder;
 use Cantiga\Metamodel\QueryClause;
 use Cantiga\Metamodel\TimeFormatterInterface;
@@ -41,8 +41,6 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Manages the area requests from the perspective of a project.
- *
- * @author Tomasz Jędrzejewski
  */
 class ProjectAreaRequestRepository
 {
@@ -68,11 +66,11 @@ class ProjectAreaRequestRepository
 	 */
 	private $eventDispatcher;
 	/**
-	 * @var MembershipRoleResolver 
+	 * @var MembershipRoleResolverInterface
 	 */
 	private $resolver;
 	
-	public function __construct(Connection $conn, Transaction $transaction, TimeFormatterInterface $timeFormatter, EventDispatcherInterface $eventDispatcher, MembershipRoleResolver $resolver)
+	public function __construct(Connection $conn, Transaction $transaction, TimeFormatterInterface $timeFormatter, EventDispatcherInterface $eventDispatcher, MembershipRoleResolverInterface $resolver)
 	{
 		$this->conn = $conn;
 		$this->transaction = $transaction;

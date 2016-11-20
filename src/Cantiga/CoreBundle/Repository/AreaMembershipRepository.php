@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
+ * This file is part of Cantiga Project. Copyright 2016 Tomasz Jedrzejewski.
  *
  * Cantiga Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,24 +18,23 @@
  */
 namespace Cantiga\CoreBundle\Repository;
 
+use Cantiga\Components\Hierarchy\Entity\Member;
+use Cantiga\Components\Hierarchy\Entity\MembershipRole;
+use Cantiga\Components\Hierarchy\MembershipEntityInterface;
+use Cantiga\Components\Hierarchy\MembershipRepositoryInterface;
+use Cantiga\Components\Hierarchy\MembershipRoleResolverInterface;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Area;
 use Cantiga\CoreBundle\Entity\Invitation;
 use Cantiga\CoreBundle\Entity\User;
-use Cantiga\Metamodel\Capabilities\MembershipEntityInterface;
-use Cantiga\Metamodel\Capabilities\MembershipRepositoryInterface;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Exception\ModelException;
-use Cantiga\Metamodel\MembershipRole;
-use Cantiga\Metamodel\MembershipRoleResolver;
 use Cantiga\Metamodel\Transaction;
 use Doctrine\DBAL\Connection;
 use Exception;
 
 /**
  * Manages the area membership information.
- *
- * @author Tomasz Jędrzejewski
  */
 class AreaMembershipRepository implements MembershipRepositoryInterface
 {
@@ -48,11 +47,11 @@ class AreaMembershipRepository implements MembershipRepositoryInterface
 	 */
 	protected $transaction;
 	/**
-	 * @var MembershipRoleResolver
+	 * @var MembershipRoleResolverInterface
 	 */
 	protected $roleResolver;
 	
-	public function __construct(Connection $conn, Transaction $transaction, MembershipRoleResolver $roleResolver)
+	public function __construct(Connection $conn, Transaction $transaction, MembershipRoleResolverInterface $roleResolver)
 	{
 		$this->conn = $conn;
 		$this->transaction = $transaction;
@@ -85,7 +84,7 @@ class AreaMembershipRepository implements MembershipRepositoryInterface
 	public function findMembers(Area $item)
 	{
 		$this->transaction->requestTransaction();
-		return $item->findMembers($this->conn, $this->roleResolver);
+		return Member::collectionAsArray($item->findMembers($this->conn, $this->roleResolver));
 	}
 
 	public function joinMember(MembershipEntityInterface $item, User $user, MembershipRole $role, $note)
@@ -96,9 +95,9 @@ class AreaMembershipRepository implements MembershipRepositoryInterface
 		$this->transaction->requestTransaction();
 		try {
 			if ($item->joinMember($this->conn, $user, $role, $note)) {
-				return ['status' => 1, 'data' => $item->findMembers($this->conn, $this->roleResolver)];
+				return ['status' => 1, 'data' => Member::collectionAsArray($item->findMembers($this->conn, $this->roleResolver))];
 			}
-			return ['status' => 0, 'data' => $item->findMembers($this->conn, $this->roleResolver)];
+			return ['status' => 0, 'data' => Member::collectionAsArray($item->findMembers($this->conn, $this->roleResolver))];
 		} catch(Exception $exception) {
 			$this->transaction->requestRollback();
 			throw $exception;
@@ -113,9 +112,9 @@ class AreaMembershipRepository implements MembershipRepositoryInterface
 		$this->transaction->requestTransaction();
 		try {
 			if ($item->editMember($this->conn, $user, $role, $note)) {
-				return ['status' => 1, 'data' => $item->findMembers($this->conn, $this->roleResolver)];
+				return ['status' => 1, 'data' => Member::collectionAsArray($item->findMembers($this->conn, $this->roleResolver))];
 			}
-			return ['status' => 0, 'data' => $item->findMembers($this->conn, $this->roleResolver)];
+			return ['status' => 0, 'data' => Member::collectionAsArray($item->findMembers($this->conn, $this->roleResolver))];
 		} catch(Exception $exception) {
 			$this->transaction->requestRollback();
 			throw $exception;
@@ -127,9 +126,9 @@ class AreaMembershipRepository implements MembershipRepositoryInterface
 		$this->transaction->requestTransaction();
 		try {
 			if ($item->removeMember($this->conn, $user)) {
-				return ['status' => 1, 'data' => $item->findMembers($this->conn, $this->roleResolver)];
+				return ['status' => 1, 'data' => Member::collectionAsArray($item->findMembers($this->conn, $this->roleResolver))];
 			}
-			return ['status' => 0, 'data' => $item->findMembers($this->conn, $this->roleResolver)];
+			return ['status' => 0, 'data' => Member::collectionAsArray($item->findMembers($this->conn, $this->roleResolver))];
 		} catch(Exception $exception) {
 			$this->transaction->requestRollback();
 			throw $exception;

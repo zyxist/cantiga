@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
+ * This file is part of Cantiga Project. Copyright 2016 Tomasz Jedrzejewski.
  *
  * Cantiga Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ use Cantiga\CoreBundle\Entity\User;
 use Cantiga\CoreBundle\Event\CantigaEvents;
 use Cantiga\CoreBundle\Event\InvitationEvent;
 use Cantiga\CoreBundle\Event\UserEvent;
-use Cantiga\Metamodel\Capabilities\MembershipRepositoryInterface;
+use Cantiga\Components\Hierarchy\MembershipRepositoryInterface;
 use Cantiga\Metamodel\Exception\DuplicateItemException;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Transaction;
@@ -36,8 +36,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * This repository can be used for both viewing the invitation list by the users,
  * and sending new invitations from other places.
- *
- * @author Tomasz Jędrzejewski
  */
 class InvitationRepository
 {

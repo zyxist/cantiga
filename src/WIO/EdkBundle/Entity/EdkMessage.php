@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
+ * This file is part of Cantiga Project. Copyright 2016 Tomasz Jedrzejewski.
  *
  * Cantiga Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Entity\User;
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
 use Cantiga\Metamodel\Capabilities\InsertableEntityInterface;
-use Cantiga\Metamodel\Capabilities\MembershipEntityInterface;
+use Cantiga\Components\Hierarchy\MembershipEntityInterface;
 use Cantiga\Metamodel\DataMappers;
 use Cantiga\Metamodel\Exception\ModelException;
 use Cantiga\Metamodel\QueryClause;
@@ -34,8 +34,6 @@ use WIO\EdkBundle\EdkTables;
 
 /**
  * Allows sending the messages to the areas.
- *
- * @author Tomasz Jędrzejewski
  */
 class EdkMessage implements IdentifiableInterface, InsertableEntityInterface
 {

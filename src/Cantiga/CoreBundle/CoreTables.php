@@ -47,6 +47,7 @@ class CoreTables
 	const PROJECT_SETTINGS_TBL = 'cantiga_project_settings';
 	const INVITATION_TBL = 'cantiga_invitations';
 	const TERRITORY_TBL = 'cantiga_territories';
+	const CONTACT_TBL = 'cantiga_contacts';
 	
 	const STAT_ARQ_TIME_TBL = 'cantiga_stat_arq_time';
 	

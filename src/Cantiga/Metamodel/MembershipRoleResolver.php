@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
+ * This file is part of Cantiga Project. Copyright 2016 Tomasz Jedrzejewski.
  *
  * Cantiga Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,18 +16,19 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+declare(strict_types=1);
 namespace Cantiga\Metamodel;
 
+use Cantiga\Components\Hierarchy\Entity\MembershipRole;
+use Cantiga\Components\Hierarchy\MembershipRoleResolverInterface;
 use LogicException;
 
 /**
  * Repository for all the available membership roles for different item types.
  * The membership roles are registered by modules and bundles, and are not kept
  * in the database.
- *
- * @author Tomasz Jędrzejewski
  */
-class MembershipRoleResolver
+class MembershipRoleResolver implements MembershipRoleResolverInterface
 {	
 	private $roles;
 	
@@ -45,7 +46,7 @@ class MembershipRoleResolver
 		$this->roles['Area'][2] = new MembershipRole(2, 'Manager', 'ROLE_AREA_MANAGER');
 	}
 
-	public function registerRole($itemType, MembershipRole $role)
+	public function registerRole(string $itemType, MembershipRole $role)
 	{
 		if (!isset($this->roles[$itemType])) {
 			$this->roles[$itemType] = array();
@@ -53,7 +54,7 @@ class MembershipRoleResolver
 		$this->roles[$itemType][$role->getId()] = $role;
 	}
 
-	public function getRoles($itemType)
+	public function getRoles(string $itemType): array
 	{
 		if (!isset($this->roles[$itemType])) {
 			throw new LogicException('Invalid item type for fetching roles: '.$itemType);
@@ -61,7 +62,7 @@ class MembershipRoleResolver
 		return $this->roles[$itemType];
 	}
 	
-	public function getRole($itemType, $id)
+	public function getRole(string $itemType, int $id): MembershipRole
 	{
 		if (!isset($this->roles[$itemType][$id])) {
 			return new MembershipRole(-1, 'Unknown', 'ROLE_USER');
@@ -69,7 +70,7 @@ class MembershipRoleResolver
 		return $this->roles[$itemType][$id];
 	}
 	
-	public function getHighestRole($itemType)
+	public function getHighestRole(string $itemType): MembershipRole
 	{
 		if (!isset($this->roles[$itemType])) {
 			return new MembershipRole(-1, 'Unknown', 'ROLE_USER');
@@ -81,7 +82,7 @@ class MembershipRoleResolver
 		return $highest;
 	}
 	
-	public function hasRole($itemType, $id)
+	public function hasRole(string $itemType, int $id): bool
 	{
 		return isset($this->roles[$itemType][$id]);
 	}

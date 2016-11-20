@@ -18,14 +18,10 @@
  */
 namespace Cantiga\CoreBundle\Repository;
 
-use Cantiga\CoreBundle\Api\WorkspaceSourceInterface;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\PasswordRecoveryRequest;
-use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Entity\User;
 use Cantiga\CoreBundle\Exception\PasswordRecoveryException;
-use Cantiga\Metamodel\Capabilities\MembershipEntityInterface;
-use Cantiga\Metamodel\MembershipRoleResolver;
 use Cantiga\Metamodel\QueryClause;
 use Cantiga\Metamodel\QueryOperator;
 use Doctrine\DBAL\Connection;

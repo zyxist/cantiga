@@ -57,11 +57,6 @@ return array(
 	'Place' => 'Miejsce',
 	'Notes' => 'Notatki',
 	
-	'Location' => 'Lokalizacja',
-	'Telephone' => 'Telefon',
-	'Public mail' => 'Publiczny e-mail',
-	'Public e-mail' => 'Publiczny e-mail',
-	'Notes' => 'Notatki',
 	'Site language' => 'Język strony',
 	'Timezone' => 'Strefa czasowa',
 	'Default workspace after logging in' => 'Domyślna przestrzeń robocza widoczna po zalogowaniu',
@@ -127,46 +122,6 @@ return array(
 	'Do you want to approve the request \'0\'? This operation cannot be undone.' => 'Czy na pewno chcesz zatwierdzić zgłoszenie rejonu "0"? Ta operacja nie może być cofnięta.',
 	'Submit request' => 'Zapisz zgłoszenie',
 	
-	
-	// User profile management
-	'ChangePasswordText' => 'Aby zmienić hasło, musisz podać swoje dotychczasowe hasło. Dodatkowo, na Twój adres e-mail zostanie wysłana wiadomość z odnośnikiem aktywacyjnym. Dopiero po kliknięciu w niego Twoje nowe hasło stanie się aktywne.',
-	'Current password' => 'Dotychczasowe hasło',
-	'Your current password' => 'Podaj swoje obecne hasło',
-	'New password' => 'Nowe hasło',
-	'YourCurrentEmailText' => 'Twój obecny adres e-mail to:',
-	'ChangeEmailText' => 'Aby zmienić adres e-mail, musisz podać swoje obecne hasło. Dodatkowo, na Twój stary adres e-mail wysyłana jest wiadomość z odnośnikiem, w który należy kliknąć, aby zatwierdzić zmianę hasła.',
-	'New e-mail address' => 'Nowy adres e-mail',
-	'Current photo' => 'Obecne zdjęcie',
-	'Upload new photo' => 'Załaduj nowe zdjęcie',
-	'New photo image' => 'Plik zdjęcia',
-	'PhotoUsageText' => 'Twoje zdjęcie jest wyświetlane w wielu miejscach systemu, najczęściej obok treści, którą stworzyłeś.',
-	'PhotoUploadRulesText' => 'Możesz załadować dowolny obrazek o rozmiarze do 700x700 punktów w jednym z formatów: JPG, PNG, GIF. Obrazek jest automatycznie skalowany do wymiarów 128x128, 64x64, 32x32 oraz 16x16 punktów. Jeżeli załadowany obrazek nie jest kwadratem, brana jest jego centralna część.',
-	'Your profile has been updated.' => 'Twój profil został zaktualizowany.',
-	'The new image has been set up.' => 'Nowe zdjęcie zostało poprawnie załadowane.',
-	'The specified image is not big enough. I cannot scale it up.' => 'Podany obrazek jest zbyt mały - nie da się przeskalować go do większego rozmiaru.',
-	'The specified image is too big.' => 'Podany obrazek jest zbyt duży.',
-	'ConfirmationLinkChangePasswordSentText' => 'Odnośnik do aktywacji nowego hasła został wysłany na Twoją skrzynkę e-mail. Proszę otworzyć wiadomość i kliknąć w podany link bez wylogowywania się z panelu.',
-	'ConfirmationLinkChangeEmailSentText' => 'Odnośnik do aktywacji nowego adresu został wysłany na Twoją starą skrzynkę e-mail. Proszę otworzyć wiadomość i kliknąć w podany link bez wylogowywania się z panelu.',
-
-	'Who can see my phone number?' => 'Kto może widzieć mój numer telefonu?',
-	'Who can see my public e-mail?' => 'Kto może widzieć mój publiczny e-mail?',
-	'Who can see my notes?' => 'Kto może widzieć moje notatki?',
-	'Do not show' => 'Nie pokazuj',
-	'Only to other area members' => 'Tylko innym członkom moich rejonów',
-	'Only to other group members' => 'Tylko innym członkom moich grup',
-	'To group members and area members' => 'Dla członków moich rejonów i grup',
-	'Only to other project members' => 'Tylko innym członkom moich projektów',
-	'To project and area members' => 'Dla członków moich projektów i rejonów',
-	'To project and group members' => 'Dla członków moich projektów i grup',
-	'To project, group and area members' => 'Dla członków moich projektów, grup i rejonów',
-	
-	// Member lists
-	'Note' => 'Uwaga',
-	'See profile' => 'Zobacz profil',
-	'About me' => 'O mnie',
-	'Member since' => 'Data rejestracji',
-	'Last visit' => 'Ostatnia wizyta',
-	
 	// Project dashboard
 	'Recent chat activity in requests' => 'Najnowsze rozmowy w zgłoszeniach rejonów',
 	'Recent area requests' => 'Najnowsze zgłoszenia rejonów',
@@ -201,6 +156,11 @@ return array(
 	'Cannot start the verification for this request.' => 'Nie można zacząć weryfikacji dla tego zgłoszenia.',
 	'Verifier' => 'Weryfikujący',
 	'CustomTextDisplayedToThisRequest' => 'Tekst wyświetlany pod oknem rozmowy w zgłoszeniach z tym statusem:',
+	'Member since' => 'Data rejestracji',
+	'Location' => 'Lokalizacja',
+	'Last visit' => 'Ostatnia wizyta',
+	'E-mail' => 'E-mail',
+	'Phone number' => 'Telefon',
 	
 	// Project area
 	'GroupUnassigned' => 'Nieprzypisana',

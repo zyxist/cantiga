@@ -21,7 +21,7 @@ namespace Cantiga\MilestoneBundle\Repository;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Group;
 use Cantiga\CoreBundle\Entity\Project;
-use Cantiga\Metamodel\Capabilities\MembershipEntityInterface;
+use Cantiga\Components\Hierarchy\MembershipEntityInterface;
 use Cantiga\Metamodel\Transaction;
 use Cantiga\MilestoneBundle\MilestoneTables;
 use Doctrine\DBAL\Connection;

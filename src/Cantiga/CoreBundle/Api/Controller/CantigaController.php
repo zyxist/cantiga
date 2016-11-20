@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
+ * This file is part of Cantiga Project. Copyright 2016 Tomasz Jedrzejewski.
  *
  * Cantiga Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,8 +40,6 @@ use Symfony\Component\Translation\TranslatorInterface;
  * the most common operations. Also, provides a compatibility layer for methods that were
  * public in Symfony 2.x, but are protected since Symfony 3.0. A lot of our code relies
  * on that, and until we develop a different solution, this must remain in the old way.
- *
- * @author Tomasz Jędrzejewski
  */
 class CantigaController extends Controller
 {
@@ -156,19 +154,34 @@ class CantigaController extends Controller
 		return $info;
 	}
 	
-	public function showPageWithMessage($message, $page, array $args = array())
+	public function showPageWithMessage($message, $page, array $args = array()): Response
 	{
 		$this->get('session')->getFlashBag()->add('info', $message);
 		return $this->redirect($this->generateUrl($page, $args));
 	}
 	
-	public function showPageWithError($message, $page, array $args = array())
+	public function showPageWithError($message, $page, array $args = array()): Response
 	{
 		$this->get('session')->getFlashBag()->add('error', $message);
 		return $this->redirect($this->generateUrl($page, $args));
 	}
 	
-	public function hasRole($role)
+	/**
+	 * Show a page with some message for the user, without redirecting him anywhere.
+	 * 
+	 * @param string $title Page title
+	 * @param string $message Message to display
+	 * @return Response
+	 */
+	public function showMessage(string $title, string $message): Response
+	{
+		return $this->render('CantigaCorebundle:layout:message.html.twig', array(
+			'pageTitle' => $title,
+			'message' => $message
+		));
+	}
+	
+	public function hasRole($role): bool
 	{
 		return $this->get('security.authorization_checker')->isGranted($role) === true;
 	}

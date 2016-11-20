@@ -45,7 +45,7 @@ class WorkspaceFinder
 	public function findWorkspace($slug): Workspace
 	{
 		$entity = Entity::fetchBySlug($this->conn, $slug);
-		if (null === $entity) {
+		if (false === $entity) {
 			throw new \RuntimeException('Cannot find the specified workspace!');
 		}
 		return $this->constructWorkspace($entity);

@@ -69,7 +69,7 @@ class AreaCourseResultController extends AreaPageController
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'courseInfoPage' => 'area_course_info',
-			'userProfilePage' => 'area_memberlist_profile',
+			'userProfilePage' => 'memberlist_profile',
 			'items' => $repository->findTotalIndividualResultsForArea($this->getMembership()->getItem()),
 		));
 	}

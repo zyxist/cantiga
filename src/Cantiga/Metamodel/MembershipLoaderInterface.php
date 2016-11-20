@@ -19,7 +19,7 @@
 namespace Cantiga\Metamodel;
 
 use Cantiga\CoreBundle\Entity\User;
-use Cantiga\Metamodel\Capabilities\MembershipEntityInterface;
+use Cantiga\Components\Hierarchy\MembershipEntityInterface;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 
 /**

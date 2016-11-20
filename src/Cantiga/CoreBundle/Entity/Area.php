@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
+ * This file is part of Cantiga Project. Copyright 2016 Tomasz Jedrzejewski.
  *
  * Cantiga Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,18 +18,19 @@
  */
 namespace Cantiga\CoreBundle\Entity;
 
+use Cantiga\Components\Hierarchy\Entity\Member;
+use Cantiga\Components\Hierarchy\Entity\MembershipRole;
 use Cantiga\Components\Hierarchy\HierarchicalInterface;
+use Cantiga\Components\Hierarchy\MembershipEntityInterface;
+use Cantiga\Components\Hierarchy\MembershipRoleResolverInterface;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Traits\EntityTrait;
 use Cantiga\Metamodel\Capabilities\EditableEntityInterface;
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
 use Cantiga\Metamodel\Capabilities\InsertableEntityInterface;
-use Cantiga\Metamodel\Capabilities\MembershipEntityInterface;
 use Cantiga\Metamodel\DataMappers;
 use Cantiga\Metamodel\Join;
 use Cantiga\Metamodel\Membership;
-use Cantiga\Metamodel\MembershipRole;
-use Cantiga\Metamodel\MembershipRoleResolver;
 use Cantiga\Metamodel\QueryClause;
 use Doctrine\DBAL\Connection;
 use PDO;
@@ -161,7 +162,7 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 	 * @param int $userId
 	 * @return Membership
 	 */
-	public static function fetchMembership(Connection $conn, MembershipRoleResolver $resolver, $slug, $userId)
+	public static function fetchMembership(Connection $conn, MembershipRoleResolverInterface $resolver, $slug, $userId)
 	{
 		$data = $conn->fetchAssoc('SELECT a.*, '
 			. 't.`id` AS `territory_id`, t.`name` AS `territory_name`, t.`areaNum` AS `territory_areaNum`, t.`requestNum` as `territory_requestNum`, '
@@ -403,6 +404,7 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		}
 		DataMappers::recount($conn, CoreTables::AREA_STATUS_TBL, null, $this->status, 'areaNum', 'id');
 		DataMappers::recount($conn, CoreTables::TERRITORY_TBL, null, $this->territory, 'areaNum', 'id');
+		$this->slug = DataMappers::generateSlug($conn, CoreTables::AREA_TBL);
 		
 		$this->entity = new Entity();
 		$this->entity->setType('Area');
@@ -412,7 +414,6 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		
 		$this->createdAt = $this->lastUpdatedAt = time();
 		$this->percentCompleteness = 0;
-		$this->slug = DataMappers::generateSlug($conn, CoreTables::GROUP_TBL);
 		$conn->insert(
 			CoreTables::AREA_TBL,
 			DataMappers::pick($this, ['name', 'slug', 'project', 'group', 'territory', 'status', 'reporter', 'entity', 'createdAt', 'lastUpdatedAt', 'percentCompleteness'], ['customData' => json_encode($this->customData), 'groupName' => $groupName])
@@ -474,30 +475,52 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		return array();
 	}
 	
-	public function findMembers(Connection $conn, MembershipRoleResolver $roleResolver)
+	public function findMembers(Connection $conn, MembershipRoleResolverInterface $roleResolver): array
 	{
-		$stmt = $conn->prepare('SELECT u.id, u.name, p.role, p.note FROM `'.CoreTables::USER_TBL.'` u '
-			. 'INNER JOIN `'.CoreTables::AREA_MEMBER_TBL.'` p ON p.`userId` = u.`id` WHERE p.`areaId` = :areaId ORDER BY p.role DESC, u.name');
-		$stmt->bindValue(':areaId', $this->getId());
+		$stmt = $conn->prepare('SELECT i.`id`, i.`name`, i.`avatar`, i.`lastVisit`, p.`location`, c.`email` AS `contactMail`, '
+			. 'c.`telephone` AS `contactTelephone`, c.`notes` AS `notes`, m.`role` AS `membershipRole`, m.`note` AS `membershipNote` '
+			. 'FROM `'.CoreTables::USER_TBL.'` i '
+			. 'INNER JOIN `'.CoreTables::USER_PROFILE_TBL.'` p ON p.`userId` = i.`id` '
+			. 'INNER JOIN `'.CoreTables::AREA_MEMBER_TBL.'` m ON m.`userId` = i.`id` '
+			. 'LEFT JOIN `'.CoreTables::CONTACT_TBL.'` c ON c.`userId` = i.`id` AND c.`projectId` = :projectId '
+			. 'WHERE m.`areaId` = :entityId AND i.`active` = 1 AND i.`removed` = 0 '
+			. 'ORDER BY i.`name`');
+		$stmt->bindValue(':projectId', $this->getProject()->getId());
+		$stmt->bindValue(':entityId', $this->getId());
 		$stmt->execute();
-		$result = array();
-		
+		$results = [];
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$role = $roleResolver->getRole('Area', $row['role']);
-			$row['roleName'] = $role->getName();
-			$result[] = $row;
+			$results[] = new Member(
+				$row, new Membership($this, $roleResolver->getRole('Area', $row['membershipRole']), $row['membershipNote'])
+			);
 		}
 		$stmt->closeCursor();
-		return $result;
+		return $results;
 	}
 	
-	public function findMember(Connection $conn, MembershipRoleResolver $resolver, $id)
+	public function findMember(Connection $conn, MembershipRoleResolverInterface $resolver, int $id)
 	{
-		return User::fetchLinkedProfile(
-			$conn, $resolver, $this,
-			Join::create(CoreTables::AREA_MEMBER_TBL, 'm', QueryClause::clause('m.`userId` = u.`id`')),
-			QueryClause::clause('u.`id` = :id', ':id', $id)
-		);
+		$stmt = $conn->prepare('SELECT i.`id`, i.`name`, i.`avatar`, i.`lastVisit`, p.`location`, c.`email` AS `contactMail`, '
+			. 'c.`telephone` AS `contactTelephone`, c.`notes` AS `notes`, m.`role` AS `membershipRole`, m.`note` AS `membershipNote` '
+			. 'FROM `'.CoreTables::USER_TBL.'` i '
+			. 'INNER JOIN `'.CoreTables::USER_PROFILE_TBL.'` p ON p.`userId` = i.`id` '
+			. 'INNER JOIN `'.CoreTables::AREA_MEMBER_TBL.'` m ON m.`userId` = i.`id` '
+			. 'LEFT JOIN `'.CoreTables::CONTACT_TBL.'` c ON c.`userId` = i.`id` AND c.`projectId` = :projectId '
+			. 'WHERE m.`areaId` = :entityId AND i.`active` = 1 AND i.`removed` = 0 AND i.`id` = :userId '
+			. 'ORDER BY i.`name`');
+		$stmt->bindValue(':projectId', $this->getProject()->getId());
+		$stmt->bindValue(':entityId', $this->getId());
+		$stmt->bindValue(':userId', $id);
+		$stmt->execute();
+		$results = [];
+		if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			$stmt->closeCursor();
+			return new Member(
+				$row, new Membership($this, $resolver->getRole('Area', $row['membershipRole']), $row['membershipNote'])
+			);
+		}
+		$stmt->closeCursor();
+		return false;
 	}
 
 	public function joinMember(Connection $conn, User $user, MembershipRole $role, $note)

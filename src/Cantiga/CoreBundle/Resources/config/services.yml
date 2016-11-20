@@ -7,13 +7,11 @@ parameters:
     user_provider.class: Cantiga\CoreBundle\Repository\AuthRepository
     transaction.class: Cantiga\Metamodel\Transaction
     time_formatter.class: Cantiga\Metamodel\TimeFormatter
-    role_resolver.class: Cantiga\Metamodel\MembershipRoleResolver
     database_settings_storage.class: Cantiga\CoreBundle\Settings\DatabaseSettingsStorage
     project_settings.class: Cantiga\CoreBundle\Settings\ProjectSettings
     archived_project_repository.class: Cantiga\CoreBundle\Repository\ArchivedProjectRepository
     language_repository.class: Cantiga\CoreBundle\Repository\LanguageRepository
     project_repository.class: Cantiga\CoreBundle\Repository\ProjectRepository
-    profile_repository.class: Cantiga\CoreBundle\Repository\ProfileRepository
     admin_membership_repository.class: Cantiga\CoreBundle\Repository\AdminMembershipRepository
     area_memberlist_repository.class: Cantiga\CoreBundle\Repository\AreaMemberListRepository
     group_membership_repository.class: Cantiga\CoreBundle\Repository\GroupMembershipRepository
@@ -66,7 +64,7 @@ services:
         class:     Cantiga\Metamodel\FileRepository
         arguments: ["%targetFileDirectory%"]
     cantiga.roles:
-        class:     "%role_resolver.class%"
+        class:     Cantiga\Metamodel\MembershipRoleResolver
     cantiga.workspace.finder:
         class:     Cantiga\CoreBundle\Api\WorkspaceFinder
         arguments: ["@database_connection", "@cantiga.core.membership.project", "@cantiga.core.membership.group", "@cantiga.core.membership.area"]
@@ -112,9 +110,6 @@ services:
     cantiga.core.repo.archived_project:                                                                                                                                                     
         class:     "%archived_project_repository.class%"                                                                                                           
         arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.time"]
-    cantiga.core.repo.profile:
-        class:     "%profile_repository.class%"
-        arguments: ["@database_connection", "@cantiga.transaction"]
     cantiga.core.repo.user_registration:                                                                                                                                                
         class:     "%UserRegistrationRepository.class%"
         arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher", "@security.encoder_factory", "@cantiga.time"]

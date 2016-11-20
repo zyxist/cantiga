@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Cantiga Project. Copyright 2015 Tomasz Jedrzejewski.
+ * This file is part of Cantiga Project. Copyright 2016 Tomasz Jedrzejewski.
  *
  * Cantiga Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,24 +18,24 @@
  */
 namespace Cantiga\CoreBundle\Repository;
 
-use Doctrine\DBAL\Connection;
-use Exception;
+use Cantiga\Components\Hierarchy\Entity\Member;
+use Cantiga\Components\Hierarchy\Entity\MembershipRole;
+use Cantiga\Components\Hierarchy\MembershipEntityInterface;
+use Cantiga\Components\Hierarchy\MembershipRepositoryInterface;
+use Cantiga\Components\Hierarchy\MembershipRoleResolverInterface;
 use Cantiga\CoreBundle\CoreTables;
+use Cantiga\CoreBundle\Entity\Invitation;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Entity\User;
-use Cantiga\Metamodel\Capabilities\MembershipEntityInterface;
-use Cantiga\Metamodel\Capabilities\MembershipRepositoryInterface;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Exception\ModelException;
-use Cantiga\Metamodel\MembershipRole;
-use Cantiga\Metamodel\MembershipRoleResolver;
 use Cantiga\Metamodel\QueryClause;
 use Cantiga\Metamodel\Transaction;
+use Doctrine\DBAL\Connection;
+use Exception;
 
 /**
  * Manages the project membership information.
- *
- * @author Tomasz Jędrzejewski
  */
 class AdminMembershipRepository implements MembershipRepositoryInterface
 {
@@ -48,11 +48,11 @@ class AdminMembershipRepository implements MembershipRepositoryInterface
 	 */
 	private $transaction;
 	/**
-	 * @var MembershipRoleResolver
+	 * @var MembershipRoleResolverInterface
 	 */
 	private $roleResolver;
 	
-	public function __construct(Connection $conn, Transaction $transaction, MembershipRoleResolver $roleResolver)
+	public function __construct(Connection $conn, Transaction $transaction, MembershipRoleResolverInterface $roleResolver)
 	{
 		$this->conn = $conn;
 		$this->transaction = $transaction;
@@ -123,7 +123,7 @@ class AdminMembershipRepository implements MembershipRepositoryInterface
 	public function findMembers(Project $project)
 	{
 		$this->transaction->requestTransaction();
-		return $project->findMembers($this->conn, $this->roleResolver);
+		return Member::collectionAsArray($project->findMembers($this->conn, $this->roleResolver));
 	}
 
 	public function joinMember(MembershipEntityInterface $project, User $user, MembershipRole $role, $note)
@@ -134,9 +134,9 @@ class AdminMembershipRepository implements MembershipRepositoryInterface
 		$this->transaction->requestTransaction();
 		try {
 			if ($project->joinMember($this->conn, $user, $role, $note)) {
-				return ['status' => 1, 'data' => $project->findMembers($this->conn, $this->roleResolver)];
+				return ['status' => 1, 'data' => Member::collectionAsArray($project->findMembers($this->conn, $this->roleResolver))];
 			}
-			return ['status' => 0, 'data' => $project->findMembers($this->conn, $this->roleResolver)];
+			return ['status' => 0, 'data' => Member::collectionAsArray($project->findMembers($this->conn, $this->roleResolver))];
 		} catch(Exception $exception) {
 			$this->transaction->requestRollback();
 			throw $exception;
@@ -151,9 +151,9 @@ class AdminMembershipRepository implements MembershipRepositoryInterface
 		$this->transaction->requestTransaction();
 		try {
 			if ($project->editMember($this->conn, $user, $role, $note)) {
-				return ['status' => 1, 'data' => $project->findMembers($this->conn, $this->roleResolver)];
+				return ['status' => 1, 'data' => Member::collectionAsArray($project->findMembers($this->conn, $this->roleResolver))];
 			}
-			return ['status' => 0, 'data' => $project->findMembers($this->conn, $this->roleResolver)];
+			return ['status' => 0, 'data' => Member::collectionAsArray($project->findMembers($this->conn, $this->roleResolver))];
 		} catch(Exception $exception) {
 			$this->transaction->requestRollback();
 			throw $exception;
@@ -165,16 +165,16 @@ class AdminMembershipRepository implements MembershipRepositoryInterface
 		$this->transaction->requestTransaction();
 		try {
 			if ($project->removeMember($this->conn, $user)) {
-				return ['status' => 1, 'data' => $project->findMembers($this->conn, $this->roleResolver)];
+				return ['status' => 1, 'data' => Member::collectionAsArray($project->findMembers($this->conn, $this->roleResolver))];
 			}
-			return ['status' => 0, 'data' => $project->findMembers($this->conn, $this->roleResolver)];
+			return ['status' => 0, 'data' => Member::collectionAsArray($project->findMembers($this->conn, $this->roleResolver))];
 		} catch(Exception $exception) {
 			$this->transaction->requestRollback();
 			throw $exception;
 		}
 	}
 
-	public function acceptInvitation(\Cantiga\CoreBundle\Entity\Invitation $invitation)
+	public function acceptInvitation(Invitation $invitation)
 	{
 	}
 

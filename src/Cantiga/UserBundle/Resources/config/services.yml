@@ -1,0 +1,16 @@
+imports:
+    - { resource: ../../../../../app/config/parameters.yml }
+
+services:
+    cantiga.user.repo.memberlist:
+        class:     Cantiga\UserBundle\Repository\MemberlistRepository
+        arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.roles"]
+    cantiga.user.repo.profile:
+        class:     Cantiga\UserBundle\Repository\ProfileRepository
+        arguments: ["@database_connection", "@cantiga.transaction"]
+    cantiga.user.workspace_listener:
+        class: Cantiga\UserBundle\EventListener\WorkspaceListener
+        tags:
+            - { name: kernel.event_listener, event: cantiga.workspace.project, method: onProjectWorkspace }
+            - { name: kernel.event_listener, event: cantiga.workspace.group, method: onGroupWorkspace }
+            - { name: kernel.event_listener, event: cantiga.workspace.area, method: onAreaWorkspace }

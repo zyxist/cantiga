@@ -1,0 +1,63 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ member.name }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ 'View member profile' | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+	<div class="row">
+		<div class="col-md-3">
+			<div class="box box-widget widget-user-2">
+				<div class="widget-user-header bg-primary">
+					<div class="widget-user-image">
+						<img class="img-circle" src="{{ asset(avatar(member)) }}" alt="av">
+					</div>
+					<h3 class="widget-user-username">{{ member.name }}</h3>
+					<h5 class="widget-user-desc">{% if member.membership.note %}{{ member.membership.note }}{% else %}&nbsp;{% endif %}</h5>
+				</div>
+				<div class="box-footer no-padding">
+					<ul class="list-summary">
+						<li class="list-summary-item">{{ 'Role' | trans([], 'users' ) }} <span class="pull-right">{{ member.membership.role.name | trans }}</span></li>
+						<li class="list-summary-item">{{ 'Location' | trans([], 'users' ) }} <span class="pull-right">{{ member.location }}</span></li>
+						<li class="list-summary-item">{{ 'Last visit' | trans([], 'users' ) }} <span class="pull-right">{{ ago(member.lastVisit) }}</span></li>
+						{% if viewContactInformation %}
+							{% if member.contactMail %}
+							<li class="list-summary-item">{{ 'E-mail' | trans([], 'users' ) }} <span class="pull-right"><a href="mailto:{{ member.contactMail }}">{{ member.contactMail }}</a></span></li>
+							{% endif %}
+							{% if member.contactTelephone %}
+							<li class="list-summary-item">{{ 'Phone number' | trans([], 'users' ) }} <span class="pull-right">{{ member.contactTelephone }}</span></li>
+							{% endif %}
+						{% endif %}
+					</ul>
+				</div>
+			</div>
+			{% if member.notes %}
+			<div class="box box-widget">
+				<div class="box-body">
+					{{ member.notes }}
+				</div>
+			</div>
+			{% endif %}
+		</div>
+		<div class="col-md-9">
+			<div class="nav-tabs-custom">
+				<ul class="nav nav-tabs">
+					{% for extension in extensions %}
+					<li{% if loop.first %} class="active"{% endif %}><a href="#{{ extension.tabHashtag }}" data-toggle="tab">{{ extension.tabTitle }}</a></li>
+					{% endfor %}
+				</ul>
+				<div class="tab-content">
+					{% for extension in extensions %}
+					<div class="{% if loop.first %}active {% endif %}tab-pane" id="{{ extension.tabHashtag }}">
+						{{ extension.tabContent(member) | raw }}
+					</div>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+
+{% block page_title %}
+	{{ 'Change e-mail' | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{'Your own profile' | trans({}, 'pages') }}
+{% endblock %}
+{% block box_body %}
+	<p>{{ 'YourCurrentEmailText' | trans([], 'users') }} <strong>{{ user.email }}</strong></p>
+	<p>{{ 'ChangeEmailText' | trans([], 'users') }}</p>
+{{ form_start(form) }}
+<div class="row">
+	<div class="col-md-6">
+		{{ form_row(form.password, { 'label_col': 4, 'widget_col': 4}) }}
+		{{ form_row(form.email, { 'label_col': 4, 'widget_col': 4}) }}
+	</div>
+</div>
+{{ form_end(form) }}
+{% endblock %}

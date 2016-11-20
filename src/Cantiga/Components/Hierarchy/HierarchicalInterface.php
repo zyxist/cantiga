@@ -16,6 +16,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+declare(strict_types=1);
 namespace Cantiga\Components\Hierarchy;
 
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
