@@ -113,6 +113,9 @@ services:
     cantiga.core.repo.user_registration:                                                                                                                                                
         class:     "%UserRegistrationRepository.class%"
         arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher", "@security.encoder_factory", "@cantiga.time"]
+    cantiga.core.repo.user_dashboard:
+        class:    Cantiga\CoreBundle\Repository\UserDashboardRepository
+        arguments: ["@database_connection"]
     cantiga.core.repo.admin_membership:
         class:     "%admin_membership_repository.class%"
         arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.roles"]

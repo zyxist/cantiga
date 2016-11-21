@@ -38,9 +38,27 @@ class UserDashboardController extends UserPageController
 
 	public function indexAction(Request $request)
 	{
+		$repository = $this->get('cantiga.core.repo.user_dashboard');
+		
+		$memberEntities = $repository->getUserMembership($this->getUser());
+		$areaRegistrations = $repository->getOpenAreaRegistrations();
+		$invitations = $repository->getInvitations($this->getUser());
+		$areaRequests = $repository->getUserAreaRequests($this->getUser());
+		
+		$dashboardType = $this->chooseDashboard($memberEntities, $areaRegistrations, $invitations, $areaRequests);
+		
 		return $this->render('CantigaCoreBundle:User:dashboard.html.twig', array(
 			'user' => $this->getUser(),
-			'invitationNum' => $this->get('cantiga.core.repo.invitation')->countInvitations($this->getUser()),
+			'dashboardType' => $dashboardType,
+			'dashboardVars' => [
+				'memberEntities' => $memberEntities,
+				'areaRegistrations' => $areaRegistrations,
+				'invitations' => $invitations,
+				'areaRequests' => $areaRequests,
+				'areaRegistrationNum' => sizeof($areaRegistrations),
+				'invitationNum' => sizeof($invitations),
+				'areaRequestNum' => sizeof($areaRequests)
+			],
 			'rightExtensions' => $this->renderExtensions($request, $this->findDashboardExtensions(CoreExtensions::USER_DASHBOARD_RIGHT)),
 			'centralExtensions' => $this->renderExtensions($request, $this->findDashboardExtensions(CoreExtensions::USER_DASHBOARD_CENTRAL)),
 		));
@@ -78,4 +96,14 @@ class UserDashboardController extends UserPageController
 		return $this->renderHelpPage($request, 'user_help_invitations', CoreTexts::HELP_INVITATIONS);
 	}
 
+	private function chooseDashboard(array $memberEntities, array $areaRegistrations, array $invitations, array $areaRequests): string
+	{
+		if (sizeof($memberEntities) > 0) {
+			return 'CantigaCoreBundle:User:dashboard-member.html.twig';
+		} elseif (sizeof($areaRegistrations) > 0 || sizeof($invitations) > 0 || sizeof($areaRequests) > 0) {
+			return 'CantigaCoreBundle:User:dashboard-not-member.html.twig';
+		} else {
+			return 'CantigaCoreBundle:User:dashboard-nothing.html.twig';
+		}
+	}
 }

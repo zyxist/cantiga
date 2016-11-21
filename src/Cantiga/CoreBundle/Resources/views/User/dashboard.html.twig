@@ -1,5 +1,4 @@
 {% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
-{% import "CantigaCoreBundle:layout:profile-macros.html.twig" as profile %}
 
 {% block page_title %}
 	{{ 'Welcome!' | trans }}
@@ -11,74 +10,15 @@
 
 {% block page_content %}
 	<div class="row">
-		<div class="col-md-3">
-			{{ profile.profile_box(user) }}
-		</div><!-- /.col -->
-		<div class="col-md-9">
-			{% if user.projectNum > 0 %}
-			<div class="col-lg-4 col-xs-6">
-				
-				<div class="small-box bg-blue">
-					<div class="inner">
-						<h3>{{ user.projectNum }}</h3>
-
-						<p>{{ 'Your projects' | trans }}</p>
-					</div>
-					<div class="icon">
-						<i class="ion ion-android-bulb"></i>
-					</div>
-					<a href="{{ path('user_place_index') }}" class="small-box-footer">{{ 'Jump' | trans }} <i class="fa fa-arrow-circle-right"></i></a>
-				</div>
-				
-			</div>
-			{% endif %}
-			<div class="col-lg-4 col-xs-6">
-				{% if user.areaNum == 0 %}
-				<div class="small-box bg-purple">
-					<div class="inner">
-						<h3>0</h3>
-
-						<p>{{ 'Not a member of any area' | trans }}</p>
-					</div>
-					<div class="icon">
-						<i class="ion ion-flag"></i>
-					</div>
-					<a href="{{ path('user_area_request_insert') }}" class="small-box-footer">{{ 'Request area' | trans }} <i class="fa fa-arrow-circle-right"></i></a>
-				</div>
-				{% else %}
-				<div class="small-box bg-aqua">
-					<div class="inner">
-						<h3>{{ user.areaNum }}</h3>
-
-						<p>{{ 'Your areas' | trans }}</p>
-					</div>
-					<div class="icon">
-						<i class="ion ion-flag"></i>
-					</div>
-					<a href="{{ path('user_place_index') }}" class="small-box-footer">{{ 'Jump' | trans }} <i class="fa fa-arrow-circle-right"></i></a>
-				</div>
-				{% endif %}
-			</div>
-			<div class="col-lg-4 col-xs-6">
-				
-				<div class="small-box bg-red">
-					<div class="inner">
-						<h3>{{ invitationNum }}</h3>
-
-						<p>{{ 'Invitations' | trans }}</p>
-					</div>
-					<div class="icon">
-						<i class="ion ion-ios-pricetag-outline"></i>
-					</div>
-					<a href="{{ path('user_invitation_index') }}" class="small-box-footer">{{ 'See invitations' | trans }} <i class="fa fa-arrow-circle-right"></i></a>
-				</div>
-			</div>
-			<div class="col-md-8">
-				{{ centralExtensions | raw }}
-			</div>
-			<div class="col-md-4">
-				{{ rightExtensions | raw }}
-			</div>
+		{% include dashboardType with dashboardVars %}
+	</div>
+	<hr/>
+	<div class="row">
+		<div class="col-lg-8 col-md-6 col-sm-12">
+			{{ centralExtensions | raw }}
+		</div>
+		<div class="col-lg-4 col-md-6 col-sm-12">
+			{{ rightExtensions | raw }}
 		</div>
 	</div>
 {% endblock %}
