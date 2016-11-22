@@ -40,4 +40,15 @@ class WorkspaceListener
 		$workspace = $event->getWorkspace();
 		$workspace->addWorkItem('community', new WorkItem('memberlist_index', 'Member list'));
 	}
+	
+	public function onUserWorkspace(WorkspaceEvent $event)
+	{
+		$workspace = $event->getWorkspace();
+		$workspace->addWorkItem('profile', new WorkItem('user_invitation_index', 'Invitations'));
+		$workspace->addWorkItem('profile', new WorkItem('user_profile_contact_data', 'Contact data'));
+		$workspace->addWorkItem('profile', new WorkItem('user_profile_settings', 'Settings'));
+		$workspace->addWorkItem('profile', new WorkItem('user_profile_photo', 'Manage photo'));
+		$workspace->addWorkItem('profile', new WorkItem('user_profile_change_password', 'Change password'));
+		$workspace->addWorkItem('profile', new WorkItem('user_profile_change_mail', 'Change e-mail'));
+	}
 }

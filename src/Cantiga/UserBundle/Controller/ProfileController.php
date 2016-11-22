@@ -49,21 +49,12 @@ class ProfileController extends UserPageController
 	}
 	
 	/**
-	 * @Route("/personal-info", name="user_profile_personal_info")
+	 * @Route("/contact-data", name="user_profile_contact_data")
 	 */
-	public function personalInfoAction(Request $request)
+	public function contactDataAction(Request $request)
 	{
-		$this->breadcrumbs()->entryLink($this->trans('Personal information', [], 'pages'), 'user_profile_personal_info');
-		$repo = $this->get(self::REPOSITORY);
-		$action = new FormAction($this->getUser(), UserProfileForm::class);
-		return $action->action($this->generateUrl('user_profile_personal_info'))
-			->template(self::TEMPLATE_LOCATION.':personal-information.html.twig')
-			->redirect($this->generateUrl('user_profile_personal_info'))
-			->formSubmittedMessage('Your profile has been updated.')
-			->onSubmit(function($user) use($repo) {
-				$repo->updateProfile($user);
-			})
-			->run($this, $request);
+		$this->breadcrumbs()->entryLink($this->trans('Contact data', [], 'pages'), 'user_profile_contact_data');
+		return $this->render(self::TEMPLATE_LOCATION.':contact-data.html.twig');
 	}
 	
 	/**

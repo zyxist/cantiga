@@ -26,10 +26,6 @@ return array(
 	
 	// User workspace menu items
 	'Profile' => 'Twój profil',
-	'Personal information' => 'Informacje osobiste',
-	'Manage photo' => 'Ustaw zdjęcie',
-	'Change password' => 'Zmień hasło',
-	'Change e-mail' => 'Zmień e-mail',
 	'Areas' => 'Rejony',
 	'Request area' => 'Zgłoś rejon',
 	'Your area requests' => 'Twoje zgłoszenia',
@@ -80,7 +76,6 @@ return array(
 	'Help pages' => 'Strony pomocy',
 	
 	// Supplementary texts for user
-	'Your own profile' => 'Twój własny profil',
 	'Request creating a new area' => 'Zgłoś chęć utworzenia nowego rejonu',
 	'Inspect your requests to create a new area' => 'Śledź status Twoich zgłoszeń o utworzenie nowego rejonu',
 	'See if someone invites you to cooperate' => 'Sprawdź czy ktoś nie zaprasza Cię do współpracy',

@@ -208,13 +208,6 @@ class WorkspaceListener implements WorkspaceSourceInterface
 		$workspace->addWorkgroup(new Workgroup('profile', 'Profile', 'user', 1));
 		$workspace->addWorkgroup(new Workgroup('areas', 'Areas', 'flag', 2));
 		
-		$workspace->addWorkItem('profile', new WorkItem('user_invitation_index', 'Invitations'));
-		$workspace->addWorkItem('profile', new WorkItem('user_profile_personal_info', 'Personal information'));
-		$workspace->addWorkItem('profile', new WorkItem('user_profile_settings', 'Settings'));
-		$workspace->addWorkItem('profile', new WorkItem('user_profile_photo', 'Manage photo'));
-		$workspace->addWorkItem('profile', new WorkItem('user_profile_change_password', 'Change password'));
-		$workspace->addWorkItem('profile', new WorkItem('user_profile_change_mail', 'Change e-mail'));
-		
 		$workspace->addWorkItem('areas', new WorkItem('user_area_request_insert', 'Request area'));
 		$workspace->addWorkItem('areas', new WorkItem('user_area_request_index', 'Your area requests'));
 		$workspace->addWorkItem('areas', new WorkItem('user_place_index', 'Your places'));
