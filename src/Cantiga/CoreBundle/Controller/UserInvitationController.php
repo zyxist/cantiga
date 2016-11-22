@@ -42,7 +42,6 @@ class UserInvitationController extends UserPageController
 	{
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$this->breadcrumbs()
-			->workgroup('profile')
 			->entryLink($this->trans('Invitations'), 'user_invitation_index');
 		return $this->render('CantigaCoreBundle:UserInvitation:index.html.twig', array(
 				'invitations' => $repository->findInvitations($this->getUser()),

@@ -72,7 +72,6 @@ class UserAreaRequestController extends UserPageController
 			->setRemoveQuestion('Do you really want to remove \'0\' item?');
 
 		$this->breadcrumbs()
-			->workgroup('areas')
 			->entryLink($this->trans('Area requests', [], 'pages'), $this->crudInfo->getIndexPage());
 
 		$this->territoryRepository = $this->get('cantiga.core.repo.project_territory');

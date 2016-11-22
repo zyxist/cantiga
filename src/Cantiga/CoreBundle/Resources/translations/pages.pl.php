@@ -26,7 +26,7 @@ return array(
 	
 	// User workspace menu items
 	'Profile' => 'Twój profil',
-	'Areas' => 'Rejony',
+	'Area requests' => 'Zgłoszenia rejonów',
 	'Request area' => 'Zgłoś rejon',
 	'Your area requests' => 'Twoje zgłoszenia',
 	'Your places' => 'Twoje miejsca',

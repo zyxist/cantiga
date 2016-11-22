@@ -3,6 +3,15 @@
 	<li><a href="{{ spath(workspaceInfo.homePage) }}">
 			<i class="fa fa-dashboard"></i> <span>{{ 'Dashboard' | trans({}, 'pages') }}</span>
 		</a></li>
+	{% for workitem in workspace.rootItems %}
+	{% if workitem.route == currentPage %}
+	<li class="active">
+	{% else %}
+	<li>
+	{% endif %}
+		<a href="{{ spath(workitem.route) }}">{% if workitem.hasIcon() %}<i class="fa fa-{{ workitem.icon }}"></i>{% endif %} <span>{{ workitem.name | trans({}, 'pages') }}</span></a>
+	</li>
+	{% endfor %}
 	{% for workgroup in workspace.workgroups %}
 	{% if workgroup.key == currentWorkgroup %}
 	<li class="active treeview">
@@ -11,7 +20,7 @@
 	{% endif %}
 		<a href="#">
 			<i class="fa fa-{{workgroup.icon }}"></i> <span>{{ workgroup.name | trans({}, 'pages') }}</span> <i class="fa fa-angle-left pull-right"></i>
-		</a>
+		</a>		
 		{% if workspace.workgroupHasContent(workgroup) %}
 		<ul class="treeview-menu">
 			{% for workitem in workspace.workitemsOf(workgroup) %}

@@ -16,33 +16,44 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+declare(strict_types=1);
 namespace Cantiga\CoreBundle\Api;
 
 /**
  * A single item that appears in the workgroup. Represented as a subnode in the menu,
  * where the root node is the workgroup. The work item points towards some controller
  * action.
- *
- * @author Tomasz Jędrzejewski
  */
 class WorkItem
 {
 	private $route;
 	private $name;
+	private $icon;
 	
-	public function __construct($route, $name)
+	public function __construct(string $route, string $name, string $icon = '')
 	{
 		$this->route = $route;
 		$this->name = $name;
+		$this->icon = $icon;
 	}
 	
-	public function getRoute()
+	public function getRoute(): string
 	{
 		return $this->route;
 	}
 
-	public function getName()
+	public function getName(): string
 	{
 		return $this->name;
+	}
+	
+	public function hasIcon(): bool
+	{
+		return !empty($this->icon);
+	}
+	
+	public function getIcon(): string
+	{
+		return $this->icon;
 	}
 }

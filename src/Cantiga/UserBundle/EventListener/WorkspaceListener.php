@@ -44,7 +44,6 @@ class WorkspaceListener
 	public function onUserWorkspace(WorkspaceEvent $event)
 	{
 		$workspace = $event->getWorkspace();
-		$workspace->addWorkItem('profile', new WorkItem('user_invitation_index', 'Invitations'));
 		$workspace->addWorkItem('profile', new WorkItem('user_profile_contact_data', 'Contact data'));
 		$workspace->addWorkItem('profile', new WorkItem('user_profile_settings', 'Settings'));
 		$workspace->addWorkItem('profile', new WorkItem('user_profile_photo', 'Manage photo'));

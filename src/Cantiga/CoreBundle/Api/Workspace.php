@@ -32,13 +32,12 @@ use Symfony\Component\Routing\RouterInterface;
  * implemented to return the workspace instance. There are predefined controllers for all the core
  * Cantiga workspaces. The workspace menu is configured by sending <tt>WorkspaceEvent</tt> to the engine
  * that collects the configuration of the workgroups, work items, etc., and then passes it to the template.
- *
- * @author Tomasz Jędrzejewski
  */
 abstract class Workspace
 {
-	private $workgroups = array();
-	private $items = array();
+	private $workgroups = [];
+	private $items = [];
+	private $rootItems = [];
 	
 	final public function addWorkgroup(Workgroup $workgroup)
 	{
@@ -51,6 +50,11 @@ abstract class Workspace
 			$this->items[$workgroupId] = array();
 		}
 		$this->items[$workgroupId][] = $workItem;
+	}
+	
+	final public function addRootItem(WorkItem $workItem)
+	{
+		$this->rootItems[] = $workItem;
 	}
 	
 	final public function getWorkgroups()
@@ -73,6 +77,11 @@ abstract class Workspace
 			return $this->items[$workgroup->getKey()];
 		}
 		return array();
+	}
+	
+	final public function rootItems()
+	{
+		return $this->rootItems;
 	}
 	
 	final public function getWorkgroup($workgroupId)
