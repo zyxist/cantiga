@@ -1,1 +1,0 @@
-ALTER TABLE  `cantiga_edk_registration_settings` ADD  `externalParticipantNum` INT NOT NULL DEFAULT  '0' AFTER  `participantNum` ;

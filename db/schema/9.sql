@@ -1,1 +1,0 @@
-ALTER TABLE  `cantiga_territories` ADD  `locale` VARCHAR(10) NULL AFTER `name`;
