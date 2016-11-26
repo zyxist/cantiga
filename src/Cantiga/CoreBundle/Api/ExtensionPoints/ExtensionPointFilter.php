@@ -16,6 +16,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+declare(strict_types=1);
 namespace Cantiga\CoreBundle\Api\ExtensionPoints;
 
 use Cantiga\CoreBundle\Settings\ProjectSettings;
@@ -31,8 +32,6 @@ use Cantiga\CoreBundle\Settings\ProjectSettings;
  *
  * <p>The instances of this class are immutable. Every new invocation that is expected
  * to change the state, actually produces a new instance, leaving the previous one untouched.
- * 
- * @author Tomasz Jędrzejewski
  */
 class ExtensionPointFilter
 {
@@ -56,7 +55,7 @@ class ExtensionPointFilter
 	 * @param array $modules List of allowed modules
 	 * @return ExtensionPointFilter
 	 */
-	public function withModules(array $modules)
+	public function withModules(array $modules): self
 	{
 		$newInstance = new ExtensionPointFilter();
 		$newInstance->modules = array_merge($this->modules, $modules);
@@ -73,7 +72,7 @@ class ExtensionPointFilter
 	 * @param array $services List of allowed services.
 	 * @return ExtensionPointFilter
 	 */
-	public function withServices(array $services)
+	public function withServices(array $services): self
 	{
 		$newInstance = new ExtensionPointFilter();
 		$newInstance->modules = $this->modules;
@@ -91,7 +90,7 @@ class ExtensionPointFilter
 	 * @param string $key setting name
 	 * @return ExtensionPointFilter
 	 */
-	public function fromSettings(ProjectSettings $settings, $key)
+	public function fromSettings(ProjectSettings $settings, string $key): self
 	{
 		return $this->withServices([$settings->get($key)->getValue()]);
 	}
@@ -102,7 +101,7 @@ class ExtensionPointFilter
 	 * @param Implementation $implementation
 	 * @return boolean
 	 */
-	public function matches(Implementation $implementation)
+	public function matches(Implementation $implementation): bool
 	{
 		if (!$this->allModules) {
 			if (!in_array($implementation->getModule(), $this->modules)) {
@@ -115,5 +114,15 @@ class ExtensionPointFilter
 			}
 		}
 		return true;
+	}
+	
+	public function getModules(): array
+	{
+		return $this->modules;
+	}
+	
+	public function getServices(): array
+	{
+		return $this->services;
 	}
 }

@@ -16,22 +16,21 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+declare(strict_types=1);
 namespace Cantiga\CoreBundle\Api\ExtensionPoints;
 
 use RuntimeException;
-use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Manages the implementations for the extension points, where the bundles
  * can hook in to extend the default functionality. The extension points
  * are populated by inspecting tags in the <tt>services.yml</tt> files.
- *
- * @author Tomasz Jędrzejewski
  */
 class ExtensionPoints implements ExtensionPointsInterface
 {
 	/**
-	 * @var Container
+	 * @var ContainerInterface
 	 */
 	private $container;
 	/**
@@ -39,7 +38,7 @@ class ExtensionPoints implements ExtensionPointsInterface
 	 */
 	private $extensionPoints;
 	
-	public function __construct(Container $container)
+	public function __construct(ContainerInterface $container)
 	{
 		$this->container = $container;
 	}
@@ -52,17 +51,17 @@ class ExtensionPoints implements ExtensionPointsInterface
 		$this->extensionPoints[$impl->getExtensionPoint()][] = $impl;
 	}
 	
-	public function registerFromArgs($extensionPoint, $module, $service, $name = '')
+	public function registerFromArgs(string $extensionPoint, string $module, string $service, string $name = '')
 	{
 		$this->register(new Implementation($extensionPoint, $module, $service, $name));
 	}
 	
-	public function describeImplementations($extPointName, ExtensionPointFilter $filter)
+	public function describeImplementations(string $extPointName, ExtensionPointFilter $filter): array
 	{
 		if (!isset($this->extensionPoints[$extPointName])) {
-			return array();
+			return [];
 		}
-		$results = array();
+		$results = [];
 		foreach ($this->extensionPoints[$extPointName] as $impl) {
 			if ($filter->matches($impl)) {
 				$results[$impl->getName()] = $impl->getService();
@@ -70,13 +69,18 @@ class ExtensionPoints implements ExtensionPointsInterface
 		}
 		return $results;
 	}
+	
+	public function hasExtensionPoint(string $extPointName): bool
+	{
+		return isset($this->extensionPoints[$extPointName]);
+	}
 
-	public function findImplementations($extPointName, ExtensionPointFilter $filter)
+	public function findImplementations(string $extPointName, ExtensionPointFilter $filter): array
 	{
 		if (!isset($this->extensionPoints[$extPointName])) {
-			return false;
+			return [];
 		}
-		$results = array();
+		$results = [];
 		foreach ($this->extensionPoints[$extPointName] as $impl) {
 			if ($filter->matches($impl)) {
 				$results[] = $this->container->get($impl->getService());
@@ -85,7 +89,7 @@ class ExtensionPoints implements ExtensionPointsInterface
 		return $results;
 	}
 
-	public function getImplementation($extPointName, ExtensionPointFilter $filter)
+	public function getImplementation(string $extPointName, ExtensionPointFilter $filter)
 	{
 		if (!isset($this->extensionPoints[$extPointName])) {
 			return false;
@@ -95,10 +99,10 @@ class ExtensionPoints implements ExtensionPointsInterface
 				return $this->container->get($impl->getService());
 			}
 		}
-		throw new RuntimeException('No implementation for an extension point \''.$extPointName.'\'');
+		throw new RuntimeException('No implementation for the extension point \''.$extPointName.'\'');
 	}
 
-	public function hasImplementation($extPointName, ExtensionPointFilter $filter)
+	public function hasImplementation(string $extPointName, ExtensionPointFilter $filter): bool
 	{
 		if (!isset($this->extensionPoints[$extPointName])) {
 			return false;

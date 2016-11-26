@@ -21,8 +21,9 @@ namespace Cantiga\CourseBundle\Tests\Entity;
 use Cantiga\CourseBundle\Entity\Answer;
 use Cantiga\CourseBundle\Entity\Question;
 use Cantiga\CourseBundle\Entity\TestTrial;
+use PHPUnit\Framework\TestCase;
 
-class TestTrialTest extends \PHPUnit_Framework_TestCase {
+class TestTrialTest extends TestCase {
 	
 	public function testValidatingFullPass() {
 		// Given

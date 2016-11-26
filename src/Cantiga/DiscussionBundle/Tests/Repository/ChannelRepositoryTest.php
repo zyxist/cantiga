@@ -19,35 +19,47 @@
 namespace Cantiga\DiscussionBundle\Tests\Repository;
 
 use Cantiga\CoreBundle\Entity\Area;
+use Cantiga\CoreBundle\Entity\Entity;
 use Cantiga\CoreBundle\Entity\Group;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\DiscussionBundle\Database\DiscussionAdapter;
 use Cantiga\DiscussionBundle\Repository\ChannelRepository;
 use Cantiga\Metamodel\Transaction;
+use PHPUnit\Framework\TestCase;
 
-class ChannelRepositoryTest extends \PHPUnit_Framework_TestCase
+class ChannelRepositoryTest extends TestCase
 {
 	private $transaction;
 	private $adapter;
 	private $repository;
 	private $project;
+	private $checkedEntity;
 	
-	public function setUp()
+	protected function setUp()
 	{
 		$this->adapter = $this->getMockBuilder(DiscussionAdapter::class)->disableOriginalConstructor()->getMock();
 		$this->transaction = $this->getMockBuilder(Transaction::class)->disableOriginalConstructor()->getMock();
 		$this->repository = new ChannelRepository($this->adapter, $this->transaction);
 		$this->project = new Project();
 		$this->project->setId(13);
+		
+		$projectEntity = new Entity();
+		$projectEntity->setId(12);
+		$this->project->setEntity($projectEntity);
+		
+		$this->checkedEntity = new Entity();
+		$this->checkedEntity->getId(26);
 	}
 	
 	public function testFetchingProjectVisibleChannels()
 	{
 		// Given
 		$entity = new Project();
+		$entity->setEntity($this->checkedEntity);
 		$this->repository->setProject($this->project);
-		$this->adapter->method('findVisibleChannels')
-			->with($this->project->getId(), 'projectVisible')
+		$this->adapter->expects($this->once())
+			->method('findVisibleChannels')
+			->with($this->project->getId(), [$entity->getEntity()->getId()], 'projectVisible', 0)
 			->will($this->returnValue(['foo' => 'bar']));
 		
 		// When
@@ -61,9 +73,12 @@ class ChannelRepositoryTest extends \PHPUnit_Framework_TestCase
 	{
 		// Given
 		$entity = new Group();
+		$entity->setEntity($this->checkedEntity);
+		$entity->setProject($this->project);
 		$this->repository->setProject($this->project);
-		$this->adapter->method('findVisibleChannels')
-			->with($this->project->getId(), 'groupVisible')
+		$this->adapter->expects($this->once())
+			->method('findVisibleChannels')
+			->with($this->project->getId(), [$entity->getEntity()->getId(), $this->project->getEntity()->getId()], 'groupVisible', 1)
 			->will($this->returnValue(['foo' => 'bar']));
 		
 		// When
@@ -73,13 +88,41 @@ class ChannelRepositoryTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals(['foo' => 'bar'], $items);
 	}
 	
-	public function testFetchingAreaVisibleChannels()
+	public function testFetchingUngroupedAreaVisibleChannels()
 	{
 		// Given
 		$entity = new Area();
+		$entity->setEntity($this->checkedEntity);
+		$entity->setProject($this->project);
 		$this->repository->setProject($this->project);
-		$this->adapter->method('findVisibleChannels')
-			->with($this->project->getId(), 'areaVisible')
+		$this->adapter->expects($this->once())
+			->method('findVisibleChannels')
+			->with($this->project->getId(), [$entity->getEntity()->getId(), $this->project->getEntity()->getId()], 'areaVisible', 2)
+			->will($this->returnValue(['foo' => 'bar']));
+		
+		// When
+		$items = $this->repository->findWorkspaceChannels($entity);
+		
+		// Then
+		$this->assertEquals(['foo' => 'bar'], $items);
+	}
+	
+	public function testFetchingGroupedAreaVisibleChannels()
+	{
+		// Given
+		$group = new Group();
+		$groupEntity = new Entity();
+		$groupEntity->setId(17);
+		$group->setEntity($groupEntity);
+		
+		$entity = new Area();
+		$entity->setGroup($group);
+		$entity->setEntity($this->checkedEntity);
+		$entity->setProject($this->project);
+		$this->repository->setProject($this->project);
+		$this->adapter->expects($this->once())
+			->method('findVisibleChannels')
+			->with($this->project->getId(), [$entity->getEntity()->getId(), $this->project->getEntity()->getId(), $group->getEntity()->getId()], 'areaVisible', 2)
 			->will($this->returnValue(['foo' => 'bar']));
 		
 		// When

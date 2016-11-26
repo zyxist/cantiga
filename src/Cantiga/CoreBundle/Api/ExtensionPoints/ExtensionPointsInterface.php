@@ -16,11 +16,9 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+declare(strict_types=1);
 namespace Cantiga\CoreBundle\Api\ExtensionPoints;
 
-/**
- * @author Tomasz Jędrzejewski
- */
 interface ExtensionPointsInterface
 {
 	/**
@@ -31,15 +29,22 @@ interface ExtensionPointsInterface
 	 * @param string $extPointName Extension point
 	 * @param ExtensionPointFilter $filter Filter to limit the implementations
 	 */
-	public function describeImplementations($extPointName, ExtensionPointFilter $filter);
+	public function describeImplementations(string $extPointName, ExtensionPointFilter $filter): array;
+	/**
+	 * Checks if the given extension point exists.
+	 * 
+	 * @param string $extPointName
+	 */
+	public function hasExtensionPoint(string $extPointName): bool;
 	/**
 	 * Checks if there is any implementation registered for the given extension point.
+	 * If the specified extension point does not exist, <strong>false</strong> is also returned.
 	 * 
 	 * @param string $extPointName Extension point
 	 * @param ExtensionPointFilter $filter Filter to limit the implementations
 	 * @return boolean
 	 */
-	public function hasImplementation($extPointName, ExtensionPointFilter $filter);
+	public function hasImplementation(string $extPointName, ExtensionPointFilter $filter): bool;
 	/**
 	 * Returns a single implementation of the given extension point, pointed
 	 * by the specific filter. If no extension is found, the method throws an
@@ -47,10 +52,10 @@ interface ExtensionPointsInterface
 	 * actual instance and return it.
 	 * 
 	 * @param string $extPointName Extension point
-	 * @param ExtensionPointFilter $key Implementation name
+	 * @param ExtensionPointFilter $filter Filter used for locating the implementations
 	 * @return object
 	 */
-	public function getImplementation($extPointName, ExtensionPointFilter $filter);
+	public function getImplementation(string $extPointName, ExtensionPointFilter $filter);
 	/**
 	 * Returns all implementations of the given extension point, pointed
 	 * by the specific filter. If no implementation is found, the method
@@ -58,8 +63,8 @@ interface ExtensionPointsInterface
 	 * actual instances and return them.
 	 * 
 	 * @param string $extPointName Extension point
-	 * @param ExtensionPointFilter $key Implementation name
+	 * @param ExtensionPointFilter $filter Filter used for locating the implementations
 	 * @return array
 	 */
-	public function findImplementations($extPointName, ExtensionPointFilter $filter);
+	public function findImplementations(string $extPointName, ExtensionPointFilter $filter): array;
 }
