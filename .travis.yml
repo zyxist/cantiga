@@ -12,3 +12,4 @@ before_script:
   - cp ./app/Branding.example.php ./app/Branding.php
   - mkdir ./var/
   - composer install
+  - php bin/console cantiga:install:db --env=test --type=$DB
