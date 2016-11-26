@@ -8,24 +8,28 @@
 	{{ 'Your contact data for other members associated with your profile' | trans({}, 'pages') }}
 {% endblock %}
 
-{% block page_content %}	
+{% block page_content %}
+<div id="contact-editor">	
 	<div class="row">
 		<div class="col-md-6">
 			<div class="box box-primary">
 				<div class="box-header with-border">
 					<h3 class="box-title">Change your location</h3>
 				</div>
-				<form role="form">
+				<form role="form" class="form">
 					<div class="box-body">
 						<div class="form-group">
-							<label for="exampleInputEmail1">Location</label>
-							<input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+							<label for="contact-location">Location</label>
+							<input type="location" class="form-control" id="contact-location" value="{{ location }}" placeholder="Enter your location">
 						</div>
 					</div>
 					<div class="box-footer">
-						<button type="submit" class="btn btn-primary">Update</button>
+						<button type="submit" class="btn btn-primary" id="location-update-btn" id="update-location-btn">Update</button>
 					</div>
 				</form>
+				<div class="overlay" style="display: none" id="location-overlay">
+					<i class="fa fa-refresh fa-spin"></i>
+				</div>
 			</div>
 		</div>
 		<div class="col-md-6 hidden-sm hidden-xs">
@@ -64,7 +68,7 @@
 							</tr>
 						</tbody>
 					</table>
-					
+
 				</div>
 				<div class="box-footer">
 					<strong>Note:</strong> You can specify different contact data for each project. In some projects, providing contact data is mandatory.
@@ -80,7 +84,7 @@
 				</div>
 				<div class="box-body no-padding">
 					<table class="table table-striped">
-						<tbody>
+						<thead>
 							<tr>
 								<th style="width: 20%">Project</th>
 								<th style="width: 20%">E-mail</th>
@@ -88,17 +92,68 @@
 								<th>Notes</th>
 								<th style="width: 90px">Actions</th>
 							</tr>
-							<tr>
-								<td class="text-bold">ABC 2017</td>
-								<td><a href="mailto:abc@example.com">abc@example.com</a></td>
-								<td>+48 123 456 789</td>
-								<td>Iron man</td>
-								<td><a href="#" class="btn btn-primary btn-xs">Update</a></td>
-							</tr>
+						</thead>
+						<tbody id="contacts">
 						</tbody>
 					</table>
+				</div>
+				<div class="overlay" style="display: none" id="contact-overlay">
+					<i class="fa fa-refresh fa-spin"></i>
 				</div>
 			</div>
 		</div>
 	</div>
+	<div class="modal fade" id="update-modal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="update-project-name"></h4>
+				</div>
+				<div class="modal-body">
+					<form role="form" class="form">
+						<p id="contact-data-required" class="text-danger">{{ 'ContactDataRequiredText' | trans([], 'users') }}</p>
+						<p id="contact-data-errorbox" class="text-danger"></p>
+						<div class="form-group">
+							<label class="control-label" for="contact-mail">{{ 'Contact e-mail' | trans([], 'users') }}</label>
+							<input type="email" name="email" id="contact-mail" class="form-control" />
+						</div>
+						<div class="form-group">
+							<label class="control-label" for="contact-telephone">{{ 'Contact e-mail' | trans([], 'users') }}</label>
+							<input type="text" name="telephone" id="contact-telephone" class="form-control" />
+						</div>
+						<div class="form-group">
+							<label class="control-label" for="contact-notes">{{ 'Notes' | trans([], 'users') }}</label>
+							<input type="text" name="notes" id="notes" class="form-control" />
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" id="update-modal-save">{{ 'Save' | trans({}, 'general') }}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	<script src="{{ asset('js/jquery-ui.min.js') }}"></script>
+	<script src="{{ asset('js/contact-editor.js') }}"></script>
+{% endblock %}
+
+{% block javascripts_inline %}
+	<script type="text/javascript">
+	$(document).ready(function() {
+		$('#contact-editor').contacts({
+			contactReloadUrl: '{{ spath('user_profile_contact_data_api_projects') }}',
+			contactUpdateUrl: '{{ spath('user_profile_contact_data_api_project_update') }}',
+			contactLocationUrl: '{{ spath('user_profile_contact_data_api_location_update') }}',
+			lang: {
+				update: '{{ 'Update' | trans({}, 'general') }}'
+			}
+		});
+	});
+	</script>
 {% endblock %}

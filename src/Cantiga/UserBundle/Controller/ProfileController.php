@@ -24,13 +24,14 @@ use Cantiga\Metamodel\Exception\ModelException;
 use Cantiga\UserBundle\Form\UserChangeEmailForm;
 use Cantiga\UserBundle\Form\UserChangePasswordForm;
 use Cantiga\UserBundle\Form\UserPhotoUploadForm;
-use Cantiga\UserBundle\Form\UserProfileForm;
 use Cantiga\UserBundle\Form\UserSettingsForm;
 use Cantiga\UserBundle\Intent\EmailChangeIntent;
 use Cantiga\UserBundle\Intent\PasswordChangeIntent;
 use Cantiga\UserBundle\Intent\UserProfilePhotoIntent;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -54,7 +55,53 @@ class ProfileController extends UserPageController
 	public function contactDataAction(Request $request)
 	{
 		$this->breadcrumbs()->entryLink($this->trans('Contact data', [], 'pages'), 'user_profile_contact_data');
-		return $this->render(self::TEMPLATE_LOCATION.':contact-data.html.twig');
+		return $this->render(self::TEMPLATE_LOCATION.':contact-data.html.twig', [
+			'location' => $this->getUser()->getLocation()
+		]);
+	}
+	
+	/**
+	 * @Route("/contact-data/projects", name="user_profile_contact_data_api_projects")
+	 */
+	public function apiLoadProjectContactsAction(Request $request)
+	{
+		return new JsonResponse(['success' => 1, 'projects' => [0 =>
+			['id' => 1, 'name' => 'ABC', 'email' => 'mock@example.com', 'telephone' => '123-456-789', 'notes' => 'Test notes', 'required' => 1],
+		]]);
+	}
+	
+	/**
+	 * @Route("/contact-data/project", name="user_profile_contact_data_api_project_update")
+	 * @Method({"POST"})
+	 */
+	public function apiContactUpdateAction(Request $request)
+	{
+		$id = $request->get('id');
+		$email = $request->get('email');
+		$telephone = $request->get('telephone');
+		$notes = $request->get('notes');
+		
+		return new JsonResponse(['success' => 1, 'project' =>
+			['id' => $id, 'name' => 'ABC', 'email' => $email, 'telephone' => $telephone, 'notes' => $notes, 'required' => 1],
+		]);
+	}
+	
+	/**
+	 * @Route("/contact-data/location", name="user_profile_contact_data_api_location_update")
+	 * @Method({"POST"})
+	 */
+	public function apiLocationUpdateAction(Request $request)
+	{
+		try {
+			$location = $request->get('location');
+			$repo = $this->get(self::REPOSITORY);
+
+			$this->getUser()->setLocation($location);
+			$repo->updateProfile($this->getUser());
+			return new JsonResponse(['success' => 1, 'location' => $location]);
+		} catch (\Exception $exception) {
+			return new JsonResponse(['success' => 0]);
+		}
 	}
 	
 	/**
