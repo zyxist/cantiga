@@ -96,7 +96,7 @@ class InstallDatabaseCommand extends ContainerAwareCommand
 	private function createNewDatabase(Connection $conn, OutputInterface $output)
 	{
 		if (in_array($this->dbname, $conn->getSchemaManager()->listDatabases())) {
-			throw new RuntimeException('The database '.$this->dbname.' already exists!');
+			throw new \RuntimeException('The database '.$this->dbname.' already exists!');
 		}
 		$output->writeln('<info>Creating a new database '.$this->dbname.'</info>');
 		$conn->getSchemaManager()->createDatabase($this->dbname);
