@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of Cantiga Project. Copyright 2016 Cantiga contributors.
  *
@@ -60,7 +59,12 @@ class InstallDatabaseCommand extends ContainerAwareCommand
 			$this->dropExistingDatabase($conn, $output);
 		}
 		$this->createNewDatabase($conn, $output);
-		$this->importDatabaseStructure($this->getConnection(true), $input->getOption('type'), $output);
+		
+		$dbAwareConnection = $this->getConnection(true);
+		$this->importDatabaseStructure($dbAwareConnection, $input->getOption('type'), $output);
+		if ($input->getOption('init')) {
+			$this->importInitialData($dbAwareConnection, $input->getOption('type'), $output);
+		}
 	}
 
 	private function getConnection(bool $dbAware = false): Connection
@@ -112,6 +116,17 @@ class InstallDatabaseCommand extends ContainerAwareCommand
 		
 		$output->writeln('   Executing: '.$structureFile);
 		$this->executeSqlFile($conn->getWrappedConnection(), $structureFile, $output);
+	}
+	
+	private function importInitialData(Connection $conn, $databaseType, OutputInterface $output)
+	{
+		$output->writeln('<info>Importing the initial data.</info>');
+		
+		$dbFilePath = $this->getContainer()->getParameter('db_files');
+		$dataFile = realpath($dbFilePath.$databaseType.DIRECTORY_SEPARATOR.'fresh-data.sql');
+		
+		$output->writeln('   Executing: '.$dataFile);
+		$this->executeSqlFile($conn->getWrappedConnection(), $dataFile, $output);
 	}
 
 	private function executeSqlFile(Connection2 $conn, $filePath, OutputInterface $output)
