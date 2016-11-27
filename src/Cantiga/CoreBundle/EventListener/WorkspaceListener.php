@@ -159,7 +159,7 @@ class WorkspaceListener implements WorkspaceSourceInterface
 		
 		if ($project->getAreasAllowed()) {
 			$workspace->addWorkItem('data', new WorkItem('project_area_request_index', 'Area requests'));
-			$workspace->addWorkItem('data', new WorkItem('project_area_index', 'Areas'));
+			$workspace->addWorkItem('data', new WorkItem('area_mgmt_index', 'Areas'));
 		}
 		$workspace->addWorkItem('data', new WorkItem('project_buttons', 'Magic buttons'));
 		$workspace->addWorkItem('data', new WorkItem('project_area_group_index', 'Groups'));
@@ -183,7 +183,7 @@ class WorkspaceListener implements WorkspaceSourceInterface
 		$workspace->addWorkgroup(new Workgroup('summary', 'Summary', 'table', 2));
 		$workspace->addWorkgroup(new Workgroup('data', 'Data', 'database', 3));
 		if ($project->getAreasAllowed()) {
-			$workspace->addWorkItem('data', new WorkItem('group_area_index', 'Areas'));
+			$workspace->addWorkItem('data', new WorkItem('area_mgmt_index', 'Areas'));
 		}
 	}
 	

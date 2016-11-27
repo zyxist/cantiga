@@ -57,6 +57,10 @@ _user_area_request_controller:
 _user_place_controller:
     resource: "@CantigaCoreBundle/Controller/UserPlaceController.php"
     type:     annotation
+    
+_area_mgmt_controller:
+    resource: "@CantigaCoreBundle/Controller/AreaMgmtController.php"
+    type:     annotation
 
 _area_dashboard_controller:
     resource: "@CantigaCoreBundle/Controller/AreaDashboardController.php"
@@ -73,9 +77,6 @@ _area_membership_controller:
 
 _group_dashboard_controller:
     resource: "@CantigaCoreBundle/Controller/GroupDashboardController.php"
-    type:     annotation
-_group_area_controller:
-    resource: "@CantigaCoreBundle/Controller/GroupAreaController.php"
     type:     annotation
     
 _project_dashboard_controller:
@@ -95,9 +96,6 @@ _project_group_controller:
     type:     annotation
 _project_group_membership_controller:
     resource: "@CantigaCoreBundle/Controller/ProjectGroupMembershipController.php"
-    type:     annotation
-_project_area_controller:
-    resource: "@CantigaCoreBundle/Controller/ProjectAreaController.php"
     type:     annotation
 _project_area_membership_controller:
     resource: "@CantigaCoreBundle/Controller/ProjectAreaMembershipController.php"

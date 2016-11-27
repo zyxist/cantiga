@@ -19,17 +19,12 @@
 namespace WIO\EdkBundle\Extension;
 
 use Cantiga\CoreBundle\Api\Controller\CantigaController;
-use Cantiga\CoreBundle\Api\Controller\GroupPageController;
-use Cantiga\CoreBundle\Api\Controller\ProjectPageController;
 use Cantiga\CoreBundle\Entity\Area;
 use Cantiga\CoreBundle\Extension\AreaInformationExtensionInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Templating\EngineInterface;
 use WIO\EdkBundle\Repository\EdkRouteRepository;
 
-/**
- * @author Tomasz Jędrzejewski
- */
 class AreaRouteExtension implements AreaInformationExtensionInterface
 {
 	private $repository;
@@ -51,9 +46,9 @@ class AreaRouteExtension implements AreaInformationExtensionInterface
 
 	public function render(CantigaController $controller, Request $request, Area $area)
 	{
-		if ($controller instanceof ProjectPageController) {
+		if ($controller->getMembership()->getItem()->isRoot()) {
 			$routeLink = 'project_route_info';
-		} elseif ($controller instanceof GroupPageController) {
+		} else {
 			$routeLink = 'group_route_info';
 		}
 		

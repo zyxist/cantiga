@@ -16,12 +16,12 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+declare(strict_types=1);
 namespace Cantiga\CoreBundle\Repository;
 
+use Cantiga\Components\Hierarchy\HierarchicalInterface;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Area;
-use Cantiga\CoreBundle\Entity\Group;
-use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Entity\User;
 use Cantiga\CoreBundle\Event\AreaEvent;
 use Cantiga\CoreBundle\Event\CantigaEvents;
@@ -36,7 +36,10 @@ use PDO;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class ProjectAreaRepository implements AreaRepositoryInterface
+/**
+ * Manages the areas in the given parent place (project or group).
+ */
+class AreaMgmtRepository
 {
 	/**
 	 * @var Connection 
@@ -51,10 +54,10 @@ class ProjectAreaRepository implements AreaRepositoryInterface
 	 */
 	private $eventDispatcher;
 	/**
-	 * Active project
-	 * @var Project
+	 * Parent place
+	 * @var HierarchicalInterface
 	 */
-	private $project;
+	private $place;
 	
 	public function __construct(Connection $conn, Transaction $transaction, EventDispatcherInterface $eventDispatcher)
 	{
@@ -63,32 +66,35 @@ class ProjectAreaRepository implements AreaRepositoryInterface
 		$this->eventDispatcher = $eventDispatcher;
 	}
 	
-	public function setActiveProject(Project $project)
+	public function setParentPlace(HierarchicalInterface $place)
 	{
-		$this->project = $project;
+		$this->place = $place;
+		if ($place instanceof Area) {
+			throw new \LogicException('Unsupported place type: Area');
+		}
 	}
 	
 	/**
 	 * @return DataTable
 	 */
-	public function createDataTable()
+	public function createDataTable(): DataTable
 	{
 		$dt = new DataTable();
 		$dt->id('id', 'i.id')
 			->searchableColumn('name', 'i.name')
-			->column('territory', 't.name')
-			->searchableColumn('groupName', 'i.groupName')
-			->searchableColumn('status', 's.id')
+			->column('territory', 't.name');
+		if ($this->place->isRoot()) {
+			$dt->searchableColumn('groupName', 'i.groupName');
+		}
+		$dt->searchableColumn('status', 's.id')
 			->column('memberNum', 'i.memberNum')
 			->column('percentCompleteness', 'i.percentCompleteness');
-		if ($this->place) {
-			
-		}
+
 		
 		return $dt;
 	}
 	
-	public function listData(DataTable $dataTable, TranslatorInterface $translator)
+	public function listData(DataTable $dataTable, TranslatorInterface $translator): array
 	{
 		$qb = QueryBuilder::select()
 			->field('i.id', 'id')
@@ -102,10 +108,14 @@ class ProjectAreaRepository implements AreaRepositoryInterface
 			->field('i.percentCompleteness', 'percentCompleteness')
 			->from(CoreTables::AREA_TBL, 'i')
 			->join(CoreTables::TERRITORY_TBL, 't', QueryClause::clause('i.territoryId = t.id'))
-			->join(CoreTables::AREA_STATUS_TBL, 's', QueryClause::clause('i.statusId = s.id'))
-			->where(QueryClause::clause('i.projectId = :projectId', ':projectId', $this->project->getId()));
-		
-		if ($dataTable->hasFilter(AreaFilter::class) && $dataTable->getFilter()->isCategorySelected()) {
+			->join(CoreTables::AREA_STATUS_TBL, 's', QueryClause::clause('i.statusId = s.id'));
+		if ($this->place->isRoot()) {
+			$qb->where(QueryClause::clause('i.projectId = :projectId', ':projectId', $this->place->getId()));
+			if ($dataTable->hasFilter(AreaFilter::class) && $dataTable->getFilter()->isCategorySelected()) {
+				$qb->join(CoreTables::GROUP_TBL, 'g', QueryClause::clause('g.id = i.groupId'));
+			}
+		} else {
+			$qb->where(QueryClause::clause('i.groupId = :groupId', ':groupId', $this->place->getId()));
 			$qb->join(CoreTables::GROUP_TBL, 'g', QueryClause::clause('g.id = i.groupId'));
 		}
 		
@@ -131,17 +141,14 @@ class ProjectAreaRepository implements AreaRepositoryInterface
 		);
 	}
 	
-	/**
-	 * @return Group
-	 */
-	public function getItem($id)
+	public function getItem($id): Area
 	{
 		$this->transaction->requestTransaction();
 		try {
-			$item = Area::fetchByProject($this->conn, $id, $this->project);
-			if(false === $item) {
+			$item = Area::fetchByPlace($this->conn, $id, $this->place);
+			if (false === $item) {
 				$this->transaction->requestRollback();
-				throw new ItemNotFoundException('The specified item has not been found.', $id);
+				throw new ItemNotFoundException('The specified area has not been found.', $id);
 			}
 			return $item;
 		} catch(Exception $exception) {
@@ -150,7 +157,7 @@ class ProjectAreaRepository implements AreaRepositoryInterface
 		}
 	}
 	
-	public function findMembers(Area $area)
+	public function findMembers(Area $area): array
 	{
 		$items = $this->conn->fetchAll('SELECT u.name, u.avatar, p.location, p.telephone, p.publicMail, p.privShowTelephone, p.privShowPublicMail, m.note '
 			. 'FROM `'.CoreTables::USER_TBL.'` u '
@@ -165,13 +172,13 @@ class ProjectAreaRepository implements AreaRepositoryInterface
 		return $items;
 	}
 	
-	public function insert(Area $item)
+	public function insert(Area $item): int
 	{
 		$this->transaction->requestTransaction();
 		try {
 			$id = $item->insert($this->conn);
 			$this->eventDispatcher->dispatch(CantigaEvents::AREA_CREATED, new AreaEvent($item));
-			return $id;
+			return (int) $id;
 		} catch(Exception $exception) {
 			$this->transaction->requestRollback();
 			throw $exception;
@@ -201,7 +208,7 @@ class ProjectAreaRepository implements AreaRepositoryInterface
 		}
 	}
 	
-	public function getFormChoices()
+	public function getFormChoices(): array
 	{
 		$this->transaction->requestTransaction();
 		$stmt = $this->conn->prepare('SELECT `id`, `name` FROM `'.CoreTables::AREA_TBL.'` WHERE `projectId` = :projectId ORDER BY `name`');

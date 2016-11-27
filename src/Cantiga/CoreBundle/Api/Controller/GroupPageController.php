@@ -90,7 +90,7 @@ class GroupPageController extends CantigaController implements WorkspaceAwareInt
 		if (null === $this->extensionFilter) {
 			$this->extensionFilter = $this->get('security.token_storage')->getToken()->getMasterProject()->createExtensionPointFilter();
 		}
-		return new ExtensionPointFilter();
+		return $this->extensionFilter;
 	}
 	
 	/**

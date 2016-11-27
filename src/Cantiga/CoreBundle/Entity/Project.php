@@ -184,6 +184,11 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 		return 'Project';
 	}
 	
+	public function isRoot(): bool
+	{
+		return true;
+	}
+	
 	public function getId()
 	{
 		return $this->id;

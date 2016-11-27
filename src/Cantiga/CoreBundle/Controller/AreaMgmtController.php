@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of Cantiga Project. Copyright 2016 Cantiga contributors.
  *
@@ -17,20 +16,20 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
 namespace Cantiga\CoreBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
 use Cantiga\CoreBundle\Api\Actions\EditAction;
 use Cantiga\CoreBundle\Api\Actions\InfoAction;
 use Cantiga\CoreBundle\Api\Actions\InsertAction;
-use Cantiga\CoreBundle\Api\Controller\ProjectPageController;
+use Cantiga\CoreBundle\Api\Controller\WorkspaceController;
+use Cantiga\CoreBundle\Controller\Traits\InformationTrait;
 use Cantiga\CoreBundle\CoreExtensions;
 use Cantiga\CoreBundle\CoreSettings;
 use Cantiga\CoreBundle\Entity\Area;
 use Cantiga\CoreBundle\Event\CantigaEvents;
 use Cantiga\CoreBundle\Event\ContextMenuEvent;
-use Cantiga\CoreBundle\Form\ProjectAreaForm;
+use Cantiga\CoreBundle\Form\AreaForm;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -39,43 +38,47 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
- * @Route("/project/{slug}/area")
- * @Security("has_role('ROLE_PROJECT_MEMBER')")
+ * @Route("/s/{slug}/areas")
+ * @Security("has_role('ROLE_PROJECT_MEMBER') or has_role('ROLE_GROUP_MEMBER')")
  */
-class ProjectAreaController extends ProjectPageController
+class AreaMgmtController extends WorkspaceController
 {
+	use InformationTrait;
 
-	use Traits\InformationTrait;
-
-	const REPOSITORY_NAME = 'cantiga.core.repo.project_area';
+	const REPOSITORY_NAME = 'cantiga.core.repo.area_mgmt';
 	const FILTER_NAME = 'cantiga.core.filter.area';
+	const API_LIST_LINK = 'area_mgmt_api_list';
+	const API_MEMBERS_LINK = 'area_mgmt_api_members';
 
 	/**
 	 * @var CRUDInfo
 	 */
 	private $crudInfo;
+	private $customizableGroup;
+	private $showCreateLink;
 
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 		$this->crudInfo = $this->newCrudInfo(self::REPOSITORY_NAME)
-			->setTemplateLocation('CantigaCoreBundle:ProjectArea:')
+			->setTemplateLocation('CantigaCoreBundle:AreaMgmt:')
 			->setItemNameProperty('name')
 			->setPageTitle('Areas')
-			->setPageSubtitle('Manage the areas in this project')
-			->setIndexPage('project_area_index')
-			->setInfoPage('project_area_info')
-			->setInsertPage('project_area_insert')
-			->setEditPage('project_area_edit')
+			->setPageSubtitle('Manage the areas')
+			->setIndexPage('area_mgmt_index')
+			->setInfoPage('area_mgmt_info')
+			->setInsertPage('area_mgmt_insert')
+			->setEditPage('area_mgmt_edit')
 			->setItemUpdatedMessage('The area profile \'0\' has been updated.');
 
 		$this->breadcrumbs()
 			->workgroup('data')
 			->entryLink($this->trans('Areas', [], 'pages'), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
-		$this->get(self::REPOSITORY_NAME)->setActiveProject($this->getActiveProject());
+		$this->get(self::REPOSITORY_NAME)->setParentPlace($this->getMembership()->getItem());
+		$this->checkCapabilities();
 	}
 
 	/**
-	 * @Route("/index", name="project_area_index")
+	 * @Route("/index", name="area_mgmt_index")
 	 */
 	public function indexAction(Request $request)
 	{
@@ -92,14 +95,16 @@ class ProjectAreaController extends ProjectPageController
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'dataTable' => $dataTable,
 			'locale' => $request->getLocale(),
-			'ajaxListPage' => 'project_area_ajax_list',
+			'ajaxListPage' => self::API_LIST_LINK,
 			'filterForm' => $filterForm->createView(),
-			'filter' => $filter
+			'filter' => $filter,
+			'showCreateLink' => $this->showCreateLink,
+			'customizableGroup' => $this->customizableGroup
 		));
 	}
 
 	/**
-	 * @Route("/ajax-list", name="project_area_ajax_list")
+	 * @Route("/list", name="area_mgmt_api_list")
 	 */
 	public function ajaxListAction(Request $request)
 	{
@@ -120,7 +125,7 @@ class ProjectAreaController extends ProjectPageController
 	}
 
 	/**
-	 * @Route("/{id}/ajax-members", name="project_area_ajax_members")
+	 * @Route("/{id}/members", name="area_mgmt_api_members")
 	 */
 	public function ajaxMembersAction($id, Request $request)
 	{
@@ -134,13 +139,13 @@ class ProjectAreaController extends ProjectPageController
 	}
 
 	/**
-	 * @Route("/{id}/info", name="project_area_info")
+	 * @Route("/{id}/info", name="area_mgmt_info")
 	 */
 	public function infoAction($id, Request $request)
 	{		
 		$action = new InfoAction($this->crudInfo);
 		$action->slug($this->getSlug());
-		$action->set('ajaxMembersPage', 'project_area_ajax_members');
+		$action->set('ajaxMembersPage', self::API_MEMBERS_LINK);
 		return $action->run($this, $id, function(Area $item) use($request) {
 				$event = $this->get('event_dispatcher')->dispatch(CantigaEvents::UI_CTXMENU_PROJECT_AREA, new ContextMenuEvent($item));
 				$html = $this->renderInformationExtensions(CoreExtensions::AREA_INFORMATION, $request, $item);
@@ -158,44 +163,68 @@ class ProjectAreaController extends ProjectPageController
 	}
 
 	/**
-	 * @Route("/insert", name="project_area_insert")
+	 * @Route("/insert", name="area_mgmt_insert")
+	 * @Security("has_role('ROLE_PROJECT_MEMBER')")
 	 */
 	public function insertAction(Request $request)
 	{
-		$territoryRepo = $this->get('cantiga.core.repo.project_territory');
-		$statusRepo = $this->get('cantiga.core.repo.project_area_status');
-		$groupRepo = $this->get('cantiga.core.repo.project_group');
-		$territoryRepo->setProject($this->getActiveProject());
-		$statusRepo->setProject($this->getActiveProject());
-		$groupRepo->setProject($this->getActiveProject());
-
 		$formModel = $this->extensionPointFromSettings(CoreExtensions::AREA_FORM, CoreSettings::AREA_FORM);
 		$item = new Area();
 		$item->setReporter($this->getUser());
 		$item->setProject($this->getActiveProject());
-		$action = new InsertAction($this->crudInfo, $item, ProjectAreaForm::class, ['customFormModel' => $formModel, 'territoryRepository' => $territoryRepo, 'groupRepository' => $groupRepo, 'statusRepository' => $statusRepo]);
+		
+		if (!$this->customizableGroup) {
+			$item->setGroup($this->getMembership()->getItem());
+		}
+		
+		$action = new InsertAction($this->crudInfo, $item, AreaForm::class, $this->createFormConfig($formModel));
 		$action->slug($this->getSlug());
 		$action->customForm($formModel);
+		$action->set('customizableGroup', $this->customizableGroup);
 		return $action->run($this, $request);
 	}
 
 	/**
-	 * @Route("/{id}/edit", name="project_area_edit")
+	 * @Route("/{id}/edit", name="area_mgmt_edit")
 	 */
 	public function editAction($id, Request $request)
 	{
-		$territoryRepo = $this->get('cantiga.core.repo.project_territory');
-		$statusRepo = $this->get('cantiga.core.repo.project_area_status');
-		$groupRepo = $this->get('cantiga.core.repo.project_group');
-		$territoryRepo->setProject($this->getActiveProject());
-		$statusRepo->setProject($this->getActiveProject());
-		$groupRepo->setProject($this->getActiveProject());
-
 		$formModel = $this->extensionPointFromSettings(CoreExtensions::AREA_FORM, CoreSettings::AREA_FORM);
-		$action = new EditAction($this->crudInfo, ProjectAreaForm::class, ['customFormModel' => $formModel, 'territoryRepository' => $territoryRepo, 'groupRepository' => $groupRepo, 'statusRepository' => $statusRepo]);
+		$action = new EditAction($this->crudInfo, AreaForm::class, $this->createFormConfig($formModel));
 		$action->slug($this->getSlug());
 		$action->customForm($formModel);
+		$action->set('customizableGroup', $this->customizableGroup);
 		return $action->run($this, $id, $request);
 	}
-
+	
+	private function createFormConfig($formModel): array
+	{
+		$territoryRepo = $this->get('cantiga.core.repo.project_territory');
+		$statusRepo = $this->get('cantiga.core.repo.project_area_status');
+		$territoryRepo->setProject($this->getActiveProject());
+		$statusRepo->setProject($this->getActiveProject());		
+		$base = [
+			'customFormModel' => $formModel,
+			'territoryRepository' => $territoryRepo,
+			'statusRepository' => $statusRepo
+		];
+		
+		if ($this->isGranted('ROLE_PROJECT_MEMBER')) {
+			$groupRepo = $this->get('cantiga.core.repo.project_group');
+			$groupRepo->setProject($this->getActiveProject());
+			$base['groupRepository'] = $groupRepo;
+		}
+		return $base;
+	}
+	
+	private function checkCapabilities()
+	{
+		if ($this->isGranted('ROLE_PROJECT_MEMBER')) {
+			$this->showCreateLink = true;
+			$this->customizableGroup = true;
+		} else {
+			$this->showCreateLink = false;
+			$this->customizableGroup = false;
+		}
+	}
 }

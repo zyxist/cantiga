@@ -31,11 +31,11 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class GroupAreaForm extends AbstractType
-{	
+class AreaForm extends AbstractType
+{
 	public function configureOptions(OptionsResolver $resolver)
 	{
-		$resolver->setDefined(['customFormModel', 'territoryRepository', 'statusRepository']);
+		$resolver->setDefined(['customFormModel', 'territoryRepository', 'groupRepository', 'statusRepository']);
 		$resolver->setRequired(['customFormModel', 'territoryRepository', 'statusRepository']);
 		$resolver->addAllowedTypes('customFormModel', CustomFormModelInterface::class);
 	}
@@ -43,10 +43,14 @@ class GroupAreaForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add('name', TextType::class, array('label' => 'Name'))
-			->add('territory', ChoiceType::class, array('label' => 'Territory', 'choices' => $options['territoryRepository']->getFormChoices()))
-			->add('status', ChoiceType::class, array('label' => 'Status', 'choices' => $options['statusRepository']->getFormChoices()))
-			->add('save', SubmitType::class, array('label' => 'Save'));
+			->add('name', TextType::class, ['label' => 'Name'])
+			->add('territory', ChoiceType::class, ['label' => 'Territory', 'choices' => $options['territoryRepository']->getFormChoices()])
+			->add('status', ChoiceType::class, ['label' => 'Status', 'choices' => $options['statusRepository']->getFormChoices()])
+			->add('save', SubmitType::class, ['label' => 'Save']);
+		if (!empty($options['groupRepository'])) {
+			$builder->add('group', ChoiceType::class, ['label' => 'Group', 'choices' => $options['groupRepository']->getFormChoices()]);
+			$builder->get('group')->addModelTransformer(new EntityTransformer($options['groupRepository']));
+		}
 		$builder->get('territory')->addModelTransformer(new EntityTransformer($options['territoryRepository']));
 		$builder->get('status')->addModelTransformer(new EntityTransformer($options['statusRepository']));
 		$builder->addEventSubscriber(new CustomFormEventSubscriber($options['customFormModel']));

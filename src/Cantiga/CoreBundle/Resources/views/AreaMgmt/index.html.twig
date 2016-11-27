@@ -9,18 +9,22 @@
 	<th width="30" data-priority="1">#</th>
 	<th data-priority="0">{{ 'Name' | trans }}</th>
 	<th width="120" data-priority="3">{{ 'Territory' | trans }}</th>
+	{% if customizableGroup %}
 	<th width="120" data-priority="3">{{ 'Group' | trans }}</th>
+	{% endif %}
 	<th width="120" data-priority="2">{{ 'Status' | trans }}</th>
 	<th width="120" data-priority="4">{{ 'Member number' | trans }}</th>
-	<th width="80" data-priority="3">{{ 'Profil' | trans }}</th>
+	<th width="80" data-priority="3">{{ 'Profile' | trans }}</th>
 	<th width="120" data-priority="0">{{ 'Actions' | trans({}, 'general') }}</th>
 </tr>
 {% endblock %}
 
 {% block box_footer %}
+{% if showCreateLink %}
 <p>
-	<a href="{{ spath('project_area_insert') }}" class="btn btn-success btn-sm" role="button">{{ 'Insert' | trans({}, 'general') }}</a>
+	<a href="{{ spath('area_mgmt_insert') }}" class="btn btn-success btn-sm" role="button">{{ 'Insert' | trans({}, 'general') }}</a>
 </p>
+{% endif %}
 {% endblock %}
 
 {% block custom_datatable_config %}

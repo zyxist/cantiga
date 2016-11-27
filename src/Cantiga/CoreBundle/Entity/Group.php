@@ -154,6 +154,11 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 		return 'Group';
 	}
 	
+	public function isRoot(): bool
+	{
+		return false;
+	}
+	
 	public function getId()
 	{
 		return $this->id;

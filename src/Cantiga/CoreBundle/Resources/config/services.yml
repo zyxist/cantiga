@@ -23,7 +23,6 @@ parameters:
     user_area_request_repository.class: Cantiga\CoreBundle\Repository\UserAreaRequestRepository
     project_area_request_repository.class: Cantiga\CoreBundle\Repository\ProjectAreaRequestRepository
     project_group_repository.class: Cantiga\CoreBundle\Repository\ProjectGroupRepository
-    project_area_repository.class: Cantiga\CoreBundle\Repository\ProjectAreaRepository
     project_area_membership_repository.class: Cantiga\CoreBundle\Repository\ProjectAreaMembershipRepository
     app_text_repository.class: Cantiga\CoreBundle\Repository\AppTextRepository
     app_mail_repository.class: Cantiga\CoreBundle\Repository\AppMailRepository
@@ -132,9 +131,6 @@ services:
     cantiga.core.repo.group_memberlist:
         class:     Cantiga\CoreBundle\Repository\GroupMemberListRepository
         arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.roles"]
-    cantiga.core.repo.group_area:
-        class:     Cantiga\CoreBundle\Repository\GroupAreaRepository
-        arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher"]
     cantiga.core.repo.project_group_membership:
         class:     "%project_group_membership_repository.class%"
         arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.roles"]
@@ -165,8 +161,8 @@ services:
     cantiga.core.repo.project_group:
         class:     "%project_group_repository.class%"
         arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher"]
-    cantiga.core.repo.project_area:
-        class:     "%project_area_repository.class%"
+    cantiga.core.repo.area_mgmt:
+        class:     Cantiga\CoreBundle\Repository\AreaMgmtRepository
         arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher"]
     cantiga.core.repo.project_area_status:
         class:     "%project_area_status.class%"

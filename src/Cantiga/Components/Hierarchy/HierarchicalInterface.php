@@ -31,5 +31,6 @@ interface HierarchicalInterface extends IdentifiableInterface
 	public function getTypeName(): string;
 	public function getParents(): array;
 	public function getRootElement(): HierarchicalInterface;
+	public function isRoot(): bool;
 	public function getElementOfType(int $type);
 }

@@ -29,9 +29,7 @@ use Cantiga\Metamodel\Capabilities\EditableEntityInterface;
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
 use Cantiga\Metamodel\Capabilities\InsertableEntityInterface;
 use Cantiga\Metamodel\DataMappers;
-use Cantiga\Metamodel\Join;
 use Cantiga\Metamodel\Membership;
-use Cantiga\Metamodel\QueryClause;
 use Doctrine\DBAL\Connection;
 use PDO;
 use Symfony\Component\Validator\Constraints\Length;
@@ -101,55 +99,38 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 	/**
 	 * @param Connection $conn
 	 * @param int $id
-	 * @param Project $project
+	 * @param HierarchicalInterface $place Parent place
 	 * @return Area
 	 */
-	public static function fetchByProject(Connection $conn, $id, Project $project)
+	public static function fetchByPlace(Connection $conn, $id, HierarchicalInterface $place)
 	{
+		if ($place instanceof Project) {
+			$selector = 'a.`projectId` = :placeId';
+		} elseif ($place instanceof Group) {
+			$selector = 'a.`groupId` = :placeId';
+		} else {
+			throw new \LogicException('The specified place type is not supported.');
+		}
 		$data = $conn->fetchAssoc('SELECT a.*, '
 			. 't.`id` AS `territory_id`, t.`name` AS `territory_name`, t.`areaNum` AS `territory_areaNum`, t.`requestNum` as `territory_requestNum`, '
 			. self::createEntityFieldList()
 			. 'FROM `'.CoreTables::AREA_TBL.'` a '
 			. self::createEntityJoin('a')
 			. 'INNER JOIN `'.CoreTables::TERRITORY_TBL.'` t ON t.`id` = a.`territoryId` '
-			. 'WHERE a.`id` = :id AND a.`projectId` = :projectId', [':id' => $id, ':projectId' => $project->getId()]);
+			. 'WHERE a.`id` = :id AND '.$selector, [':id' => $id, ':placeId' => $place->getId()]);
 		if(false === $data) {
 			return false;
 		}
 		$item = Area::fromArray($data);
-		$item->project = Project::fetchActive($conn, $data['projectId']);
-		if (false == $item->project) {
-			return false;
+		if ($place->isRoot()) {
+			$item->project = $place;
+			if (!empty($data['groupId'])) {
+				$item->group = $item->oldGroup = Group::fetchByProject($conn, $data['groupId'], $item->project);
+			}
+		} else {
+			$item->group = $item->oldGroup = $place;
+			$item->project = $place->getRootElement();
 		}
-		
-		$item->status = $item->oldStatus = AreaStatus::fetchByProject($conn, $data['statusId'], $item->project);
-		$item->setTerritory($item->oldTerritory = Territory::fromArray($data, 'territory'));
-		if (!empty($data['groupId'])) {
-			$item->group = $item->oldGroup = Group::fetchByProject($conn, $data['groupId'], $item->project);
-		}
-		$item->entity = Entity::fromArray($data, 'entity');
-		return $item;
-	}
-	
-	public static function fetchByGroup(Connection $conn, $id, Group $group)
-	{
-		$data = $conn->fetchAssoc('SELECT a.*, '
-			. 't.`id` AS `territory_id`, t.`name` AS `territory_name`, t.`areaNum` AS `territory_areaNum`, t.`requestNum` as `territory_requestNum`, '
-			. self::createEntityFieldList()
-			. 'FROM `'.CoreTables::AREA_TBL.'` a '
-			. self::createEntityJoin('a')
-			. 'INNER JOIN `'.CoreTables::TERRITORY_TBL.'` t ON t.`id` = a.`territoryId` '
-			. 'WHERE a.`id` = :id AND a.`groupId` = :groupId', [':id' => $id, ':groupId' => $group->getId()]);
-		if(false === $data) {
-			return false;
-		}
-		$item = Area::fromArray($data);
-		$item->group = $group;
-		$item->project = Project::fetchActive($conn, $data['projectId']);
-		if (false == $item->project) {
-			return false;
-		}
-		
 		$item->status = $item->oldStatus = AreaStatus::fetchByProject($conn, $data['statusId'], $item->project);
 		$item->setTerritory($item->oldTerritory = Territory::fromArray($data, 'territory'));
 		$item->entity = Entity::fromArray($data, 'entity');
@@ -217,6 +198,11 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 	public function getTypeName():string
 	{
 		return 'Area';
+	}
+	
+	public function isRoot(): bool
+	{
+		return false;
 	}
 	
 	public function getId()
