@@ -18,34 +18,31 @@
  */
 namespace Cantiga\CoreBundle\Api\Workspace;
 
+use Cantiga\Components\Hierarchy\Entity\Membership;
 use Cantiga\CoreBundle\Api\Workspace;
-use Cantiga\CoreBundle\Entity\Membership\GroupMembershipLoader;
+use Cantiga\CoreBundle\CoreTexts;
+use Cantiga\CoreBundle\Entity\Area;
+use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Event\CantigaEvents;
-use Cantiga\Metamodel\Membership;
-use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Group workspace is a workspace, where the users work in the context of some group.
  * The user must be a member of some group in order to access it.
  * 
- * @see Cantiga\CoreBundle\Entity\Area
- * @author Tomasz Jędrzejewski
+ * @see Area
  */
 class GroupWorkspace extends Workspace
 {
-	/**
-	 * @var GroupMembershipLoader 
-	 */
-	private $groupMembershipLoader;
 	private $slug;
 	/**
 	 * @var Project
 	 */
 	private $project;
 	
-	public function __construct(GroupMembershipLoader $pml)
+	public function __construct(Membership $membership)
 	{
-		$this->groupMembershipLoader = $pml;
+		$this->project = $membership->getPlace()->getRootElement();
+		$this->slug = $membership->getPlace()->getPlace()->getSlug();
 	}
 
 	public function getKey()
@@ -60,29 +57,23 @@ class GroupWorkspace extends Workspace
 	{
 		return $this->project;
 	}
-	
-	public function getMembershipLoader()
-	{
-		return $this->groupMembershipLoader;
-	}
 
 	public function getWorkspaceEvent()
 	{
 		return CantigaEvents::WORKSPACE_GROUP;
 	}
 	
-	public function onWorkspaceLoaded(Membership $membership)
+	public function getHelpRoute(): string
 	{
-		$this->slug = $membership->getItem()->getSlug();
-		$this->project = $membership->getItem()->getProject();
+		return 'place_help_page';
 	}
 	
-	public function getHelpPages(RouterInterface $router)
+	public function getHelpPages(): array
 	{
 		return [
-			['route' => 'user_help_introduction', 'url' => $router->generate('user_help_introduction'), 'title' => 'Introduction to the system'],
-			['route' => 'group_help_introduction', 'url' => $router->generate('group_help_introduction', ['slug' => $this->slug]), 'title' => 'Introduction to groups'],
-			['route' => 'group_help_members', 'url' => $router->generate('group_help_members', ['slug' => $this->slug]), 'title' => 'Member management'],
+			['route' => 'user_introduction', 'title' => 'Introduction to the system', 'text' => CoreTexts::HELP_INTRODUCTION],
+			['route' => 'group_introduction', 'title' => 'Introduction to groups', 'text' => CoreTexts::HELP_GROUP_INTRODUCTION],
+			['route' => 'group_members', 'title' => 'Member management', 'text' => CoreTexts::HELP_GROUP_MEMBERS],
 		];
 	}
 }

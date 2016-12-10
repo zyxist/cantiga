@@ -47,6 +47,7 @@ return array(
 	'Area requests' => 'Zgłoszenia rejonów',
 	'Group categories' => 'Kategorie grup',
 	'Groups' => 'Grupy',
+	'Areas' => 'Rejony',
 	'Project members' => 'Członkowie projektu',
 	'Group members' => 'Członkowie grupy',
 	'Area members' => 'Członkowie rejonu',
@@ -82,16 +83,16 @@ return array(
 	'Places you are a member of' => 'Miejsca, których jesteś członkiem',
 	
 	// Supplementary texts for area
-	'Area page' => 'Strona rejonu',
+	'AreaTypeSubtitle' => 'Strona rejonu',
 	'Meet your group' => 'Poznaj swoją grupę',
 	'Edit the details of your area' => 'Edytuj informacje o swoim rejonie',
 	
 	// Supplementary texts for group
-	'Group page' => 'Strona grupy',
+	'GroupTypeSubtitle' => 'Strona grupy',
 	'Manage the areas in this group' => 'Zarządzaj rejonami w tej grupie',
 	
 	// Supplementary texts for project
-	'Project page' => 'Strona projektu',
+	'ProjectTypeSubtitle' => 'Strona projektu',
 	'Manage project settings' => 'Zarządzaj ustawieniami projektu',
 	'Explore submitted area requests' => 'Przeglądaj nadesłane zgłoszenia rejonów',
 	'Organize the areas and users into groups to ease the management' => 'Łącz rejony oraz użytkowników w grupy, aby ułatwić zarządzanie',

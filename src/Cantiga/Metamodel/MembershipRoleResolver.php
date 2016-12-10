@@ -35,15 +35,15 @@ class MembershipRoleResolver implements MembershipRoleResolverInterface
 	public function __construct()
 	{
 		// TODO: Make some more generic configuration in the future and move this out of here.
-		$this->roles['Project'][0] = new MembershipRole(0, 'Visitor', 'ROLE_PROJECT_VISITOR');
-		$this->roles['Project'][1] = new MembershipRole(1, 'Member', 'ROLE_PROJECT_MEMBER');
-		$this->roles['Project'][2] = new MembershipRole(2, 'Manager', 'ROLE_PROJECT_MANAGER');
+		$this->roles['Project'][0] = new MembershipRole(0, 'Visitor', 'PLACE_VISITOR');
+		$this->roles['Project'][1] = new MembershipRole(1, 'Member', 'PLACE_MEMBER', $this->roles['Project'][0]);
+		$this->roles['Project'][2] = new MembershipRole(2, 'Manager', 'PLACE_MANAGER', $this->roles['Project'][1]);
 		
-		$this->roles['Group'][0] = new MembershipRole(0, 'Member', 'ROLE_GROUP_MEMBER');
+		$this->roles['Group'][0] = new MembershipRole(0, 'Member', 'PLACE_MEMBER');
 		
-		$this->roles['Area'][0] = new MembershipRole(0, 'Member', 'ROLE_AREA_MEMBER');
-		$this->roles['Area'][1] = new MembershipRole(1, 'Personal data access', 'ROLE_AREA_PD_ADMIN');
-		$this->roles['Area'][2] = new MembershipRole(2, 'Manager', 'ROLE_AREA_MANAGER');
+		$this->roles['Area'][0] = new MembershipRole(0, 'Member', 'PLACE_MEMBER');
+		$this->roles['Area'][1] = new MembershipRole(1, 'Personal data access', 'PLACE_PD_ADMIN', $this->roles['Area'][0]);
+		$this->roles['Area'][2] = new MembershipRole(2, 'Manager', 'PLACE_MANAGER', $this->roles['Area'][1]);
 	}
 
 	public function registerRole(string $itemType, MembershipRole $role)
@@ -65,7 +65,7 @@ class MembershipRoleResolver implements MembershipRoleResolverInterface
 	public function getRole(string $itemType, int $id): MembershipRole
 	{
 		if (!isset($this->roles[$itemType][$id])) {
-			return new MembershipRole(-1, 'Unknown', 'ROLE_USER');
+			return new MembershipRole(-1, 'Unknown', 'USER');
 		}
 		return $this->roles[$itemType][$id];
 	}
@@ -73,7 +73,7 @@ class MembershipRoleResolver implements MembershipRoleResolverInterface
 	public function getHighestRole(string $itemType): MembershipRole
 	{
 		if (!isset($this->roles[$itemType])) {
-			return new MembershipRole(-1, 'Unknown', 'ROLE_USER');
+			return new MembershipRole(-1, 'Unknown', 'USER');
 		}
 		$highest = null;
 		foreach ($this->roles[$itemType] as $role) {

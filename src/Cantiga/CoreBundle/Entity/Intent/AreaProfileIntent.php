@@ -19,6 +19,7 @@
 namespace Cantiga\CoreBundle\Entity\Intent;
 
 use Cantiga\CoreBundle\Entity\Area;
+use Cantiga\CoreBundle\Repository\AreaMgmtRepository;
 use Cantiga\CoreBundle\Repository\ProjectAreaRepository;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -26,8 +27,6 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 /**
  * Intent for editing the profile by the area member.
- *
- * @author Tomasz Jędrzejewski
  */
 class AreaProfileIntent
 {
@@ -45,7 +44,7 @@ class AreaProfileIntent
 	 */
 	private $repository;
 	
-	public function __construct(Area $area, ProjectAreaRepository $repository)
+	public function __construct(Area $area, AreaMgmtRepository $repository)
 	{
 		$this->area = $area;
 		$this->repository = $repository;

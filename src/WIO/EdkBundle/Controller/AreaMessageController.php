@@ -32,7 +32,7 @@ use WIO\EdkBundle\EdkTexts;
 
 /**
  * @Route("/area/{slug}/participants/messages")
- * @Security("has_role('ROLE_AREA_MEMBER')")
+ * @Security("is_granted('PLACE_MEMBER')")
  */
 class AreaMessageController extends AreaPageController
 {
@@ -107,7 +107,7 @@ class AreaMessageController extends AreaPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, function($item) {
 			return [
-				'transitions' => $item->getAllowedTransitions($this->getUser(), $this->hasRole('ROLE_AREA_MANAGER')),
+				'transitions' => $item->getAllowedTransitions($this->getUser(), $this->isGranted('PLACE_MANAGER')),
 				'currentUser' => $this->getUser(),
 			];
 		});
@@ -120,7 +120,7 @@ class AreaMessageController extends AreaPageController
 	{
 		try {
 			$item = $this->crudInfo->getRepository()->getItem($id);
-			$this->crudInfo->getRepository()->changeState($item, $this->getUser(), $this->hasRole('ROLE_AREA_MANAGER'), $status);
+			$this->crudInfo->getRepository()->changeState($item, $this->getUser(), $this->isGranted('PLACE_MANAGER'), $status);
 			return $this->showPageWithMessage($this->trans('MsgTransitionCompleted', [], 'edk'), 'area_edk_message_info', ['slug' => $this->getSlug(), 'id' => $item->getId()]);
 		} catch (ModelException $ex) {
 			return $this->showPageWithError($this->trans($ex->getMessage(), [], 'edk'), 'area_edk_message_index', ['slug' => $this->getSlug()]);

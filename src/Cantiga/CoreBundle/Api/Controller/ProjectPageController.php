@@ -18,15 +18,12 @@
  */
 namespace Cantiga\CoreBundle\Api\Controller;
 
+use Cantiga\Components\Hierarchy\Entity\Membership;
+use Cantiga\Components\Workspace\WorkspaceAwareInterface;
 use Cantiga\CoreBundle\Api\ExtensionPoints\ExtensionPointFilter;
 use Cantiga\CoreBundle\Api\Workspace;
 use Cantiga\CoreBundle\Api\Workspace\ProjectWorkspace;
-use Cantiga\CoreBundle\Api\WorkspaceAwareInterface;
 use Cantiga\CoreBundle\Entity\Project;
-use Cantiga\Metamodel\Membership;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-
 
 /**
  * This class shall be extended by all the controllers that work in the
@@ -42,44 +39,25 @@ class ProjectPageController extends CantigaController implements WorkspaceAwareI
 	 * @var ExtensionPointsFilter
 	 */
 	private $extensionFilter;
-	/**
-	 * @var TokenStorageInterface
-	 */
-	private $tokenStorage;
-	
-	public function createWorkspace(Request $request): Workspace
+
+	public function createWorkspace(Membership $membership = null): Workspace
 	{
-		$this->tokenStorage = $this->get('security.token_storage');
-		return $this->workspace = new ProjectWorkspace($this->get('cantiga.core.membership.project'));
+		return $this->workspace = new ProjectWorkspace($membership);
 	}
 	
-	/**
-	 * @return ProjectWorkspace
-	 */
-	public function getWorkspace()
+	public function getWorkspace(): ProjectWorkspace
 	{
 		return $this->workspace;
 	}
 	
-	public function getSlug()
+	public function getSlug(): string
 	{
-		return $this->tokenStorage->getToken()->getMembershipEntity()->getSlug();
+		return $this->workspace->getProject()->getSlug();
 	}
 	
-	/**
-	 * @return Membership
-	 */
-	public function getMembership()
+	public function getActiveProject(): Project
 	{
-		return $this->tokenStorage->getToken()->getMembership();
-	}
-	
-	/**
-	 * @return Project
-	 */
-	public function getActiveProject()
-	{
-		return $this->tokenStorage->getToken()->getMembershipEntity();
+		return $this->workspace->getProject();
 	}
 	
 	/**
@@ -88,7 +66,7 @@ class ProjectPageController extends CantigaController implements WorkspaceAwareI
 	public function getExtensionPointFilter()
 	{
 		if (null === $this->extensionFilter) {
-			$this->extensionFilter = $this->get('security.token_storage')->getToken()->getMasterProject()->createExtensionPointFilter();
+			$this->extensionFilter = $this->getActiveProject()->createExtensionPointFilter();
 		}
 		return $this->extensionFilter;
 	}

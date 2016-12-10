@@ -19,6 +19,7 @@
 declare(strict_types=1);
 namespace Cantiga\Components\Hierarchy;
 
+use Cantiga\CoreBundle\Entity\Place; // temporary, until an interface is added.
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
 
 interface HierarchicalInterface extends IdentifiableInterface
@@ -31,6 +32,9 @@ interface HierarchicalInterface extends IdentifiableInterface
 	public function getTypeName(): string;
 	public function getParents(): array;
 	public function getRootElement(): HierarchicalInterface;
+	public function getPlace(): Place;
 	public function isRoot(): bool;
 	public function getElementOfType(int $type);
+	
+	public function isChild(HierarchicalInterface $place): bool;
 }

@@ -40,7 +40,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @Route("/project/{slug}/area-request")
- * @Security("has_role('ROLE_PROJECT_MEMBER')")
+ * @Security("is_granted('PLACE_MEMBER') and is_granted('MEMBEROF_PROJECT')")
  */
 class ProjectAreaRequestController extends ProjectPageController
 {

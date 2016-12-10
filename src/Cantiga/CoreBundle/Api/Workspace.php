@@ -18,10 +18,7 @@
  */
 namespace Cantiga\CoreBundle\Api;
 
-use Cantiga\Metamodel\Membership;
-use Cantiga\Metamodel\MembershipLoaderInterface;
 use LogicException;
-use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Represents a single logical part of the application that has certain access control settings,
@@ -92,24 +89,9 @@ abstract class Workspace
 		return $this->workgroups[$workgroupId];
 	}
 	
-	/**
-	 * If this workspace is tied to a concrete entity the user is member of, this
-	 * method shall return a loader for that entity and all the entity information.
-	 * Otherwise, the returned value shall be NULL.
-	 * 
-	 * @return MembershipLoaderInterface
-	 */
-	public function getMembershipLoader()
-	{
-		return null;
-	}
+	abstract public function getHelpRoute(): string;
 	
-	public function onWorkspaceLoaded(Membership $membership)
-	{
-		// empty
-	}
-	
-	public function getHelpPages(RouterInterface $router)
+	public function getHelpPages(): array
 	{
 		return [];
 	}

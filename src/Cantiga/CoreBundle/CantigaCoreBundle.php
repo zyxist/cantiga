@@ -32,9 +32,9 @@ class CantigaCoreBundle extends Bundle
 	public function boot()
 	{
 		Workspaces::registerWorkspace('user', 'User workspace', 'cantiga_home_page', 'ROLE_USER', 'green');
-		Workspaces::registerWorkspace('area', 'Area workspace', 'area_dashboard', 'ROLE_AREA_AWARE', 'purple', Workspaces::HIDDEN);
-		Workspaces::registerWorkspace('group', 'Group workspace', 'group_dashboard', 'ROLE_GROUP_AWARE', 'black', Workspaces::HIDDEN);
-		Workspaces::registerWorkspace('project', 'Project workspace', 'project_dashboard', 'ROLE_PROJECT_AWARE', 'blue', Workspaces::HIDDEN);
+		Workspaces::registerWorkspace('area', 'Area workspace', 'place_dashboard', 'MEMBEROF_AREA', 'purple', Workspaces::HIDDEN);
+		Workspaces::registerWorkspace('group', 'Group workspace', 'place_dashboard', 'MEMBEROF_GROUP', 'black', Workspaces::HIDDEN);
+		Workspaces::registerWorkspace('project', 'Project workspace', 'place_dashboard', 'MEMBEROF_PROJECT', 'blue', Workspaces::HIDDEN);
 		Workspaces::registerWorkspace('admin', 'Admin workspace', 'admin_dashboard', 'ROLE_ADMIN', 'red');
 		
 		AppTexts::registerName(CoreTexts::AREA_REQUEST_CREATION_STEP1_TEXT);
@@ -81,6 +81,5 @@ class CantigaCoreBundle extends Bundle
 	{
 		parent::build($container);
 		$container->addCompilerPass(new ExtensionPointPass());
-		$container->addCompilerPass(new MembershipPass());
 	}
 }

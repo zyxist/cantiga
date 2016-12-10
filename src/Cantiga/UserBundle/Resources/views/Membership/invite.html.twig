@@ -1,0 +1,47 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ ('InviteTo'~placeType~'Title: 0') | trans([place.name], 'pages') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ ('InviteNewPeople'~placeType~'Text') | trans([], 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+<div class="row">
+	<div class="col-lg-6 col-md-12">
+		<div class="box box-primary">
+			{{ form_start(form) }}
+			<div class="box-body">
+				{{ form_row(form.email) }}
+				{{ form_row(form.role) }}
+				{{ form_row(form.note) }}
+				{% if showContactsManageable %}
+				{{ form_row(form.showDownstreamContactData) }}	
+				{% endif %}
+			</div>
+			<div class="box-footer">
+				{{ form_row(form.save) }}
+			</div>
+			{{ form_end(form) }}
+		</div>
+	</div>
+	<div class="col-lg-6 hidden-md">
+		<div class="box box-primary">
+			<div class="box-header with-border">
+				<i class="fa fa-info"></i>
+				<h3 class="box-title">{{ 'HowItWorksTitle' | trans([], 'general') }}</h3>
+			</div>
+			<div class="box-body">
+				<p>{{ (placeType~'InvitationNoteText') | trans([], 'users') }}</p>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	{{ use_icheck() }}
+{% endblock %}

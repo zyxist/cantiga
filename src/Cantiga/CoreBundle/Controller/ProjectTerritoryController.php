@@ -36,7 +36,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @Route("/project/{slug}/territories")
- * @Security("has_role('ROLE_PROJECT_MANAGER')")
+ * @Security("is_granted('PLACE_MANAGER') and is_granted('MEMBEROF_PROJECT')")
  */
 class ProjectTerritoryController extends ProjectPageController
 {

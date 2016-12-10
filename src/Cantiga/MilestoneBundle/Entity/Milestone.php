@@ -19,7 +19,7 @@
 namespace Cantiga\MilestoneBundle\Entity;
 
 use Cantiga\CoreBundle\CoreTables;
-use Cantiga\CoreBundle\Entity\Entity;
+use Cantiga\CoreBundle\Entity\Place;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\Metamodel\Capabilities\EditableEntityInterface;
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
@@ -75,7 +75,7 @@ class Milestone implements IdentifiableInterface, InsertableEntityInterface, Edi
 		return $item;
 	}
 	
-	public static function fetchClosestDeadline(Connection $conn, Entity $entity, Project $project)
+	public static function fetchClosestDeadline(Connection $conn, Place $entity, Project $project)
 	{
 		$data = $conn->fetchAssoc('SELECT * FROM `'.MilestoneTables::MILESTONE_TBL.'` WHERE `deadline` > :currentTime AND `projectId` = :projectId AND `entityType` = :entityType ORDER BY `deadline`', [
 			':currentTime' => time(), ':projectId' => $project->getId(), ':entityType' => $entity->getType()]);
@@ -87,7 +87,7 @@ class Milestone implements IdentifiableInterface, InsertableEntityInterface, Edi
 		return $item;
 	}
 	
-	public static function populateEntities(Connection $conn, Entity $newEntity, Project $project)
+	public static function populateEntities(Connection $conn, Place $newEntity, Project $project)
 	{
 		$conn->insert(MilestoneTables::MILESTONE_PROGRESS_TBL, ['entityId' => $newEntity->getId(), 'completedNum' => 0]);
 		$milestones = $conn->fetchAll('SELECT `id` FROM `'.MilestoneTables::MILESTONE_TBL.'` WHERE `projectId` = :projectId AND `entityType` = :entityType', [':projectId' => $project->getId(), ':entityType' => $newEntity->getType()]);
@@ -251,23 +251,23 @@ class Milestone implements IdentifiableInterface, InsertableEntityInterface, Edi
 		switch($this->entityType) {
 			case 'Project':
 				$stmt = $this->createStatusPopulator($conn);
-				$stmt->bindValue(':entityId', $this->project->getEntity()->getId());
+				$stmt->bindValue(':entityId', $this->project->getPlace()->getId());
 				$stmt->bindValue(':milestoneId', $this->id);
 				$stmt->execute();
 				break;
 			case 'Group':
-				$groupIds = $conn->fetchAll('SELECT `entityId` FROM `'.CoreTables::GROUP_TBL.'` WHERE `projectId` = :projectId', [':projectId' => $this->project->getId()]);
+				$groupIds = $conn->fetchAll('SELECT `placeId` FROM `'.CoreTables::GROUP_TBL.'` WHERE `projectId` = :projectId', [':projectId' => $this->project->getId()]);
 				$stmt = $this->createStatusPopulator($conn);
 				foreach ($groupIds as $row) {
-					$stmt->bindValue(':entityId', $row['entityId']);
+					$stmt->bindValue(':entityId', $row['placeId']);
 					$stmt->bindValue(':milestoneId', $this->id);
 					$stmt->execute();
 				}
 			case 'Area':
-				$groupIds = $conn->fetchAll('SELECT `entityId` FROM `'.CoreTables::AREA_TBL.'` WHERE `projectId` = :projectId', [':projectId' => $this->project->getId()]);
+				$groupIds = $conn->fetchAll('SELECT `placeId` FROM `'.CoreTables::AREA_TBL.'` WHERE `projectId` = :projectId', [':projectId' => $this->project->getId()]);
 				$stmt = $this->createStatusPopulator($conn);
 				foreach ($groupIds as $row) {
-					$stmt->bindValue(':entityId', $row['entityId']);
+					$stmt->bindValue(':entityId', $row['placeId']);
 					$stmt->bindValue(':milestoneId', $this->id);
 					$stmt->execute();
 				}
@@ -303,14 +303,14 @@ class Milestone implements IdentifiableInterface, InsertableEntityInterface, Edi
 	 * to provide <tt>$timeFormatter</tt> instance, too.
 	 * 
 	 * @param Connection $conn
-	 * @param Entity $entity
+	 * @param Place $entity
 	 * @param boolean $retVal Either Milestone::RETURN_BOOLEAN (default) or Milestone::RETURN_SUMMARY
 	 * @param TimeFormatterInterface $timeFormatter Provide only if $retVal is set to Milestone::RETURN_SUMMARY
 	 * @return mixed
 	 * @throws ModelException
 	 * @throws ItemNotFoundException
 	 */
-	public function complete(Connection $conn, Entity $entity, $retVal = self::RETURN_BOOLEAN, TimeFormatterInterface $timeFormatter = null)
+	public function complete(Connection $conn, Place $entity, $retVal = self::RETURN_BOOLEAN, TimeFormatterInterface $timeFormatter = null)
 	{
 		if ($this->getType() != Milestone::TYPE_BINARY) {
 			throw new ModelException('Cannot change the state of the milestone!');
@@ -347,7 +347,7 @@ class Milestone implements IdentifiableInterface, InsertableEntityInterface, Edi
 	 * to provide <tt>$timeFormatter</tt> instance, too.
 	 * 
 	 * @param Connection $conn
-	 * @param Entity $entity
+	 * @param Place $entity
 	 * @param int $progress Progress as percentage (0-100)
 	 * @param boolean $retVal Either Milestone::RETURN_BOOLEAN (default) or Milestone::RETURN_SUMMARY
 	 * @param TimeFormatterInterface $timeFormatter Provide only if $retVal is set to Milestone::RETURN_SUMMARY
@@ -355,7 +355,7 @@ class Milestone implements IdentifiableInterface, InsertableEntityInterface, Edi
 	 * @throws ModelException
 	 * @throws ItemNotFoundException
 	 */
-	public function updateProgress(Connection $conn, Entity $entity, $progress, $retVal = self::RETURN_BOOLEAN, TimeFormatterInterface $timeFormatter = null)
+	public function updateProgress(Connection $conn, Place $entity, $progress, $retVal = self::RETURN_BOOLEAN, TimeFormatterInterface $timeFormatter = null)
 	{
 		if ($this->getType() != Milestone::TYPE_PERCENT) {
 			throw new ModelException('Cannot change the state of the milestone!');
@@ -395,14 +395,14 @@ class Milestone implements IdentifiableInterface, InsertableEntityInterface, Edi
 	 * to provide <tt>$timeFormatter</tt> instance, too.
 	 * 
 	 * @param Connection $conn
-	 * @param Entity $entity
+	 * @param Place $entity
 	 * @param boolean $retVal Either Milestone::RETURN_BOOLEAN (default) or Milestone::RETURN_SUMMARY
 	 * @param TimeFormatterInterface $timeFormatter Provide only if $retVal is set to Milestone::RETURN_SUMMARY
 	 * @return mixed
 	 * @throws ModelException
 	 * @throws ItemNotFoundException
 	 */
-	public function cancel(Connection $conn, Entity $entity, $retVal = self::RETURN_BOOLEAN, TimeFormatterInterface $timeFormatter = null)
+	public function cancel(Connection $conn, Place $entity, $retVal = self::RETURN_BOOLEAN, TimeFormatterInterface $timeFormatter = null)
 	{
 		if ($this->getType() != Milestone::TYPE_BINARY) {
 			throw new ModelException('Cannot change the state of the milestone!');

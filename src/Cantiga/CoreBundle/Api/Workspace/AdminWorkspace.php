@@ -19,14 +19,12 @@
 namespace Cantiga\CoreBundle\Api\Workspace;
 
 use Cantiga\CoreBundle\Api\Workspace;
+use Cantiga\CoreBundle\CoreTexts;
 use Cantiga\CoreBundle\Event\CantigaEvents;
-use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Administrative workspace allows managing the system. It is available only to the
  * users with the 'ROLE_ADMIN' granted.
- *
- * @author Tomasz Jędrzejewski
  */
 class AdminWorkspace extends Workspace
 {
@@ -45,11 +43,16 @@ class AdminWorkspace extends Workspace
 		return CantigaEvents::WORKSPACE_ADMIN;
 	}
 	
-	public function getHelpPages(RouterInterface $router)
+	public function getHelpRoute(): string
+	{
+		return 'admin_help_page';
+	}
+	
+	public function getHelpPages(): array
 	{
 		return [
-			['route' => 'user_help_introduction', 'url' => $router->generate('user_help_introduction'), 'title' => 'Introduction to the system'],
-			['route' => 'admin_help_managing', 'url' => $router->generate('admin_help_managing'), 'title' => 'Managing the system']
+			['route' => 'user_introduction', 'title' => 'Introduction to the system', 'text' => CoreTexts::HELP_INTRODUCTION],
+			['route' => 'admin_managing',  'title' => 'Managing the system', 'text' => CoreTexts::HELP_ADMIN_MANAGING]
 		];
 	}
 }

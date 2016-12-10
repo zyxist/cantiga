@@ -27,7 +27,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @Route("/group/{slug}/routes")
- * @Security("has_role('ROLE_GROUP_MEMBER')")
+ * @Security("is_granted('PLACE_MEMBER')")
  */
 class GroupRouteController extends GroupPageController
 {
@@ -50,8 +50,9 @@ class GroupRouteController extends GroupPageController
 
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
+		$membership = $this->get('cantiga.user.memebership.storage')->getMembership();
 		$repository = $this->get(self::REPOSITORY_NAME);
-		$repository->setRootEntity($this->getMembership()->getItem());
+		$repository->setRootEntity($membership->getPlace());
 		$this->crudInfo = $this->newCrudInfo($repository)
 			->setTemplateLocation('WioEdkBundle:EdkRoute:')
 			->setItemNameProperty('name')

@@ -36,8 +36,6 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
  * will see the invitation in his/her profile and can accept it or reject. When the invitation is
  * accepted, the user joins the given place. If the user does not have an account yet, he/she must
  * create one and then the invitation will be linked to the newly created profile.
- *
- * @author Tomasz Jędrzejewski
  */
 class Invitation implements IdentifiableInterface, InsertableEntityInterface, RemovableEntityInterface
 {
@@ -46,22 +44,25 @@ class Invitation implements IdentifiableInterface, InsertableEntityInterface, Re
 	private $user;
 	private $role;
 	private $note;
-	private $resourceType;
-	private $resourceName;
-	private $resourceId;
+	private $showDownstreamContactData;
+	private $place;
 	private $inviter;
 	private $createdAt;
 	private $assignmentKey;
 	
 	public static function fetchByUser(Connection $conn, $id, User $user)
 	{
-		$data = $conn->fetchAssoc('SELECT * '
-			. 'FROM `'.CoreTables::INVITATION_TBL.'` WHERE `id` = :id AND `userId` = :userId', [':id' => $id, ':userId' => $user->getId()]);
+		$data = $conn->fetchAssoc('SELECT i.*, p.`id` AS `place_id`, p.`name` AS `place_name`, p.`type` AS `place_type`, p.`slug` AS `place_slug`, '
+			. 'p.`removedAt` AS `place_removedAt`, p.`memberNum` AS `place_memberNum`, p.`rootPlaceId` AS `place_rootPlaceId` '
+			. 'FROM `'.CoreTables::INVITATION_TBL.'` i '
+			. 'INNER JOIN `'.CoreTables::PLACE_TBL.'` p ON p.`id` = i.`placeId` '
+			. 'WHERE i.`id` = :id AND i.`userId` = :userId', [':id' => $id, ':userId' => $user->getId()]);
 		if (empty($data)) {
 			return false;
 		}
 		$item = self::fromArray($data);
 		$item->user = $user;
+		$item->place = Place::fromArray($data, 'place');
 		return $item;
 	}
 	
@@ -82,6 +83,11 @@ class Invitation implements IdentifiableInterface, InsertableEntityInterface, Re
 		$item = new Invitation;
 		DataMappers::fromArray($item, $array, $prefix);
 		return $item;
+	}
+	
+	public static function getRelationships()
+	{
+		return ['place'];
 	}
 	
 	public static function loadValidatorMetadata(ClassMetadata $metadata)
@@ -113,24 +119,22 @@ class Invitation implements IdentifiableInterface, InsertableEntityInterface, Re
 		return $this->role;
 	}
 
-	public function getNote()
+	public function getNote(): string
 	{
-		return $this->note;
+		return (string) $this->note;
+	}
+	
+	public function getShowDownstreamContactData(): bool
+	{
+		return (bool) $this->showDownstreamContactData;
 	}
 
-	public function getResourceType()
+	/**
+	 * @return Place
+	 */
+	public function getPlace()
 	{
-		return $this->resourceType;
-	}
-
-	public function getResourceName()
-	{
-		return $this->resourceName;
-	}
-
-	public function getResourceId()
-	{
-		return $this->resourceId;
+		return $this->place;
 	}
 
 	public function getInviter()
@@ -155,74 +159,58 @@ class Invitation implements IdentifiableInterface, InsertableEntityInterface, Re
 		return $this->assignmentKey;
 	}
 	
-	public function setId($id)
+	public function setId($id): self
 	{
 		DataMappers::noOverwritingId($this->id);
 		$this->id = $id;
 		return $this;
 	}
 
-	public function setEmail($email)
+	public function setEmail($email): self
 	{
 		$this->email = $email;
 		return $this;
 	}
 
-	public function setUser(User $user)
+	public function setUser(User $user): self
 	{
 		$this->user = $user;
 		return $this;
 	}
 
-	public function setRole($role)
+	public function setRole($role): self
 	{
-		$this->role = $role;
+		$this->role = (int) $role;
 		return $this;
 	}
 
-	public function setNote($note)
+	public function setNote($note): self
 	{
 		$this->note = $note;
 		return $this;
 	}
-
-	public function setResourceType($resourceType)
-	{
-		$this->resourceType = $resourceType;
-		return $this;
-	}
-
-	public function setResourceName($resourceName)
-	{
-		$this->resourceName = $resourceName;
-		return $this;
-	}
-
-	public function setResourceId($resourceId)
-	{
-		$this->resourceId = $resourceId;
-		return $this;
-	}
 	
-	public function toEntity(IdentifiableInterface $entity)
+	public function setShowDownstreamContactData($showDownstreamContactData): self
 	{
-		$this->resourceType = get_class($entity);
-		if (false !== ($pos = strrpos($this->resourceType, '\\'))) {
-			$this->resourceType = substr($this->resourceType, $pos + 1, strlen($this->resourceType) - $pos - 1);
-		}
-		$this->resourceName = $entity->getName();
-		$this->resourceId = $entity->getId();
+		$this->showDownstreamContactData = (bool) $showDownstreamContactData;
+		return $this;
 	}
 
-	public function setInviter(User $inviter)
+	public function setPlace(Place $place): self
+	{
+		$this->place = $place;
+		return $this;
+	}
+
+	public function setInviter(User $inviter): self
 	{
 		$this->inviter = $inviter;
 		return $this;
 	}
 
-	public function setCreatedAt($createdAt)
+	public function setCreatedAt($createdAt): self
 	{
-		$this->createdAt = $createdAt;
+		$this->createdAt = (int) $createdAt;
 		return $this;
 	}
 
@@ -236,9 +224,8 @@ class Invitation implements IdentifiableInterface, InsertableEntityInterface, Re
 				'email' => $this->email,
 				'role' => $this->role,
 				'note' => $this->note,
-				'resourceType' => $this->resourceType,
-				'resourceName' => $this->resourceName,
-				'resourceId' => $this->resourceId,
+				'showDownstreamContactData' => (int) $this->showDownstreamContactData,
+				'placeId' => $this->place->getId(),
 				'inviterId' => $this->inviter->getId(),
 				'createdAt' => $this->createdAt,
 				'assignmentKey' => $this->assignmentKey				
@@ -250,12 +237,11 @@ class Invitation implements IdentifiableInterface, InsertableEntityInterface, Re
 				'userId' => $this->user->getId(),
 				'role' => $this->role,
 				'note' => $this->note,
-				'resourceType' => $this->resourceType,
-				'resourceName' => $this->resourceName,
-				'resourceId' => $this->resourceId,
+				'showDownstreamContactData' => (int) $this->showDownstreamContactData,
+				'placeId' => $this->place->getId(),
 				'inviterId' => $this->inviter->getId(),
 				'createdAt' => $this->createdAt,
-				'assignmentKey' => $this->assignmentKey				
+				'assignmentKey' => $this->assignmentKey		
 			]);
 		}
 		return $this->id;

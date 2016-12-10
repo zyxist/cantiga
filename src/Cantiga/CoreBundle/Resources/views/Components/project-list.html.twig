@@ -12,7 +12,7 @@
 		{% if hasProjects %}
         <li class="header">{{ 'You are a member of:' |trans }}</li>
 		{% for project in projects %}
-        <li><a href="{{ path(project.route, {slug: project.slug }) }}">{{ project.translationKey | trans([ project.name ]) }}</a></li>
+        <li><a href="{{ path('place_dashboard', {slug: project.slug }) }}">{{ (project.type~'Nominative: 0') | trans([ project.name ]) }}</a></li>
 		{% endfor %}
 		{% endif %}
     </ul>

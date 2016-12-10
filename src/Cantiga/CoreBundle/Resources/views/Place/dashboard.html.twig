@@ -1,0 +1,23 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ place.name }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ (place.typeName~'TypeSubtitle') | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+	<div class="row">
+		<div class="col-md-12">
+			{{ topExtensions | raw }}
+		</div>
+		<div class="col-md-8 col-sm-12">
+			{{ centralExtensions | raw }}
+		</div>
+		<div class="col-md-4 col-sm-12">
+			{{ rightExtensions | raw }}
+		</div>
+	</div>
+{% endblock %}

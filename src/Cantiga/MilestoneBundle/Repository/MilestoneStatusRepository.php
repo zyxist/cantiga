@@ -18,13 +18,14 @@
  */
 namespace Cantiga\MilestoneBundle\Repository;
 
+use Cantiga\Components\Hierarchy\HierarchicalInterface;
+use Cantiga\Components\Hierarchy\MembershipEntityInterface;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Area;
-use Cantiga\CoreBundle\Entity\Entity;
 use Cantiga\CoreBundle\Entity\Group;
+use Cantiga\CoreBundle\Entity\Place;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Settings\ProjectSettings;
-use Cantiga\Components\Hierarchy\MembershipEntityInterface;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Exception\ModelException;
 use Cantiga\Metamodel\TimeFormatterInterface;
@@ -39,8 +40,6 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * The logic for updating the status of milestones for particular entities is here.
- *
- * @author Tomasz Jędrzejewski
  */
 class MilestoneStatusRepository
 {
@@ -73,7 +72,7 @@ class MilestoneStatusRepository
 	{
 		$this->transaction->requestTransaction();
 		try {
-			$item = Entity::fetchById($this->conn, $id);
+			$item = Place::fetchById($this->conn, $id);
 			if (false === $item) {
 				throw new ItemNotFoundException('Item not found.');
 			}
@@ -84,7 +83,7 @@ class MilestoneStatusRepository
 		}
 	}
 	
-	public function findMilestone($id, Entity $entity, Project $project)
+	public function findMilestone($id, Place $entity, Project $project)
 	{
 		$this->transaction->requestTransaction();
 		try {
@@ -99,7 +98,7 @@ class MilestoneStatusRepository
 		}
 	}
 	
-	public function completeMilestone(Entity $entity, Milestone $milestone, MembershipEntityInterface $who)
+	public function completeMilestone(Place $entity, Milestone $milestone, HierarchicalInterface $who)
 	{
 		$this->transaction->requestTransaction();
 		try {
@@ -114,7 +113,7 @@ class MilestoneStatusRepository
 		}
 	}
 	
-	public function updateMilestone(Entity $entity, Milestone $milestone, MembershipEntityInterface $who, $progress)
+	public function updateMilestone(Place $entity, Milestone $milestone, HierarchicalInterface $who, $progress)
 	{
 		$this->transaction->requestTransaction();
 		try {
@@ -129,7 +128,7 @@ class MilestoneStatusRepository
 		}
 	}
 	
-	public function cancelMilestone(Entity $entity, Milestone $milestone, MembershipEntityInterface $who)
+	public function cancelMilestone(Place $entity, Milestone $milestone, HierarchicalInterface $who)
 	{
 		$this->transaction->requestTransaction();
 		try {
@@ -144,18 +143,18 @@ class MilestoneStatusRepository
 		}
 	}
 	
-	public function getAvailableEntities(MembershipEntityInterface $who, TranslatorInterface $translator)
+	public function getAvailableEntities(HierarchicalInterface $who, TranslatorInterface $translator)
 	{
 		$this->transaction->requestTransaction();
 		try {
 			$results = [];
-			$results[] = ['id' => $who->getEntity()->getId(), 'name' => $translator->trans($who->getEntity()->getType().'Nominative: 0', [$who->getName()])];
+			$results[] = ['id' => $who->getPlace()->getId(), 'name' => $translator->trans($who->getPlace()->getType().'Nominative: 0', [$who->getName()])];
 			$query = '';
 			if ($who instanceof Project) {
-				$query = '(SELECT e.`id`, e.`name`, e.`type` FROM `'.CoreTables::ENTITY_TBL.'` e INNER JOIN `'.CoreTables::GROUP_TBL.'` g ON g.`entityId` = e.`id` WHERE g.`projectId` = '.$who->getId().' ORDER BY g.`name`) '
-					. 'UNION (SELECT e.`id`, e.`name`, e.`type` FROM `'.CoreTables::ENTITY_TBL.'` e INNER JOIN `'.CoreTables::AREA_TBL.'` a ON a.`entityId` = e.`id` WHERE a.`projectId` = '.$who->getId().' ORDER BY a.`name`)';
+				$query = '(SELECT e.`id`, e.`name`, e.`type` FROM `'.CoreTables::PLACE_TBL.'` e INNER JOIN `'.CoreTables::GROUP_TBL.'` g ON g.`placeId` = e.`id` WHERE g.`projectId` = '.$who->getId().' ORDER BY g.`name`) '
+					. 'UNION (SELECT e.`id`, e.`name`, e.`type` FROM `'.CoreTables::PLACE_TBL.'` e INNER JOIN `'.CoreTables::AREA_TBL.'` a ON a.`placeId` = e.`id` WHERE a.`projectId` = '.$who->getId().' ORDER BY a.`name`)';
 			} elseif ($who instanceof Group) {
-				$query = 'SELECT e.`id`, e.`name`, e.`type` FROM `'.CoreTables::ENTITY_TBL.'` e INNER JOIN `'.CoreTables::AREA_TBL.'` a ON a.`entityId` = e.`id` WHERE a.`groupId` = '.$who->getId().' ORDER BY a.`name`';
+				$query = 'SELECT e.`id`, e.`name`, e.`type` FROM `'.CoreTables::PLACE_TBL.'` e INNER JOIN `'.CoreTables::AREA_TBL.'` a ON a.`placeId` = e.`id` WHERE a.`groupId` = '.$who->getId().' ORDER BY a.`name`';
 			}
 
 			if (!empty($query)) {
@@ -170,7 +169,7 @@ class MilestoneStatusRepository
 		}
 	}
 	
-	public function computeTotalProgress(Entity $entity, Project $project)
+	public function computeTotalProgress(Place $entity, Project $project)
 	{
 		$this->transaction->requestTransaction();
 		try {
@@ -191,7 +190,7 @@ class MilestoneStatusRepository
 		}
 	}
 	
-	public function findAllMilestones(Entity $entity, Project $project, $editable)
+	public function findAllMilestones(Place $entity, Project $project, $editable)
 	{
 		$this->transaction->requestTransaction();
 		try {
@@ -214,12 +213,12 @@ class MilestoneStatusRepository
 		}
 	}
 	
-	public function findClosestDeadline(Entity $entity, Project $project)
+	public function findClosestDeadline(Place $entity, Project $project)
 	{
 		return Milestone::fetchClosestDeadline($this->conn, $entity, $project);
 	}
 	
-	public function isAllowed(Entity $entity, MembershipEntityInterface $who, $editable = false)
+	public function isAllowed(Place $entity, HierarchicalInterface $who, $editable = false)
 	{
 		$this->transaction->requestTransaction();
 		try {
@@ -237,7 +236,7 @@ class MilestoneStatusRepository
 		}
 	}
 	
-	public function isEditable(Entity $entity, MembershipEntityInterface $who)
+	public function isEditable(Place $entity, HierarchicalInterface $who)
 	{
 		if ($who instanceof Area) {
 			return $this->settings->get(MilestoneSettings::AREA_CAN_UPDATE_OWN_PROGRESS)->getValue();
@@ -254,34 +253,34 @@ class MilestoneStatusRepository
 		return false;
 	}
 	
-	private function isAllowedForProject(Entity $entity, MembershipEntityInterface $who, $editable = false)
+	private function isAllowedForProject(Place $entity, HierarchicalInterface $who, $editable = false)
 	{
 		switch ($entity->getType()) {
 			case 'Project':
-				return $who->getEntity()->getId() == $entity->getId();
+				return $who->getPlace()->getId() == $entity->getId();
 			case 'Group':
-				$pid = $this->conn->fetchColumn('SELECT `projectId` FROM `'.CoreTables::GROUP_TBL.'` WHERE `entityId` = :id', [':id' => $entity->getId()]);
+				$pid = $this->conn->fetchColumn('SELECT `projectId` FROM `'.CoreTables::GROUP_TBL.'` WHERE `placeId` = :id', [':id' => $entity->getId()]);
 				return $pid == $who->getId();
 			case 'Area':
-				$pid = $this->conn->fetchColumn('SELECT `projectId` FROM `'.CoreTables::AREA_TBL.'` WHERE `entityId` = :id', [':id' => $entity->getId()]);
+				$pid = $this->conn->fetchColumn('SELECT `projectId` FROM `'.CoreTables::AREA_TBL.'` WHERE `placeId` = :id', [':id' => $entity->getId()]);
 				return $pid == $who->getId();
 		}
 		return false;
 	}
 	
-	private function isAllowedForGroup(Entity $entity, MembershipEntityInterface $who, $editable = false)
+	private function isAllowedForGroup(Place $entity, HierarchicalInterface $who, $editable = false)
 	{
 		switch ($entity->getType()) {
 			case 'Project':
 				return false;
 			case 'Group':
 				if (!$editable || $this->settings->get(MilestoneSettings::GROUP_CAN_UPDATE_OWN_PROGRESS)->getValue()) {
-					return $who->getEntity()->getId() == $entity->getId();
+					return $who->getPlace()->getId() == $entity->getId();
 				}
 				return false;
 			case 'Area':
 				if (!$editable || $this->settings->get(MilestoneSettings::GROUP_CAN_UPDATE_AREA_PROGRESS)->getValue()) {
-					$pid = $this->conn->fetchColumn('SELECT `groupId` FROM `'.CoreTables::AREA_TBL.'` WHERE `entityId` = :id', [':id' => $entity->getId()]);
+					$pid = $this->conn->fetchColumn('SELECT `groupId` FROM `'.CoreTables::AREA_TBL.'` WHERE `placeId` = :id', [':id' => $entity->getId()]);
 					return $pid == $who->getId();
 				}
 				return false;
@@ -289,11 +288,11 @@ class MilestoneStatusRepository
 		return false;
 	}
 	
-	private function isAllowedForArea(Entity $entity, MembershipEntityInterface $who, $editable = false)
+	private function isAllowedForArea(Place $entity, HierarchicalInterface $who, $editable = false)
 	{
 		if ($entity->getType() == 'Area') {
 			if (!$editable || $this->settings->get(MilestoneSettings::AREA_CAN_UPDATE_OWN_PROGRESS)->getValue()) {
-				return $who->getEntity()->getId() == $entity->getId(); 
+				return $who->getPlace()->getId() == $entity->getId(); 
 			}
 		}
 		return false;

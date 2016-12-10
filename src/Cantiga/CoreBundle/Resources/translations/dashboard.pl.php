@@ -20,6 +20,7 @@ return [
 	'ProjectInvitationText' => 'Zaproszenie do projektu',
 	'GroupInvitationText' => 'Zaproszenie do grupy',
 	'AreaInvitationText' => 'Zaproszenie do rejonu',
+	'GotoInvitationsText' => 'Przejdź do zaproszeń',
 	
 	'NoActivityTitle' => 'Brak aktywności',
 	'ThankYouJoiningText' => 'Dziękujemy za dołączenie do nas. Niestety w tym momencie nie jest otwarta żadna rejestracja rejonów, nie jesteś członkiem żadnego projektu, grupy ani rejonu, nie masz także żadnych zaproszeń.',

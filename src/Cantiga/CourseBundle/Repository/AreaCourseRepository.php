@@ -149,7 +149,7 @@ class AreaCourseRepository
 	private function spawnActivationEvent(Area $area, $output)
 	{
 		if ($output instanceof CourseProgress) {
-			$this->eventDispatcher->dispatch(MilestoneEvents::ACTIVATION_EVENT, new ActivationEvent($area->getProject(), $area->getEntity(), 'course.completed', function() use($output) {
+			$this->eventDispatcher->dispatch(MilestoneEvents::ACTIVATION_EVENT, new ActivationEvent($area->getProject(), $area->getPlace(), 'course.completed', function() use($output) {
 				if ($output->getMandatoryCourseNum() == 0) {
 					return NewMilestoneStatus::create(100);
 				} else {

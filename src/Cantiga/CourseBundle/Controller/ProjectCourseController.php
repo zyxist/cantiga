@@ -42,7 +42,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @Route("/project/{slug}/courses")
- * @Security("has_role('ROLE_PROJECT_MANAGER')")
+ * @Security("is_granted('PLACE_MANAGER')")
  */
 class ProjectCourseController extends ProjectPageController
 {

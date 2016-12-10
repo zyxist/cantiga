@@ -18,10 +18,10 @@
  */
 namespace Cantiga\CoreBundle\Api\Controller;
 
+use Cantiga\Components\Hierarchy\Entity\Membership;
+use Cantiga\Components\Workspace\WorkspaceAwareInterface;
 use Cantiga\CoreBundle\Api\Workspace;
 use Cantiga\CoreBundle\Api\Workspace\AdminWorkspace;
-use Cantiga\CoreBundle\Api\WorkspaceAwareInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Base class for all the controllers in the admin workspace.
@@ -30,21 +30,13 @@ class AdminPageController extends CantigaController implements WorkspaceAwareInt
 {
 	private $workspace;
 	
-	public function createWorkspace(Request $request): Workspace
+	public function createWorkspace(Membership $membership = null): Workspace
 	{
 		return $this->workspace = new AdminWorkspace();
 	}
-	
-	/**
-	 * @return AdminWorkspace
-	 */
-	public function getWorkspace()
+
+	public function getWorkspace(): AdminWorkspace
 	{
 		return $this->workspace;
-	}
-
-	public function createProjectList()
-	{
-		return [];
 	}
 }

@@ -19,13 +19,11 @@
 namespace Cantiga\CoreBundle\Api\Workspace;
 
 use Cantiga\CoreBundle\Api\Workspace;
+use Cantiga\CoreBundle\CoreTexts;
 use Cantiga\CoreBundle\Event\CantigaEvents;
-use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Admin workspace is a workspace, where the user can manage the system.
- *
- * @author Tomasz Jędrzejewski
  */
 class UserWorkspace extends Workspace
 {
@@ -44,13 +42,18 @@ class UserWorkspace extends Workspace
 		return CantigaEvents::WORKSPACE_USER;
 	}
 	
-	public function getHelpPages(RouterInterface $router)
+	public function getHelpRoute(): string
+	{
+		return 'user_help_page';
+	}
+	
+	public function getHelpPages(): array
 	{
 		return [
-			['route' => 'user_help_introduction', 'url' => $router->generate('user_help_introduction'), 'title' => 'Introduction to the system'],
-			['route' => 'user_help_profile', 'url' => $router->generate('user_help_profile'), 'title' => 'User profile'],
-			['route' => 'user_help_requesting_areas', 'url' => $router->generate('user_help_requesting_areas'), 'title' => 'Requesting areas'],
-			['route' => 'user_help_invitations', 'url' => $router->generate('user_help_invitations'), 'title' => 'Invitations']
+			['route' => 'user_introduction', 'title' => 'Introduction to the system', 'text' => CoreTexts::HELP_INTRODUCTION],
+			['route' => 'user_profile', 'title' => 'User profile', 'text' => CoreTexts::HELP_PROFILE],
+			['route' => 'user_requesting_areas', 'title' => 'Requesting areas', 'text' => CoreTexts::HELP_REQUEST_AREAS],
+			['route' => 'user_invitations', 'title' => 'Invitations', 'text' => CoreTexts::HELP_INVITATIONS]
 		];
 	}
 }

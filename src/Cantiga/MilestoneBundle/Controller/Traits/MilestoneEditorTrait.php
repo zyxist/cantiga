@@ -18,7 +18,8 @@
  */
 namespace Cantiga\MilestoneBundle\Controller\Traits;
 
-use Cantiga\CoreBundle\Entity\Project;
+use Cantiga\Components\Hierarchy\Entity\Membership;
+use Cantiga\Components\Hierarchy\HierarchicalInterface;
 use Cantiga\Metamodel\Exception\ModelException;
 use Cantiga\MilestoneBundle\Repository\MilestoneStatusRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,8 +27,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Common code for the management actions.
- *
- * @author Tomasz Jędrzejewski
  */
 trait MilestoneEditorTrait
 {
@@ -36,10 +35,10 @@ trait MilestoneEditorTrait
 	 */
 	protected $repository;
 	
-	protected function performReload(Request $request)
+	protected function performReload(Request $request, Membership $membership)
 	{
 		try {
-			$root = $this->getMembership()->getItem();
+			$root = $membership->getPlace();
 			$entity = $this->repository->findEntity($request->get('i'));
 			if (!$this->repository->isAllowed($entity, $root)) {
 				return new JsonResponse(['success' => 0]);
@@ -57,10 +56,10 @@ trait MilestoneEditorTrait
 		}
 	}
 	
-	protected function performComplete(Request $request)
+	protected function performComplete(Request $request, Membership $membership)
 	{
 		try {
-			$root = $this->getMembership()->getItem();
+			$root = $membership->getPlace();
 			$entity = $this->repository->findEntity($request->get('i'));
 			if (!$this->repository->isAllowed($entity, $root, true)) {
 				return new JsonResponse(['success' => 0]);
@@ -78,10 +77,10 @@ trait MilestoneEditorTrait
 		}
 	}
 	
-	protected function performCancel(Request $request)
+	protected function performCancel(Request $request, Membership $membership)
 	{
 		try {
-			$root = $this->getMembership()->getItem();
+			$root = $membership->getPlace();
 			$entity = $this->repository->findEntity($request->get('i'));
 			if (!$this->repository->isAllowed($entity, $root, true)) {
 				return new JsonResponse(['success' => 0]);
@@ -99,10 +98,10 @@ trait MilestoneEditorTrait
 		}
 	}
 	
-	protected function performUpdate(Request $request)
+	protected function performUpdate(Request $request, Membership $membership)
 	{
 		try {
-			$root = $this->getMembership()->getItem();
+			$root = $membership->getPlace();
 			$entity = $this->repository->findEntity($request->get('i'));
 			$progress = $request->get('p');
 			if (!$this->repository->isAllowed($entity, $root, true)) {
@@ -121,11 +120,8 @@ trait MilestoneEditorTrait
 		}
 	}
 	
-	private function extractProject($root)
+	private function extractProject(HierarchicalInterface $root)
 	{
-		if ($root instanceof Project) {
-			return $root;
-		}
-		return $root->getProject();
+		return $root->getRootElement();
 	}
 }

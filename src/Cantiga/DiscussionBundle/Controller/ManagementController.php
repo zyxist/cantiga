@@ -34,7 +34,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @Route("/s/{slug}/manage/discussion")
- * @Security("has_role('ROLE_PROJECT_AWARE')")
+ * @Security("is_granted('PLACE_MANAGER') and is_granted('MEMBEROF_PROJECT')")
  */
 class ManagementController extends ProjectPageController
 {

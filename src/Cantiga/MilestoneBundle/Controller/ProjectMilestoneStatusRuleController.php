@@ -36,7 +36,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @Route("/project/{slug}/milestone/status-rules")
- * @Security("has_role('ROLE_PROJECT_MANAGER')")
+ * @Security("is_granted('PLACE_MANAGER')")
  */
 class ProjectMilestoneStatusRuleController extends ProjectPageController
 {

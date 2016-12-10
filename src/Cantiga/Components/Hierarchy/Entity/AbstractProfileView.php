@@ -20,7 +20,6 @@ declare(strict_types=1);
 namespace Cantiga\Components\Hierarchy\Entity;
 
 use Cantiga\Components\Hierarchy\User\CantigaUserRefInterface;
-use Cantiga\Metamodel\Membership;
 
 /**
  * Details about somebody's profile.
@@ -88,7 +87,7 @@ abstract class AbstractProfileView implements CantigaUserRefInterface
 		return $this->notes;
 	}
 	
-	abstract public function canViewContactInformation(Membership $viewingMember): bool;
+	abstract public function canViewContactInformation(AbstractMemberInfo $viewingMember): bool;
 	
 	public function asArray(): array
 	{

@@ -94,22 +94,22 @@ class ChannelRepository
 		}
 	}
 	
-	public function findWorkspaceChannels(MembershipEntityInterface $entity): array
+	public function findWorkspaceChannels(HierarchicalInterface $entity): array
 	{
-		$entityIds = [$entity->getEntity()->getId()];
+		$entityIds = [$entity->getPlace()->getId()];
 		if ($entity instanceof Project) {
 			$visibility = 'projectVisible';
 			$minLevel = 0;
 		} elseif ($entity instanceof Group) {
 			$visibility = 'groupVisible';
 			$minLevel = 1;
-			$entityIds[] = $entity->getProject()->getEntity()->getId();
+			$entityIds[] = $entity->getProject()->getPlace()->getId();
 		} elseif ($entity instanceof Area) {
 			$visibility = 'areaVisible';
 			$minLevel = 2;
-			$entityIds[] = $entity->getProject()->getEntity()->getId();
+			$entityIds[] = $entity->getProject()->getPlace()->getId();
 			if (null !== $entity->getGroup()) {
-				$entityIds[] = $entity->getGroup()->getEntity()->getId();
+				$entityIds[] = $entity->getGroup()->getPlace()->getId();
 			}
 		}
 		return $this->adapter->findVisibleChannels($this->project->getId(), $entityIds, $visibility, $minLevel);

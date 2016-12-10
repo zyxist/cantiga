@@ -34,13 +34,10 @@
 	{% for memberEntity in memberEntities %}
 	<div class="col-lg-4 col-md-12">
 		{% if memberEntity.type == 'Project' %}
-			{% set route = 'project_dashboard' %}
 		<div class="small-box bg-blue">
 		{% elseif memberEntity.type == 'Group' %}
-			{% set route = 'group_dashboard' %}
 		<div class="small-box bg-gray">	
 		{% else %}
-			{% set route = 'area_dashboard' %}
 		<div class="small-box bg-purple">	
 		{% endif%}
 			<div class="inner">
@@ -56,7 +53,7 @@
 				<i class="fa fa-cube"></i>
 				{% endif%}
 			</div>
-			<a href="{{ path(route, {'slug': memberEntity.slug} ) }}" class="small-box-footer">
+			<a href="{{ path('place_dashboard', {'slug': memberEntity.slug} ) }}" class="small-box-footer">
 				{{ ('Goto'~memberEntity.type~'Text') | trans([], 'dashboard') }} <i class="fa fa-arrow-circle-right"></i>
 			</a>
           </div>
@@ -66,8 +63,8 @@
 	<div class="col-lg-4 col-md-12">
 		<div class="small-box bg-red">
 			<div class="inner">
-				<h3>{{ invitation.resourceName }}</h3>
-				<p>{{ (invitation.resourceType~'InvitationText') | trans([], 'dashboard') }}</p>
+				<h3>{{ invitation.name }}</h3>
+				<p>{{ (invitation.type~'InvitationText') | trans([], 'dashboard') }}</p>
 			</div>
 			<div class="icon">
 				<i class="fa fa-handshake-o"></i>

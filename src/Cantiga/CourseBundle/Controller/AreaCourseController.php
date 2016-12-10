@@ -20,6 +20,7 @@
 
 namespace Cantiga\CourseBundle\Controller;
 
+use Cantiga\Components\Hierarchy\Entity\Membership;
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
 use Cantiga\CoreBundle\Api\Controller\AreaPageController;
 use Cantiga\CourseBundle\CourseSettings;
@@ -34,7 +35,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @Route("/area/{slug}/courses")
- * @Security("has_role('ROLE_AREA_AWARE')")
+ * @Security("is_granted('PLACE_MEMBER')")
  */
 class AreaCourseController extends AreaPageController
 {
@@ -48,8 +49,9 @@ class AreaCourseController extends AreaPageController
 
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
+		$membership = $this->get('cantiga.user.membership.storage')->getMembership();
 		$repository = $this->get(self::REPOSITORY_NAME);
-		$repository->setArea($this->getMembership()->getItem());
+		$repository->setArea($membership->getPlace());
 		$this->crudInfo = $this->newCrudInfo($repository)
 			->setTemplateLocation('CantigaCourseBundle:AreaCourse:')
 			->setItemNameProperty('name')
@@ -82,13 +84,13 @@ class AreaCourseController extends AreaPageController
 	/**
 	 * @Route("/{id}/info", name="area_course_info")
 	 */
-	public function infoAction($id)
+	public function infoAction($id, Membership $membership)
 	{
 		try {
 			$repo = $this->get(self::REPOSITORY_NAME);
 			$item = $repo->getItem($id);
 			$result = $repo->getTestResult($this->getUser(), $item);
-			$areaResult = $repo->getAreaResult($this->getMembership()->getItem(), $item);
+			$areaResult = $repo->getAreaResult($membership->getPlace(), $item);
 			$this->breadcrumbs()->link($item->getName(), 'area_course_info', ['slug' => $this->getSlug(), 'id' => $item->getId()]);
 			return $this->render($this->crudInfo->getTemplateLocation() . 'info.html.twig', array(
 					'item' => $item,
@@ -105,7 +107,7 @@ class AreaCourseController extends AreaPageController
 	/**
 	 * @Route("/{id}/test", name="area_course_test")
 	 */
-	public function testAction($id, Request $request)
+	public function testAction($id, Request $request, Membership $membership)
 	{
 		try {
 			$repo = $this->get(self::REPOSITORY_NAME);
@@ -136,7 +138,7 @@ class AreaCourseController extends AreaPageController
 			if ($form->isValid()) {
 				$this->get('session')->remove('trial');
 				$ok = $testTrial->validateTestTrial($form->getData());
-				$repo->completeTrial($result, $this->getMembership()->getItem(), $testTrial);
+				$repo->completeTrial($result, $membership->getPlace(), $testTrial);
 				if ($ok) {
 					return $this->showPageWithMessage($this->trans('TestPassedMsg'), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
 				} else {
@@ -164,7 +166,7 @@ class AreaCourseController extends AreaPageController
 	/**
 	 * @Route("/{id}/complete", name="area_course_complete")
 	 */
-	public function goodFaithCompletionAction($id)
+	public function goodFaithCompletionAction($id, Membership $membership)
 	{
 		try {
 			$repo = $this->get(self::REPOSITORY_NAME);
@@ -173,7 +175,7 @@ class AreaCourseController extends AreaPageController
 			if ($item->hasTest()) {
 				return $this->showPageWithError($this->trans('CourseHasTestMsg'), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
 			}
-			$repo->confirmGoodFaithCompletion($this->getMembership()->getItem(), $this->getUser(), $item);
+			$repo->confirmGoodFaithCompletion($membership->getPlace(), $this->getUser(), $item);
 			return $this->showPageWithMessage($this->trans('CourseCompletedConfirmationMsg'), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);
 		} catch (ModelException $exception) {
 			return $this->showPageWithError($this->trans($exception->getMessage()), $this->crudInfo->getInfoPage(), ['id' => $id, 'slug' => $this->getSlug()]);

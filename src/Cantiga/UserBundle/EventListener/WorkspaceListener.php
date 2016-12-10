@@ -27,23 +27,27 @@ class WorkspaceListener
 	{
 		$workspace = $event->getWorkspace();
 		$workspace->addWorkItem('community', new WorkItem('memberlist_index', 'Member list'));
+		$workspace->addWorkItem('manage', new WorkItem('current_membership_index', 'Project members'));
 	}
 	
 	public function onGroupWorkspace(WorkspaceEvent $event)
 	{
 		$workspace = $event->getWorkspace();
 		$workspace->addWorkItem('community', new WorkItem('memberlist_index', 'Member list'));
+		$workspace->addWorkItem('manage', new WorkItem('current_membership_index', 'Group members'));
 	}
 	
 	public function onAreaWorkspace(WorkspaceEvent $event)
 	{
 		$workspace = $event->getWorkspace();
 		$workspace->addWorkItem('community', new WorkItem('memberlist_index', 'Member list'));
+		$workspace->addWorkItem('manage', new WorkItem('current_membership_index', 'Area members'));
 	}
 	
 	public function onUserWorkspace(WorkspaceEvent $event)
 	{
 		$workspace = $event->getWorkspace();
+		$workspace->addRootItem(new WorkItem('user_invitation_index', 'Invitations', 'handshake-o'));
 		$workspace->addWorkItem('profile', new WorkItem('user_profile_contact_data', 'Contact data'));
 		$workspace->addWorkItem('profile', new WorkItem('user_profile_settings', 'Settings'));
 		$workspace->addWorkItem('profile', new WorkItem('user_profile_photo', 'Manage photo'));

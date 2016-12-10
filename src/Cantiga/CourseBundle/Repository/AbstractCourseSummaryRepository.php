@@ -30,6 +30,7 @@ use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\QueryBuilder;
 use Cantiga\Metamodel\QueryClause;
 use Cantiga\Metamodel\Transaction;
+use Cantiga\UserBundle\UserTables;
 use Doctrine\DBAL\Connection;
 
 /**
@@ -131,11 +132,11 @@ abstract class AbstractCourseSummaryRepository
 		$items = $this->conn->fetchAll('SELECT c.`id` AS `courseId`, c.`name` AS `courseName`, u.`id` AS `userId`, u.`name` AS `userName`, u.`avatar`, '
 			. 'ur.`result`, ur.`totalQuestions`, ur.`passedQuestions`, ur.`completedAt`, ur.`trialNumber` '
 			. 'FROM `'.CourseTables::COURSE_TBL.'` c '
-			. 'INNER JOIN `'.CoreTables::AREA_MEMBER_TBL.'` m ON m.`areaId` = :areaId '
+			. 'INNER JOIN `'.UserTables::PLACE_MEMBERS_TBL.'` m ON m.`placeId` = :placeId '
 			. 'INNER JOIN `'.CoreTables::USER_TBL.'` u ON u.`id` = m.`userId` '
 			. 'LEFT JOIN `'.CourseTables::COURSE_RESULT_TBL.'` ur ON ur.`userId` = u.`id` AND c.`id` = ur.`courseId` '
 			. 'WHERE c.`isPublished` = 1 AND u.`active` = 1 AND c.`projectId` = :projectId '
-			. 'ORDER BY c.`displayOrder`, u.`name`', [':areaId' => $area->getId(), ':projectId' => $area->getProject()->getId()]);
+			. 'ORDER BY c.`displayOrder`, u.`name`', [':placeId' => $area->getPlace()->getId(), ':projectId' => $area->getProject()->getId()]);
 		foreach ($items as &$item) {
 			TestResult::processResults($item);
 		}

@@ -55,6 +55,8 @@ return array(
 	'a year ago|%count% years ago' => 'a year ago|%count% years ago',
 	'a decade ago|%count% decades ago' => ' decade ago|%count% decades ago',
 	
+	'HowItWorksTitle' => 'How it works?',
+	
 	// Chat
 	'Type Message ...' => 'Type Message ...',
 	'Send' => 'Send',

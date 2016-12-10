@@ -21,14 +21,14 @@ namespace Cantiga\Components\Hierarchy;
 
 use Cantiga\Components\Hierarchy\Entity\MembershipRole;
 use Cantiga\Components\Hierarchy\MembershipRoleResolverInterface;
-use Cantiga\CoreBundle\Entity\User;
+use Cantiga\Components\Hierarchy\User\CantigaUserRefInterface;
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
 use Doctrine\DBAL\Connection;
 
 interface MembershipEntityInterface extends IdentifiableInterface
 {
 	/**
-	 * The method shall return all the members of the current entity, as the entities of
+	 * The method shall return all the members of the current place, as the entities of
 	 * {@link Cantiga\Components\Hierarchy\Entity\Member} type.
 	 * 
 	 * @param Connection $conn Database connection
@@ -38,14 +38,14 @@ interface MembershipEntityInterface extends IdentifiableInterface
 	public function findMembers(Connection $conn, MembershipRoleResolverInterface $roleResolver): array;
 	
 	/**
-	 * Finds a profile of the member of this entity.
+	 * Finds a profile of the member of this place.
 	 * 
 	 * @param Connection $conn
 	 * @param MembershipRoleResolverInterface $roleResolver
 	 * @param int $id Member profile ID
 	 */
 	public function findMember(Connection $conn, MembershipRoleResolverInterface $roleResolver, int $id);
-	public function joinMember(Connection $conn, User $user, MembershipRole $role, $note);
-	public function editMember(Connection $conn, User $user, MembershipRole $role, $note);
-	public function removeMember(Connection $conn, User $user);
+	public function joinMember(Connection $conn, CantigaUserRefInterface $user, MembershipRole $role, $note, $showDownstreamContactData);
+	public function editMember(Connection $conn, CantigaUserRefInterface $user, MembershipRole $role, $note, $showDownstreamContactData);
+	public function removeMember(Connection $conn, CantigaUserRefInterface $user);
 }

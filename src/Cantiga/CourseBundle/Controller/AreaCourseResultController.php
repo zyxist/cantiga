@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of Cantiga Project. Copyright 2016 Cantiga contributors.
  *
@@ -20,6 +19,7 @@
 
 namespace Cantiga\CourseBundle\Controller;
 
+use Cantiga\Components\Hierarchy\Entity\Membership;
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
 use Cantiga\CoreBundle\Api\Controller\AreaPageController;
 use Cantiga\CourseBundle\CourseTexts;
@@ -30,7 +30,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @Route("/area/{slug}/course-results")
- * @Security("has_role('ROLE_AREA_AWARE')")
+ * @Security("is_granted('PLACE_MEMBER')")
  */
 class AreaCourseResultController extends AreaPageController
 {
@@ -61,7 +61,7 @@ class AreaCourseResultController extends AreaPageController
 	/**
 	 * @Route("/index", name="area_course_results")
 	 */
-	public function resultsAction(Request $request)
+	public function resultsAction(Request $request, Membership $membership)
 	{
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$text = $this->getTextRepository()->getText(CourseTexts::AREA_COURSE_LIST_TEXT, $request);
@@ -70,7 +70,7 @@ class AreaCourseResultController extends AreaPageController
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'courseInfoPage' => 'area_course_info',
 			'userProfilePage' => 'memberlist_profile',
-			'items' => $repository->findTotalIndividualResultsForArea($this->getMembership()->getItem()),
+			'items' => $repository->findTotalIndividualResultsForArea($membership->getPlace()),
 		));
 	}
 

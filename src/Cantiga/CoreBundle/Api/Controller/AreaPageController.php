@@ -18,14 +18,12 @@
  */
 namespace Cantiga\CoreBundle\Api\Controller;
 
+use Cantiga\Components\Hierarchy\Entity\Membership;
+use Cantiga\Components\Workspace\WorkspaceAwareInterface;
 use Cantiga\CoreBundle\Api\ExtensionPoints\ExtensionPointFilter;
 use Cantiga\CoreBundle\Api\Workspace;
 use Cantiga\CoreBundle\Api\Workspace\AreaWorkspace;
-use Cantiga\CoreBundle\Api\WorkspaceAwareInterface;
 use Cantiga\CoreBundle\Entity\Project;
-use Cantiga\Metamodel\Membership;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 
 /**
@@ -42,44 +40,27 @@ class AreaPageController extends CantigaController implements WorkspaceAwareInte
 	 * @var ExtensionPointsFilter
 	 */
 	private $extensionFilter;
-	/**
-	 * @var TokenStorageInterface
-	 */
-	private $tokenStorage;
+	private $slug;
 	
-	public function createWorkspace(Request $request): Workspace
+	public function createWorkspace(Membership $membership = null): Workspace
 	{
-		$this->tokenStorage = $this->get('security.token_storage');
-		return $this->workspace = new AreaWorkspace($this->get('cantiga.core.membership.area'));
+		$this->slug = $membership->getPlace()->getSlug();
+		return $this->workspace = new AreaWorkspace($membership);
 	}
-	
-	/**
-	 * @return AreaWorkspace
-	 */
-	public function getWorkspace()
+
+	public function getWorkspace(): AreaWorkspace
 	{
 		return $this->workspace;
 	}
 	
-	public function getSlug()
+	public function getSlug(): string
 	{
-		return $this->tokenStorage->getToken()->getMembershipEntity()->getSlug();
+		return $this->slug;
 	}
 
-	/**
-	 * @return Membership
-	 */
-	public function getMembership()
+	public function getActiveProject(): Project
 	{
-		return $this->tokenStorage->getToken()->getMembership();
-	}
-	
-	/**
-	 * @return Project
-	 */
-	public function getActiveProject()
-	{
-		return $this->tokenStorage->getToken()->getMasterProject();
+		return $this->workspace->getProject();
 	}
 	
 	/**
@@ -88,7 +69,7 @@ class AreaPageController extends CantigaController implements WorkspaceAwareInte
 	public function getExtensionPointFilter()
 	{
 		if (null === $this->extensionFilter) {
-			$this->extensionFilter = $this->get('security.token_storage')->getToken()->getMasterProject()->createExtensionPointFilter();
+			$this->extensionFilter = $this->getActiveProject()->createExtensionPointFilter();
 		}
 		return $this->extensionFilter;
 	}

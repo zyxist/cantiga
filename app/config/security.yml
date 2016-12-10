@@ -12,16 +12,6 @@ security:
             id: cantiga.user_provider
             
     role_hierarchy:
-        ROLE_LEADER:      [ROLE_USER, ROLE_AREA]
-        ROLE_AREA_AWARE: [ROLE_USER]
-        ROLE_AREA_MEMBER: [ROLE_AREA_AWARE]
-        ROLE_AREA_PD_ADMIN: [ROLE_AREA_MEMBER]
-        ROLE_AREA_MANAGER: [ROLE_AREA_PD_ADMIN]
-        ROLE_GROUP_AWARE: [ROLE_USER]
-        ROLE_PROJECT_AWARE: [ROLE_USER]
-        ROLE_PROJECT_VISITOR: [ROLE_PROJECT_AWARE]
-        ROLE_PROJECT_MEMBER: [ROLE_PROJECT_VISITOR]
-        ROLE_PROJECT_MANAGER: [ROLE_PROJECT_MEMBER]
         ROLE_ADMIN:       [ROLE_USER]
 
     firewalls:

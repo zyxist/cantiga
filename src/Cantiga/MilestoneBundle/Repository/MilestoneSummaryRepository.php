@@ -18,10 +18,11 @@
  */
 namespace Cantiga\MilestoneBundle\Repository;
 
+use Cantiga\Components\Hierarchy\HierarchicalInterface;
+use Cantiga\Components\Hierarchy\MembershipEntityInterface;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Group;
 use Cantiga\CoreBundle\Entity\Project;
-use Cantiga\Components\Hierarchy\MembershipEntityInterface;
 use Cantiga\Metamodel\Transaction;
 use Cantiga\MilestoneBundle\MilestoneTables;
 use Doctrine\DBAL\Connection;
@@ -50,9 +51,9 @@ class MilestoneSummaryRepository
 	public function findMilestoneProgressForAreasInProject(Project $project)
 	{
 		$totalMilestones = $this->conn->fetchColumn('SELECT COUNT(`id`) FROM `'.MilestoneTables::MILESTONE_TBL.'` WHERE `projectId` = :projectId AND `entityType` = \'Area\'', [':projectId' => $project->getId()]);	
-		$results = $this->conn->fetchAll('SELECT a.`id`, a.`name`, a.`entityId`, p.`completedNum` '
+		$results = $this->conn->fetchAll('SELECT a.`id`, a.`name`, a.`placeId`, p.`completedNum` '
 			. 'FROM `'.CoreTables::AREA_TBL.'` a '
-			. 'INNER JOIN `'.MilestoneTables::MILESTONE_PROGRESS_TBL.'` p ON p.`entityId` = a.`entityId` '
+			. 'INNER JOIN `'.MilestoneTables::MILESTONE_PROGRESS_TBL.'` p ON p.`entityId` = a.`placeId` '
 			. 'WHERE a.`projectId` = :projectId '
 			. 'ORDER BY p.`completedNum` DESC, a.`name`', [':projectId' => $project->getId()]);
 		foreach ($results as &$result) {
@@ -64,9 +65,9 @@ class MilestoneSummaryRepository
 	public function findMilestoneProgressForGroupsInProject(Project $project)
 	{
 		$totalMilestones = $this->conn->fetchColumn('SELECT COUNT(`id`) FROM `'.MilestoneTables::MILESTONE_TBL.'` WHERE `projectId` = :projectId AND `entityType` = \'Group\'', [':projectId' => $project->getId()]);	
-		$results = $this->conn->fetchAll('SELECT g.`id`, g.`name`, g.`entityId`, p.`completedNum` '
+		$results = $this->conn->fetchAll('SELECT g.`id`, g.`name`, g.`placeId`, p.`completedNum` '
 			. 'FROM `'.CoreTables::GROUP_TBL.'` g '
-			. 'INNER JOIN `'.MilestoneTables::MILESTONE_PROGRESS_TBL.'` p ON p.`entityId` = g.`entityId` '
+			. 'INNER JOIN `'.MilestoneTables::MILESTONE_PROGRESS_TBL.'` p ON p.`entityId` = g.`placeId` '
 			. 'WHERE g.`projectId` = :projectId '
 			. 'ORDER BY p.`completedNum` DESC, g.`name`', [':projectId' => $project->getId()]);
 		foreach ($results as &$result) {
@@ -78,9 +79,9 @@ class MilestoneSummaryRepository
 	public function findMilestoneProgressForAreasInGroup(Group $group)
 	{
 		$totalMilestones = $this->conn->fetchColumn('SELECT COUNT(`id`) FROM `'.MilestoneTables::MILESTONE_TBL.'` WHERE `projectId` = :projectId AND `entityType` = \'Area\'', [':projectId' => $group->getProject()->getId()]);	
-		$results = $this->conn->fetchAll('SELECT a.`id`, a.`name`, a.`entityId`, p.`completedNum` '
+		$results = $this->conn->fetchAll('SELECT a.`id`, a.`name`, a.`placeId`, p.`completedNum` '
 			. 'FROM `'.CoreTables::AREA_TBL.'` a '
-			. 'INNER JOIN `'.MilestoneTables::MILESTONE_PROGRESS_TBL.'` p ON p.`entityId` = a.`entityId` '
+			. 'INNER JOIN `'.MilestoneTables::MILESTONE_PROGRESS_TBL.'` p ON p.`entityId` = a.`placeId` '
 			. 'WHERE a.`groupId` = :groupId '
 			. 'ORDER BY p.`completedNum` DESC, a.`name`', [':groupId' => $group->getId()]);
 		foreach ($results as &$result) {
@@ -94,7 +95,7 @@ class MilestoneSummaryRepository
 	 * 
 	 * @param MembershipEntityInterface $parent
 	 */
-	public function findTotalAreaCompleteness(MembershipEntityInterface $parent)
+	public function findTotalAreaCompleteness(HierarchicalInterface $parent)
 	{
 		$whereExtras = '';
 		if ($parent instanceof Project) {
@@ -103,10 +104,10 @@ class MilestoneSummaryRepository
 			$whereExtras = ' AND a.`groupId` = :itemId ';
 		}
 		
-		$stmt = $this->conn->prepare('SELECT a.`id`, a.`entityId`, a.`name`, t.`name` AS `statusName`, t.`label` AS `statusLabel`, m.`id` AS `milestoneId`, m.`name` AS `milestoneName`, s.`progress` '
+		$stmt = $this->conn->prepare('SELECT a.`id`, a.`placeId`, a.`name`, t.`name` AS `statusName`, t.`label` AS `statusLabel`, m.`id` AS `milestoneId`, m.`name` AS `milestoneName`, s.`progress` '
 			. 'FROM `'.CoreTables::AREA_TBL.'` a '
 			. 'INNER JOIN `'.CoreTables::AREA_STATUS_TBL.'` t ON t.`id` = a.`statusId` '
-			. 'INNER JOIN `'.MilestoneTables::MILESTONE_STATUS_TBL.'` s ON s.`entityId` = a.`entityId` '
+			. 'INNER JOIN `'.MilestoneTables::MILESTONE_STATUS_TBL.'` s ON s.`entityId` = a.`placeId` '
 			. 'INNER JOIN `'.MilestoneTables::MILESTONE_TBL.'` m ON m.`id` = s.`milestoneId` '
 			. 'WHERE m.`entityType` = \'Area\' '.$whereExtras
 			. 'ORDER BY a.`name`, m.`id` ');
@@ -119,7 +120,7 @@ class MilestoneSummaryRepository
 			if (!isset($results[$row['id']])) {
 				$results[$row['id']] = [
 					'id' => $row['id'],
-					'entityId' => $row['entityId'],
+					'entityId' => $row['placeId'],
 					'name' => $row['name'],
 					'status' => $row['statusName'],
 					'label' => $row['statusLabel'],

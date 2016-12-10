@@ -4,7 +4,7 @@
     </a>
     <ul class="dropdown-menu">
 		{% for page in pages %}
-        <li><a href="{{ page.url }}">{{ page.title | trans([], 'pages') }}</a></li>
+        <li><a href="{{ spath(route, {'page': page.route}) }}">{{ page.title | trans([], 'pages') }}</a></li>
 		{% endfor %}
     </ul>
 </li>

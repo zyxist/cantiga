@@ -27,12 +27,14 @@ class MembershipRole
 	private $id;
 	private $name;
 	private $authRole;
+	private $nestedRole;
 	
-	public function __construct($id, $name, $authRole)
+	public function __construct($id, $name, $authRole, MembershipRole $nestedRole = null)
 	{
 		$this->id = $id;
 		$this->name = $name;
 		$this->authRole = $authRole;
+		$this->nestedRole = $nestedRole;
 	}
 	
 	public function getId(): int
@@ -48,6 +50,17 @@ class MembershipRole
 	public function getAuthRole(): string
 	{
 		return $this->authRole;
+	}
+	
+	public function isGranted(string $role): bool
+	{
+		if ($this->authRole == $role) {
+			return true;
+		}
+		if (null !== $this->nestedRole) {
+			return $this->nestedRole->isGranted($role);
+		}
+		return false;
 	}
 	
 	/**

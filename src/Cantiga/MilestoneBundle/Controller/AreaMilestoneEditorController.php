@@ -20,7 +20,9 @@
 
 namespace Cantiga\MilestoneBundle\Controller;
 
+use Cantiga\Components\Hierarchy\Entity\Membership;
 use Cantiga\CoreBundle\Api\Controller\AreaPageController;
+use Cantiga\MilestoneBundle\Controller\Traits\MilestoneEditorTrait;
 use Cantiga\MilestoneBundle\MilestoneTexts;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -29,12 +31,12 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @Route("/area/{slug}/milestones")
- * @Security("has_role('ROLE_AREA_MEMBER')")
+ * @Security("is_granted('PLACE_MEMBER')")
  */
 class AreaMilestoneEditorController extends AreaPageController
 {
 
-	use Traits\MilestoneEditorTrait;
+	use MilestoneEditorTrait;
 
 	const REPOSITORY_NAME = 'cantiga.milestone.repo.status';
 	const MILESTONE_TEMPLATE = 'CantigaMilestoneBundle:MilestoneEditor:milestone-editor.html.twig';
@@ -50,7 +52,7 @@ class AreaMilestoneEditorController extends AreaPageController
 	/**
 	 * @Route("/editor", name="area_milestone_editor")
 	 */
-	public function indexAction(Request $request)
+	public function indexAction(Request $request, Membership $membership)
 	{
 		$text = $this->getTextRepository()->getText(MilestoneTexts::AREA_MILESTONE_EDITOR_TEXT, $request, $this->getActiveProject());
 		return $this->render(self::MILESTONE_TEMPLATE, array(
@@ -61,7 +63,7 @@ class AreaMilestoneEditorController extends AreaPageController
 			'updatePage' => 'area_milestone_ajax_update',
 			'cancelPage' => 'area_milestone_ajax_cancel',
 			'selectorEnabled' => 0,
-			'selectedEntity' => $this->getMembership()->getItem()->getEntity()->getId(),
+			'selectedEntity' => $membership->getPlace()->getPlace()->getId(),
 			'text' => $text->getContent(),
 		));
 	}
@@ -69,33 +71,33 @@ class AreaMilestoneEditorController extends AreaPageController
 	/**
 	 * @Route("/ajax-reload", name="area_milestone_ajax_reload")
 	 */
-	public function ajaxReloadAction(Request $request)
+	public function ajaxReloadAction(Request $request, Membership $membership)
 	{
-		return $this->performReload($request);
+		return $this->performReload($request, $membership);
 	}
 
 	/**
 	 * @Route("/ajax-complete", name="area_milestone_ajax_complete")
 	 */
-	public function ajaxCompleteAction(Request $request)
+	public function ajaxCompleteAction(Request $request, Membership $membership)
 	{
-		return $this->performComplete($request);
+		return $this->performComplete($request, $membership);
 	}
 
 	/**
 	 * @Route("/ajax-cancel", name="area_milestone_ajax_cancel")
 	 */
-	public function ajaxCancelAction(Request $request)
+	public function ajaxCancelAction(Request $request, Membership $membership)
 	{
-		return $this->performCancel($request);
+		return $this->performCancel($request, $membership);
 	}
 
 	/**
 	 * @Route("/ajax-update", name="area_milestone_ajax_update")
 	 */
-	public function ajaxUpdateAction(Request $request)
+	public function ajaxUpdateAction(Request $request, Membership $membership)
 	{
-		return $this->performUpdate($request);
+		return $this->performUpdate($request, $membership);
 	}
 
 }

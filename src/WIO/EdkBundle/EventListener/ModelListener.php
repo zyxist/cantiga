@@ -59,7 +59,7 @@ class ModelListener
 	public function onAreaUpdated(AreaEvent $event)
 	{
 		$area = $event->getArea();
-		$this->eventDispatcher->dispatch(MilestoneEvents::ACTIVATION_EVENT, new ActivationEvent($area->getProject(), $area->getEntity(), 'profile.updated', function() use($area) {
+		$this->eventDispatcher->dispatch(MilestoneEvents::ACTIVATION_EVENT, new ActivationEvent($area->getProject(), $area->getPlace(), 'profile.updated', function() use($area) {
 			return NewMilestoneStatus::create((bool) $this->canApproveProfile($area));
 		}));
 	}

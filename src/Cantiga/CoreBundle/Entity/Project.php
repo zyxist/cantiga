@@ -18,26 +18,24 @@
  */
 namespace Cantiga\CoreBundle\Entity;
 
-use Cantiga\Components\Hierarchy\Entity\Member;
-use Cantiga\Components\Hierarchy\Entity\MembershipRole;
+use Cantiga\Components\Hierarchy\Entity\PlaceRef;
 use Cantiga\Components\Hierarchy\HierarchicalInterface;
-use Cantiga\Components\Hierarchy\MembershipEntityInterface;
 use Cantiga\Components\Hierarchy\MembershipRoleResolverInterface;
 use Cantiga\CoreBundle\Api\ExtensionPoints\ExtensionPointFilter;
 use Cantiga\CoreBundle\Api\ModuleAwareInterface;
 use Cantiga\CoreBundle\CoreTables;
-use Cantiga\CoreBundle\Entity\Traits\EntityTrait;
+use Cantiga\CoreBundle\Entity\Traits\PlaceTrait;
 use Cantiga\Metamodel\Capabilities\EditableEntityInterface;
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
 use Cantiga\Metamodel\Capabilities\InsertableEntityInterface;
 use Cantiga\Metamodel\DataMappers;
 use Cantiga\Metamodel\Membership;
+use Cantiga\UserBundle\UserTables;
 use Doctrine\DBAL\Connection;
-use PDO;
 
-class Project implements IdentifiableInterface, InsertableEntityInterface, EditableEntityInterface, MembershipEntityInterface, HierarchicalInterface
+class Project implements IdentifiableInterface, InsertableEntityInterface, EditableEntityInterface, HierarchicalInterface
 {
-	use EntityTrait;
+	use PlaceTrait;
 	
 	private $id;
 	private $name;
@@ -71,48 +69,63 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 	public static function fetchActive(Connection $conn, $id)
 	{
 		$data = $conn->fetchAssoc('SELECT p.*, '
-			. self::createEntityFieldList()
+			. self::createPlaceFieldList()
 			. 'FROM `'.CoreTables::PROJECT_TBL.'` p '
-			. self::createEntityJoin('p')
+			. self::createPlaceJoin('p')
 			. 'WHERE p.`id` = :id AND p.`archived` = 0', [':id' => $id]);
 		if (false === $data) {
 			return false;
 		}
 		$item = self::fromArray($data);
-		$item->entity = Entity::fromArray($data, 'entity');
+		$item->place = Place::fromArray($data, 'place');
 		return $item;
 	}
 	
 	public static function fetchBySlug(Connection $conn, $slug)
 	{
 		$data = $conn->fetchAssoc('SELECT p.*, '
-			. self::createEntityFieldList()
+			. self::createPlaceFieldList()
 			. 'FROM `'.CoreTables::PROJECT_TBL.'` p '
-			. self::createEntityJoin('p')
+			. self::createPlaceJoin('p')
 			. 'WHERE p.`slug` = :slug AND p.`archived` = 0', [':slug' => $slug]);
 		if (false === $data) {
 			return false;
 		}
 		$item = self::fromArray($data);
-		$item->entity = Entity::fromArray($data, 'entity');
+		$item->place = Place::fromArray($data, 'place');
 		return $item;
 	}
 	
 	public static function fetch(Connection $conn, $id)
 	{
 		$data = $conn->fetchAssoc('SELECT p.*, '
-			. self::createEntityFieldList()
+			. self::createPlaceFieldList()
 			. 'FROM `'.CoreTables::PROJECT_TBL.'` p '
-			. self::createEntityJoin('p')
+			. self::createPlaceJoin('p')
 			. 'WHERE p.`id` = :id', [':id' => $id]);
 		if (false === $data) {
 			return false;
 		}
 		$item = self::fromArray($data);
-		$item->entity = Entity::fromArray($data, 'entity');
+		$item->place = Place::fromArray($data, 'place');
 		return $item;
 	}
 
+	public static function fetchByPlaceRef(Connection $conn, PlaceRef $place)
+	{
+		$data = $conn->fetchAssoc('SELECT p.*, '
+			. self::createPlaceFieldList()
+			. 'FROM `'.CoreTables::PROJECT_TBL.'` p '
+			. self::createPlaceJoin('p')
+			. 'WHERE p.`placeId` = :placeId', [':placeId' => $place->getId()]);
+		if(false === $data) {
+			return false;
+		}
+		$project = self::fromArray($data);
+		$project->place = Place::fromArray($data, 'place');
+		return $project;
+	}
+	
 	/**
 	 * @param Connection $conn
 	 * @param int $projectId
@@ -123,16 +136,16 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 	{
 		$data = $conn->fetchAssoc('SELECT p.*, '
 			. 'm.`role` AS `membership_role`, m.`note` AS `membership_note`, '
-			. self::createEntityFieldList()
+			. self::createPlaceFieldList()
 			. 'FROM `'.CoreTables::PROJECT_TBL.'` p '
-			. self::createEntityJoin('p')
-			. 'INNER JOIN `'.CoreTables::PROJECT_MEMBER_TBL.'` m ON m.`projectId` = p.`id` '
+			. self::createPlaceJoin('p')
+			. 'INNER JOIN `'.UserTables::PLACE_MEMBER_TBL.'` m ON m.`placeId` = e.`id` '
 			. 'WHERE m.`userId` = :userId AND p.`slug` = :slug', [':userId' => $userId, ':slug' => $slug]);
 		if(false === $data) {
 			return false;
 		}
 		$project = self::fromArray($data);
-		$project->entity = Entity::fromArray($data, 'entity');
+		$project->place = Place::fromArray($data, 'place');
 		$role = $resolver->getRole('Project', $data['membership_role']);
 		return new Membership($project, $role, $data['membership_note']);
 	}
@@ -148,15 +161,15 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 	public static function fetchAvailableForRegistration(Connection $conn, $projectId)
 	{
 		$data = $conn->fetchAssoc('SELECT p.*, '
-			. self::createEntityFieldList()
+			. self::createPlaceFieldList()
 			. 'FROM `'.CoreTables::PROJECT_TBL.'` p '
-			. self::createEntityJoin('p')
+			. self::createPlaceJoin('p')
 			. 'WHERE p.`id` = :id AND p.`archived` = 0 AND p.`areasAllowed` = 1 AND p.`areaRegistrationAllowed` = 1', [':id' => $projectId]);
 		if (empty($data)) {
 			return false;
 		}
 		$item = self::fromArray($data);
-		$item->entity = Entity::fromArray($data, 'entity');
+		$item->place = Place::fromArray($data, 'place');
 		return $item;
 	}
 
@@ -373,15 +386,15 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 	{
 		$this->slug = DataMappers::generateSlug($conn, CoreTables::PROJECT_TBL);
 		
-		$this->entity = new Entity();
-		$this->entity->setType('Project');
-		$this->entity->setName($this->name);
-		$this->entity->setSlug($this->slug);
-		$this->entity->insert($conn);
+		$this->place = new Place();
+		$this->place->setType('Project');
+		$this->place->setName($this->name);
+		$this->place->setSlug($this->slug);
+		$this->place->insert($conn);
 		
 		$conn->insert(
 			CoreTables::PROJECT_TBL,
-			DataMappers::pick($this, ['name', 'slug', 'description', 'parentProject', 'areasAllowed', 'areaRegistrationAllowed', 'entity'], [
+			DataMappers::pick($this, ['name', 'slug', 'description', 'parentProject', 'areasAllowed', 'areaRegistrationAllowed', 'place'], [
 				'modules' => implode(',', $this->getModules()),
 				'archived' => false,
 				'createdAt' => time(),
@@ -393,8 +406,8 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 
 	public function update(Connection $conn)
 	{
-		$this->entity->setName($this->name);
-		$this->entity->update($conn);
+		$this->place->setName($this->name);
+		$this->place->update($conn);
 		
 		return $conn->update(
 			CoreTables::PROJECT_TBL,
@@ -403,107 +416,6 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 			]),
 			DataMappers::pick($this, ['id'])
 		);
-	}
-	
-	/**
-	 * Finds the hints for the users that could join the project, basing on their partial e-mail
-	 * address.
-	 * 
-	 * @param string $mailQuery
-	 * @return array
-	 */
-	public function findHints(Connection $conn, $mailQuery)
-	{
-		$mailQuery = trim(str_replace('%', '', $mailQuery));
-		if (strlen($mailQuery) < 3) {
-			return array();
-		}
-		
-		$items = $conn->fetchAll('SELECT `email` FROM `'.CoreTables::USER_TBL.'` WHERE '
-			. '`email` LIKE :email AND `id` NOT IN(SELECT `userId` FROM `'.CoreTables::PROJECT_MEMBER_TBL.'` WHERE `projectId` = :project) AND `active` = 1 AND `removed` = 0 ORDER BY `email` DESC LIMIT 15', [':project' => $this->getId(), ':email' => $mailQuery.'%']);
-		if (!empty($items)) {
-			$result = array();
-			foreach ($items as $item) {
-				$result[] = $item['email'];
-			}
-			return $result;
-		}
-		return array();
-	}
-	
-	public function findMembers(Connection $conn, MembershipRoleResolverInterface $roleResolver): array
-	{
-		$stmt = $conn->prepare('SELECT i.`id`, i.`name`, i.`avatar`, i.`lastVisit`, p.`location`, c.`email` AS `contactMail`, '
-			. 'c.`telephone` AS `contactTelephone`, c.`notes` AS `notes`, m.`role` AS `membershipRole`, m.`note` AS `membershipNote` '
-			. 'FROM `'.CoreTables::USER_TBL.'` i '
-			. 'INNER JOIN `'.CoreTables::USER_PROFILE_TBL.'` p ON p.`userId` = i.`id` '
-			. 'INNER JOIN `'.CoreTables::PROJECT_MEMBER_TBL.'` m ON m.`userId` = i.`id` '
-			. 'LEFT JOIN `'.CoreTables::CONTACT_TBL.'` c ON c.`userId` = i.`id` AND c.`projectId` = :projectId '
-			. 'WHERE m.`projectId` = :entityId AND i.`active` = 1 AND i.`removed` = 0 '
-			. 'ORDER BY i.`name`');
-		$stmt->bindValue(':projectId', $this->getId());
-		$stmt->bindValue(':entityId', $this->getId());
-		$stmt->execute();
-		$results = [];
-		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$results[] = new Member(
-				$row, new Membership($this, $roleResolver->getRole('Project', $row['membershipRole']), $row['membershipNote'])
-			);
-		}
-		$stmt->closeCursor();
-		return $results;
-	}
-	
-	public function findMember(Connection $conn, MembershipRoleResolverInterface $resolver, int $id)
-	{
-		$stmt = $conn->prepare('SELECT i.`id`, i.`name`, i.`avatar`, i.`lastVisit`, p.`location`, c.`email` AS `contactMail`, '
-			. 'c.`telephone` AS `contactTelephone`, c.`notes` AS `notes`, m.`role` AS `membershipRole`, m.`note` AS `membershipNote` '
-			. 'FROM `'.CoreTables::USER_TBL.'` i '
-			. 'INNER JOIN `'.CoreTables::USER_PROFILE_TBL.'` p ON p.`userId` = i.`id` '
-			. 'INNER JOIN `'.CoreTables::PROJECT_MEMBER_TBL.'` m ON m.`userId` = i.`id` '
-			. 'LEFT JOIN `'.CoreTables::CONTACT_TBL.'` c ON c.`userId` = i.`id` AND c.`projectId` = :projectId '
-			. 'WHERE m.`projectId` = :entityId AND i.`active` = 1 AND i.`removed` = 0 AND i.`id` = :userId '
-			. 'ORDER BY i.`name`');
-		$stmt->bindValue(':projectId', $this->getId());
-		$stmt->bindValue(':entityId', $this->getId());
-		$stmt->bindValue(':userId', $id);
-		$stmt->execute();
-		$results = [];
-		if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$stmt->closeCursor();
-			return new Member(
-				$row, new Membership($this, $resolver->getRole('Project', $row['membershipRole']), $row['membershipNote'])
-			);
-		}
-		$stmt->closeCursor();
-		return false;
-	}
-
-	public function joinMember(Connection $conn, User $user, MembershipRole $role, $note)
-	{
-		$ifExists = $conn->fetchColumn('SELECT `userId` FROM `'.CoreTables::PROJECT_MEMBER_TBL.'` WHERE `projectId` = :project AND `userId` = :user', [':project' => $this->getId(), ':user' => $user->getId()]);
-		if (false === $ifExists) {
-			$conn->insert(CoreTables::PROJECT_MEMBER_TBL, ['projectId' => $this->getId(), 'userId' => $user->getId(), 'role' => $role->getId(), 'note' => $note]);
-			$conn->executeQuery('UPDATE `'.CoreTables::PROJECT_TBL.'` SET `memberNum` = (`memberNum` + 1) WHERE `id` = :id', [':id' => $this->id]);
-			$conn->executeQuery('UPDATE `'.CoreTables::USER_TBL.'` SET `projectNum` = (`projectNum` + 1) WHERE `id` = :id', [':id' => $user->getId()]);
-			return true;
-		}
-		return false;
-	}
-	
-	public function editMember(Connection $conn, User $user, MembershipRole $role, $note)
-	{
-		return 1 == $conn->update(CoreTables::PROJECT_MEMBER_TBL, ['role' => (int) $role->getId(), 'note' => $note], ['projectId' => $this->getId(), 'userId' => $user->getId()]);
-	}
-
-	public function removeMember(Connection $conn, User $user)
-	{
-		if (1 == $conn->delete(CoreTables::PROJECT_MEMBER_TBL, ['projectId' => $this->getId(), 'userId' => $user->getId()])) {
-			$conn->executeQuery('UPDATE `'.CoreTables::PROJECT_TBL.'` SET `memberNum` = (`memberNum` - 1) WHERE `id` = :id', [':id' => $this->id]);
-			$conn->executeQuery('UPDATE `'.CoreTables::USER_TBL.'` SET `projectNum` = (`projectNum` - 1) WHERE `id` = :id', [':id' => $user->getId()]);
-			return true;
-		}
-		return false;
 	}
 
 	public function getElementOfType(int $type)
@@ -523,5 +435,12 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 	{
 		return $this;
 	}
-
+	
+	public function isChild(HierarchicalInterface $place): bool
+	{
+		if ($place->getRootElement()->getId() == $this->getId()) {
+			return true;
+		}
+		return false;
+	}
 }

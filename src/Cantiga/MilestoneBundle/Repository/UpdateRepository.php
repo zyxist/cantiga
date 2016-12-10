@@ -63,7 +63,7 @@ class UpdateRepository
 		
 		$rawAreas = $this->conn->fetchAll('SELECT a.`id` AS `areaId`, a.`statusId`, m.`milestoneId` '
 			. 'FROM `'.CoreTables::AREA_TBL.'` a '
-			. 'INNER JOIN `'.MilestoneTables::MILESTONE_STATUS_TBL.'` m ON m.`entityId` = a.`entityId` '
+			. 'INNER JOIN `'.MilestoneTables::MILESTONE_STATUS_TBL.'` m ON m.`entityId` = a.`placeId` '
 			. 'WHERE a.`projectId` = :projectId AND m.`progress` = 100', [':projectId' => $projectId]);
 		
 		$areas = [];

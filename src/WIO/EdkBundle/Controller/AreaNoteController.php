@@ -28,7 +28,7 @@ use WIO\EdkBundle\Entity\EdkAreaNotes;
 
 /**
  * @Route("/area/{slug}/notes")
- * @Security("has_role('ROLE_AREA_MEMBER')")
+ * @Security("is_granted('PLACE_MEMBER')")
  */
 class AreaNoteController extends AreaPageController
 {

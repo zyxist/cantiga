@@ -20,8 +20,6 @@ namespace Cantiga\CoreBundle\Api\Controller;
 
 /**
  * Pages that do not require the authentication, shall use this controller.
- *
- * @author Tomasz Jędrzejewski
  */
 class PublicPageController extends CantigaController
 {

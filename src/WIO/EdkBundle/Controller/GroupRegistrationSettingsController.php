@@ -28,7 +28,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @Route("/group/{slug}/participants/registration-settings")
- * @Security("has_role('ROLE_GROUP_MEMBER')")
+ * @Security("is_granted('PLACE_MEMBER')")
  */
 class GroupRegistrationSettingsController extends GroupPageController
 {

@@ -27,7 +27,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @Route("/project/{slug}/routes")
- * @Security("has_role('ROLE_PROJECT_MEMBER')")
+ * @Security("is_granted('PLACE_MEMBER')")
  */
 class ProjectRouteController extends ProjectPageController
 {

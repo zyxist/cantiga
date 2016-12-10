@@ -18,26 +18,19 @@
  */
 namespace Cantiga\CoreBundle\Api\Workspace;
 
+use Cantiga\Components\Hierarchy\Entity\Membership;
 use Cantiga\CoreBundle\Api\Workspace;
-use Cantiga\CoreBundle\Entity\Membership\AreaMembershipLoader;
+use Cantiga\CoreBundle\CoreTexts;
+use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Event\CantigaEvents;
 use Cantiga\CoreBundle\Exception\AreasNotSupportedException;
-use Cantiga\Metamodel\Membership;
-use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Area workspace is a workspace, where the users work in the context of some area.
  * The user must be a member of some area in order to access it.
- * 
- * @see Cantiga\CoreBundle\Entity\Area
- * @author Tomasz Jędrzejewski
  */
 class AreaWorkspace extends Workspace
 {
-	/**
-	 * @var AreaMembershipLoader 
-	 */
-	private $areaMembershipLoader;
 	/**
 	 * @var string
 	 */
@@ -47,16 +40,21 @@ class AreaWorkspace extends Workspace
 	 */
 	private $project;
 	
-	public function __construct(AreaMembershipLoader $pml)
+	public function __construct(Membership $membership)
 	{
-		$this->areaMembershipLoader = $pml;
+		$this->project = $membership->getPlace()->getRootElement();
+		$this->slug = $membership->getPlace()->getPlace()->getSlug();
+		
+		if (!$this->project->getAreasAllowed()) {
+			throw new AreasNotSupportedException('This project does not support areas.');
+		}
 	}
 
 	public function getKey()
 	{
 		return 'area';
 	}
-	
+
 	/**
 	 * @return Project
 	 */
@@ -64,32 +62,23 @@ class AreaWorkspace extends Workspace
 	{
 		return $this->project;
 	}
-	
-	public function getMembershipLoader()
-	{
-		return $this->areaMembershipLoader;
-	}
 
 	public function getWorkspaceEvent()
 	{
 		return CantigaEvents::WORKSPACE_AREA;
 	}
 	
-	public function onWorkspaceLoaded(Membership $membership)
+	public function getHelpRoute(): string
 	{
-		$this->slug = $membership->getItem()->getSlug();
-		$this->project = $membership->getItem()->getProject();
-		if (!$this->project->getAreasAllowed()) {
-			throw new AreasNotSupportedException('This project does not support areas.');
-		}
+		return 'place_help_page';
 	}
-	
-	public function getHelpPages(RouterInterface $router)
+
+	public function getHelpPages(): array
 	{
 		return [
-			['route' => 'user_help_introduction', 'url' => $router->generate('user_help_introduction'), 'title' => 'Introduction to the system'],
-			['route' => 'area_help_introduction', 'url' => $router->generate('area_help_introduction', ['slug' => $this->slug]), 'title' => 'Introduction to areas'],
-			['route' => 'area_help_members', 'url' => $router->generate('area_help_members', ['slug' => $this->slug]), 'title' => 'Member management'],
+			['route' => 'user_introduction', 'title' => 'Introduction to the system', 'text' => CoreTexts::HELP_INTRODUCTION],
+			['route' => 'area_introduction', 'title' => 'Introduction to areas', 'text' => CoreTexts::HELP_AREA_INTRODUCTION],
+			['route' => 'area_members', 'title' => 'Member management', 'text' => CoreTexts::HELP_AREA_MEMBERS],
 		];
 	}
 }

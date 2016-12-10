@@ -15,9 +15,9 @@
 			<ul class="nav nav-pills">
 				{% for page in pages %}
 					{% if page.current %}
-					<li role="presentation" class="active"><a href="{{ page.url }}">{{ page.title | trans([], 'pages') }}</a></li>
+					<li role="presentation" class="active"><a href="{{ spath(route, {'page': page.route}) }}">{{ page.title | trans([], 'pages') }}</a></li>
 					{% else %}
-					<li role="presentation"><a href="{{ page.url }}">{{ page.title | trans([], 'pages') }}</a></li>	
+					<li role="presentation"><a href="{{ spath(route, {'page': page.route}) }}">{{ page.title | trans([], 'pages') }}</a></li>	
 					{% endif %}
 				{% endfor %}
 			</ul>

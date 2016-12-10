@@ -20,7 +20,9 @@
 
 namespace Cantiga\MilestoneBundle\Controller;
 
+use Cantiga\Components\Hierarchy\Entity\Membership;
 use Cantiga\CoreBundle\Api\Controller\GroupPageController;
+use Cantiga\MilestoneBundle\Controller\Traits\MilestoneEditorTrait;
 use Cantiga\MilestoneBundle\MilestoneTexts;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -34,7 +36,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class GroupMilestoneEditorController extends GroupPageController
 {
 
-	use Traits\MilestoneEditorTrait;
+	use MilestoneEditorTrait;
 
 	const REPOSITORY_NAME = 'cantiga.milestone.repo.status';
 	const MILESTONE_TEMPLATE = 'CantigaMilestoneBundle:MilestoneEditor:milestone-editor.html.twig';
@@ -50,10 +52,10 @@ class GroupMilestoneEditorController extends GroupPageController
 	/**
 	 * @Route("/editor/{i}", name="group_milestone_editor", defaults={"i" = "current"})
 	 */
-	public function indexAction($i, Request $request)
+	public function indexAction($i, Request $request, Membership $membership)
 	{
 		if ($i === 'current' || !ctype_digit($i)) {
-			$i = $this->getMembership()->getItem()->getEntity()->getId();
+			$i = $membership->getPlace()->getPlace()->getId();
 		}
 		
 		$text = $this->getTextRepository()->getText(MilestoneTexts::GROUP_MILESTONE_EDITOR_TEXT, $request, $this->getActiveProject());
@@ -73,33 +75,33 @@ class GroupMilestoneEditorController extends GroupPageController
 	/**
 	 * @Route("/ajax-reload", name="group_milestone_ajax_reload")
 	 */
-	public function ajaxReloadAction(Request $request)
+	public function ajaxReloadAction(Request $request, Membership $membership)
 	{
-		return $this->performReload($request);
+		return $this->performReload($request, $membership);
 	}
 
 	/**
 	 * @Route("/ajax-complete", name="group_milestone_ajax_complete")
 	 */
-	public function ajaxCompleteAction(Request $request)
+	public function ajaxCompleteAction(Request $request, Membership $membership)
 	{
-		return $this->performComplete($request);
+		return $this->performComplete($request, $membership);
 	}
 
 	/**
 	 * @Route("/ajax-cancel", name="group_milestone_ajax_cancel")
 	 */
-	public function ajaxCancelAction(Request $request)
+	public function ajaxCancelAction(Request $request, Membership $membership)
 	{
-		return $this->performCancel($request);
+		return $this->performCancel($request, $membership);
 	}
 
 	/**
 	 * @Route("/ajax-update", name="group_milestone_ajax_update")
 	 */
-	public function ajaxUpdateAction(Request $request)
+	public function ajaxUpdateAction(Request $request, Membership $membership)
 	{
-		return $this->performUpdate($request);
+		return $this->performUpdate($request, $membership);
 	}
 
 }

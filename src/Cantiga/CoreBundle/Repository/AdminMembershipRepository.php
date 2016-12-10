@@ -23,6 +23,7 @@ use Cantiga\Components\Hierarchy\Entity\MembershipRole;
 use Cantiga\Components\Hierarchy\MembershipEntityInterface;
 use Cantiga\Components\Hierarchy\MembershipRepositoryInterface;
 use Cantiga\Components\Hierarchy\MembershipRoleResolverInterface;
+use Cantiga\Components\Hierarchy\User\CantigaUserRefInterface;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Invitation;
 use Cantiga\CoreBundle\Entity\Project;
@@ -91,14 +92,14 @@ class AdminMembershipRepository implements MembershipRepositoryInterface
 		return $user;
 	}
 	
-	public function getMember(Project $project, $id)
+	public function getMember(MembershipEntityInterface $place, $id)
 	{
 		if (!ctype_digit($id)) {
 			throw new ModelException('Invalid user ID');
 		}
 		
 		$this->transaction->requestTransaction();
-		$user = $project->findMember($this->conn, $this->roleResolver, $id);
+		$user = $place->findMember($this->conn, $this->roleResolver, $id);
 		if (empty($user)) {
 			throw new ItemNotFoundException('The specified user has not been found.');
 		}
@@ -114,26 +115,26 @@ class AdminMembershipRepository implements MembershipRepositoryInterface
 		return $this->roleResolver->getRole('Project', $id);
 	}
 
-	public function findHints(Project $project, $query)
+	public function findHints(MembershipEntityInterface $place, $query)
 	{
 		$this->transaction->requestTransaction();
-		return $project->findHints($this->conn, $query);
+		return $place->findHints($this->conn, $query);
 	}
 	
-	public function findMembers(Project $project)
+	public function findMembers(MembershipEntityInterface $project)
 	{
 		$this->transaction->requestTransaction();
 		return Member::collectionAsArray($project->findMembers($this->conn, $this->roleResolver));
 	}
 
-	public function joinMember(MembershipEntityInterface $project, User $user, MembershipRole $role, $note)
+	public function joinMember(MembershipEntityInterface $project, CantigaUserRefInterface $user, MembershipRole $role, $note)
 	{
 		if($role->isUnknown()) {
 			return ['status' => 0];
 		}
 		$this->transaction->requestTransaction();
 		try {
-			if ($project->joinMember($this->conn, $user, $role, $note)) {
+			if ($project->joinMember($this->conn, $user, $role, $note, true)) {
 				return ['status' => 1, 'data' => Member::collectionAsArray($project->findMembers($this->conn, $this->roleResolver))];
 			}
 			return ['status' => 0, 'data' => Member::collectionAsArray($project->findMembers($this->conn, $this->roleResolver))];
@@ -143,14 +144,14 @@ class AdminMembershipRepository implements MembershipRepositoryInterface
 		}
 	}
 	
-	public function editMember(MembershipEntityInterface $project, User $user, MembershipRole $role, $note)
+	public function editMember(MembershipEntityInterface $project, CantigaUserRefInterface $user, MembershipRole $role, $note)
 	{
 		if($role->isUnknown()) {
 			return ['status' => 0];
 		}
 		$this->transaction->requestTransaction();
 		try {
-			if ($project->editMember($this->conn, $user, $role, $note)) {
+			if ($project->editMember($this->conn, $user, $role, $note, true)) {
 				return ['status' => 1, 'data' => Member::collectionAsArray($project->findMembers($this->conn, $this->roleResolver))];
 			}
 			return ['status' => 0, 'data' => Member::collectionAsArray($project->findMembers($this->conn, $this->roleResolver))];
@@ -160,7 +161,7 @@ class AdminMembershipRepository implements MembershipRepositoryInterface
 		}
 	}
 
-	public function removeMember(MembershipEntityInterface $project, User $user)
+	public function removeMember(MembershipEntityInterface $project, CantigaUserRefInterface $user)
 	{
 		$this->transaction->requestTransaction();
 		try {

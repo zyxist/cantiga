@@ -21,17 +21,15 @@
 namespace Cantiga\CoreBundle\Twig;
 
 use Cantiga\Branding;
+use Cantiga\Components\Hierarchy\MembershipStorageInterface;
 use Cantiga\CoreBundle\Api\Modules;
 use Cantiga\CoreBundle\Api\Workspaces;
 use Cantiga\CoreBundle\Api\WorkspaceSourceInterface;
 use Cantiga\CoreBundle\Block\BlockLauncherInterface;
-use Cantiga\CoreBundle\Entity\User;
 use Cantiga\Metamodel\DataTable;
-use Cantiga\Metamodel\MembershipToken;
 use Cantiga\Metamodel\TimeFormatterInterface;
 use ReflectionClass;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\Exception\LogicException;
 use Twig_Environment;
 use Twig_Extension;
@@ -61,9 +59,9 @@ class CantigaExtension extends Twig_Extension implements Twig_Extension_GlobalsI
 	private $timeFormatter;
 
 	/**
-	 * @var TokenStorageInterface
+	 * @var MembershipStorageInterface
 	 */
-	private $tokenStorage;
+	private $membershipStorage;
 
 	/**
 	 * @var RouterInterface
@@ -75,11 +73,11 @@ class CantigaExtension extends Twig_Extension implements Twig_Extension_GlobalsI
 	 */
 	private $blockLauncher;
 
-	public function __construct(WorkspaceSourceInterface $workspaceSource, TimeFormatterInterface $timeFormatter, TokenStorageInterface $tokenStorage, RouterInterface $router, BlockLauncherInterface $blockLauncher)
+	public function __construct(WorkspaceSourceInterface $workspaceSource, TimeFormatterInterface $timeFormatter, MembershipStorageInterface $membershipStorage, RouterInterface $router, BlockLauncherInterface $blockLauncher)
 	{
 		$this->workspaceSource = $workspaceSource;
 		$this->timeFormatter = $timeFormatter;
-		$this->tokenStorage = $tokenStorage;
+		$this->membershipStorage = $membershipStorage;
 		$this->router = $router;
 		$this->blockLauncher = $blockLauncher;
 	}
@@ -246,9 +244,8 @@ class CantigaExtension extends Twig_Extension implements Twig_Extension_GlobalsI
 
 	public function spath($route, $args = [], $referenceType = null)
 	{
-		$token = $this->tokenStorage->getToken();
-		if ($token instanceof MembershipToken) {
-			$args['slug'] = $token->getMembershipEntity()->getSlug();
+		if ($this->membershipStorage->hasMembership()) {
+			$args['slug'] = $this->membershipStorage->getMembership()->getPlace()->getSlug();
 		}
 		return $this->router->generate($route, $args, $referenceType);
 	}

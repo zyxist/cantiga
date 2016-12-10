@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of Cantiga Project. Copyright 2016 Cantiga contributors.
  *
@@ -20,59 +19,57 @@
 
 namespace Cantiga\CoreBundle\Event;
 
-use Cantiga\Metamodel\ProjectRepresentation;
+use Cantiga\Components\Hierarchy\Entity\PlaceRef;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
  * Emitted by the navbar controller, the event is used to pass the list of projects
  * to the UI. Note that this does not have to mean Cantiga projects. Areas in the area
  * workspace are handled in the same way.
- *
- * @author Tomasz Jędrzejewski
  */
 class ShowProjectsEvent extends Event
 {
 
 	/**
-	 * Stores the list of projects
+	 * Stores the list of place
 	 * @var array
 	 */
-	private $projects = array();
+	private $places = array();
 
 	/**
-	 * The active project is shown in as the list title.
-	 * @var ProjectRepresentation
+	 * The active place is shown in as the list title.
+	 * @var PlaceRef
 	 */
-	private $activeProject;
+	private $activePlace;
 
-	public function setActiveProject(ProjectRepresentation $project)
+	public function setActiveProject(PlaceRef $project)
 	{
-		$this->activeProject = $project;
+		$this->activePlace = $project;
 	}
 
-	public function addProject(ProjectRepresentation $project)
+	public function addProject(PlaceRef $project)
 	{
-		$this->projects[] = $project;
+		$this->places[] = $project;
 	}
 
 	public function hasActiveProject()
 	{
-		return null !== $this->activeProject;
+		return null !== $this->activePlace;
 	}
 
 	public function getProjects()
 	{
-		return $this->projects;
+		return $this->places;
 	}
 
 	public function getActiveProject()
 	{
-		return $this->activeProject;
+		return $this->activePlace;
 	}
 
 	public function hasProjects()
 	{
-		return sizeof($this->projects) > 0;
+		return sizeof($this->places) > 0;
 	}
 
 }

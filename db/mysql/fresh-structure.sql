@@ -12,26 +12,16 @@ CREATE TABLE IF NOT EXISTS `cantiga_areas` (
   `lastUpdatedAt` int(11) NOT NULL,
   `percentCompleteness` int(11) NOT NULL,
   `visiblePublicly` int(11) NOT NULL,
-  `memberNum` int(11) NOT NULL,
   `customData` text NOT NULL,
-  `entityId` int(11) NOT NULL,
+  `placeId` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `slug` (`slug`),
-  UNIQUE KEY `entityId` (`entityId`),
+  UNIQUE KEY `placeId` (`placeId`),
   KEY `projectId` (`projectId`),
   KEY `groupId` (`groupId`),
   KEY `statusId` (`statusId`),
   KEY `territoryId` (`territoryId`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `cantiga_area_members` (
-  `areaId` int(11) NOT NULL,
-  `userId` int(11) NOT NULL,
-  `role` int(11) NOT NULL,
-  `note` varchar(30) DEFAULT NULL,
-  PRIMARY KEY (`areaId`,`userId`),
-  KEY `userId` (`userId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `cantiga_area_requests` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -77,12 +67,12 @@ CREATE TABLE IF NOT EXISTS `cantiga_area_statuses` (
 
 CREATE TABLE IF NOT EXISTS `cantiga_contacts` (
   `userId` int(11) NOT NULL,
-  `projectId` int(11) NOT NULL,
+  `placeId` int(11) NOT NULL,
   `email` varchar(100) DEFAULT NULL,
   `telephone` varchar(30) DEFAULT NULL,
   `notes` varchar(250) DEFAULT NULL,
-  PRIMARY KEY (`userId`,`projectId`),
-  KEY `projectId` (`projectId`)
+  PRIMARY KEY (`userId`,`placeId`),
+  KEY `placeId` (`placeId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `cantiga_courses` (
@@ -206,16 +196,6 @@ CREATE TABLE IF NOT EXISTS `cantiga_discussion_subchannels` (
   PRIMARY KEY (`id`),
   KEY `channelId` (`channelId`),
   KEY `entityId` (`entityId`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
-
-CREATE TABLE IF NOT EXISTS `cantiga_entities` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) NOT NULL,
-  `slug` varchar(12) NOT NULL,
-  `type` varchar(30) NOT NULL,
-  `removedAt` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `slug` (`slug`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `cantiga_groups` (
@@ -225,11 +205,10 @@ CREATE TABLE IF NOT EXISTS `cantiga_groups` (
   `notes` varchar(500) DEFAULT '',
   `slug` varchar(12) NOT NULL,
   `projectId` int(11) NOT NULL,
-  `memberNum` int(11) NOT NULL,
   `areaNum` int(11) NOT NULL,
-  `entityId` int(11) NOT NULL,
+  `placeId` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `entityId` (`entityId`),
+  UNIQUE KEY `placeId` (`placeId`),
   KEY `projectId` (`projectId`),
   KEY `categoryId` (`categoryId`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
@@ -242,29 +221,19 @@ CREATE TABLE IF NOT EXISTS `cantiga_group_categories` (
   KEY `projectId` (`projectId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `cantiga_group_members` (
-  `groupId` int(11) NOT NULL,
-  `userId` int(11) NOT NULL,
-  `role` int(11) NOT NULL,
-  `note` varchar(30) DEFAULT NULL,
-  PRIMARY KEY (`groupId`,`userId`),
-  KEY `userId` (`userId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 CREATE TABLE IF NOT EXISTS `cantiga_invitations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `email` varchar(100) NOT NULL,
   `userId` int(11) DEFAULT NULL,
   `role` int(11) NOT NULL,
   `note` varchar(30) NOT NULL,
-  `resourceType` varchar(30) NOT NULL,
-  `resourceId` int(11) NOT NULL,
-  `resourceName` varchar(100) NOT NULL,
+  `showDownstreamContactData` tinyint(1) NOT NULL DEFAULT 0,
+  `placeId` int(11) NOT NULL,
   `inviterId` int(11) NOT NULL,
   `createdAt` int(11) NOT NULL,
   `assignmentKey` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uniqueCombination` (`email`,`resourceType`,`resourceId`),
+  UNIQUE KEY `uniqueCombination` (`email`,`placeId`),
   KEY `inviterId` (`inviterId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -283,8 +252,7 @@ CREATE TABLE IF NOT EXISTS `cantiga_links` (
   `presentedTo` tinyint(4) NOT NULL DEFAULT '0',
   `listOrder` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `projectId` (`projectId`),
-  KEY `projectId_2` (`projectId`)
+  KEY `projectId` (`projectId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `cantiga_mail` (
@@ -366,6 +334,29 @@ CREATE TABLE IF NOT EXISTS `cantiga_password_recovery` (
   KEY `userId` (`userId`,`provisionKey`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS `cantiga_places` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `slug` varchar(12) NOT NULL,
+  `type` varchar(30) NOT NULL,
+  `removedAt` int(11) DEFAULT NULL,
+  `memberNum` int(11) DEFAULT 0,
+  `rootPlaceId` int(11) NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `slug` (`slug`),
+  KEY `rootPlaceId` (`rootPlaceId`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `cantiga_place_members` (
+  `placeId` int(11) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `role` int(11) NOT NULL,
+  `showDownstreamContactData` tinyint(1) NOT NULL DEFAULT 0,
+  `note` varchar(30) DEFAULT NULL,
+  PRIMARY KEY (`placeId`,`userId`),
+  KEY `userId` (`userId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 CREATE TABLE IF NOT EXISTS `cantiga_projects` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(30) NOT NULL,
@@ -378,22 +369,12 @@ CREATE TABLE IF NOT EXISTS `cantiga_projects` (
   `archived` tinyint(4) NOT NULL,
   `createdAt` int(11) NOT NULL,
   `archivedAt` int(11) DEFAULT NULL,
-  `memberNum` int(11) NOT NULL DEFAULT '0',
-  `entityId` int(11) NOT NULL,
+  `placeId` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `slug` (`slug`),
-  UNIQUE KEY `entityId` (`entityId`),
+  UNIQUE KEY `placeId` (`placeId`),
   KEY `parentProjectId` (`parentProjectId`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `cantiga_project_members` (
-  `projectId` int(11) NOT NULL,
-  `userId` int(11) NOT NULL,
-  `role` int(11) NOT NULL,
-  `note` varchar(30) DEFAULT NULL,
-  PRIMARY KEY (`projectId`,`userId`),
-  KEY `userId` (`userId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `cantiga_project_settings` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -463,9 +444,7 @@ CREATE TABLE IF NOT EXISTS `cantiga_users` (
   `lastVisit` int(11) DEFAULT NULL,
   `avatar` varchar(40) COLLATE utf8_polish_ci DEFAULT NULL,
   `registeredAt` int(11) NOT NULL,
-  `projectNum` int(11) NOT NULL DEFAULT '0',
-  `groupNum` int(11) NOT NULL DEFAULT '0',
-  `areaNum` int(11) NOT NULL DEFAULT '0',
+  `placeNum` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `login` (`login`),
   KEY `active_users` (`active`,`login`),
@@ -499,15 +478,11 @@ CREATE TABLE IF NOT EXISTS `cantiga_user_registrations` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 ALTER TABLE `cantiga_areas`
-  ADD CONSTRAINT `cantiga_areas_fk5` FOREIGN KEY (`entityId`) REFERENCES `cantiga_entities` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  ADD CONSTRAINT `cantiga_areas_fk5` FOREIGN KEY (`placeId`) REFERENCES `cantiga_places` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
   ADD CONSTRAINT `cantiga_areas_ibfk_1` FOREIGN KEY (`projectId`) REFERENCES `cantiga_projects` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `cantiga_areas_ibfk_2` FOREIGN KEY (`groupId`) REFERENCES `cantiga_groups` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
   ADD CONSTRAINT `cantiga_areas_ibfk_3` FOREIGN KEY (`statusId`) REFERENCES `cantiga_area_statuses` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `cantiga_areas_ibfk_4` FOREIGN KEY (`territoryId`) REFERENCES `cantiga_territories` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
-
-ALTER TABLE `cantiga_area_members`
-  ADD CONSTRAINT `cantiga_area_members_ibfk_1` FOREIGN KEY (`areaId`) REFERENCES `cantiga_areas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `cantiga_area_members_ibfk_2` FOREIGN KEY (`userId`) REFERENCES `cantiga_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `cantiga_area_requests`
   ADD CONSTRAINT `cantiga_area_requests_ibfk_2` FOREIGN KEY (`requestorId`) REFERENCES `cantiga_users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
@@ -524,7 +499,7 @@ ALTER TABLE `cantiga_area_statuses`
 
 ALTER TABLE `cantiga_contacts`
   ADD CONSTRAINT `cantiga_contacts_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `cantiga_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `cantiga_contacts_ibfk_2` FOREIGN KEY (`projectId`) REFERENCES `cantiga_projects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `cantiga_contacts_ibfk_2` FOREIGN KEY (`placeId`) REFERENCES `cantiga_places` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `cantiga_courses`
   ADD CONSTRAINT `cantiga_courses_fk1` FOREIGN KEY (`projectId`) REFERENCES `cantiga_projects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -559,19 +534,15 @@ ALTER TABLE `cantiga_discussion_posts`
 
 ALTER TABLE `cantiga_discussion_subchannels`
   ADD CONSTRAINT `cantiga_discussion_subchannels_ibfk_1` FOREIGN KEY (`channelId`) REFERENCES `cantiga_discussion_channels` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `cantiga_discussion_subchannels_ibfk_2` FOREIGN KEY (`entityId`) REFERENCES `cantiga_entities` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `cantiga_discussion_subchannels_ibfk_2` FOREIGN KEY (`entityId`) REFERENCES `cantiga_places` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `cantiga_groups`
   ADD CONSTRAINT `cantiga_groups_fk2` FOREIGN KEY (`categoryId`) REFERENCES `cantiga_group_categories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `cantiga_groups_fk3` FOREIGN KEY (`entityId`) REFERENCES `cantiga_entities` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  ADD CONSTRAINT `cantiga_groups_fk3` FOREIGN KEY (`placeId`) REFERENCES `cantiga_places` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
   ADD CONSTRAINT `cantiga_groups_ibfk_1` FOREIGN KEY (`projectId`) REFERENCES `cantiga_projects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `cantiga_group_categories`
   ADD CONSTRAINT `cantiga_group_categories_fk1` FOREIGN KEY (`projectId`) REFERENCES `cantiga_projects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `cantiga_group_members`
-  ADD CONSTRAINT `cantiga_group_members_ibfk_1` FOREIGN KEY (`groupId`) REFERENCES `cantiga_groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `cantiga_group_members_ibfk_2` FOREIGN KEY (`userId`) REFERENCES `cantiga_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `cantiga_links`
   ADD CONSTRAINT `cantiga_links_ibfk_1` FOREIGN KEY (`projectId`) REFERENCES `cantiga_projects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -580,14 +551,14 @@ ALTER TABLE `cantiga_milestones`
   ADD CONSTRAINT `cantiga_milestones_fk1` FOREIGN KEY (`projectId`) REFERENCES `cantiga_projects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `cantiga_milestone_progress`
-  ADD CONSTRAINT `cantiga_milestone_progress_fk1` FOREIGN KEY (`entityId`) REFERENCES `cantiga_entities` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `cantiga_milestone_progress_fk1` FOREIGN KEY (`entityId`) REFERENCES `cantiga_places` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `cantiga_milestone_rules`
   ADD CONSTRAINT `cantiga_milestone_rules_fk_1` FOREIGN KEY (`milestoneId`) REFERENCES `cantiga_milestones` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `cantiga_milestone_rules_fk_2` FOREIGN KEY (`projectId`) REFERENCES `cantiga_projects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `cantiga_milestone_status`
-  ADD CONSTRAINT `cantiga_milestone_status_fk1` FOREIGN KEY (`entityId`) REFERENCES `cantiga_entities` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `cantiga_milestone_status_fk1` FOREIGN KEY (`entityId`) REFERENCES `cantiga_places` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `cantiga_milestone_status_fk2` FOREIGN KEY (`milestoneId`) REFERENCES `cantiga_milestones` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `cantiga_milestone_status_rules`
@@ -598,12 +569,15 @@ ALTER TABLE `cantiga_milestone_status_rules`
 ALTER TABLE `cantiga_password_recovery`
   ADD CONSTRAINT `cantiga_password_recovery_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `cantiga_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE `cantiga_projects`
-  ADD CONSTRAINT `cantiga_projects_fk1` FOREIGN KEY (`entityId`) REFERENCES `cantiga_entities` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
+ALTER TABLE `cantiga_places`
+  ADD CONSTRAINT `cantiga_places_ibfk_1` FOREIGN KEY (`rootPlaceId`) REFERENCES `cantiga_places` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE `cantiga_project_members`
-  ADD CONSTRAINT `cantiga_project_members_ibfk_1` FOREIGN KEY (`projectId`) REFERENCES `cantiga_projects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `cantiga_project_members_ibfk_2` FOREIGN KEY (`userId`) REFERENCES `cantiga_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `cantiga_place_members`
+  ADD CONSTRAINT `cantiga_place_members_ibfk_1` FOREIGN KEY (`placeId`) REFERENCES `cantiga_places` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `cantiga_place_members_ibfk_2` FOREIGN KEY (`userId`) REFERENCES `cantiga_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `cantiga_projects`
+  ADD CONSTRAINT `cantiga_projects_fk1` FOREIGN KEY (`placeId`) REFERENCES `cantiga_places` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE;
 
 ALTER TABLE `cantiga_project_settings`
   ADD CONSTRAINT `cantiga_project_settings_ibfk_1` FOREIGN KEY (`projectId`) REFERENCES `cantiga_projects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;

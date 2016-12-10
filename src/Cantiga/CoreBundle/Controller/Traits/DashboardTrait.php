@@ -23,8 +23,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Additional utilities for constructing dashboards.
- * 
- * @author Tomasz Jędrzejewski
  */
 trait DashboardTrait
 {
@@ -69,14 +67,17 @@ trait DashboardTrait
 		return $html;
 	}
 	
-	protected function renderHelpPage(Request $request, $route, $textId)
+	protected function renderHelpPage(Request $request, $route, $pageName)
 	{
+		$textId = $this->findText($pageName);
+		if (null === $textId) {
+			throw $this->createNotFoundException('The specified help page does not exist.');
+		}
+		
 		$text = $this->getTextRepository()->getText($textId, $request);
 		$pages = $this->getWorkspace()->getHelpPages($this->get('router'));
-		$breadcrumbLink = '#';
 		foreach ($pages as &$page) {
-			if ($page['route'] == $route) {
-				$breadcrumbLink = $page['url'];
+			if ($page['route'] == $pageName) {
 				$page['current'] = true;
 			} else {
 				$page['current'] = false;
@@ -84,7 +85,17 @@ trait DashboardTrait
 		}
 		$this->breadcrumbs()
 			->staticItem($this->trans('Help', [], 'pages'))
-			->url($text->getTitle(), $breadcrumbLink);
-		return $this->render('CantigaCoreBundle:Components:help-page.html.twig', ['text' => $text, 'pages' => $pages]);
+			->url($text->getTitle(), $route, ['page' => $route]);
+		return $this->render('CantigaCoreBundle:Components:help-page.html.twig', ['text' => $text, 'pages' => $pages, 'route' => $route]);
+	}
+	
+	private function findText(string $route)
+	{
+		foreach ($this->getWorkspace()->getHelpPages() as $page) {
+			if ($page['route'] == $route) {
+				return $page['text'];
+			}
+		}
+		return null;
 	}
 }

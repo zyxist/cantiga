@@ -18,6 +18,7 @@
  */
 namespace Cantiga\CoreBundle\Extension;
 
+use Cantiga\Components\Hierarchy\MembershipStorageInterface;
 use Cantiga\CoreBundle\Api\Controller\CantigaController;
 use Cantiga\CoreBundle\Api\Workspace;
 use Cantiga\CoreBundle\Entity\Area;
@@ -27,8 +28,6 @@ use Symfony\Component\Templating\EngineInterface;
 
 /**
  * Displays a short information about the current area status.
- *
- * @author Tomasz Jędrzeewski
  */
 class AreaSummaryExtension implements DashboardExtensionInterface
 {
@@ -36,10 +35,15 @@ class AreaSummaryExtension implements DashboardExtensionInterface
 	 * @var EngineInterface
 	 */
 	private $templating;
+	/**
+	 * @var MembershipStorageInterface
+	 */
+	private $membershipStorage;
 	
-	public function __construct(EngineInterface $templating)
+	public function __construct(EngineInterface $templating, MembershipStorageInterface $membershipStorage)
 	{
 		$this->templating = $templating;
+		$this->membershipStorage = $membershipStorage;
 	}
 	
 	public function getPriority()
@@ -49,7 +53,7 @@ class AreaSummaryExtension implements DashboardExtensionInterface
 
 	public function render(CantigaController $controller, Request $request, Workspace $workspace, Project $project = null)
 	{
-		$area = $controller->getMembership()->getItem();
+		$area = $this->membershipStorage->getMembership()->getPlace();
 		return $this->templating->render('CantigaCoreBundle:Area:area-summary.html.twig', ['area' => $area, 'bgcolor' => $this->translateColor($area)]);
 	}
 	

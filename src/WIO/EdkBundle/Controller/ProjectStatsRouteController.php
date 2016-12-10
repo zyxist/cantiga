@@ -29,7 +29,7 @@ use WIO\EdkBundle\EdkExtensions;
 
 /**
  * @Route("/project/{slug}/stats/routes")
- * @Security("has_role('ROLE_PROJECT_VISITOR')")
+ * @Security("is_granted('PLACE_VISITOR')")
  */
 class ProjectStatsRouteController extends ProjectPageController
 {

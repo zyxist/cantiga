@@ -75,7 +75,7 @@ class ProjectGroupRepository implements EntityTransformerInterface
 		$dt->id('id', 'i.id')
 			->searchableColumn('name', 'i.name')
 			->searchableColumn('categoryName', 'c.name')
-			->column('memberNum', 'i.memberNum')
+			->column('memberNum', 'p.memberNum')
 			->column('areaNum', 'i.areaNum');
 		return $dt;
 	}
@@ -86,9 +86,10 @@ class ProjectGroupRepository implements EntityTransformerInterface
 			->field('i.id', 'id')
 			->field('i.name', 'name')
 			->field('c.name', 'categoryName')
-			->field('i.memberNum', 'memberNum')
+			->field('p.memberNum', 'memberNum')
 			->field('i.areaNum', 'areaNum')
 			->from(CoreTables::GROUP_TBL, 'i')
+			->join(CoreTables::PLACE_TBL, 'p', QueryClause::clause('p.id = i.placeId'))
 			->leftJoin(CoreTables::GROUP_CATEGORY_TBL, 'c', QueryClause::clause('c.id = i.categoryId'))
 			->where(QueryClause::clause('i.projectId = :projectId', ':projectId', $this->project->getId()));	
 		
@@ -151,8 +152,9 @@ class ProjectGroupRepository implements EntityTransformerInterface
 	{
 		$this->transaction->requestTransaction();
 		try {
-			return $this->conn->fetchAll('SELECT a.`id`, a.`name`, a.`memberNum`, s.`id` AS `statusId`, s.`name` AS `statusName`, s.`label` AS `statusLabel`, t.`id` AS `territoryId`, t.`name` AS `territoryName` '
+			return $this->conn->fetchAll('SELECT a.`id`, a.`name`, p.`memberNum`, s.`id` AS `statusId`, s.`name` AS `statusName`, s.`label` AS `statusLabel`, t.`id` AS `territoryId`, t.`name` AS `territoryName` '
 				. 'FROM `'.CoreTables::AREA_TBL.'` a '
+				. 'INNER JOIN `'.CoreTables::PLACE_TBL.'` p ON p.`id` = a.`placeId` '
 				. 'INNER JOIN `'.CoreTables::AREA_STATUS_TBL.'` s ON s.`id` = a.`statusId` '
 				. 'INNER JOIN `'.CoreTables::TERRITORY_TBL.'` t ON t.`id` = a.`territoryId` '
 				. 'WHERE a.`groupId` = :id ORDER BY a.`name`', [':id' => $group->getId()]);

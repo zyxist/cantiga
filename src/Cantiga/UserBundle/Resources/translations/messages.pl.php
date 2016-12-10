@@ -1,5 +1,7 @@
 <?php
 return [
+	'MembershipManagementNotAllowedInThisPlace' => 'Nie możesz zarządzać członkami tego miejsca.',
+	
 	'UserSettingsUpdatedText' => 'Ustawienia Twojego profilu zostały zmienione.',
 	'ConfirmationLinkChangePasswordSentText' => 'Odnośnik do aktywacji nowego adresu został wysłany na Twoją starą skrzynkę e-mail. Proszę otworzyć wiadomość i kliknąć w podany link bez wylogowywania się z panelu.',
 	'ConfirmationLinkChangeEmailSentText' => 'Odnośnik do aktywacji nowego hasła został wysłany na Twoją skrzynkę e-mail. Proszę otworzyć wiadomość i kliknąć w podany link bez wylogowywania się z panelu.',
@@ -11,8 +13,6 @@ return [
 	'YourCurrentEmailText' => 'Twój obecny adres e-mail to:',
 
 	'New e-mail address' => 'Nowy adres e-mail',
-	'Current photo' => 'Obecne zdjęcie',
-	'Upload new photo' => 'Załaduj nowe zdjęcie',
 	'New photo image' => 'Plik zdjęcia',
 	'Your profile has been updated.' => 'Twój profil został zaktualizowany.',
 	'The new image has been set up.' => 'Nowe zdjęcie zostało poprawnie załadowane.',

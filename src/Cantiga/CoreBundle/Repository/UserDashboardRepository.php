@@ -20,6 +20,7 @@ namespace Cantiga\CoreBundle\Repository;
 
 use Cantiga\Components\Hierarchy\User\CantigaUserRefInterface;
 use Cantiga\CoreBundle\CoreTables;
+use Cantiga\UserBundle\UserTables;
 use Doctrine\DBAL\Connection;
 
 class UserDashboardRepository
@@ -36,12 +37,12 @@ class UserDashboardRepository
 	
 	public function getUserMembership(CantigaUserRefInterface $user)
 	{
-		return $this->conn->fetchAll(
-			'(SELECT p.`id`, p.`name`, p.`slug`, \'Project\' AS `type` FROM `'.CoreTables::PROJECT_TBL.'` p INNER JOIN `'.CoreTables::PROJECT_MEMBER_TBL.'` m ON m.`projectId` = p.`id` WHERE m.`userId` = :userId1) '.
-			'UNION (SELECT g.`id`, g.`name`, g.`slug`, \'Group\' AS `type` FROM `'.CoreTables::GROUP_TBL.'` g INNER JOIN `'.CoreTables::GROUP_MEMBER_TBL.'` m ON m.`groupId` = g.`id` WHERE m.`userId` = :userId2) '.
-			'UNION (SELECT a.`id`, a.`name`, a.`slug`, \'Area\' AS `type` FROM `'.CoreTables::AREA_TBL.'` a INNER JOIN `'.CoreTables::AREA_MEMBER_TBL.'` m ON m.`areaId` = a.`id` WHERE m.`userId` = :userId3) '.
-			'ORDER BY `type` DESC, `name`',
-			[':userId1' => $user->getId(), ':userId2' => $user->getId(), ':userId3' => $user->getId()]);
+		return $this->conn->fetchAll('SELECT p.`id`, p.`name`, p.`slug`, p.`type` '
+			. 'FROM `'.CoreTables::PLACE_TBL.'` p '
+			. 'INNER JOIN `'.UserTables::PLACE_MEMBERS_TBL.'` m ON m.`placeId` = p.`id` '
+			. 'WHERE m.`userId` = :userId '
+			. 'ORDER BY p.`type` DESC, p.`name`',
+			[':userId' => $user->getId()]);
 	}
 	
 	public function getOpenAreaRegistrations()
@@ -51,9 +52,10 @@ class UserDashboardRepository
 	
 	public function getInvitations(CantigaUserRefInterface $user)
 	{
-		return $this->conn->fetchAll('SELECT `id`, `resourceType`, `resourceName` '
-			. 'FROM `'.CoreTables::INVITATION_TBL.'` '
-			. 'WHERE `userId` = :userId ORDER BY `resourceType`, `resourceName`', [':userId' => $user->getId()]);
+		return $this->conn->fetchAll('SELECT i.`id`, p.`type`, p.`name` '
+			. 'FROM `'.CoreTables::INVITATION_TBL.'` i '
+			. 'INNER JOIN `'.CoreTables::PLACE_TBL.'` p ON p.`id` = i.`placeId` '
+			. 'WHERE `userId` = :userId ORDER BY p.`type`, p.`name`', [':userId' => $user->getId()]);
 	}
 	
 	public function getUserAreaRequests(CantigaUserRefInterface $user)

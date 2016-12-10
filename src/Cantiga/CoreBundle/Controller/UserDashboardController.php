@@ -65,35 +65,11 @@ class UserDashboardController extends UserPageController
 	}
 
 	/**
-	 * @Route("/help/introduction", name="user_help_introduction")
+	 * @Route("/help/{page}", name="user_help_page")
 	 */
-	public function helpIntroductionAction(Request $request)
+	public function helpAction($page, Request $request)
 	{
-		return $this->renderHelpPage($request, 'user_help_introduction', CoreTexts::HELP_INTRODUCTION);
-	}
-
-	/**
-	 * @Route("/help/profile", name="user_help_profile")
-	 */
-	public function helpProfileAction(Request $request)
-	{
-		return $this->renderHelpPage($request, 'user_help_profile', CoreTexts::HELP_PROFILE);
-	}
-
-	/**
-	 * @Route("/help/requesting-areas", name="user_help_requesting_areas")
-	 */
-	public function helpRequestingAreasAction(Request $request)
-	{
-		return $this->renderHelpPage($request, 'user_help_requesting_areas', CoreTexts::HELP_REQUEST_AREAS);
-	}
-
-	/**
-	 * @Route("/help/invitations", name="user_help_invitations")
-	 */
-	public function helpInvitationsAction(Request $request)
-	{
-		return $this->renderHelpPage($request, 'user_help_invitations', CoreTexts::HELP_INVITATIONS);
+		return $this->renderHelpPage($request, 'user_help_page', $page);
 	}
 
 	private function chooseDashboard(array $memberEntities, array $areaRegistrations, array $invitations, array $areaRequests): string

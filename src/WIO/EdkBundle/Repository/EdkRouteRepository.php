@@ -348,7 +348,7 @@ class EdkRouteRepository
 			}
 			$this->eventDispatcher->dispatch(MilestoneEvents::ACTIVATION_EVENT, new ActivationEvent(
 				$item->getArea()->getProject(),
-				$item->getArea()->getEntity(),
+				$item->getArea()->getPlace(),
 				'route.approved',
 				$this->getActivationFunc($item)
 			));
@@ -367,7 +367,7 @@ class EdkRouteRepository
 			}
 			$this->eventDispatcher->dispatch(MilestoneEvents::ACTIVATION_EVENT, new ActivationEvent(
 				$item->getArea()->getProject(),
-				$item->getArea()->getEntity(),
+				$item->getArea()->getPlace(),
 				'route.approved',
 				$this->getActivationFunc($item)
 			));

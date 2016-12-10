@@ -28,9 +28,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
-/**
- * @author Tomasz Jędrzejewski
- */
 class UserRegistrationIntent
 {
 	public $login;

@@ -20,6 +20,7 @@ return [
 	'ProjectInvitationText' => 'Invitation to join a project',
 	'GroupInvitationText' => 'Invitation to join a group',
 	'AreaInvitationText' => 'Invitation to join an area',
+	'GotoInvitationsText' => 'Go to invitations',
 	
 	'NoActivityTitle' => 'No activity',
 	'ThankYouJoiningText' => 'Thank you for joining us. However, right now no area registration takes place, and you have no pending invitations to join an existing project, group or area.',

@@ -55,6 +55,8 @@ return array(
 	'a year ago|%count% years ago' => 'rok temu|%count% lata temu|%count% lat temu',
 	'a decade ago|%count% decades ago' => 'dekadę temu|%count% dekady temu|%count% dekad temu',
 	
+	'HowItWorksTitle' => 'Jak to działa?',
+	
 	// Chat
 	'Type Message ...' => 'Wpisz wiadomość...',
 	'Send' => 'Wyślij',

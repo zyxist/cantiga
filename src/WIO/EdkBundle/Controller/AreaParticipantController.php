@@ -41,7 +41,7 @@ use WIO\EdkBundle\Form\EdkParticipantForm;
 
 /**
  * @Route("/area/{slug}/participants/registered")
- * @Security("has_role('ROLE_AREA_PD_ADMIN')")
+ * @Security("is_granted('PLACE_PD_ADMIN')")
  */
 class AreaParticipantController extends AreaPageController
 {

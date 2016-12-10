@@ -18,6 +18,7 @@
  */
 namespace Cantiga\MilestoneBundle\Controller;
 
+use Cantiga\Components\Hierarchy\Entity\Membership;
 use Cantiga\CoreBundle\Api\Controller\GroupPageController;
 use Cantiga\MilestoneBundle\Repository\MilestoneSummaryRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -51,7 +52,7 @@ class GroupMilestoneSummaryController extends GroupPageController
 	/**
 	 * @Route("/view", name="group_milestone_summary")
 	 */
-	public function indexAction(Request $request)
+	public function indexAction(Request $request, Membership $membership)
 	{
 		return $this->render(self::MILESTONE_TEMPLATE, array(
 			'pageTitle' => 'Milestones',
@@ -59,26 +60,26 @@ class GroupMilestoneSummaryController extends GroupPageController
 			'viewPage' => 'group_milestone_summary',
 			'individualPage' => 'group_milestone_summary_individual_areas',
 			'editPage' => 'group_milestone_editor',
-			'areaInfoPage' => 'group_area_info',
+			'areaInfoPage' => 'area_mgmt_info',
 			'showTypeSelector' => false,			
 			'type' => 0,
-			'items' => $this->repository->findMilestoneProgressForAreasInGroup($this->getMembership()->getItem()),
+			'items' => $this->repository->findMilestoneProgressForAreasInGroup($membership->getPlace()),
 		));
 	}
 	
 	/**
 	 * @Route("/individual/areas", name="group_milestone_summary_individual_areas")
 	 */
-	public function individualListAction(Request $request)
+	public function individualListAction(Request $request, Membership $membership)
 	{
-		list($milestones, $items) = $this->repository->findTotalAreaCompleteness($this->getMembership()->getItem());
+		list($milestones, $items) = $this->repository->findTotalAreaCompleteness($membership->getPlace());
 		return $this->render(self::MILESTONE_INDIVIDUAL_TEMPLATE, array(
 			'pageTitle' => 'Milestones',
 			'pageSubtitle' => 'See which milestones are completed in each area',
 			'viewPage' => 'group_milestone_summary',
 			'individualPage' => 'group_milestone_summary_individual_areas',
 			'editPage' => 'group_milestone_editor',
-			'areaInfoPage' => 'group_area_info',
+			'areaInfoPage' => 'area_mgmt_info',
 			'showTypeSelector' => false,
 			'type' => 2,
 			'milestones' => $milestones,

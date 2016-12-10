@@ -51,8 +51,8 @@
 	<div class="col-lg-4 col-md-12">
 		<div class="small-box bg-red">
 			<div class="inner">
-				<h3>{{ invitation.resourceName }}</h3>
-				<p>{{ (invitation.resourceType~'InvitationText') | trans([], 'dashboard') }}</p>
+				<h3>{{ invitation.name }}</h3>
+				<p>{{ (invitation.type~'InvitationText') | trans([], 'dashboard') }}</p>
 			</div>
 			<div class="icon">
 				<i class="fa fa-handshake-o"></i>

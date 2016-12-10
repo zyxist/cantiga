@@ -64,28 +64,6 @@ return array(
 	'Your profile is visible only to the people who are members of the same projects or areas as you.' => 'Twój profil jest widoczny tylko dla osób, które są członkami tych samych projektów bądź rejonów, co ty.',
 	'Your location is visible to everyone who has access to your profile.' => 'Twoja lokalizacja jest widoczna dla wszystkich, którzy mają dostęp do Twego profilu.',
 
-	// Invitation
-	'Invite to project' => 'Zaproś do projektu',
-	'Invite to group' => 'Zaproś do grupy',
-	'Invite to area' => 'Zaproś do rejonu',
-	'ProjectInvitationNoteText' => 'Tutaj możesz zaprosić nowe osoby do projektu. Wystarczy że podasz adres e-mail, rolę oraz dowolny opis nowego członka. Jeśli zapraszana osoba posiada już konto w systemie, zaproszenie pojawi się w jej profilu od razu. W przeciwnym wypadku będzie najpierw poproszona o założenie konta.',
-	'GroupInvitationNoteText' => 'Tutaj możesz zaprosić nowe osoby do grupy. Wystarczy że podasz adres e-mail, rolę oraz dowolny opis nowego członka. Jeśli zapraszana osoba posiada już konto w systemie, zaproszenie pojawi się w jej profilu od razu. W przeciwnym wypadku będzie najpierw poproszona o założenie konta.',
-	'AreaInvitationNoteText' => 'Tutaj możesz zaprosić nowe osoby do rejonu. Wystarczy że podasz adres e-mail, rolę oraz dowolny opis nowego członka. Jeśli zapraszana osoba posiada już konto w systemie, zaproszenie pojawi się w jej profilu od razu. W przeciwnym wypadku będzie najpierw poproszona o założenie konta.',
-	'The invited person does not have to have an account.' => 'Zapraszana osoba nie musi posiadać konta w systemie.',
-	'Custom short text describing this member.' => 'Dowolny krótki tekst opisujący tego członka projektu (np. jego funkcja).',
-	'Submit invitation' => 'Wyślij zaproszenie',
-	'The invitation has been sent.' => 'Zaproszenie zostało wysłane.',
-	'Inviter' => 'Zapraszający',
-	'Invitation date' => 'Data zaproszenia',
-	'InvitationAcceptedText' => 'Zaproszenie zostało zaakceptowane. Przyjrzyj się górnej belce nawigacyjnej panelu - powinieneś zobaczyć tam kilka nowych opcji.',
-	'InvitationFoundText' => 'Zaproszenie zostało pomyślnie podłączone pod Twój profil. Możesz je teraz zatwierdzić bądź odrzucić.',
-	'InvitationNotFoundText' => 'Nie znaleziono podanego zaproszenia. Upewnij się, że przepisałeś klucz zaproszenia dokładnie w takiej formie, w jakiej został on do Ciebie przysłany w wiadomości e-mail.',
-	'InvitationRevokedText' => 'Zaproszenie zostało odrzucone i zniszczone.',
-	'Nobody has sent you invitations.' => 'Nikt nie przysłał Ci żadnych zaproszeń.',
-	'Find invitation' => 'Znajdź zaproszenie',
-	'FindInvitationPlaceholder' => 'Podaj klucz zaproszenia, aby podłączyć je pod Twój profil...',
-	'PersonAlreadyInvitedErr' => 'Ta osoba jest już tutaj zaproszona.',
-	
 	// Invitation mail forms
 	'ProjectNominative: 0' => 'Projekt "0"',
 	'GroupNominative: 0' => 'Grupa "0"',
@@ -140,6 +118,12 @@ return array(
 	// Area profile editor
 	'The area profile \'0\' has been updated.' => 'Profil rejonu "0" został zmieniony.',
 	'AreaProfileSaved' => 'Profil Twojego rejonu został zapisany.',
+	
+	// Group management
+	'The group \'0\' has been created.' => 'Grupa "0" została utworzona.',
+	'The group \'0\' has been updated.' => 'Grupa "0" została zmieniona.',
+	'The group \'0\' has been removed.' => 'Grupa "0" została usunięta.',
+	'Do you really want to remove group \'0\'?' => 'Czy naprawdę chcesz skasować grupę "0"?',
 	
 	// Project buttons
 	'Invalid button implementation' => 'Nieprawidłowa implementacja przycisku.',
@@ -253,7 +237,6 @@ return array(
 	'Manager' => 'Zarządca',
 	'Change role' => 'Zmień rolę',
 	'Enter some note' => 'Wpisz jakąś uwagę',
-	'NoteHintText' => 'Polecamy wpisywać tutaj funkcję, za jaką odpowiada dany członek - jest ona wyświetlana w profilach oraz na listach użytkowników.',
 	
 	// Admin application texts
 	'Content' => 'Treść',

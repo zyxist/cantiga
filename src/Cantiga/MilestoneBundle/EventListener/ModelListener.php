@@ -56,12 +56,12 @@ class ModelListener
 	
 	public function onGroupCreated(GroupEvent $event)
 	{
-		Milestone::populateEntities($this->conn, $event->getGroup()->getEntity(), $event->getGroup()->getProject());
+		Milestone::populateEntities($this->conn, $event->getGroup()->getPlace(), $event->getGroup()->getProject());
 	}
 	
 	public function onAreaCreated(AreaEvent $event)
 	{
-		Milestone::populateEntities($this->conn, $event->getArea()->getEntity(), $event->getArea()->getProject());
+		Milestone::populateEntities($this->conn, $event->getArea()->getPlace(), $event->getArea()->getProject());
 	}
 	
 	/**

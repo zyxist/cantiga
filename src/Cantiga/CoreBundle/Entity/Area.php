@@ -18,27 +18,22 @@
  */
 namespace Cantiga\CoreBundle\Entity;
 
-use Cantiga\Components\Hierarchy\Entity\Member;
-use Cantiga\Components\Hierarchy\Entity\MembershipRole;
+use Cantiga\Components\Hierarchy\Entity\PlaceRef;
 use Cantiga\Components\Hierarchy\HierarchicalInterface;
-use Cantiga\Components\Hierarchy\MembershipEntityInterface;
-use Cantiga\Components\Hierarchy\MembershipRoleResolverInterface;
 use Cantiga\CoreBundle\CoreTables;
-use Cantiga\CoreBundle\Entity\Traits\EntityTrait;
+use Cantiga\CoreBundle\Entity\Traits\PlaceTrait;
 use Cantiga\Metamodel\Capabilities\EditableEntityInterface;
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
 use Cantiga\Metamodel\Capabilities\InsertableEntityInterface;
 use Cantiga\Metamodel\DataMappers;
-use Cantiga\Metamodel\Membership;
 use Doctrine\DBAL\Connection;
-use PDO;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
-class Area implements IdentifiableInterface, InsertableEntityInterface, EditableEntityInterface, MembershipEntityInterface, HierarchicalInterface
+class Area implements IdentifiableInterface, InsertableEntityInterface, EditableEntityInterface, HierarchicalInterface
 {
-	use EntityTrait;
+	use PlaceTrait;
 	
 	private $id;
 	private $name;
@@ -73,10 +68,10 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 	{
 		$data = $conn->fetchAssoc('SELECT a.*, '
 			. 't.`id` AS `territory_id`, t.`name` AS `territory_name`, t.`areaNum` AS `territory_areaNum`, t.`requestNum` as `territory_requestNum`, '
-			. self::createEntityFieldList()
+			. self::createPlaceFieldList()
 			. 'FROM `'.CoreTables::AREA_TBL.'` a '
 			. 'INNER JOIN `'.CoreTables::TERRITORY_TBL.'` t ON t.`id` = a.`territoryId` '
-			. self::createEntityJoin('a')
+			. self::createPlaceJoin('a')
 			. 'INNER JOIN `'.CoreTables::PROJECT_TBL.'` p ON p.`id` = a.`projectId` WHERE a.`id` = :id AND p.`archived` = 0', [':id' => $id]);
 		if(null === $data) {
 			return false;
@@ -92,7 +87,7 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		if (!empty($data['groupId'])) {
 			$item->group = $item->oldGroup = Group::fetchByProject($conn, $data['groupId'], $item->project);
 		}
-		$item->entity = Entity::fromArray($data, 'entity');
+		$item->place = Place::fromArray($data, 'place');
 		return $item;
 	}
 	
@@ -113,9 +108,9 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		}
 		$data = $conn->fetchAssoc('SELECT a.*, '
 			. 't.`id` AS `territory_id`, t.`name` AS `territory_name`, t.`areaNum` AS `territory_areaNum`, t.`requestNum` as `territory_requestNum`, '
-			. self::createEntityFieldList()
+			. self::createPlaceFieldList()
 			. 'FROM `'.CoreTables::AREA_TBL.'` a '
-			. self::createEntityJoin('a')
+			. self::createPlaceJoin('a')
 			. 'INNER JOIN `'.CoreTables::TERRITORY_TBL.'` t ON t.`id` = a.`territoryId` '
 			. 'WHERE a.`id` = :id AND '.$selector, [':id' => $id, ':placeId' => $place->getId()]);
 		if(false === $data) {
@@ -133,42 +128,33 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		}
 		$item->status = $item->oldStatus = AreaStatus::fetchByProject($conn, $data['statusId'], $item->project);
 		$item->setTerritory($item->oldTerritory = Territory::fromArray($data, 'territory'));
-		$item->entity = Entity::fromArray($data, 'entity');
+		$item->place = Place::fromArray($data, 'place');
 		return $item;
 	}
 	
-	/**
-	 * @param Connection $conn
-	 * @param int $projectId
-	 * @param int $userId
-	 * @return Membership
-	 */
-	public static function fetchMembership(Connection $conn, MembershipRoleResolverInterface $resolver, $slug, $userId)
+	public static function fetchByPlaceRef(Connection $conn, PlaceRef $place)
 	{
 		$data = $conn->fetchAssoc('SELECT a.*, '
 			. 't.`id` AS `territory_id`, t.`name` AS `territory_name`, t.`areaNum` AS `territory_areaNum`, t.`requestNum` as `territory_requestNum`, '
-			. 'm.`role` AS `membership_role`, m.`note` AS `membership_note`, '
-			. self::createEntityFieldList()
+			. self::createPlaceFieldList()
 			. 'FROM `'.CoreTables::AREA_TBL.'` a '
-			. self::createEntityJoin('a')
+			. self::createPlaceJoin('a')
 			. 'INNER JOIN `'.CoreTables::TERRITORY_TBL.'` t ON t.`id` = a.`territoryId` '
-			. 'INNER JOIN `'.CoreTables::AREA_MEMBER_TBL.'` m ON m.`areaId` = a.`id` WHERE m.`userId` = :userId AND a.`slug` = :slug', [':userId' => $userId, ':slug' => $slug]);
+			. 'WHERE a.`placeId` = :placeId', [':placeId' => $place->getId()]);
 		if(false === $data) {
 			return false;
 		}
-		$item = self::fromArray($data);
-		$item->project = Project::fetchActive($conn, $data['projectId']);
-		if (false == $item->project) {
-			return false;
-		}
-		$item->status = $item->oldStatus = AreaStatus::fetchByProject($conn, $data['statusId'], $item->project);
+		$area = self::fromArray($data);
+		$area->project = Project::fetchActive($conn, $data['projectId']);
+		$area->place = Place::fromArray($data, 'place');
+		$area->status = $area->oldStatus = AreaStatus::fetchByProject($conn, $data['statusId'], $area->project);
+		$area->setTerritory($area->oldTerritory = Territory::fromArray($data, 'territory'));
+		
 		if (!empty($data['groupId'])) {
-			$item->group = $item->oldGroup = Group::fetchByProject($conn, $data['groupId'], $item->project);
+			$area->group = $area->oldGroup = Group::fetchByProject($conn, $data['groupId'], $area->project);
 		}
-		$item->setTerritory($item->oldTerritory = Territory::fromArray($data, 'territory'));
-		$role = $resolver->getRole('Area', $data['membership_role']);
-		$item->entity = Entity::fromArray($data, 'entity');
-		return new Membership($item, $role, $data['membership_note']);
+		
+		return $area;
 	}
 
 	public static function fromArray($array, $prefix = '')
@@ -187,7 +173,7 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 	
 	public static function getRelationships()
 	{
-		return ['project', 'status', 'group', 'territory', 'reporter', 'entity'];
+		return ['project', 'status', 'group', 'territory', 'reporter', 'place'];
 	}
 	
 	public static function loadValidatorMetadata(ClassMetadata $metadata) {
@@ -250,17 +236,6 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 	public function setProject(Project $project)
 	{
 		$this->project = $project;
-		return $this;
-	}
-	
-	public function getMemberNum()
-	{
-		return $this->memberNum;
-	}
-
-	public function setMemberNum($memberNum)
-	{
-		$this->memberNum = $memberNum;
 		return $this;
 	}
 	
@@ -392,17 +367,18 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		DataMappers::recount($conn, CoreTables::TERRITORY_TBL, null, $this->territory, 'areaNum', 'id');
 		$this->slug = DataMappers::generateSlug($conn, CoreTables::AREA_TBL);
 		
-		$this->entity = new Entity();
-		$this->entity->setType('Area');
-		$this->entity->setName($this->name);
-		$this->entity->setSlug($this->slug);
-		$this->entity->insert($conn);
+		$this->place = new Place();
+		$this->place->setType('Area');
+		$this->place->setName($this->name);
+		$this->place->setSlug($this->slug);
+		$this->place->setRootPlaceId($this->project->getPlace()->getId());
+		$this->place->insert($conn);
 		
 		$this->createdAt = $this->lastUpdatedAt = time();
 		$this->percentCompleteness = 0;
 		$conn->insert(
 			CoreTables::AREA_TBL,
-			DataMappers::pick($this, ['name', 'slug', 'project', 'group', 'territory', 'status', 'reporter', 'entity', 'createdAt', 'lastUpdatedAt', 'percentCompleteness'], ['customData' => json_encode($this->customData), 'groupName' => $groupName])
+			DataMappers::pick($this, ['name', 'slug', 'project', 'group', 'territory', 'status', 'reporter', 'place', 'createdAt', 'lastUpdatedAt', 'percentCompleteness'], ['customData' => json_encode($this->customData), 'groupName' => $groupName])
 		);
 		return $this->id = $conn->lastInsertId();
 	}
@@ -424,8 +400,8 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 			DataMappers::recount($conn, CoreTables::TERRITORY_TBL, $this->oldTerritory, $this->territory, 'areaNum', 'id');
 		}
 		
-		$this->entity->setName($this->name);
-		$this->entity->update($conn);
+		$this->place->setName($this->name);
+		$this->place->update($conn);
 		$this->lastUpdatedAt = time();
 		
 		return $conn->update(
@@ -433,107 +409,6 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 			DataMappers::pick($this, ['name', 'group', 'territory', 'status', 'lastUpdatedAt', 'percentCompleteness'], ['customData' => json_encode($this->customData), 'groupName' => $groupName]),
 			DataMappers::pick($this, ['id'])
 		);
-	}
-	
-	/**
-	 * Finds the hints for the users that could join the project, basing on their partial e-mail
-	 * address.
-	 * 
-	 * @param string $mailQuery
-	 * @return array
-	 */
-	public function findHints(Connection $conn, $mailQuery)
-	{
-		$mailQuery = trim(str_replace('%', '', $mailQuery));
-		if (strlen($mailQuery) < 3) {
-			return array();
-		}
-		
-		$items = $conn->fetchAll('SELECT `email` FROM `'.CoreTables::USER_TBL.'` WHERE '
-			. '`email` LIKE :email AND `id` NOT IN(SELECT `userId` FROM `'.CoreTables::AREA_MEMBER_TBL.'` WHERE `areaId` = :area) ORDER BY `email` DESC LIMIT 15', [':area' => $this->getId(), ':email' => $mailQuery.'%']);
-		if (!empty($items)) {
-			$result = array();
-			foreach ($items as $item) {
-				$result[] = $item['email'];
-			}
-			return $result;
-		}
-		return array();
-	}
-	
-	public function findMembers(Connection $conn, MembershipRoleResolverInterface $roleResolver): array
-	{
-		$stmt = $conn->prepare('SELECT i.`id`, i.`name`, i.`avatar`, i.`lastVisit`, p.`location`, c.`email` AS `contactMail`, '
-			. 'c.`telephone` AS `contactTelephone`, c.`notes` AS `notes`, m.`role` AS `membershipRole`, m.`note` AS `membershipNote` '
-			. 'FROM `'.CoreTables::USER_TBL.'` i '
-			. 'INNER JOIN `'.CoreTables::USER_PROFILE_TBL.'` p ON p.`userId` = i.`id` '
-			. 'INNER JOIN `'.CoreTables::AREA_MEMBER_TBL.'` m ON m.`userId` = i.`id` '
-			. 'LEFT JOIN `'.CoreTables::CONTACT_TBL.'` c ON c.`userId` = i.`id` AND c.`projectId` = :projectId '
-			. 'WHERE m.`areaId` = :entityId AND i.`active` = 1 AND i.`removed` = 0 '
-			. 'ORDER BY i.`name`');
-		$stmt->bindValue(':projectId', $this->getProject()->getId());
-		$stmt->bindValue(':entityId', $this->getId());
-		$stmt->execute();
-		$results = [];
-		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$results[] = new Member(
-				$row, new Membership($this, $roleResolver->getRole('Area', $row['membershipRole']), $row['membershipNote'])
-			);
-		}
-		$stmt->closeCursor();
-		return $results;
-	}
-	
-	public function findMember(Connection $conn, MembershipRoleResolverInterface $resolver, int $id)
-	{
-		$stmt = $conn->prepare('SELECT i.`id`, i.`name`, i.`avatar`, i.`lastVisit`, p.`location`, c.`email` AS `contactMail`, '
-			. 'c.`telephone` AS `contactTelephone`, c.`notes` AS `notes`, m.`role` AS `membershipRole`, m.`note` AS `membershipNote` '
-			. 'FROM `'.CoreTables::USER_TBL.'` i '
-			. 'INNER JOIN `'.CoreTables::USER_PROFILE_TBL.'` p ON p.`userId` = i.`id` '
-			. 'INNER JOIN `'.CoreTables::AREA_MEMBER_TBL.'` m ON m.`userId` = i.`id` '
-			. 'LEFT JOIN `'.CoreTables::CONTACT_TBL.'` c ON c.`userId` = i.`id` AND c.`projectId` = :projectId '
-			. 'WHERE m.`areaId` = :entityId AND i.`active` = 1 AND i.`removed` = 0 AND i.`id` = :userId '
-			. 'ORDER BY i.`name`');
-		$stmt->bindValue(':projectId', $this->getProject()->getId());
-		$stmt->bindValue(':entityId', $this->getId());
-		$stmt->bindValue(':userId', $id);
-		$stmt->execute();
-		$results = [];
-		if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$stmt->closeCursor();
-			return new Member(
-				$row, new Membership($this, $resolver->getRole('Area', $row['membershipRole']), $row['membershipNote'])
-			);
-		}
-		$stmt->closeCursor();
-		return false;
-	}
-
-	public function joinMember(Connection $conn, User $user, MembershipRole $role, $note)
-	{
-		$ifExists = $conn->fetchColumn('SELECT `userId` FROM `'.CoreTables::AREA_MEMBER_TBL.'` WHERE `areaId` = :area AND `userId` = :user', [':area' => $this->getId(), ':user' => $user->getId()]);
-		if (false === $ifExists) {
-			$conn->insert(CoreTables::AREA_MEMBER_TBL, ['areaId' => $this->getId(), 'userId' => $user->getId(), 'role' => $role->getId(), 'note' => $note]);
-			$conn->executeQuery('UPDATE `'.CoreTables::USER_TBL.'` SET `areaNum` = (`areaNum` + 1) WHERE `id` = :id', [':id' => $user->getId()]);
-			$conn->executeQuery('UPDATE `'.CoreTables::AREA_TBL.'` SET `memberNum` = (SELECT COUNT(`userId`) FROM `'.CoreTables::AREA_MEMBER_TBL.'` WHERE `areaId` = :id) WHERE `id` = :id2', [':id' => $this->getId(), ':id2' => $this->getId()]);
-			return true;
-		}
-		return false;
-	}
-	
-	public function editMember(Connection $conn, User $user, MembershipRole $role, $note)
-	{
-		return 1 == $conn->update(CoreTables::AREA_MEMBER_TBL, ['role' => (int) $role->getId(), 'note' => $note], ['areaId' => $this->getId(), 'userId' => $user->getId()]);
-	}
-
-	public function removeMember(Connection $conn, User $user)
-	{
-		if (1 == $conn->delete(CoreTables::AREA_MEMBER_TBL, ['areaId' => $this->getId(), 'userId' => $user->getId()])) {
-			$conn->executeQuery('UPDATE `'.CoreTables::USER_TBL.'` SET `areaNum` = (`areaNum` - 1) WHERE `id` = :id', [':id' => $user->getId()]);
-			$conn->executeQuery('UPDATE `'.CoreTables::AREA_TBL.'` SET `memberNum` = (SELECT COUNT(`userId`) FROM `'.CoreTables::AREA_MEMBER_TBL.'` WHERE `areaId` = :id) WHERE `id` = :id2', [':id' => $this->getId(), ':id2' => $this->getId()]);
-			return true;
-		}
-		return false;
 	}
 
 	public function getElementOfType(int $type)
@@ -558,5 +433,9 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 	{
 		return $this->project;
 	}
-
+	
+	public function isChild(HierarchicalInterface $place): bool
+	{
+		return false;
+	}
 }

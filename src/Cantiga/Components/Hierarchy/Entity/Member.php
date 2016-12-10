@@ -19,30 +19,28 @@
 declare(strict_types=1);
 namespace Cantiga\Components\Hierarchy\Entity;
 
-use Cantiga\Metamodel\Membership;
-
 /**
  * Member of the same entity, as us. We can see his/her contact information.
  */
 class Member extends AbstractProfileView
 {
 	/**
-	 * @var Membership
+	 * @var MemberInfo
 	 */
-	private $membership;
+	private $memberInfo;
 	
-	public function __construct(array $data, Membership $membership)
+	public function __construct(array $data, MemberInfo $memberInfo)
 	{
 		parent::__construct($data);
-		$this->membership = $membership;
+		$this->memberInfo = $memberInfo;
 	}
 	
-	public function getMembership(): Membership
+	public function getMemberInfo(): MemberInfo
 	{
-		return $this->membership;
+		return $this->memberInfo;
 	}
 	
-	public function canViewContactInformation(Membership $viewingMember): bool
+	public function canViewContactInformation(AbstractMemberInfo $viewingMember): bool
 	{
 		return true;
 	}
@@ -50,9 +48,10 @@ class Member extends AbstractProfileView
 	public function asArray(): array
 	{
 		$array = parent::asArray();
-		$array['role'] = $this->membership->getRole()->getId();
-		$array['roleName'] = $this->membership->getRole()->getName();
-		$array['note'] = $this->membership->getNote() ?? '';
+		$array['role'] = $this->memberInfo->getRole()->getId();
+		$array['roleName'] = $this->memberInfo->getRole()->getName();
+		$array['note'] = $this->memberInfo->getNote() ?? '';
+		$array['showDownstreamContactData'] = $this->memberInfo->getShowDownstreamContactData() ?? 0;
 		return $array;
 	}
 	

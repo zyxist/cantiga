@@ -1,6 +1,18 @@
 _memberlist_controller:                                                                                                                                                   
     resource: "@CantigaUserBundle/Controller/MemberlistController.php"                                                                                                      
     type:     annotation
+_current_membership_controller:
+    resource: "@CantigaUserBundle/Controller/CurrentMembershipController.php"
+    type:     annotation
+_downstream_membership_controller:
+    resource: "@CantigaUserBundle/Controller/DownstreamMembershipController.php"
+    type:     annotation
+_admin_membership_controller:
+    resource: "@CantigaUserBundle/Controller/AdminMembershipController.php"
+    type:     annotation
 _user_profile_controller:
     resource: "@CantigaUserBundle/Controller/ProfileController.php"
+    type:     annotation
+_user_invitation_controller:
+    resource: "@CantigaUserBundle/Controller/UserInvitationController.php"
     type:     annotation

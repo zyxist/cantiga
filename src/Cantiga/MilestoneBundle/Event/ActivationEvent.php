@@ -18,7 +18,7 @@
  */
 namespace Cantiga\MilestoneBundle\Event;
 
-use Cantiga\CoreBundle\Entity\Entity;
+use Cantiga\CoreBundle\Entity\Place;
 use Cantiga\CoreBundle\Entity\Project;
 use Symfony\Component\EventDispatcher\Event;
 
@@ -41,11 +41,11 @@ class ActivationEvent extends Event
 	 * which describes the new status of the milestone configured by the user.
 	 * 
 	 * @param \Cantiga\MilestoneBundle\Entity\Project $project
-	 * @param Entity $entity
+	 * @param Place $entity
 	 * @param string $activator
 	 * @param callback $callback
 	 */
-	public function __construct(Project $project, Entity $entity, $activator, $callback)
+	public function __construct(Project $project, Place $entity, $activator, $callback)
 	{
 		$this->project = $project;
 		$this->entity = $entity;
@@ -62,7 +62,7 @@ class ActivationEvent extends Event
 	}
 	
 	/**
-	 * @return Entity
+	 * @return Place
 	 */
 	public function getEntity()
 	{

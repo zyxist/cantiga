@@ -18,6 +18,7 @@
  */
 namespace Cantiga\CoreBundle\Controller;
 
+use Cantiga\Components\Hierarchy\Entity\Membership;
 use Cantiga\CoreBundle\Api\Actions\FormAction;
 use Cantiga\CoreBundle\Api\Controller\AreaPageController;
 use Cantiga\CoreBundle\CoreExtensions;
@@ -32,11 +33,11 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @Route("/area/{slug}/profile")
- * @Security("has_role('ROLE_AREA_MEMBER')")
+ * @Security("is_granted('PLACE_MEMBER')")
  */
 class AreaProfileController extends AreaPageController
 {
-	const REPOSITORY = 'cantiga.core.repo.project_area';
+	const REPOSITORY = 'cantiga.core.repo.area_mgmt';
 	
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
@@ -46,10 +47,10 @@ class AreaProfileController extends AreaPageController
 	/**
 	 * @Route("/editor", name="area_profile_editor")
 	 */
-	public function editorAction(Request $request)
+	public function editorAction(Request $request, Membership $membership)
 	{
 		$this->breadcrumbs()->entryLink($this->trans('Profile editor', [], 'pages'), 'area_profile_editor', ['slug' => $this->getSlug()]);
-		$area = $this->getMembership()->getItem();
+		$area = $membership->getPlace();
 		$repo = $this->get(self::REPOSITORY);
 		$territoryRepo = $this->get('cantiga.core.repo.project_territory');
 		$territoryRepo->setProject($area->getProject());

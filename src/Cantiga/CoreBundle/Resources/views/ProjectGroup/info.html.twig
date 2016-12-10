@@ -1,11 +1,11 @@
 {% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
 
 {% block page_title %}
-	{{ pageTitle | trans({}, 'pages') }}
+	{{ pageTitle | trans([], 'pages') }}
 {% endblock %}
 
 {% block page_subtitle %}
-	{{ pageSubtitle | trans({}, 'pages') }}
+	{{ pageSubtitle | trans([], 'pages') }}
 {% endblock %}
 
 {% block page_content %}
@@ -23,7 +23,7 @@
 								<span class="sr-only">{{ 'Toggle dropdown' | trans([], 'general') }}</span>
 							</button>
 							<ul class="dropdown-menu" role="menu">
-								<li><a href="{{ spath('project_group_membership_index', {'id': item.id }) }}">{{ 'Members' | trans({}, 'general') }}</a></li>
+								<li><a href="{{ spath('downstream_membership_index', {'id': item.id, 'placeType': 'group' }) }}">{{ 'Members' | trans({}, 'general') }}</a></li>
 								<li><a href="{{ spath(editPage, {'id': item.id }) }}">{{ 'Edit' | trans({}, 'general') }}</a></li>
 								<li><a href="{{ spath(removePage, {'id': item.id }) }}">{{ 'Remove' | trans({}, 'general') }}</a></li>
 							</ul>
@@ -46,7 +46,7 @@
 					</div>
 					<div class="info-item">
 						<h4><i class="fa fa-user"></i> {{ 'Member number' | trans }}</h4>
-						<span class="value">{{ item.memberNum }}</span>
+						<span class="value">{{ item.place.memberNum }}</span>
 					</div>
 				</div>
 			</div>
@@ -71,7 +71,7 @@
 						<tbody>
 							{% for area in custom.areas %}
 							<tr>
-								<td><a href="{{ spath('project_area_info', {'id': area.id}) }}">{{area.name}}</a></td>
+								<td><a href="{{ spath('area_mgmt_info', {'id': area.id}) }}">{{area.name}}</a></td>
 								<td><span class="label label-{{area.statusLabel}}">{{area.statusName | trans([], 'statuses')}}</span></td>
 								<td>{{area.territoryName}}</td>
 								<td>{{area.memberNum}}</td>
@@ -118,7 +118,7 @@
 	<script type="text/javascript">
 	$(document).ready(function() {
 		$('#member-table').membersDisplay({
-			url: '{{ spath('project_area_group_ajax_members', {'id': item.id}) }}',
+			url: '{{ spath('group_mgmt_api_members', {'id': item.id}) }}',
 			table: '#member-table',
 			tab: 'members',
 			avatars: '{{ asset('ph') }}'

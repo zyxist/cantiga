@@ -20,11 +20,13 @@
 
 namespace Cantiga\CoreBundle\EventListener;
 
+use Cantiga\Components\Hierarchy\MembershipStorageInterface;
 use Cantiga\CoreBundle\Api\Controller\CantigaController;
 use Cantiga\CoreBundle\Api\Workspaces;
 use Cantiga\CoreBundle\Api\WorkspaceSourceInterface;
 use Cantiga\CoreBundle\Event\ShowBreadcrumbsEvent;
 use Cantiga\CoreBundle\Event\ShowHelpEvent;
+use Cantiga\CoreBundle\Event\ShowProjectsEvent;
 use Cantiga\CoreBundle\Event\ShowTasksEvent;
 use Cantiga\CoreBundle\Event\ShowUserEvent;
 use Cantiga\CoreBundle\Event\ShowWorkspacesEvent;
@@ -65,12 +67,17 @@ class UiListener
 	 * @var WorkspaceSourceInterface 
 	 */
 	private $workspaceSource;
+	/**
+	 * @var MembershipStorageInterface
+	 */
+	private $membershipStorage;
 
-	public function __construct(TokenStorageInterface $tokenStorage, AuthorizationCheckerInterface $authChecker, RouterInterface $router, WorkspaceSourceInterface $workspaceSource)
+	public function __construct(TokenStorageInterface $tokenStorage, AuthorizationCheckerInterface $authChecker, RouterInterface $router, WorkspaceSourceInterface $workspaceSource, MembershipStorageInterface $membershipStorage)
 	{
 		$this->tokenStorage = $tokenStorage;
 		$this->workspaceSource = $workspaceSource;
 		$this->authChecker = $authChecker;
+		$this->membershipStorage = $membershipStorage;
 		$this->router = $router;
 	}
 
@@ -103,6 +110,7 @@ class UiListener
 
 	public function showHelpPages(ShowHelpEvent $event)
 	{
+		$event->setRoute($this->workspaceSource->getWorkspace()->getHelpRoute());
 		$event->setPages($this->workspaceSource->getWorkspace()->getHelpPages($this->router));
 	}
 
@@ -117,6 +125,18 @@ class UiListener
 		if (null !== $this->controller) {
 			$event->setCurrentWorkgroup($this->controller->breadcrumbs()->getWorkgroup());
 			$event->setCurrentPage($this->controller->breadcrumbs()->getEntryPage());
+		}
+	}
+	
+	public function showPlaces(ShowProjectsEvent $projects)
+	{
+		foreach ($this->membershipStorage->getPlaces() as $place) {
+			if ($this->membershipStorage->hasMembership()) {
+				if ($place->getSlug() == $this->membershipStorage->getMembership()->getPlace()->getSlug()) {
+					$projects->setActiveProject($place);
+				}
+			}
+			$projects->addProject($place);
 		}
 	}
 

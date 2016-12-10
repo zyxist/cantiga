@@ -48,9 +48,6 @@ _cantiga_error_controller:
 _user_dashboard_controller:
     resource: "@CantigaCoreBundle/Controller/UserDashboardController.php"
     type:     annotation
-_user_invitation_controller:
-    resource: "@CantigaCoreBundle/Controller/UserInvitationController.php"
-    type:     annotation
 _user_area_request_controller:
     resource: "@CantigaCoreBundle/Controller/UserAreaRequestController.php"
     type:     annotation
@@ -61,26 +58,18 @@ _user_place_controller:
 _area_mgmt_controller:
     resource: "@CantigaCoreBundle/Controller/AreaMgmtController.php"
     type:     annotation
-
-_area_dashboard_controller:
-    resource: "@CantigaCoreBundle/Controller/AreaDashboardController.php"
+_group_mgmt_controller:
+    resource: "@CantigaCoreBundle/Controller/GroupMgmtController.php"
     type:     annotation
+_place_dashboard_controller:
+    resource: "@CantigaCoreBundle/Controller/PlaceDashboardController.php"
+    type:     annotation
+
 _area_group_controller:
     resource: "@CantigaCoreBundle/Controller/AreaGroupController.php"
     type:     annotation
 _area_profile_controller:
     resource: "@CantigaCoreBundle/Controller/AreaProfileController.php"
-    type:     annotation
-_area_membership_controller:
-    resource: "@CantigaCoreBundle/Controller/AreaMembershipController.php"
-    type:     annotation
-
-_group_dashboard_controller:
-    resource: "@CantigaCoreBundle/Controller/GroupDashboardController.php"
-    type:     annotation
-    
-_project_dashboard_controller:
-    resource: "@CantigaCoreBundle/Controller/ProjectDashboardController.php"
     type:     annotation
 _project_button_controller:
     resource: "@CantigaCoreBundle/Controller/ProjectButtonController.php"
@@ -91,23 +80,11 @@ _project_stats_area_controller:
 _project_area_request_controller:
     resource: "@CantigaCoreBundle/Controller/ProjectAreaRequestController.php"
     type:     annotation
-_project_group_controller:
-    resource: "@CantigaCoreBundle/Controller/ProjectGroupController.php"
-    type:     annotation
-_project_group_membership_controller:
-    resource: "@CantigaCoreBundle/Controller/ProjectGroupMembershipController.php"
-    type:     annotation
-_project_area_membership_controller:
-    resource: "@CantigaCoreBundle/Controller/ProjectAreaMembershipController.php"
-    type:     annotation
 _project_group_category_controller:
     resource: "@CantigaCoreBundle/Controller/ProjectGroupCategoryController.php"
     type:     annotation
 _project_settings_controller:
     resource: "@CantigaCoreBundle/Controller/ProjectSettingsController.php"
-    type:     annotation
-_project_membership_controller:
-    resource: "@CantigaCoreBundle/Controller/ProjectMembershipController.php"
     type:     annotation
 _project_area_status_controller:                                                                                                                                                   
     resource: "@CantigaCoreBundle/Controller/ProjectAreaStatusController.php"                                                                                                      
@@ -139,7 +116,4 @@ _admin_app_text_controller:
     type:     annotation
 _admin_app_mail_controller:
     resource: "@CantigaCoreBundle/Controller/AdminAppMailController.php"
-    type:     annotation
-_admin_membership_controller:
-    resource: "@CantigaCoreBundle/Controller/AdminMembershipController.php"
     type:     annotation

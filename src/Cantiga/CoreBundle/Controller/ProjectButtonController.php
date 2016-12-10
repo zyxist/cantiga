@@ -31,7 +31,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @Route("/project/{slug}/buttons")
- * @Security("has_role('ROLE_PROJECT_MEMBER')")
+ * @Security("is_granted('PLACE_MEMBER') and is_granted('MEMBEROF_PROJECT')")
  */
 class ProjectButtonController extends ProjectPageController
 {

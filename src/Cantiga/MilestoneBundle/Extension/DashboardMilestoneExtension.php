@@ -18,6 +18,7 @@
  */
 namespace Cantiga\MilestoneBundle\Extension;
 
+use Cantiga\Components\Hierarchy\MembershipStorageInterface;
 use Cantiga\CoreBundle\Api\Controller\CantigaController;
 use Cantiga\CoreBundle\Api\Workspace;
 use Cantiga\CoreBundle\Entity\Project;
@@ -25,9 +26,7 @@ use Cantiga\CoreBundle\Extension\DashboardExtensionInterface;
 use Cantiga\MilestoneBundle\Repository\MilestoneStatusRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Templating\EngineInterface;
-/**
- * @author Tomasz Jędrzejewski
- */
+
 class DashboardMilestoneExtension implements DashboardExtensionInterface
 {
 	/**
@@ -38,11 +37,16 @@ class DashboardMilestoneExtension implements DashboardExtensionInterface
 	 * @var EngineInterface
 	 */
 	private $templating;
+	/**
+	 * @var MembershipStorageInterface
+	 */
+	private $membershipStorage;
 	
-	public function __construct(MilestoneStatusRepository $repository, EngineInterface $templating)
+	public function __construct(MilestoneStatusRepository $repository, MembershipStorageInterface $membershipStorage, EngineInterface $templating)
 	{
 		$this->repository = $repository;
 		$this->templating = $templating;
+		$this->membershipStorage = $membershipStorage;
 	}
 	
 	public function getPriority()
@@ -52,11 +56,11 @@ class DashboardMilestoneExtension implements DashboardExtensionInterface
 
 	public function render(CantigaController $controller, Request $request, Workspace $workspace, Project $project = null)
 	{
-		$entity = $controller->getMembership()->getItem()->getEntity();
+		$place = $this->membershipStorage->getMembership()->getPlace()->getPlace();
 		return $this->templating->render('CantigaMilestoneBundle:Dashboard:milestone-progress.html.twig', [
-			'progress' => $this->repository->computeTotalProgress($entity, $project),
-			'incomingDeadline' => $this->repository->findClosestDeadline($entity, $project),
-			'milestoneEditorPage' => lcfirst($entity->getType()).'_milestone_editor',
+			'progress' => $this->repository->computeTotalProgress($place, $project),
+			'incomingDeadline' => $this->repository->findClosestDeadline($place, $project),
+			'milestoneEditorPage' => lcfirst($place->getType()).'_milestone_editor',
 		]);
 	}
 }

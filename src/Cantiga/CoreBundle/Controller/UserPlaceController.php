@@ -34,7 +34,7 @@ use Symfony\Component\HttpFoundation\Request;
 class UserPlaceController extends UserPageController
 {
 
-	const REPOSITORY_NAME = 'cantiga.core.repo.invitation';
+	const REPOSITORY_NAME = 'cantiga.user.repo.invitation';
 
 	/**
 	 * @Route("/index", name="user_place_index")

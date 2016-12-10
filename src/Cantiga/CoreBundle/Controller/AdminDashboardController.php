@@ -50,11 +50,10 @@ class AdminDashboardController extends AdminPageController
 	}
 
 	/**
-	 * @Route("/help/introduction", name="admin_help_managing")
+	 * @Route("/help/{page}", name="admin_help_page")
 	 */
-	public function helpManagingAction(Request $request)
+	public function helpAction($page, Request $request)
 	{
-		return $this->renderHelpPage($request, 'admin_help_managing', CoreTexts::HELP_ADMIN_MANAGING);
+		return $this->renderHelpPage($request, 'admin_help_page', $page);
 	}
-
 }

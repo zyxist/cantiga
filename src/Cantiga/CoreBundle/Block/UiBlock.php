@@ -77,7 +77,7 @@ class UiBlock
 		}
 
 		$listEvent = $this->dispatcher->dispatch(CantigaEvents::UI_HELP, new ShowHelpEvent());
-		return $this->tpl->render('CantigaCoreBundle:Components:help-list.html.twig', array('pages' => $listEvent->getPages()));
+		return $this->tpl->render('CantigaCoreBundle:Components:help-list.html.twig', array('pages' => $listEvent->getPages(), 'route' => $listEvent->getRoute()));
 	}
 	
 	public function showProjectsAction()
@@ -93,7 +93,7 @@ class UiBlock
 			'CantigaCoreBundle:Components:project-list.html.twig', array(
 			'hasProjects' => $listEvent->hasProjects(),
 			'active' => ($listEvent->hasActiveProject()
-				? $this->translator->trans($listEvent->getActiveProject()->getTranslationKey(), [$listEvent->getActiveProject()->getName()])
+				? $this->translator->trans($listEvent->getActiveProject()->getType().'Nominative: 0', [$listEvent->getActiveProject()->getName()])
 				: $this->translator->trans($workspace['title'], [], 'pages')),
 			'projects' => $listEvent->getProjects(),
 			'workspaces' => $workspaceEvent->getWorkspaces()

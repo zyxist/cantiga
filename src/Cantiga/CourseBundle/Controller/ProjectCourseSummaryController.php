@@ -19,7 +19,6 @@
 namespace Cantiga\CourseBundle\Controller;
 
 use Cantiga\CoreBundle\Api\Controller\ProjectPageController;
-use Cantiga\CourseBundle\CourseTexts;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -28,7 +27,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @Route("/project/{slug}/course-summary")
- * @Security("has_role('ROLE_PROJECT_VISITOR')")
+ * @Security("is_granted('PLACE_VISITOR')")
  */
 class ProjectCourseSummaryController extends ProjectPageController
 {

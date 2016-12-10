@@ -18,12 +18,12 @@
  */
 namespace Cantiga\Metamodel;
 
+use \DateTimeZone;
+
 /**
  * Actual implementation of the time formatting service. Note that at some point of the request,
  * the service must be configured with the translator and the timezone, which depends on the logged
  * user settings. Until then, all the methods return empty strings.
- *
- * @author Tomasz Jędrzejewski
  */
 class TimeFormatter implements TimeFormatterInterface
 {
@@ -93,7 +93,7 @@ class TimeFormatter implements TimeFormatterInterface
 		return $this->translator->transChoice(self::$PERIODS[$j], $diff, array('%count%' => $diff), 'general');
 	}
 
-	public function format($format, $utcTimestamp)
+	public function format(int $format, $utcTimestamp)
 	{
 		if (null === $this->translator) {
 			return '';
@@ -120,5 +120,10 @@ class TimeFormatter implements TimeFormatterInterface
 			return $this->formatDateLong->format(new \DateTime($date['year'].'-'.$date['month'].'-'.$date['day']));
 		}
 		return '---';
+	}
+
+	public function getTimezone(): DateTimeZone
+	{
+		return $this->timezone;
 	}
 }

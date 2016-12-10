@@ -18,10 +18,10 @@
  */
 namespace Cantiga\Metamodel;
 
+use \DateTimeZone;
+
 /**
  * Utility for formatting the times and dates. We assume that all the time is kept as 64-bit UTC Unix timestamp.
- * 
- * @author Tomasz Jędrzejewski
  */
 interface TimeFormatterInterface
 {
@@ -53,7 +53,7 @@ interface TimeFormatterInterface
 	 * @param int $utcTimestamp UTC Unix timestamp
 	 * @return string
 	 */
-	public function format($format, $utcTimestamp);
+	public function format(int $format, $utcTimestamp);
 	/**
 	 * Formats a date given as an array of cells 'year', 'month', 'day'.
 	 * 
@@ -67,4 +67,8 @@ interface TimeFormatterInterface
 	 * @param int $utcTimestamp UTC Unix timestamp
 	 */
 	public function ago($utcTimestamp);
+	/**
+	 * @return Current timezone.
+	 */
+	public function getTimezone(): DateTimeZone;
 }

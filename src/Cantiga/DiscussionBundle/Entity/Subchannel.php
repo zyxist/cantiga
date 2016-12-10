@@ -19,7 +19,7 @@
 namespace Cantiga\DiscussionBundle\Entity;
 
 use Cantiga\Components\Hierarchy\HierarchicalInterface;
-use Cantiga\CoreBundle\Entity\Entity;
+use Cantiga\CoreBundle\Entity\Place;
 use Cantiga\CoreBundle\Entity\User;
 use Cantiga\DiscussionBundle\Database\DiscussionAdapter;
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
@@ -71,7 +71,7 @@ class Subchannel implements IdentifiableInterface
 				break;
 		}
 		if (!empty($normalizedEntity)) {
-			return $normalizedEntity->getEntity();
+			return $normalizedEntity->getPlace();
 		}
 		return null;
 	}
@@ -93,7 +93,7 @@ class Subchannel implements IdentifiableInterface
 		return $this->channel;
 	}
 
-	public function getEntity(): Entity
+	public function getEntity(): Place
 	{
 		return $this->entity;
 	}
@@ -113,7 +113,7 @@ class Subchannel implements IdentifiableInterface
 		$this->channel = $channel;
 	}
 
-	function setEntity(Entity $entity)
+	function setEntity(Place $entity)
 	{
 		$this->entity = $entity;
 	}

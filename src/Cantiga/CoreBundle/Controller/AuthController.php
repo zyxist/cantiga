@@ -89,7 +89,10 @@ class AuthController extends CantigaController
 			$intent = new UserRegistrationIntent($repository);
 			$intent->email = $request->get('fromMail', '');
 
-			$form = $this->createForm(new UserRegistrationForm($langRepo), $intent, array('action' => $this->generateUrl('cantiga_auth_register')));
+			$form = $this->createForm(UserRegistrationForm::class, $intent, [
+				'action' => $this->generateUrl('cantiga_auth_register'),
+				'languageRepository' => $langRepo
+			]);
 			$form->handleRequest($request);
 
 			if ($form->isValid()) {

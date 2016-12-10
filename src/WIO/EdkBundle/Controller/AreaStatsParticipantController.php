@@ -29,7 +29,7 @@ use WIO\EdkBundle\EdkExtensions;
 
 /**
  * @Route("/area/{slug}/stats/participants")
- * @Security("has_role('ROLE_AREA_MEMBER')")
+ * @Security("is_granted('PLACE_MEMBER')")
  */
 class AreaStatsParticipantController extends AreaPageController
 {

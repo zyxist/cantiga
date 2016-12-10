@@ -18,15 +18,18 @@
  */
 namespace Cantiga\CoreBundle\Api\Controller;
 
+use Cantiga\Components\Hierarchy\Entity\Membership;
+use Cantiga\Components\Workspace\WorkspaceAwareInterface;
 use Cantiga\CoreBundle\Api\Controller\CantigaController;
 use Cantiga\CoreBundle\Api\Controller\ProjectAwareControllerInterface;
 use Cantiga\CoreBundle\Api\ExtensionPoints\ExtensionPointFilter;
 use Cantiga\CoreBundle\Api\Workspace;
-use Cantiga\CoreBundle\Api\WorkspaceAwareInterface;
+use Cantiga\CoreBundle\Api\Workspace\AreaWorkspace;
+use Cantiga\CoreBundle\Api\Workspace\GroupWorkspace;
+use Cantiga\CoreBundle\Api\Workspace\ProjectWorkspace;
+use Cantiga\CoreBundle\Entity\Area;
+use Cantiga\CoreBundle\Entity\Group;
 use Cantiga\CoreBundle\Entity\Project;
-use Cantiga\Metamodel\Membership;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * The controller that can dynamically choose a workspace (project, group or area), depending
@@ -42,46 +45,34 @@ class WorkspaceController extends CantigaController implements WorkspaceAwareInt
 	 * @var ExtensionPointsFilter
 	 */
 	private $extensionFilter;
-	/**
-	 * @var TokenStorageInterface
-	 */
-	private $tokenStorage;
+	private $slug;
 	
-	public function createWorkspace(Request $request): Workspace
+	public function createWorkspace(Membership $membership = null): Workspace
 	{
-		$slug = $request->get('slug', NULL);
-		if (empty($slug)) {
-			throw new \RuntimeException('No slug specified');
+		$this->slug = $membership->getPlace()->getSlug();
+		if ($membership->getPlace() instanceof Project) {
+			return $this->workspace = new ProjectWorkspace($membership);
+		} elseif ($membership->getPlace() instanceof Group) {
+			return $this->workspace = new GroupWorkspace($membership);
+		} elseif ($membership->getPlace() instanceof Area) {
+			return $this->workspace = new AreaWorkspace($membership);
 		}
-		
-		$this->tokenStorage = $this->get('security.token_storage');
-		return $this->workspace = $this->get('cantiga.workspace.finder')->findWorkspace($slug);
+		throw new \LogicalException('Unknown workspace for the given place.');
 	}
 	
-	public function getWorkspace()
+	public function getWorkspace(): Workspace
 	{
 		return $this->workspace;
 	}
 	
-	public function getSlug()
+	public function getSlug(): string
 	{
-		return $this->tokenStorage->getToken()->getMembershipEntity()->getSlug();
+		return $this->slug;
 	}
-	
-	/**
-	 * @return Membership
-	 */
-	public function getMembership()
+
+	public function getActiveProject(): Project
 	{
-		return $this->tokenStorage->getToken()->getMembership();
-	}
-	
-	/**
-	 * @return Project
-	 */
-	public function getActiveProject()
-	{
-		return $this->tokenStorage->getToken()->getMembershipEntity()->getRootElement();
+		return $this->workspace->getProject();
 	}
 	
 	/**
@@ -90,7 +81,7 @@ class WorkspaceController extends CantigaController implements WorkspaceAwareInt
 	public function getExtensionPointFilter()
 	{
 		if (null === $this->extensionFilter) {
-			$this->extensionFilter = $this->get('security.token_storage')->getToken()->getMasterProject()->createExtensionPointFilter();
+			$this->extensionFilter = $this->getActiveProject()->createExtensionPointFilter();
 		}
 		return $this->extensionFilter;
 	}

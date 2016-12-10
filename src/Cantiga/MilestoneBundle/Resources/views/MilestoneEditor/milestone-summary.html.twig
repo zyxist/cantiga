@@ -57,7 +57,7 @@
 						<tbody>
 							{% for item in items %}
 							<tr>
-								<td><a href="{{ spath(editPage, {'i': item.entityId })}}"><span class="fa fa-pencil"></span></a></td>
+								<td><a href="{{ spath(editPage, {'i': item.placeId })}}"><span class="fa fa-pencil"></span></a></td>
 								<td><a href="{{ spath(areaInfoPage, { 'id': item.id }) }}">{{ item.name }}</a></td>
 								<td><div class="progress progress-xs"><div class="progress-bar progress-bar-{{ item.progressColor }}" style="width: {{item.progress}}%"></div></div></td>
 								<td><span class="badge bg-{{item.badgeColor}}">{{item.progress}}%</span></td>

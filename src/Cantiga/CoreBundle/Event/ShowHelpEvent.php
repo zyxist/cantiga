@@ -22,12 +22,22 @@ use Symfony\Component\EventDispatcher\Event;
 
 /**
  * Allows publishing links to the help pages in the top bar.
- *
- * @author Tomasz Jędrzejewski
  */
 class ShowHelpEvent extends Event
 {
 	private $pages = array();
+	private $route = '';
+	
+	public function getRoute(): string
+	{
+		return $this->route;
+	}
+
+	public function setRoute($route)
+	{
+		$this->route = $route;
+		return $this;
+	}
 	
 	public function setPages(array $pages)
 	{

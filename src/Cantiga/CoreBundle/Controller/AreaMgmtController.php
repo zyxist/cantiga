@@ -18,6 +18,7 @@
  */
 namespace Cantiga\CoreBundle\Controller;
 
+use Cantiga\Components\Hierarchy\Entity\Membership;
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
 use Cantiga\CoreBundle\Api\Actions\EditAction;
 use Cantiga\CoreBundle\Api\Actions\InfoAction;
@@ -39,7 +40,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @Route("/s/{slug}/areas")
- * @Security("has_role('ROLE_PROJECT_MEMBER') or has_role('ROLE_GROUP_MEMBER')")
+ * @Security("is_granted('PLACE_MEMBER') and (is_granted('MEMBEROF_PROJECT') or is_granted('MEMBEROF_GROUP'))")
  */
 class AreaMgmtController extends WorkspaceController
 {
@@ -73,7 +74,7 @@ class AreaMgmtController extends WorkspaceController
 		$this->breadcrumbs()
 			->workgroup('data')
 			->entryLink($this->trans('Areas', [], 'pages'), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
-		$this->get(self::REPOSITORY_NAME)->setParentPlace($this->getMembership()->getItem());
+		$this->get(self::REPOSITORY_NAME)->setParentPlace($this->get('cantiga.user.membership.storage')->getMembership()->getPlace());
 		$this->checkCapabilities();
 	}
 
@@ -164,9 +165,9 @@ class AreaMgmtController extends WorkspaceController
 
 	/**
 	 * @Route("/insert", name="area_mgmt_insert")
-	 * @Security("has_role('ROLE_PROJECT_MEMBER')")
+	 * @Security("is_granted('MEMBEROF_PROJECT')")
 	 */
-	public function insertAction(Request $request)
+	public function insertAction(Request $request, Membership $membership)
 	{
 		$formModel = $this->extensionPointFromSettings(CoreExtensions::AREA_FORM, CoreSettings::AREA_FORM);
 		$item = new Area();
@@ -174,7 +175,7 @@ class AreaMgmtController extends WorkspaceController
 		$item->setProject($this->getActiveProject());
 		
 		if (!$this->customizableGroup) {
-			$item->setGroup($this->getMembership()->getItem());
+			$item->setGroup($membership->getPlace());
 		}
 		
 		$action = new InsertAction($this->crudInfo, $item, AreaForm::class, $this->createFormConfig($formModel));
@@ -209,7 +210,7 @@ class AreaMgmtController extends WorkspaceController
 			'statusRepository' => $statusRepo
 		];
 		
-		if ($this->isGranted('ROLE_PROJECT_MEMBER')) {
+		if ($this->isGranted('MEMBEROF_PROJECT')) {
 			$groupRepo = $this->get('cantiga.core.repo.project_group');
 			$groupRepo->setProject($this->getActiveProject());
 			$base['groupRepository'] = $groupRepo;
@@ -219,7 +220,7 @@ class AreaMgmtController extends WorkspaceController
 	
 	private function checkCapabilities()
 	{
-		if ($this->isGranted('ROLE_PROJECT_MEMBER')) {
+		if ($this->isGranted('MEMBEROF_PROJECT')) {
 			$this->showCreateLink = true;
 			$this->customizableGroup = true;
 		} else {

@@ -28,8 +28,6 @@ use Cantiga\Metamodel\DataMappers;
 
 /**
  * Represents a registration attempt of a new user.
- *
- * @author Tomasz Jędrzejewski
  */
 class UserRegistration implements IdentifiableInterface, InsertableEntityInterface, RemovableEntityInterface
 {
@@ -216,7 +214,7 @@ class UserRegistration implements IdentifiableInterface, InsertableEntityInterfa
 		$conn->delete(CoreTables::USER_REGISTRATION_TBL, DataMappers::pick($this, ['id']));
 	}
 
-	public function activate($provisionKey)
+	public function activate(string $provisionKey, string $timezone)
 	{
 		if ($this->provisionKey == $provisionKey) {
 			$user = User::freshActive($this->getPassword(), $this->getSalt());
@@ -224,6 +222,7 @@ class UserRegistration implements IdentifiableInterface, InsertableEntityInterfa
 			$user->setName($this->getName());
 			$user->setEmail($this->getEmail());
 			$user->setSettingsLanguage($this->getLanguage());
+			$user->setSettingsTimezone($timezone);
 			return $user;
 		} else {
 			throw new UserRegistrationException('Invalid provision key.');

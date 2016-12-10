@@ -2,12 +2,30 @@ imports:
     - { resource: ../../../../../app/config/parameters.yml }
 
 services:
+    cantiga.user.membership.finder:
+        class:     Cantiga\UserBundle\Membership\MembershipFinder
+        arguments: ["@cantiga.user.membership.storage", "@cantiga.user.repo.membership"]
+    cantiga.user.membership.storage:
+        class:     Cantiga\UserBundle\Membership\MembershipStorage
     cantiga.user.repo.memberlist:
         class:     Cantiga\UserBundle\Repository\MemberlistRepository
         arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.roles"]
+    cantiga.user.repo.membership:
+        class:     Cantiga\UserBundle\Repository\MembershipRepository
+        arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.roles"]
+        tags:
+            - { name: cantiga.invitation-aware, entity: Project }
+            - { name: cantiga.invitation-aware, entity: Group }
+            - { name: cantiga.invitation-aware, entity: Area }
     cantiga.user.repo.profile:
         class:     Cantiga\UserBundle\Repository\ProfileRepository
         arguments: ["@database_connection", "@cantiga.transaction"]
+    cantiga.user.repo.invitation:
+        class:     Cantiga\UserBundle\Repository\InvitationRepository
+        arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher"]
+        tags:
+            - { name: kernel.event_listener, event: cantiga.user.activated, method: onUserActivated }
+            - { name: kernel.event_listener, event: cantiga.user.removed, method: onUserRemoved }
     cantiga.user.workspace_listener:
         class: Cantiga\UserBundle\EventListener\WorkspaceListener
         tags:
@@ -15,3 +33,20 @@ services:
             - { name: kernel.event_listener, event: cantiga.workspace.group, method: onGroupWorkspace }
             - { name: kernel.event_listener, event: cantiga.workspace.area, method: onAreaWorkspace }
             - { name: kernel.event_listener, event: cantiga.workspace.user, method: onUserWorkspace }
+    cantiga.user.role.voter:
+         class: Cantiga\UserBundle\Auth\PlaceRoleVoter
+         arguments: ["@cantiga.user.membership.storage"]
+         public: false
+         tags:
+            - { name: security.voter }
+    cantiga.user.membership.voter:
+         class: Cantiga\UserBundle\Auth\MembershipVoter
+         arguments: ["@cantiga.user.membership.storage"]
+         public: false
+         tags:
+            - { name: security.voter }
+    cantiga.user.membership.argument-resolver:
+         class: Cantiga\UserBundle\ArgumentResolver\MembershipArgumentResolver
+         arguments: ["@cantiga.user.membership.storage"]
+         tags:
+            - { name: controller.argument_value_resolver, priority: 50 }

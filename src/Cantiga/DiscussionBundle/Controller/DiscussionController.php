@@ -18,6 +18,7 @@
  */
 namespace Cantiga\DiscussionBundle\Controller;
 
+use Cantiga\Components\Hierarchy\Entity\Membership;
 use Cantiga\CoreBundle\Api\Controller\WorkspaceController;
 use Cantiga\DiscussionBundle\Entity\Subchannel;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
@@ -30,7 +31,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @Route("/s/{slug}/discussion")
- * @Security("has_role('ROLE_PROJECT_AWARE') or has_role('ROLE_GROUP_AWARE') or has_role('ROLE_AREA_AWARE')")
+ * @Security("is_granted('MEMBEROF_ANY')")
  */
 class DiscussionController extends WorkspaceController
 {
@@ -46,7 +47,7 @@ class DiscussionController extends WorkspaceController
 	/**
 	 * @Route("/index", name="discussion_index")
 	 */
-	public function indexAction()
+	public function indexAction(Membership $membership)
 	{
 		$this->breadcrumbs()
 			->workgroup('community')
@@ -54,7 +55,7 @@ class DiscussionController extends WorkspaceController
 		
 		$repository = $this->get(self::REPOSITORY);
 		$repository->setProject($this->getActiveProject());
-		$channels = $repository->findWorkspaceChannels($this->getMembership()->getItem());
+		$channels = $repository->findWorkspaceChannels($membership->getPlace());
 		
 		return $this->render(self::TEMPLATE_LOCATION . 'channels.html.twig', ['channels' => $channels]);
 	}
@@ -62,12 +63,12 @@ class DiscussionController extends WorkspaceController
 	/**
 	 * @Route("/channel/{id}", name="discussion_channel")
 	 */
-	public function channelAction($id, Request $request)
+	public function channelAction($id, Request $request, Membership $membership)
 	{
 		try {		
 			$repository = $this->get(self::REPOSITORY);
 			$repository->setProject($this->getActiveProject());
-			$hierarchical = $this->getMembership()->getItem();
+			$hierarchical = $membership->getPlace();
 			
 			$subchannel = $repository->getSubchannel((int) $id, $hierarchical);
 			
@@ -98,13 +99,13 @@ class DiscussionController extends WorkspaceController
 	/**
 	 * @Route("/channel/{id}/feed", name="discussion_api_feed")
 	 */
-	public function ajaxFeedAction($id, Request $request)
+	public function apiFeedAction($id, Request $request, Membership $membership)
 	{
 		try {
 			$lastPostTime = $request->get('lastPostTime');
 			$repository = $this->get(self::REPOSITORY);
 			$repository->setProject($this->getActiveProject());
-			$hierarchical = $this->getMembership()->getItem();
+			$hierarchical = $membership->getPlace();
 			
 			$subchannel = $repository->getSubchannel((int) $id, $hierarchical);
 			if (!$subchannel->getChannel()->isVisible($hierarchical)) {
@@ -121,12 +122,12 @@ class DiscussionController extends WorkspaceController
 	/**
 	 * @Route("/channel/{id}/post", name="discussion_api_post")
 	 */
-	public function ajaxPostAction($id, Request $request)
+	public function apiPostAction($id, Request $request, Membership $membership)
 	{
 		try {
 			$repository = $this->get(self::REPOSITORY);
 			$repository->setProject($this->getActiveProject());
-			$hierarchical = $this->getMembership()->getItem();
+			$hierarchical = $membership->getPlace();
 			
 			$subchannel = $repository->getSubchannel((int) $id, $hierarchical);
 			if (!$subchannel->getChannel()->isVisible($hierarchical)) {

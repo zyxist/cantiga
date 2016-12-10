@@ -18,9 +18,17 @@
  */
 namespace Cantiga\UserBundle;
 
+use Cantiga\UserBundle\DependencyInjection\InvitationPass;
+use Cantiga\UserBundle\DependencyInjection\PlaceLoaderPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class CantigaUserBundle extends Bundle
 {
-	//put your code here
+	public function build(ContainerBuilder $container)
+	{
+		parent::build($container);
+		$container->addCompilerPass(new PlaceLoaderPass());
+		$container->addCompilerPass(new InvitationPass());
+	}
 }

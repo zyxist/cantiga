@@ -18,6 +18,7 @@
  */
 namespace Cantiga\UserBundle\Controller;
 
+use Cantiga\Components\Hierarchy\Entity\Membership;
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
 use Cantiga\CoreBundle\Api\Controller\ProjectAwareControllerInterface;
 use Cantiga\CoreBundle\Api\Controller\WorkspaceController;
@@ -31,7 +32,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @Route("/s/{slug}/members")
- * @Security("has_role('ROLE_PROJECT_AWARE') or has_role('ROLE_GROUP_AWARE') or has_role('ROLE_AREA_AWARE')")
+ * @Security("is_granted('MEMBEROF_ANY')")
  */
 class MemberlistController extends WorkspaceController
 {
@@ -60,13 +61,13 @@ class MemberlistController extends WorkspaceController
 	/**
 	 * @Route("/index", name="memberlist_index")
 	 */
-	public function indexAction(Request $request)
+	public function indexAction(Request $request, Membership $membership)
 	{
 		$repository = $this->get(self::REPOSITORY_NAME);
 		return $this->render($this->crudInfo->getTemplateLocation() . 'index.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
-			'members' => $repository->findMembers($this->getMembership()->getItem()),
+			'members' => $repository->findMembers($membership->getPlace()->getPlace()),
 			'locale' => $request->getLocale(),
 			'profilePage' => $this->crudInfo->getInfoPage(),
 		));
@@ -75,16 +76,16 @@ class MemberlistController extends WorkspaceController
 	/**
 	 * @Route("/{id}/profile", name="memberlist_profile")
 	 */
-	public function profileAction($id, Request $request)
+	public function profileAction($id, Request $request, Membership $membership)
 	{
 		try {
 			$repository = $this->get(self::REPOSITORY_NAME);
-			$member = $repository->getItem($this->getMembership()->getItem(), $id);
+			$member = $repository->getItem($membership->getPlace()->getPlace(), $id);
 			$this->breadcrumbs()
 				->link($member->getName(), $this->crudInfo->getInfoPage(), ['slug' => $this->getSlug(), 'id' => $id]);
 			return $this->render($this->crudInfo->getTemplateLocation() . 'profile.html.twig', array(
 				'member' => $member,
-				'viewContactInformation' => $member->canViewContactInformation($this->getMembership()),
+				'viewContactInformation' => $member->canViewContactInformation($membership),
 				'extensions' => $this->findProfileExtensions(UserExtensions::PROFILE_EXTENSION),
 				'locale' => $request->getLocale(),
 			));

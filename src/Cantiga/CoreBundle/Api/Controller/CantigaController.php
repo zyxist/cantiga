@@ -142,7 +142,7 @@ class CantigaController extends Controller
 		return $this->translator;
 	}
 	
-	public function newCrudInfo($repositoryService)
+	public function newCrudInfo($repositoryService): CRUDInfo
 	{
 		$info = new CRUDInfo();
 		

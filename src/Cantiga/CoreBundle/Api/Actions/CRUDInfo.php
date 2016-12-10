@@ -16,13 +16,12 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+declare(strict_types=1);
 namespace Cantiga\CoreBundle\Api\Actions;
 
 /**
  * Keep the entire information used by CRUD actions in a single place, so that it is kept in
  * single place in the controller, so that it is easy to find and edit it.
- *
- * @author Tomasz Jędrzejewski
  */
 class CRUDInfo
 {
@@ -133,140 +132,140 @@ class CRUDInfo
 		return $this;
 	}
 
-	public function setTemplateLocation($templateLocation)
+	public function setTemplateLocation(string $templateLocation): self
 	{
 		$this->templateLocation = $templateLocation;
 		return $this;
 	}
 
-	public function setItemNameProperty($itemNameProperty)
+	public function setItemNameProperty(string $itemNameProperty): self
 	{
 		$this->itemNameProperty = $itemNameProperty;
 		return $this;
 	}
 
-	public function setIndexPage($indexPage)
+	public function setIndexPage(string $indexPage): self
 	{
 		$this->indexPage = $indexPage;
 		return $this;
 	}
 
-	public function setInfoPage($infoPage)
+	public function setInfoPage(string $infoPage): self
 	{
 		$this->infoPage = $infoPage;
 		return $this;
 	}
 
-	public function setInsertPage($page)
+	public function setInsertPage(string $page): self
 	{
 		$this->insertPage = $page;
 		return $this;
 	}
 
-	public function setEditPage($editPage)
+	public function setEditPage(string $editPage): self
 	{
 		$this->editPage = $editPage;
 		return $this;
 	}
 
-	public function setRemovePage($removePage)
+	public function setRemovePage(string $removePage): self
 	{
 		$this->removePage = $removePage;
 		return $this;
 	}
 
-	public function setErrorPage($errorPage)
+	public function setErrorPage(string $errorPage): self
 	{
 		$this->errorPage = $errorPage;
 		return $this;
 	}
 
-	public function setItemCreatedMessage($itemCreatedMessage)
+	public function setItemCreatedMessage(string $itemCreatedMessage): self
 	{
 		$this->itemCreatedMessage = $itemCreatedMessage;
 		return $this;
 	}
 
-	public function setItemUpdatedMessage($itemUpdatedMessage)
+	public function setItemUpdatedMessage(string $itemUpdatedMessage): self
 	{
 		$this->itemUpdatedMessage = $itemUpdatedMessage;
 		return $this;
 	}
 
-	public function setItemRemovedMessage($itemRemovedMessage)
+	public function setItemRemovedMessage(string $itemRemovedMessage): self
 	{
 		$this->itemRemovedMessage = $itemRemovedMessage;
 		return $this;
 	}
 
-	public function setItemNotFoundErrorMessage($itemNotFoundErrorMessage)
+	public function setItemNotFoundErrorMessage(string $itemNotFoundErrorMessage): self
 	{
 		$this->itemNotFoundErrorMessage = $itemNotFoundErrorMessage;
 		return $this;
 	}
 
-	public function setIndexTemplate($indexTemplate)
+	public function setIndexTemplate(string $indexTemplate): self
 	{
 		$this->indexTemplate = $indexTemplate;
 		return $this;
 	}
 
-	public function setInfoTemplate($infoTemplate)
+	public function setInfoTemplate(string $infoTemplate): self
 	{
 		$this->infoTemplate = $infoTemplate;
 		return $this;
 	}
 	
-	public function getRemoveQuestionTitle()
+	public function getRemoveQuestionTitle(): string
 	{
 		return $this->removeQuestionTitle;
 	}
 
-	public function getRemoveQuestion()
+	public function getRemoveQuestion(): string
 	{
 		return $this->removeQuestion;
 	}
 
-	public function setRemoveQuestionTitle($removeQuestionTitle)
+	public function setRemoveQuestionTitle(string $removeQuestionTitle): self
 	{
 		$this->removeQuestionTitle = $removeQuestionTitle;
 		return $this;
 	}
 
-	public function setRemoveQuestion($removeQuestion)
+	public function setRemoveQuestion(string $removeQuestion): self
 	{
 		$this->removeQuestion = $removeQuestion;
 		return $this;
 	}
 
-	public function getPageTitle()
+	public function getPageTitle(): string
 	{
 		return $this->pageTitle;
 	}
 
-	public function getPageSubtitle()
+	public function getPageSubtitle(): string
 	{
 		return $this->pageSubtitle;
 	}
 
-	public function setPageTitle($pageTitle)
+	public function setPageTitle(string $pageTitle): self
 	{
 		$this->pageTitle = $pageTitle;
 		return $this;
 	}
 
-	public function setPageSubtitle($pageSubtitle)
+	public function setPageSubtitle(string $pageSubtitle): self
 	{
 		$this->pageSubtitle = $pageSubtitle;
 		return $this;
 	}
 	
-	public function getCannotRemoveMessage()
+	public function getCannotRemoveMessage(): string
 	{
 		return $this->cannotRemoveMessage;
 	}
 
-	public function setCannotRemoveMessage($cannotRemoveMessage)
+	public function setCannotRemoveMessage($cannotRemoveMessage): self
 	{
 		$this->cannotRemoveMessage = $cannotRemoveMessage;
 		return $this;

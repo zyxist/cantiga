@@ -407,7 +407,7 @@ class AreaRequest implements IdentifiableInterface, InsertableEntityInterface, E
 				['areaId' => $id], ['id' => $this->getId()]
 			);
 			
-			$area->joinMember($conn, $this->requestor, $resolver->getHighestRole('Area'), '');
+			$area->getPlace()->joinMember($conn, $this->requestor, $resolver->getHighestRole('Area'), false, '');
 			return $area;
 		}
 		return false;

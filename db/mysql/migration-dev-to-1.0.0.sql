@@ -49,6 +49,16 @@ CREATE TABLE IF NOT EXISTS `cantiga_contacts` (
   PRIMARY KEY (`userId`,`projectId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS `cantiga_membership` (
+  `entityId` int(11) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `role` int(11) NOT NULL,
+  `accessDownstreamContactData` tinyint(1) NOT NULL DEFAULT 0,
+  `note` varchar(30) DEFAULT NULL,
+  PRIMARY KEY (`projectId`,`userId`),
+  KEY `userId` (`userId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 ALTER TABLE `cantiga_user_profiles`
   DROP `telephone`,
   DROP `publicMail`,
@@ -70,3 +80,7 @@ ALTER TABLE `cantiga_discussion_posts`
 ALTER TABLE `cantiga_discussion_subchannels`
   ADD CONSTRAINT `cantiga_discussion_subchannels_ibfk_1` FOREIGN KEY (`channelId`) REFERENCES `cantiga_discussion_channels` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `cantiga_discussion_subchannels_ibfk_2` FOREIGN KEY (`entityId`) REFERENCES `cantiga_entities` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `cantiga_membership`
+  ADD CONSTRAINT `cantiga_membership_ibfk_1` FOREIGN KEY (`entityId`) REFERENCES `cantiga_entities` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `cantiga_membership_ibfk_2` FOREIGN KEY (`userId`) REFERENCES `cantiga_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;

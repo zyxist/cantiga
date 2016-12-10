@@ -29,7 +29,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use WIO\EdkBundle\EdkExtensions;
 
 /**
- * @Security("has_role('ROLE_PROJECT_VISITOR')")
+ * @Security("is_granted('PLACE_VISITOR')")
  */
 class ProjectStatsParticipantController extends ProjectPageController
 {

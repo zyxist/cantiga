@@ -184,12 +184,9 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 		return ['settingsLanguage'];
 	}
 	
-	public static function loadValidatorMetadata(ClassMetadata $metadata) {
+	public static function loadValidatorMetadata(ClassMetadata $metadata)
+	{
 		$metadata->addPropertyConstraint('location', new Length(array('max' => 100)));
-		$metadata->addPropertyConstraint('telephone', new Length(array('max' => 30)));
-		$metadata->addPropertyConstraint('telephone', new Regex(array('pattern' => '/^[0-9\-\+ ]{9,16}$/', 'htmlPattern' => '^[0-9\-\+ ]{9,16}$', 'message' => 'This is not a valid phone number.')));
-		$metadata->addPropertyConstraint('publicMail', new Email);
-		$metadata->addPropertyConstraint('notes', new Length(array('max' => 250)));
 	}
 
 	public function getId()

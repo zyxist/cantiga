@@ -18,6 +18,7 @@
  */
 namespace Cantiga\CoreBundle\Controller;
 
+use Cantiga\Components\Hierarchy\Entity\Membership;
 use Cantiga\CoreBundle\Api\Controller\AreaPageController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -25,16 +26,16 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @Route("/area/{slug}/my-group")
- * @Security("has_role('ROLE_AREA_MEMBER')")
+ * @Security("is_granted('PLACE_MEMBER')")
  */
 class AreaGroupController extends AreaPageController
 {
 	/**
 	 * @Route("/", name="area_my_group")
 	 */
-	public function myGroupAction(Request $request)
+	public function myGroupAction(Request $request, Membership $membership)
 	{
-		$area = $this->getMembership()->getItem();
+		$area = $membership->getPlace();
 		$group = $area->getGroup();
 		if (null === $area->getGroup()) {
 			return $this->showPageWithError('AreaNotAssignedToGroupMsg', 'area_dashboard', ['slug' => $this->getSlug()]);

@@ -18,26 +18,16 @@
  */
 namespace Cantiga\CoreBundle\EventListener;
 
-use Cantiga\CoreBundle\Api\ExtensionPoints\ExtensionPointFilter;
-use Cantiga\CoreBundle\Api\ExtensionPoints\ExtensionPointsInterface;
+use Cantiga\Components\Hierarchy\MembershipFinderInterface;
+use Cantiga\Components\Workspace\WorkspaceAwareInterface;
 use Cantiga\CoreBundle\Api\Workgroup;
 use Cantiga\CoreBundle\Api\WorkItem;
 use Cantiga\CoreBundle\Api\Workspace;
-use Cantiga\CoreBundle\Api\WorkspaceAwareInterface;
 use Cantiga\CoreBundle\Api\WorkspaceSourceInterface;
-use Cantiga\CoreBundle\CoreExtensions;
-use Cantiga\CoreBundle\Entity\User;
-use Cantiga\CoreBundle\Event\ShowProjectsEvent;
 use Cantiga\CoreBundle\Event\WorkspaceEvent;
 use Cantiga\CoreBundle\Settings\ProjectSettings;
-use Cantiga\Metamodel\Exception\ItemNotFoundException;
-use Cantiga\Metamodel\Membership;
-use Cantiga\Metamodel\MembershipToken;
-use LogicException;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class WorkspaceListener implements WorkspaceSourceInterface
@@ -56,25 +46,19 @@ class WorkspaceListener implements WorkspaceSourceInterface
 	 * @var AuthorizationCheckerInterface
 	 */
 	private $authChecker;
-	/**
-	 * @var TokenStorageInterface
-	 */
+	private $membershipFinder;
 	private $tokenStorage;
-	/**
-	 * @var ExtensionPointsInterface
-	 */
-	private $extensionPoints;
 	/**
 	 * @var ProjectSettings 
 	 */
 	private $projectSettings;
 	
-	public function __construct(AuthorizationCheckerInterface $authChecker, TokenStorageInterface $tokenStorage, ExtensionPointsInterface $extensionPoints, ProjectSettings $settings)
+	public function __construct(AuthorizationCheckerInterface $authChecker, TokenStorageInterface $tokenStorage, MembershipFinderInterface $membershipFinder, ProjectSettings $settings)
 	{
 		$this->authChecker = $authChecker;
 		$this->tokenStorage = $tokenStorage;
-		$this->extensionPoints = $extensionPoints;
 		$this->projectSettings = $settings;
+		$this->membershipFinder = $membershipFinder;
 	}
 	
 	public function onControllerSelected(FilterControllerEvent $event)
@@ -87,34 +71,13 @@ class WorkspaceListener implements WorkspaceSourceInterface
 			$ctrl = $ctrl[0];
 		}
 		if ($ctrl instanceof WorkspaceAwareInterface) {
+			$membership = $this->membershipFinder->findMembership($this->tokenStorage->getToken()->getUser(), $event->getRequest());
+			$this->workspace = $ctrl->createWorkspace($membership);
 			$this->workspaceController = $ctrl;
-			$this->workspace = $ctrl->createWorkspace($event->getRequest());
-			$membershipLoader = $this->workspace->getMembershipLoader();
-			$membership = null;
 			
-			if (null !== $membershipLoader) {
-				try {
-					$user = $this->tokenStorage->getToken()->getUser();
-					$membership = $membershipLoader->findMembership($event->getRequest()->get('slug'), $user);
-					
-					if (!($membership instanceof Membership)) {
-						throw new LogicException('The membership loader did not return \'Membership\' instance.');
-					}
-					$project = $membershipLoader->findProjectForEntity($membership->getItem());
-					
-					$user->addRole($membership->getRole()->getAuthRole());
-					User::installMembershipInformation($user, $membership);
-					$this->projectSettings->setProject($project);
-					$this->tokenStorage->setToken(new MembershipToken($this->tokenStorage->getToken(), $membership, $project));
-				} catch(ItemNotFoundException $exception) {
-					throw new AccessDeniedHttpException($exception->getMessage(), $exception);
-				}
-			} else {
-				$oldToken = $this->tokenStorage->getToken();
-				$this->tokenStorage->setToken(new UsernamePasswordToken($oldToken->getUser(), $oldToken->getCredentials(), $oldToken->getProviderKey(), $oldToken->getUser()->getRoles()));
-				User::installMembershipInformation($this->tokenStorage->getToken()->getUser(), $membership = new Membership());
+			if (!empty($membership)) {
+				$this->projectSettings->setProject($membership->getPlace()->getRootElement());
 			}
-			$this->workspace->onWorkspaceLoaded($membership);
 		}
 	}
 	
@@ -129,7 +92,6 @@ class WorkspaceListener implements WorkspaceSourceInterface
 		$workspace->addWorkItem('access', new WorkItem('admin_registration_index', 'User registrations'));
 		
 		$workspace->addWorkItem('projects', new WorkItem('admin_project_index', 'Projects'));
-		$workspace->addWorkItem('projects', new WorkItem('admin_membership_index', 'Membership'));
 		
 		$workspace->addWorkItem('settings', new WorkItem('admin_language_index', 'Languages'));
 		$workspace->addWorkItem('settings', new WorkItem('admin_app_text_index', 'Application texts'));
@@ -141,15 +103,15 @@ class WorkspaceListener implements WorkspaceSourceInterface
 		$workspace = $event->getWorkspace();
 		$project = $workspace->getProject();
 		$workspace->addWorkgroup(new Workgroup('community', 'Community', 'users', 1));
-		
-		if ($this->authChecker->isGranted('ROLE_PROJECT_VISITOR')) {
+
+		if ($this->authChecker->isGranted('PLACE_VISITOR')) {
 			$workspace->addWorkgroup(new Workgroup('statistics', 'Statistics', 'bar-chart', 1));
 			$workspace->addWorkgroup(new Workgroup('summary', 'Summary', 'table', 2));
 		}
-		if ($this->authChecker->isGranted('ROLE_PROJECT_MEMBER')) {
+		if ($this->authChecker->isGranted('PLACE_MEMBER')) {
 			$workspace->addWorkgroup(new Workgroup('data', 'Data', 'database', 3));
 		}
-		if ($this->authChecker->isGranted('ROLE_PROJECT_MANAGER')) {
+		if ($this->authChecker->isGranted('PLACE_MANAGER')) {
 			$workspace->addWorkgroup(new Workgroup('manage', 'Manage', 'wrench', 10));
 		}
 		
@@ -162,11 +124,10 @@ class WorkspaceListener implements WorkspaceSourceInterface
 			$workspace->addWorkItem('data', new WorkItem('area_mgmt_index', 'Areas'));
 		}
 		$workspace->addWorkItem('data', new WorkItem('project_buttons', 'Magic buttons'));
-		$workspace->addWorkItem('data', new WorkItem('project_area_group_index', 'Groups'));
+		$workspace->addWorkItem('data', new WorkItem('group_mgmt_index', 'Groups'));
 		$workspace->addWorkItem('data', new WorkItem('project_group_category_index', 'Group categories'));
 		
 		$workspace->addWorkItem('manage', new WorkItem('project_settings_index', 'Settings'));
-		$workspace->addWorkItem('manage', new WorkItem('project_membership_index', 'Project members'));
 		if ($project->getAreasAllowed()) {
 			$workspace->addWorkItem('manage', new WorkItem('project_area_status_index', 'Area status'));
 			$workspace->addWorkItem('manage', new WorkItem('project_territory_index', 'Territories'));
@@ -193,13 +154,11 @@ class WorkspaceListener implements WorkspaceSourceInterface
 		$workspace->addWorkgroup(new Workgroup('community', 'Community', 'users', 1));
 		$workspace->addWorkgroup(new Workgroup('summary', 'Summary', 'table', 2));
 		$workspace->addWorkgroup(new Workgroup('area', 'Area', 'flag-o', 3));
-		if ($this->authChecker->isGranted('ROLE_AREA_MANAGER')) {
+		if ($this->authChecker->isGranted('PLACE_MANAGER')) {
 			$workspace->addWorkgroup(new Workgroup('manage', 'Manage', 'wrench', 10));
 		}
 		$workspace->addWorkItem('community', new WorkItem('area_my_group', 'My group'));
 		$workspace->addWorkItem('area', new WorkItem('area_profile_editor', 'Profile editor'));
-		
-		$workspace->addWorkItem('manage', new WorkItem('area_membership_index', 'Area members'));
 	}
 	
 	public function onUserWorkspace(WorkspaceEvent $event)
@@ -209,9 +168,8 @@ class WorkspaceListener implements WorkspaceSourceInterface
 		
 		$workspace->addRootItem(new WorkItem('user_area_request_insert', 'Request area', 'thumbs-up'));
 		$workspace->addRootItem(new WorkItem('user_area_request_index', 'Your area requests', 'flag-o'));
-		$workspace->addRootItem(new WorkItem('user_invitation_index', 'Invitations', 'handshake-o'));
 	}
-	
+
 	public function onProjectList(ShowProjectsEvent $projects)
 	{
 		$loaders = $this->extensionPoints->findImplementations(CoreExtensions::MEMBERSHIP_LOADER, new ExtensionPointFilter());
@@ -228,7 +186,7 @@ class WorkspaceListener implements WorkspaceSourceInterface
 			}
 		}
 	}
-	
+
 	public function getWorkspace()
 	{
 		return $this->workspace;

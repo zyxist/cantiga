@@ -19,7 +19,7 @@
 namespace Cantiga\DiscussionBundle\Tests\Repository;
 
 use Cantiga\CoreBundle\Entity\Area;
-use Cantiga\CoreBundle\Entity\Entity;
+use Cantiga\CoreBundle\Entity\Place;
 use Cantiga\CoreBundle\Entity\Group;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\DiscussionBundle\Database\DiscussionAdapter;
@@ -43,11 +43,11 @@ class ChannelRepositoryTest extends TestCase
 		$this->project = new Project();
 		$this->project->setId(13);
 		
-		$projectEntity = new Entity();
+		$projectEntity = new Place();
 		$projectEntity->setId(12);
-		$this->project->setEntity($projectEntity);
+		$this->project->setPlace($projectEntity);
 		
-		$this->checkedEntity = new Entity();
+		$this->checkedEntity = new Place();
 		$this->checkedEntity->getId(26);
 	}
 	
@@ -55,11 +55,11 @@ class ChannelRepositoryTest extends TestCase
 	{
 		// Given
 		$entity = new Project();
-		$entity->setEntity($this->checkedEntity);
+		$entity->setPlace($this->checkedEntity);
 		$this->repository->setProject($this->project);
 		$this->adapter->expects($this->once())
 			->method('findVisibleChannels')
-			->with($this->project->getId(), [$entity->getEntity()->getId()], 'projectVisible', 0)
+			->with($this->project->getId(), [$entity->getPlace()->getId()], 'projectVisible', 0)
 			->will($this->returnValue(['foo' => 'bar']));
 		
 		// When
@@ -73,12 +73,12 @@ class ChannelRepositoryTest extends TestCase
 	{
 		// Given
 		$entity = new Group();
-		$entity->setEntity($this->checkedEntity);
+		$entity->setPlace($this->checkedEntity);
 		$entity->setProject($this->project);
 		$this->repository->setProject($this->project);
 		$this->adapter->expects($this->once())
 			->method('findVisibleChannels')
-			->with($this->project->getId(), [$entity->getEntity()->getId(), $this->project->getEntity()->getId()], 'groupVisible', 1)
+			->with($this->project->getId(), [$entity->getPlace()->getId(), $this->project->getPlace()->getId()], 'groupVisible', 1)
 			->will($this->returnValue(['foo' => 'bar']));
 		
 		// When
@@ -92,12 +92,12 @@ class ChannelRepositoryTest extends TestCase
 	{
 		// Given
 		$entity = new Area();
-		$entity->setEntity($this->checkedEntity);
+		$entity->setPlace($this->checkedEntity);
 		$entity->setProject($this->project);
 		$this->repository->setProject($this->project);
 		$this->adapter->expects($this->once())
 			->method('findVisibleChannels')
-			->with($this->project->getId(), [$entity->getEntity()->getId(), $this->project->getEntity()->getId()], 'areaVisible', 2)
+			->with($this->project->getId(), [$entity->getPlace()->getId(), $this->project->getPlace()->getId()], 'areaVisible', 2)
 			->will($this->returnValue(['foo' => 'bar']));
 		
 		// When
@@ -111,18 +111,18 @@ class ChannelRepositoryTest extends TestCase
 	{
 		// Given
 		$group = new Group();
-		$groupEntity = new Entity();
+		$groupEntity = new Place();
 		$groupEntity->setId(17);
-		$group->setEntity($groupEntity);
+		$group->setPlace($groupEntity);
 		
 		$entity = new Area();
 		$entity->setGroup($group);
-		$entity->setEntity($this->checkedEntity);
+		$entity->setPlace($this->checkedEntity);
 		$entity->setProject($this->project);
 		$this->repository->setProject($this->project);
 		$this->adapter->expects($this->once())
 			->method('findVisibleChannels')
-			->with($this->project->getId(), [$entity->getEntity()->getId(), $this->project->getEntity()->getId(), $group->getEntity()->getId()], 'areaVisible', 2)
+			->with($this->project->getId(), [$entity->getPlace()->getId(), $this->project->getPlace()->getId(), $group->getPlace()->getId()], 'areaVisible', 2)
 			->will($this->returnValue(['foo' => 'bar']));
 		
 		// When

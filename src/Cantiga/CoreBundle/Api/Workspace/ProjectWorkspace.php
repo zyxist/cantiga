@@ -18,44 +18,33 @@
  */
 namespace Cantiga\CoreBundle\Api\Workspace;
 
+use Cantiga\Components\Hierarchy\Entity\Membership;
 use Cantiga\CoreBundle\Api\Workspace;
-use Cantiga\CoreBundle\Entity\Membership\ProjectMembershipLoader;
+use Cantiga\CoreBundle\CoreTexts;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Event\CantigaEvents;
-use Cantiga\Metamodel\Membership;
-use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Project workspace is a workspace, where the users work in the context of some project.
  * The user must be a member of some project in order to access it.
  * 
- * @see Cantiga\CoreBundle\Entity\Project
- * @author Tomasz Jędrzejewski
+ * @see Project
  */
 class ProjectWorkspace extends Workspace
 {
-	/**
-	 * @var ProjectMembershipLoader 
-	 */
-	private $projectMembershipLoader;
 	/**
 	 * @var Project
 	 */
 	private $project;
 	
-	public function __construct(ProjectMembershipLoader $pml)
+	public function __construct(Membership $membership)
 	{
-		$this->projectMembershipLoader = $pml;
+		$this->project = $membership->getPlace()->getRootElement();
 	}
 
 	public function getKey()
 	{
 		return 'project';
-	}
-	
-	public function onWorkspaceLoaded(Membership $membership)
-	{
-		$this->project = $membership->getItem();
 	}
 	
 	/**
@@ -65,23 +54,23 @@ class ProjectWorkspace extends Workspace
 	{
 		return $this->project;
 	}
-	
-	public function getMembershipLoader()
-	{
-		return $this->projectMembershipLoader;
-	}
 
 	public function getWorkspaceEvent()
 	{
 		return CantigaEvents::WORKSPACE_PROJECT;
 	}
 	
-	public function getHelpPages(RouterInterface $router)
+	public function getHelpRoute(): string
+	{
+		return 'place_help_page';
+	}
+	
+	public function getHelpPages(): array
 	{
 		return [
-			['route' => 'user_help_introduction', 'url' => $router->generate('user_help_introduction'), 'title' => 'Introduction to the system'],
-			['route' => 'project_help_introduction', 'url' => $router->generate('project_help_introduction', ['slug' => $this->project->getSlug()]), 'title' => 'Introduction to projects'],
-			['route' => 'project_help_members', 'url' => $router->generate('project_help_members', ['slug' => $this->project->getSlug()]), 'title' => 'Member management'],
+			['route' => 'user_introduction', 'title' => 'Introduction to the system', 'text' => CoreTexts::HELP_INTRODUCTION],
+			['route' => 'project_introduction', 'title' => 'Introduction to projects', 'text' => CoreTexts::HELP_PROJECT_INTRODUCTION],
+			['route' => 'project_members', 'title' => 'Member management', 'text' => CoreTexts::HELP_PROJECT_MEMBERS],
 		];
 	}
 }

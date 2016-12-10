@@ -150,7 +150,7 @@ class UserRegistrationRepository implements EntityTransformerInterface
 	{
 		try {
 			$item = $this->getItem($id);
-			$user = $item->activate($provisionKey);
+			$user = $item->activate($provisionKey, $this->timeFormatter->getTimezone()->getName());
 			$user->insert($this->conn);
 			$item->remove($this->conn);
 			$this->eventDispatcher->dispatch(CantigaEvents::USER_ACTIVATED, new UserEvent($user));

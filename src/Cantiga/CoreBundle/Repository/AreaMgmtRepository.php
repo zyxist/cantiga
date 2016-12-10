@@ -87,7 +87,7 @@ class AreaMgmtRepository
 			$dt->searchableColumn('groupName', 'i.groupName');
 		}
 		$dt->searchableColumn('status', 's.id')
-			->column('memberNum', 'i.memberNum')
+			->column('memberNum', 'p.memberNum')
 			->column('percentCompleteness', 'i.percentCompleteness');
 
 		
@@ -104,9 +104,10 @@ class AreaMgmtRepository
 			->field('s.name', 'statusName')
 			->field('s.label', 'statusLabel')
 			->field('t.name', 'territory')
-			->field('i.memberNum', 'memberNum')
+			->field('p.memberNum', 'memberNum')
 			->field('i.percentCompleteness', 'percentCompleteness')
 			->from(CoreTables::AREA_TBL, 'i')
+			->join(CoreTables::PLACE_TBL, 'p', QueryClause::clause('i.placeId = p.id'))
 			->join(CoreTables::TERRITORY_TBL, 't', QueryClause::clause('i.territoryId = t.id'))
 			->join(CoreTables::AREA_STATUS_TBL, 's', QueryClause::clause('i.statusId = s.id'));
 		if ($this->place->isRoot()) {

@@ -18,6 +18,7 @@
  */
 namespace Cantiga\MilestoneBundle\Controller;
 
+use Cantiga\Components\Hierarchy\Entity\Membership;
 use Cantiga\CoreBundle\Api\Controller\ProjectPageController;
 use Cantiga\MilestoneBundle\Repository\MilestoneSummaryRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -27,7 +28,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @Route("/project/{slug}/milestone-summary")
- * @Security("has_role('ROLE_PROJECT_VISITOR')")
+ * @Security("is_granted('PLACE_VISITOR')")
  */
 class ProjectMilestoneSummaryController extends ProjectPageController
 {
@@ -63,7 +64,7 @@ class ProjectMilestoneSummaryController extends ProjectPageController
 			'viewPage' => 'project_milestone_summary',
 			'individualPage' => 'project_milestone_summary_individual_areas',
 			'editPage' => 'project_milestone_editor',
-			'areaInfoPage' => 'project_area_info',
+			'areaInfoPage' => 'area_mgmt_info',
 			'showTypeSelector' => true,			
 			'type' => $type,
 			'items' => $items,
@@ -73,16 +74,16 @@ class ProjectMilestoneSummaryController extends ProjectPageController
 	/**
 	 * @Route("/individual/areas", name="project_milestone_summary_individual_areas")
 	 */
-	public function individualListAction(Request $request)
+	public function individualListAction(Request $request, Membership $membership)
 	{
-		list($milestones, $items) = $this->repository->findTotalAreaCompleteness($this->getMembership()->getItem());
+		list($milestones, $items) = $this->repository->findTotalAreaCompleteness($membership->getPlace());
 		return $this->render(self::MILESTONE_INDIVIDUAL_TEMPLATE, array(
 			'pageTitle' => 'Milestones',
 			'pageSubtitle' => 'See which milestones are completed in each area',
 			'viewPage' => 'project_milestone_summary',
 			'individualPage' => 'project_milestone_summary_individual_areas',
 			'editPage' => 'project_milestone_editor',
-			'areaInfoPage' => 'project_area_info',
+			'areaInfoPage' => 'area_mgmt_info',
 			'showTypeSelector' => true,
 			'type' => 2,
 			'milestones' => $milestones,

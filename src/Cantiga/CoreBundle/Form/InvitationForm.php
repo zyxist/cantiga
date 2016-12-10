@@ -18,6 +18,7 @@
  */
 namespace Cantiga\CoreBundle\Form;
 
+use Cantiga\CoreBundle\Form\Type\BooleanType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -31,20 +32,26 @@ class InvitationForm extends AbstractType
 {
 	public function configureOptions(OptionsResolver $resolver)
 	{
-		$resolver->setDefined(['roles']);
+		$resolver->setDefined(['roles', 'showContactsManageable', 'showContactHelpText']);
 		$resolver->setRequired(['roles']);
+		$resolver->setDefault('showContactsManageable', false);
+		$resolver->setDefault('showContactHelpText', '');
+		$resolver->setDefault('translation_domain', 'users');
 	}
 	
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add('email', EmailType::class, array('label' => 'E-mail', 'attr' => array('help_text' => 'The invited person does not have to have an account.')))
-			->add('role', ChoiceType::class, array('label' => 'Role', 'choices' => $this->asChoices($options['roles'])))
-			->add('note', TextType::class, array('label' => 'Note', 
-				'constraints' => array(new Length(['min' => 0, 'max' => 30])),
-				'attr' => array('help_text' => 'NoteHintText'))
+			->add('email', EmailType::class, ['label' => 'E-mail', 'attr' => ['help_text' => 'The invited person does not have to have an account.']])
+			->add('role', ChoiceType::class, ['label' => 'Role', 'choices' => $this->asChoices($options['roles'])])
+			->add('note', TextType::class, ['label' => 'Note', 
+				'constraints' => [new Length(['min' => 0, 'max' => 30])],
+				'attr' => ['help_text' => 'NoteHintText']]
 			)
 			->add('save', SubmitType::class, array('label' => 'Submit invitation'));
+		if ($options['showContactsManageable']) {
+			$builder->add('showDownstreamContactData', BooleanType::class, ['label' => 'Show contacts to members of other places?', 'attr' => ['help_text' => $options['showContactHelpText']]]);
+		}
 	}
 	
 	private function asChoices(array $roles)

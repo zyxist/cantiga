@@ -78,7 +78,7 @@ class WorkspaceListener
 			$workspace->addWorkItem('participants', new WorkItem('area_reg_settings_index', 'Registration settings'));
 			$workspace->addWorkItem('participants', new WorkItem('area_edk_message_index', 'Messages'));
 			$workspace->addWorkItem('participants', new WorkItem('area_stats_participant_index', 'Participant statistics'));
-			if ($this->authChecker->isGranted('ROLE_AREA_PD_ADMIN')) {
+			if ($this->authChecker->isGranted('PLACE_PD_ADMIN')) {
 				$workspace->addWorkItem('participants', new WorkItem('area_edk_participant_index', 'Participants'));
 			}
 		}

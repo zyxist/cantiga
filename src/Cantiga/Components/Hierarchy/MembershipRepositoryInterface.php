@@ -19,16 +19,17 @@
 declare(strict_types=1);
 namespace Cantiga\Components\Hierarchy;
 
+use Cantiga\Components\Hierarchy\Entity\MembershipRole;
+use Cantiga\Components\Hierarchy\MembershipEntityInterface;
+use Cantiga\Components\Hierarchy\User\CantigaUserRefInterface;
 use Cantiga\CoreBundle\Entity\Invitation;
 use Cantiga\CoreBundle\Entity\User;
-use Cantiga\Components\Hierarchy\MembershipEntityInterface;
-use Cantiga\Components\Hierarchy\Entity\MembershipRole;
 
 interface MembershipRepositoryInterface
 {
-	public function joinMember(MembershipEntityInterface $identifiable, User $user, MembershipRole $role, $note);
-	public function editMember(MembershipEntityInterface $identifiable, User $user, MembershipRole $role, $note);
-	public function removeMember(MembershipEntityInterface $identifiable, User $user);
+	public function joinMember(MembershipEntityInterface $identifiable, CantigaUserRefInterface $user, MembershipRole $role, $note, $showDownstreamContactData);
+	public function editMember(MembershipEntityInterface $identifiable, CantigaUserRefInterface $user, MembershipRole $role, $note, $showDownstreamContactData);
+	public function removeMember(MembershipEntityInterface $identifiable, CantigaUserRefInterface $user);
 	public function acceptInvitation(Invitation $invitation);
 	public function clearMembership(User $user);
 }

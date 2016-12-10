@@ -48,5 +48,6 @@
 <p>
 	<a href="{{ path('admin_project_index') }}" class="btn btn-default btn-sm" role="button">{{ 'Back' | trans({}, 'general') }}</a>
 	<a href="{{ path('admin_project_edit', {'id': item.id }) }}" class="btn btn-warning btn-sm" role="button">{{ 'Edit' | trans({}, 'general') }}</a>
+	<a href="{{ path('admin_membership_index', {'id': item.id }) }}" class="btn btn-danger btn-sm" role="button">{{ 'Members' | trans({}, 'general') }}</a>
 </p>
 {% endblock %}

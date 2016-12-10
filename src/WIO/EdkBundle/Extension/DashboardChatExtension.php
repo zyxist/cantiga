@@ -57,6 +57,6 @@ class DashboardChatExtension implements DashboardExtensionInterface
 	{
 		$item = $controller->getMembership()->getItem();
 		$this->repository->setRootEntity($item);
-		return $this->templating->render('WioEdkBundle:Extension:recent-comments.html.twig', ['routeInfoPath' => lcfirst($item->getEntity()->getType()).'_route_info', 'comments' => $this->repository->getRecentCommentActivity(8)]);
+		return $this->templating->render('WioEdkBundle:Extension:recent-comments.html.twig', ['routeInfoPath' => lcfirst($item->getPlace()->getType()).'_route_info', 'comments' => $this->repository->getRecentCommentActivity(8)]);
 	}
 }

@@ -29,7 +29,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @Route("/project/{slug}/stats/area")
- * @Security("has_role('ROLE_PROJECT_VISITOR')")
+ * @Security("is_granted('PLACE_VISITOR')")
  */
 class ProjectStatsAreaController extends ProjectPageController
 {

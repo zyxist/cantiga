@@ -18,30 +18,26 @@
  */
 namespace Cantiga\CoreBundle\Entity;
 
-use Cantiga\Components\Hierarchy\Entity\Member;
-use Cantiga\Components\Hierarchy\Entity\MembershipRole;
+use Cantiga\Components\Hierarchy\Entity\PlaceRef;
 use Cantiga\Components\Hierarchy\HierarchicalInterface;
 use Cantiga\Components\Hierarchy\MembershipEntityInterface;
-use Cantiga\Components\Hierarchy\MembershipRoleResolverInterface;
 use Cantiga\CoreBundle\CoreTables;
-use Cantiga\CoreBundle\Entity\Traits\EntityTrait;
+use Cantiga\CoreBundle\Entity\Traits\PlaceTrait;
 use Cantiga\Metamodel\Capabilities\EditableEntityInterface;
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
 use Cantiga\Metamodel\Capabilities\InsertableEntityInterface;
 use Cantiga\Metamodel\Capabilities\RemovableEntityInterface;
 use Cantiga\Metamodel\DataMappers;
-use Cantiga\Metamodel\Join;
-use Cantiga\Metamodel\Membership;
-use Cantiga\Metamodel\QueryClause;
+use Cantiga\UserBundle\UserTables;
 use Doctrine\DBAL\Connection;
 use PDO;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
-class Group implements IdentifiableInterface, InsertableEntityInterface, EditableEntityInterface, RemovableEntityInterface, MembershipEntityInterface, HierarchicalInterface
+class Group implements IdentifiableInterface, InsertableEntityInterface, EditableEntityInterface, RemovableEntityInterface, HierarchicalInterface
 {
-	use EntityTrait;
+	use PlaceTrait;
 	
 	private $id;
 	private $name;
@@ -49,15 +45,14 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 	private $project;
 	private $category;
 	private $notes;
-	private $memberNum;
 	private $areaNum;
 	
 	public static function fetchByProject(Connection $conn, $id, Project $project)
 	{
 		$data = $conn->fetchAssoc('SELECT g.*, '
-			. self::createEntityFieldList()
+			. self::createPlaceFieldList()
 			. 'FROM `'.CoreTables::GROUP_TBL.'` g '
-			. self::createEntityJoin('g')
+			. self::createPlaceJoin('g')
 			. 'WHERE g.`id` = :id AND g.`projectId` = :projectId', [':id' => $id, ':projectId' => $project->getId()]);
 		if(null === $data) {
 			return false;
@@ -68,7 +63,7 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 		if (!empty($data['categoryId'])) {
 			$item->category = GroupCategory::fetchByProject($conn, $data['categoryId'], $project);
 		}
-		$item->entity = Entity::fromArray($data, 'entity');
+		$item->place = Place::fromArray($data, 'place');
 		
 		return $item;
 	}
@@ -76,9 +71,9 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 	public static function fetch(Connection $conn, $id)
 	{
 		$data = $conn->fetchAssoc('SELECT g.*, '
-			. self::createEntityFieldList()
+			. self::createPlaceFieldList()
 			. 'FROM `'.CoreTables::GROUP_TBL.'` g '
-			. self::createEntityJoin('g')
+			. self::createPlaceJoin('g')
 			. 'WHERE g.`id` = :id', [':id' => $id]);
 		if(null === $data) {
 			return false;
@@ -92,42 +87,30 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 		if (!empty($data['categoryId'])) {
 			$item->category = GroupCategory::fetchByProject($conn, $data['categoryId'], $item->project);
 		}
-		$item->entity = Entity::fromArray($data, 'entity');
+		$item->place = Place::fromArray($data, 'place');
 		
 		return $item;
 	}
 	
-	/**
-	 * @param Connection $conn
-	 * @param int $projectId
-	 * @param int $userId
-	 * @return Membership
-	 */
-	public static function fetchMembership(Connection $conn, MembershipRoleResolverInterface $resolver, $slug, $userId)
+	public static function fetchByPlaceRef(Connection $conn, PlaceRef $place)
 	{
 		$data = $conn->fetchAssoc('SELECT g.*, '
-			. 'm.`role` AS `membership_role`, m.`note` AS `membership_note`, '
-			. self::createEntityFieldList()
+			. self::createPlaceFieldList()
 			. 'FROM `'.CoreTables::GROUP_TBL.'` g '
-			. self::createEntityJoin('g')
-			. 'INNER JOIN `'.CoreTables::GROUP_MEMBER_TBL.'` m ON m.`groupId` = g.`id` '
-			. 'WHERE m.`userId` = :userId AND g.`slug` = :slug', [':userId' => $userId, ':slug' => $slug]);
+			. self::createPlaceJoin('g')
+			. 'WHERE g.`placeId` = :placeId', [':placeId' => $place->getId()]);
 		if(false === $data) {
 			return false;
 		}
 		$group = self::fromArray($data);
 		$group->project = Project::fetchActive($conn, $data['projectId']);
-		if (false == $group->project) {
-			return false;
-		}
+		$group->place = Place::fromArray($data, 'place');
 		
 		if (!empty($data['categoryId'])) {
 			$group->category = GroupCategory::fetchByProject($conn, $data['categoryId'], $group->project);
 		}
-		$group->entity = Entity::fromArray($data, 'entity');
 		
-		$role = $resolver->getRole('Group', $data['membership_role']);
-		return new Membership($group, $role, $data['membership_note']);
+		return $group;
 	}
 
 	public static function fromArray($array, $prefix = '')
@@ -139,7 +122,7 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 	
 	public static function getRelationships()
 	{
-		return ['project', 'category', 'entity'];
+		return ['project', 'category', 'place'];
 	}
 	
 	public static function loadValidatorMetadata(ClassMetadata $metadata)
@@ -226,20 +209,9 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 		return $this;
 	}
 	
-	public function getMemberNum()
-	{
-		return $this->memberNum;
-	}
-
 	public function getAreaNum()
 	{
 		return $this->areaNum;
-	}
-
-	public function setMemberNum($memberNum)
-	{
-		$this->memberNum = $memberNum;
-		return $this;
 	}
 
 	public function setAreaNum($areaNum)
@@ -252,15 +224,16 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 	{
 		$this->slug = DataMappers::generateSlug($conn, CoreTables::GROUP_TBL);
 		
-		$this->entity = new Entity();
-		$this->entity->setType('Group');
-		$this->entity->setName($this->name);
-		$this->entity->setSlug($this->slug);
-		$this->entity->insert($conn);
+		$this->place = new Place();
+		$this->place->setType('Group');
+		$this->place->setName($this->name);
+		$this->place->setSlug($this->slug);
+		$this->place->setRootPlaceId($this->project->getPlace()->getId());
+		$this->place->insert($conn);
 		
 		$conn->insert(
 			CoreTables::GROUP_TBL,
-			DataMappers::pick($this, ['name', 'slug', 'project', 'category', 'notes', 'entity'])
+			DataMappers::pick($this, ['name', 'slug', 'project', 'category', 'notes', 'place'])
 		);
 		return $conn->lastInsertId();
 	}
@@ -271,8 +244,8 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 			':groupName' => $this->name,
 			':id' => $this->id
 		]);
-		$this->entity->setName($this->name);
-		$this->entity->update($conn);
+		$this->place->setName($this->name);
+		$this->place->update($conn);
 		
 		return $conn->update(
 			CoreTables::GROUP_TBL,
@@ -289,7 +262,7 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 	public function remove(Connection $conn)
 	{
 		if ($this->canRemove()) {
-			$this->entity->remove($conn);
+			$this->place->remove($conn);
 			$conn->delete(CoreTables::GROUP_TBL, DataMappers::pick($this, ['id']));
 		}
 	}
@@ -327,21 +300,18 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 	 * @param MembershipEntityInterface $entity Another entity that views the information about members.
 	 * @return array
 	 */
-	public function findMemberInformationForEntity(Connection $conn, MembershipEntityInterface $entity)
+	public function findMemberInformationForEntity(Connection $conn, HierarchicalInterface $entity)
 	{
-		$stmt = $conn->prepare('SELECT u.id, u.name, u.avatar, u.lastVisit, p.location, p.telephone, p.publicMail, p.privShowTelephone, p.privShowPublicMail, m.note '
+		$stmt = $conn->prepare('SELECT u.id, u.name, u.avatar, u.lastVisit, p.location, m.note '
 			. 'FROM `'.CoreTables::USER_TBL.'` u '
 			. 'INNER JOIN `'.CoreTables::USER_PROFILE_TBL.'` p ON p.`userId` = u.`id` '
-			. 'INNER JOIN `'.CoreTables::GROUP_MEMBER_TBL.'` m ON m.`userId` = u.`id` '
-			. 'WHERE m.`groupId` = :groupId ORDER BY m.role DESC, u.name');
-		$stmt->bindValue(':groupId', $this->getId());
+			. 'INNER JOIN `'.UserTables::PLACE_MEMBERS_TBL.'` m ON m.`userId` = u.`id` '
+			. 'WHERE m.`placeId` = :placeId ORDER BY m.role DESC, u.name');
+		$stmt->bindValue(':placeId', $this->getPlace()->getId());
 		$stmt->execute();
 		$result = array();
 		
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$row['privShowTelephone'] = User::evaluateUserPrivacy($row['privShowTelephone'], $entity);
-			$row['privShowPublicMail'] = User::evaluateUserPrivacy($row['privShowPublicMail'], $entity);
-			
 			$result[] = $row;
 		}
 		$stmt->closeCursor();
@@ -364,81 +334,6 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 		$stmt->closeCursor();
 		return $result;
 	}
-	
-	public function findMembers(Connection $conn, MembershipRoleResolverInterface $roleResolver): array
-	{
-		$stmt = $conn->prepare('SELECT i.`id`, i.`name`, i.`avatar`, i.`lastVisit`, p.`location`, c.`email` AS `contactMail`, '
-			. 'c.`telephone` AS `contactTelephone`, c.`notes` AS `notes`, m.`role` AS `membershipRole`, m.`note` AS `membershipNote` '
-			. 'FROM `'.CoreTables::USER_TBL.'` i '
-			. 'INNER JOIN `'.CoreTables::USER_PROFILE_TBL.'` p ON p.`userId` = i.`id` '
-			. 'INNER JOIN `'.CoreTables::GROUP_MEMBER_TBL.'` m ON m.`userId` = i.`id` '
-			. 'LEFT JOIN `'.CoreTables::CONTACT_TBL.'` c ON c.`userId` = i.`id` AND c.`projectId` = :projectId '
-			. 'WHERE m.`groupId` = :entityId AND i.`active` = 1 AND i.`removed` = 0 '
-			. 'ORDER BY i.`name`');
-		$stmt->bindValue(':projectId', $this->getProject()->getId());
-		$stmt->bindValue(':entityId', $this->getId());
-		$stmt->execute();
-		$results = [];
-		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$results[] = new Member(
-				$row, new Membership($this, $roleResolver->getRole('Group', $row['membershipRole']), $row['membershipNote'])
-			);
-		}
-		$stmt->closeCursor();
-		return $results;
-	}
-	
-	public function findMember(Connection $conn, MembershipRoleResolverInterface $resolver, int $id)
-	{
-		$stmt = $conn->prepare('SELECT i.`id`, i.`name`, i.`avatar`, i.`lastVisit`, p.`location`, c.`email` AS `contactMail`, '
-			. 'c.`telephone` AS `contactTelephone`, c.`notes` AS `notes`, m.`role` AS `membershipRole`, m.`note` AS `membershipNote` '
-			. 'FROM `'.CoreTables::USER_TBL.'` i '
-			. 'INNER JOIN `'.CoreTables::USER_PROFILE_TBL.'` p ON p.`userId` = i.`id` '
-			. 'INNER JOIN `'.CoreTables::GROUP_MEMBER_TBL.'` m ON m.`userId` = i.`id` '
-			. 'LEFT JOIN `'.CoreTables::CONTACT_TBL.'` c ON c.`userId` = i.`id` AND c.`projectId` = :projectId '
-			. 'WHERE m.`groupId` = :entityId AND i.`active` = 1 AND i.`removed` = 0 AND i.`id` = :userId '
-			. 'ORDER BY i.`name`');
-		$stmt->bindValue(':projectId', $this->getProject()->getId());
-		$stmt->bindValue(':entityId', $this->getId());
-		$stmt->bindValue(':userId', $id);
-		$stmt->execute();
-		$results = [];
-		if ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$stmt->closeCursor();
-			return new Member(
-				$row, new Membership($this, $resolver->getRole('Group', $row['membershipRole']), $row['membershipNote'])
-			);
-		}
-		$stmt->closeCursor();
-		return false;
-	}
-
-	public function joinMember(Connection $conn, User $user, MembershipRole $role, $note)
-	{
-		$ifExists = $conn->fetchColumn('SELECT `userId` FROM `'.CoreTables::GROUP_MEMBER_TBL.'` WHERE `groupId` = :group AND `userId` = :user', [':group' => $this->getId(), ':user' => $user->getId()]);
-		if (false === $ifExists) {
-			$conn->insert(CoreTables::GROUP_MEMBER_TBL, ['groupId' => $this->getId(), 'userId' => $user->getId(), 'role' => $role->getId(), 'note' => $note]);
-			$conn->executeQuery('UPDATE `'.CoreTables::GROUP_TBL.'` SET `memberNum` = (`memberNum` + 1) WHERE `id` = :id', [':id' => $this->id]);
-			$conn->executeQuery('UPDATE `'.CoreTables::USER_TBL.'` SET `groupNum` = (`groupNum` + 1) WHERE `id` = :id', [':id' => $user->getId()]);
-			return true;
-		}
-		return false;
-	}
-	
-	public function editMember(Connection $conn, User $user, MembershipRole $role, $note)
-	{
-		return 1 == $conn->update(CoreTables::GROUP_MEMBER_TBL, ['role' => (int) $role->getId(), 'note' => $note], ['groupId' => $this->getId(), 'userId' => $user->getId()]);
-	}
-
-	public function removeMember(Connection $conn, User $user)
-	{
-		if (1 == $conn->delete(CoreTables::GROUP_MEMBER_TBL, ['groupId' => $this->getId(), 'userId' => $user->getId()])) {
-			$conn->executeQuery('UPDATE `'.CoreTables::GROUP_TBL.'` SET `memberNum` = (`memberNum` - 1) WHERE `id` = :id', [':id' => $this->id]);
-			$conn->executeQuery('UPDATE `'.CoreTables::USER_TBL.'` SET `groupNum` = (`groupNum` - 1) WHERE `id` = :id', [':id' => $user->getId()]);
-			return true;
-		}
-		return false;
-	}
 
 	public function getElementOfType(int $type)
 	{
@@ -458,5 +353,16 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 	public function getRootElement(): HierarchicalInterface
 	{
 		return $this->getProject();
+	}
+	
+	public function isChild(HierarchicalInterface $place): bool
+	{
+		if ($place instanceof Area) {
+			$group = $place->getGroup();
+			if (null !== $group && $group->getId() == $this->getId()) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

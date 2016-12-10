@@ -19,7 +19,7 @@
 
 namespace Cantiga\MilestoneBundle\Entity;
 
-use Cantiga\CoreBundle\Entity\Entity;
+use Cantiga\CoreBundle\Entity\Place;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\Metamodel\Capabilities\EditableEntityInterface;
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
@@ -71,7 +71,7 @@ class MilestoneRule implements IdentifiableInterface, InsertableEntityInterface,
 		return $item;
 	}
 	
-	public static function fetchByActivator(Connection $conn, Project $project, $activator, Entity $entity)
+	public static function fetchByActivator(Connection $conn, Project $project, $activator, Place $entity)
 	{
 		$data = $conn->fetchAssoc('SELECT r.*, m.`id` AS `milestone_id`, m.`name` AS `milestone_name`, m.`description` AS `milestone_description`, m.`displayOrder` AS `milestone_displayOrder`, '
 			. 'm.`type` AS `milestone_type`, m.`entityType` AS `milestone_entityType`, m.`deadline` AS `milestone_deadline` '
@@ -195,10 +195,10 @@ class MilestoneRule implements IdentifiableInterface, InsertableEntityInterface,
 	 * for the milestone.
 	 * 
 	 * @param Connection $conn
-	 * @param Entity $entity
+	 * @param Place $entity
 	 * @param callback $callback
 	 */
-	public function fireRule(Connection $conn, Entity $entity, $callback)
+	public function fireRule(Connection $conn, Place $entity, $callback)
 	{
 		if ($this->milestone->isBeforeDeadline()) {
 			$result = $callback();

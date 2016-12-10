@@ -16,6 +16,11 @@
 			var membershipAdder = $(opts['membershipForm']).find('input[role="member-selector"]');
 			var membershipRole = $(opts['membershipForm']).find('select[role="role-selector"]');
 			var membershipNote = $(opts['membershipForm']).find('input[role="note-selector"]');
+			if (opts['showDownstreamContactData']) {
+				var membershipShowContactsYes = $(opts['membershipForm']).find('input[role="showContacts-1-selector"]');
+				var membershipShowContactsNo = $(opts['membershipForm']).find('input[role="showContacts-0-selector"]');
+			}
+			
 			
 			membershipAdder.autocomplete({
 				minLength: 4,
@@ -63,10 +68,20 @@
 			});
 		}
 		
-		function edit(who, whoName, startRole, startNote) {
+		function edit(who, whoName, startRole, startNote, showContacts) {
 			$(opts['editModal']).find('span[role="title"]').text(whoName);
 			$(opts['editModal']).find('select[role="role-selector"]').val(startRole);
 			$(opts['editModal']).find('input[role="note-selector"]').val(startNote);
+			if (opts['showDownstreamContactData']) {
+				if (showContacts) {
+					$(opts['editModal']).find('input#showContacts-1-selector').iCheck('check');
+					$(opts['editModal']).find('input#showContacts-0-selector').iCheck('uncheck');
+				} else {
+					$(opts['editModal']).find('input#showContacts-1-selector').iCheck('uncheck');
+					$(opts['editModal']).find('input#showContacts-0-selector').iCheck('check');
+				}
+			}
+			
 			$(opts['editModalConfirm']).unbind('click').click(function(data) {
 				$.ajax({
 					url: opts['memberEditUrl'],
@@ -75,7 +90,8 @@
 						p: selectedProject,
 						u: who,
 						r: $(opts['editModal']).find('select[role="role-selector"]').val(),
-						n: $(opts['editModal']).find('input[role="note-selector"]').val()
+						n: $(opts['editModal']).find('input[role="note-selector"]').val(),
+						c: $(opts['editModal']).find('input[name="showContacts"]:checked').val()
 					},
 					success: function (data) {
 						if (data.status == 1) {
@@ -131,11 +147,18 @@
 					tr.append($('<td/>').append(opts['lang'][data[i]['roleName']]));
 				}
 				tr.append($('<td/>').append(data[i]['note']));
+				if (opts['showDownstreamContactData']) {
+					if (data[i]['showDownstreamContactData']) {
+						tr.append($('<td/>', {class: 'text-center'}).append('<span class="glyphicon glyphicon-ok"></span>'));
+					} else {
+						tr.append($('<td/>'));
+					}
+				}
 				if (null !== opts['memberEditUrl']) {
 					var roleBtn = $('<a/>', {class: 'btn btn-xs btn-primary', href: '#'}).append(opts['lang']['role']);
-					roleBtn.click(function(id, name, role, note){ return function(data) {
-						edit(id, name, role, note);
-					}; }(data[i]['id'], data[i]['name'], data[i]['role'], data[i]['note']));
+					roleBtn.click(function(id, name, role, note, showContacts){ return function(data) {
+						edit(id, name, role, note, showContacts);
+					}; }(data[i]['id'], data[i]['name'], data[i]['role'], data[i]['note'], data[i]['showDownstreamContactData']));
 				}
 				var removeBtn = $('<a/>', {class: 'btn btn-xs btn-danger', href: '#'}).append(opts['lang']['remove']);
 				removeBtn.click(function(id, name){ return function(data) {
@@ -178,6 +201,7 @@
 		editModalConfirm: null,
 		removeModal: null,
 		removeModalConfirm: null,
+		showDownstreamContactData: false,
 		
 		memberHintUrl: null,
 		memberReloadUrl: null,

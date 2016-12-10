@@ -57,6 +57,6 @@ class DashboardRouteExtension implements DashboardExtensionInterface
 	{
 		$item = $controller->getMembership()->getItem();
 		$this->repository->setRootEntity($item);
-		return $this->templating->render('WioEdkBundle:Extension:recent-routes.html.twig', ['routeInfoPath' => lcfirst($item->getEntity()->getType()).'_route_info', 'routes' => $this->repository->getRecentlyChangedRoutes(5)]);
+		return $this->templating->render('WioEdkBundle:Extension:recent-routes.html.twig', ['routeInfoPath' => lcfirst($item->getPlace()->getType()).'_route_info', 'routes' => $this->repository->getRecentlyChangedRoutes(5)]);
 	}
 }

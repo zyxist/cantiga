@@ -24,5 +24,5 @@ INSERT INTO `cantiga_mail` VALUES(18, 'cantiga:credential-change', 'pl', '[Canti
 INSERT INTO `cantiga_texts` VALUES(1, 'cantiga:login', NULL, 'Welcome to Cantiga', '<p>Welcome to Cantiga. Please sign in to access the system and configure it.</p>', 'en');
 INSERT INTO `cantiga_texts` VALUES(2, 'cantiga:login', NULL, 'Witaj w systemie Cantiga', '<p>Witaj w systemie Cantiga. Zaloguj się, aby uzyskać dostęp do systemu i skonfigurować go.</p>', 'pl');
 
-INSERT INTO `cantiga_users` VALUES(1, 'administrator', 'Administrator', 'c0vl2Nq/4I6gOwFbH32Qe/UadsPSG5VVaVyyh4/6duQ=', 'ffda6bdf3973428d3d5d0c6521a336cb55ab7369', 'admin@example.com', 1, 0, 1, 1, NULL, UNIX_TIMESTAMP(), 0, 0, 0);
+INSERT INTO `cantiga_users` VALUES(1, 'administrator', 'Administrator', 'c0vl2Nq/4I6gOwFbH32Qe/UadsPSG5VVaVyyh4/6duQ=', 'ffda6bdf3973428d3d5d0c6521a336cb55ab7369', 'admin@example.com', 1, 0, 1, 1, NULL, UNIX_TIMESTAMP(), 0);
 INSERT INTO `cantiga_user_profiles` VALUES(1, '', 1, 'Europe/Warsaw', NULL);

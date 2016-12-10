@@ -27,7 +27,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * @Route("/group/{slug}/course-summary")
- * @Security("has_role('ROLE_GROUP_MEMBER')")
+ * @Security("is_granted('PLACE_MEMBER')")
  */
 class GroupCourseSummaryController extends GroupPageController
 {
@@ -38,9 +38,10 @@ class GroupCourseSummaryController extends GroupPageController
 
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
+		$membership = $this->get('cantiga.user.memebership.storage')->getMembership();
 		$this->performInitialization('group_course_summary_index', 'group_course_summary_info', $request, $authChecker);
 		$repository = $this->get(self::REPOSITORY_NAME);
-		$repository->setGroup($this->getMembership()->getItem());
+		$repository->setGroup($membership->getPlace());
 	}
 	
 	/**
