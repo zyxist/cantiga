@@ -16,21 +16,42 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-namespace Cantiga\UserBundle\Intent;
-
+declare(strict_types=1);
+namespace Cantiga\UserBundle\Entity;
+use Cantiga\Components\Hierarchy\HierarchicalInterface;
 use Cantiga\Components\Hierarchy\User\CantigaUserRefInterface;
 use Cantiga\CoreBundle\CoreTables;
 use Doctrine\DBAL\Connection;
 
 class ContactData
 {
-	private $id;
-	private $name;
+	private $project;
+	private $user;
 	private $email;
 	private $telephone;
 	private $notes;
-	private $required;
-	private $user;
+	
+	public static function findContactData(Connection $conn, HierarchicalInterface $project, CantigaUserRefInterface $user): ContactData
+	{
+		$contact = $conn->fetchAssoc('SELECT * FROM `'.CoreTables::CONTACT_TBL.'` WHERE `userId` = :userId AND `placeId` = :placeId FOR UPDATE', [
+			':userId' => $user->getId(),
+			':placeId' => $project->getPlace()->getId()
+		]);
+		
+		if (empty($contact)) {
+			return new ContactData($project, $user);
+		}
+		return new ContactData($project, $user, $contact);
+	}
+	
+	public function __construct(HierarchicalInterface $project, CantigaUserRefInterface $user, array $data = [])
+	{
+		$this->project = $project;
+		$this->user = $user;
+		$this->email = $data['email'] ?? '';
+		$this->telephone = $data['telephone'] ?? '';
+		$this->notes = $data['notes'] ?? '';
+	}
 	
 	public function getId()
 	{
@@ -42,48 +63,26 @@ class ContactData
 		return $this->user;
 	}
 
-	public function getName()
+	public function getProject(): HierarchicalInterface
 	{
-		return $this->name;
-	}
-
-	public function getContactEmail()
-	{
-		return $this->contactEmail;
-	}
-
-	public function getContactTelephone()
-	{
-		return $this->contactTelephone;
-	}
-
-	public function getContactNotes()
-	{
-		return $this->contactNotes;
-	}
-
-	public function getRequired()
-	{
-		return $this->required;
-	}
-
-	public function setId($id): self
-	{
-		$this->id = $id;
-		return $this;
+		return $this->project;
 	}
 	
-	public function setUser(CantigaUserRefInterface $user): self
+	public function getEmail()
 	{
-		$this->user = $user;
-		return $this;
+		return $this->email;
 	}
 
-	public function setName($name): self
+	public function getTelephone()
 	{
-		$this->name = $name;
-		return $this;
+		return $this->telephone;
 	}
+
+	public function getNotes()
+	{
+		return $this->notes;
+	}
+
 
 	public function setEmail($email): self
 	{
@@ -103,26 +102,23 @@ class ContactData
 		return $this;
 	}
 	
-	public function setRequired($required): self
-	{
-		$this->required = $required;
-		return $this;
-	}
-	
 	public function update(Connection $conn)
 	{
-		$contacts = $conn->fetchAssoc('SELECT FOR UPDATE * FROM `'.CoreTables::CONTACT_TBL.'` WHERE `userId` = :userId AND `projectId` = :projectId', [':userId' => $this->getUser()->getId(), $this->id]);
+		$contacts = $conn->fetchAssoc('SELECT * FROM `'.CoreTables::CONTACT_TBL.'` WHERE `userId` = :userId AND `placeId` = :placeId FOR UPDATE', [
+			':userId' => $this->getUser()->getId(),
+			':placeId' => $this->getProject()->getPlace()->getId()
+		]);
 		if (!empty($contacts)) {
 			$conn->update(CoreTables::CONTACT_TBL, 
 				['email' => $this->email, 'telephone' => $this->telephone, 'notes' => $this->notes], 
-				['userId' => $this->getUser()->getId(), 'projectId' => $this->id]);
+				['userId' => $this->getUser()->getId(), 'placeId' => $this->getProject()->getPlace()->getId()]);
 		} else {
 			$conn->insert(CoreTables::CONTACT_TBL, [
 				'email' => $this->email,
 				'telephone' => $this->telephone,
 				'notes' => $this->notes,
 				'userId' => $this->user->getId(),
-				'projectId' => $this->id]
+				'placeId' => $this->getProject()->getPlace()->getId()]
 			);
 		}
 	}

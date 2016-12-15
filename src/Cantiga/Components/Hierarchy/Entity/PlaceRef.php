@@ -19,12 +19,12 @@
 declare(strict_types=1);
 namespace Cantiga\Components\Hierarchy\Entity;
 
+use Cantiga\Components\Hierarchy\PlaceRefInterface;
+
 /**
- * Description of PlaceRef
- *
- * @author Tomasz Jędrzejewski
+ * Basic information of some place combined with the user membership.
  */
-class PlaceRef extends AbstractMemberInfo
+class PlaceRef extends AbstractMemberInfo implements PlaceRefInterface
 {
 	private $id;
 	private $name;

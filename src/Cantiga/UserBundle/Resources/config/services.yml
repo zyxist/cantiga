@@ -10,6 +10,9 @@ services:
     cantiga.user.repo.memberlist:
         class:     Cantiga\UserBundle\Repository\MemberlistRepository
         arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.roles"]
+    cantiga.user.repo.contact:
+        class:     Cantiga\UserBundle\Repository\ContactRepository
+        arguments: ["@database_connection", "@cantiga.transaction"]
     cantiga.user.repo.membership:
         class:     Cantiga\UserBundle\Repository\MembershipRepository
         arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.roles"]

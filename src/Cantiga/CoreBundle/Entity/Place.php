@@ -23,6 +23,7 @@ use Cantiga\Components\Hierarchy\Entity\MemberInfo;
 use Cantiga\Components\Hierarchy\Entity\MembershipRole;
 use Cantiga\Components\Hierarchy\MembershipEntityInterface;
 use Cantiga\Components\Hierarchy\MembershipRoleResolverInterface;
+use Cantiga\Components\Hierarchy\PlaceRefInterface;
 use Cantiga\Components\Hierarchy\User\CantigaUserRefInterface;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\Metamodel\Capabilities\EditableEntityInterface;
@@ -41,7 +42,7 @@ use PDO;
  * should be managed in this way, should also deal with creating and managing such a
  * row.
  */
-class Place implements IdentifiableInterface, InsertableEntityInterface, EditableEntityInterface, RemovableEntityInterface, MembershipEntityInterface
+class Place implements IdentifiableInterface, InsertableEntityInterface, EditableEntityInterface, RemovableEntityInterface, MembershipEntityInterface, PlaceRefInterface
 {
 	private $id;
 	private $name;

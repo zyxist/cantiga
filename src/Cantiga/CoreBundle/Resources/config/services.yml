@@ -47,7 +47,7 @@ services:
         class:     "%locale_provider.class%"
         arguments: ["%locale%"]
     cantiga.user_provider:
-        class:     "%user_provider.class%"
+        class:     Cantiga\CoreBundle\Repository\AuthRepository
         arguments: ["@database_connection"]
     cantiga.blocks:
         class:     "%block_launcher.class%"
@@ -78,6 +78,9 @@ services:
     cantiga.core.block.ui:
         class:     "%ui_block.class%"
         arguments: ["@cantiga.workspace_listener", "@event_dispatcher", "@twig", "@security.token_storage", "@translator"]
+    cantiga.core.area_request_flow:
+        class:     Cantiga\CoreBundle\Repository\Utils\AreaRequestFlow
+        arguments: ["@cantiga.core.repo.user_area_request", "@cantiga.user.repo.contact"]
     cantiga.core.repo.place.project:
         class:     Cantiga\CoreBundle\Repository\Place\ProjectLoader
         arguments: ["@database_connection"]
@@ -97,58 +100,46 @@ services:
         class:     "%language_repository.class%"
         arguments: ["@database_connection", "@cantiga.transaction"]
     cantiga.core.repo.admin_user:                                                                                                                                                       
-        class:     "%AdminUserRepository.class%"                                                                                                                                     
+        class:     Cantiga\CoreBundle\Repository\AdminUserRepository                                                                                                                                     
         arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher", "@cantiga.time"]
     cantiga.core.repo.project:                                                                                                                                                     
-        class:     "%project_repository.class%"                                                                                                           
+        class:     Cantiga\CoreBundle\Repository\ProjectRepository
         arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.time", "@event_dispatcher", "@cantiga.project.settings.database_storage"]
     cantiga.core.repo.archived_project:                                                                                                                                                     
-        class:     "%archived_project_repository.class%"                                                                                                           
+        class:     Cantiga\CoreBundle\Repository\ArchivedProjectRepository
         arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.time"]
     cantiga.core.repo.user_registration:                                                                                                                                                
-        class:     "%UserRegistrationRepository.class%"
+        class:     Cantiga\CoreBundle\Repository\UserRegistrationRepository
         arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher", "@security.encoder_factory", "@cantiga.time"]
     cantiga.core.repo.user_dashboard:
-        class:    Cantiga\CoreBundle\Repository\UserDashboardRepository
+        class:     Cantiga\CoreBundle\Repository\UserDashboardRepository
         arguments: ["@database_connection"]
-    cantiga.core.repo.admin_membership:
-        class:     "%admin_membership_repository.class%"
-        arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.roles"]
-    cantiga.core.repo.group_memberlist:
-        class:     Cantiga\CoreBundle\Repository\GroupMemberListRepository
-        arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.roles"]
-    cantiga.core.repo.project_memberlist:
-        class:     "%project_memberlist_repository.class%"
-        arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.roles"]
-    cantiga.core.repo.area_memberlist:
-        class:     "%area_memberlist_repository.class%"
-        arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.roles"]
     cantiga.core.repo.user_area_request:
-        class:     "%user_area_request_repository.class%"
+        class:     Cantiga\CoreBundle\Repository\UserAreaRequestRepository
         arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher", "@cantiga.time", "@security.token_storage"]
     cantiga.core.repo.project_area_request:
-        class:     "%project_area_request_repository.class%"
+        class:     Cantiga\CoreBundle\Repository\ProjectAreaRequestRepository
         arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.time", "@event_dispatcher", "@cantiga.roles"]
     cantiga.core.repo.project_group:
-        class:     "%project_group_repository.class%"
+        class:     Cantiga\CoreBundle\Repository\ProjectGroupRepository
         arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher"]
     cantiga.core.repo.area_mgmt:
         class:     Cantiga\CoreBundle\Repository\AreaMgmtRepository
         arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher"]
     cantiga.core.repo.project_area_status:
-        class:     "%project_area_status.class%"
+        class:     Cantiga\CoreBundle\Repository\ProjectAreaStatusRepository
         arguments: ["@database_connection", "@cantiga.transaction"]
     cantiga.core.repo.project_group_category:
         class:     Cantiga\CoreBundle\Repository\ProjectGroupCategoryRepository
         arguments: ["@database_connection", "@cantiga.transaction"]
     cantiga.core.repo.project_territory:
-        class:     "%project_territory.class%"
+        class:     Cantiga\CoreBundle\Repository\ProjectTerritoryRepository
         arguments: ["@database_connection", "@cantiga.transaction"]
     cantiga.core.repo.text:
-        class:     "%app_text_repository.class%"
+        class:     Cantiga\CoreBundle\Repository\AppTextRepository
         arguments: ["@database_connection", "@cantiga.transaction"]
     cantiga.core.repo.mail:
-        class:     "%app_mail_repository.class%"
+        class:     Cantiga\CoreBundle\Repository\AppMailRepository
         arguments: ["@database_connection", "@cantiga.transaction"]
     cantiga.core.repo.statistics:                                                                                                                               
         class:     Cantiga\CoreBundle\Repository\CoreStatisticsRepository

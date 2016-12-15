@@ -30,7 +30,12 @@ use Cantiga\CoreBundle\CoreTexts;
 use Cantiga\CoreBundle\Entity\AreaRequest;
 use Cantiga\CoreBundle\Entity\Message;
 use Cantiga\CoreBundle\Form\UserAreaRequestForm;
+use Cantiga\CoreBundle\Repository\ProjectTerritoryRepository;
+use Cantiga\CoreBundle\Repository\UserAreaRequestRepository;
+use Cantiga\CoreBundle\Repository\Utils\AreaRequestFlow;
 use Cantiga\Metamodel\Exception\ModelException;
+use Cantiga\UserBundle\Entity\ContactData;
+use Cantiga\UserBundle\Form\ContactDataForm;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -43,7 +48,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class UserAreaRequestController extends UserPageController
 {
-
+	const AREA_REQUEST_FLOW = 'cantiga.core.area_request_flow';
 	const REPOSITORY_NAME = 'cantiga.core.repo.user_area_request';
 	
 	/**
@@ -65,7 +70,7 @@ class UserAreaRequestController extends UserPageController
 			->setPageSubtitle('Inspect your requests to create a new area')
 			->setIndexPage('user_area_request_index')
 			->setInfoPage('user_area_request_info')
-			->setInsertPage('user_area_request_insert')
+			->setInsertPage('user_area_request_create')
 			->setEditPage('user_area_request_edit')
 			->setRemovePage('user_area_request_remove')
 			->setCannotRemoveMessage('Cannot remove an approved or declined request \'0\'.')
@@ -139,68 +144,142 @@ class UserAreaRequestController extends UserPageController
 			return new JsonResponse(['status' => 0]);
 		}
 	}
-
+	
 	/**
-	 * @Route("/insert", name="user_area_request_insert")
+	 * @Route("/create/{step}/{projectId}", name="user_area_request_create", requirements={"step": "(1|2|3|4)"}, defaults={"step": 1, "projectId": "select"},)
 	 */
-	public function insertAction(Request $request)
+	public function createAction($step, $projectId, Request $request)
 	{
-		$this->breadcrumbs()->entryLink($this->trans('Request a new area', [], 'pages'), $this->crudInfo->getInsertPage());
+		$this->breadcrumbs()->entryLink($this->trans('Request a new area', [], 'pages'), $this->crudInfo->getInsertPage(), ['step' => $step]);
+		
+		switch ($step) {
+			case 1:
+				return $this->createStep1($request);
+			case 2:
+				return $this->createStep2($projectId, $request);
+			case 3:
+				return $this->createStep3($projectId, $request);
+			case 4:
+				return $this->createStep4($projectId, $request);
+		}
+	}
+	
+	public function createStep1(Request $request)
+	{
+		$this->getAreaRequestFlow()->clearSession($request->getSession());
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$text = $this->getTextRepository()->getText(CoreTexts::AREA_REQUEST_CREATION_STEP1_TEXT, $request);
 		return $this->render($this->crudInfo->getTemplateLocation().'insert-step1.html.twig', array(
-				'text' => $text,
-				'availableProjects' => $repository->getAvailableProjects(),
+			'text' => $text,
+			'availableProjects' => $repository->getAvailableProjects(),
 		));
 	}
-
-	/**
-	 * @Route("/insert-cont/{projectId}", name="user_area_request_insert_cont")
-	 */
-	public function insertContAction($projectId, Request $request)
+	
+	public function createStep2($projectId, Request $request)
 	{
+		if (!ctype_digit($projectId)) {
+			return $this->redirectToBeginning();
+		}
 		try {
-			$repository = $this->get(self::REPOSITORY_NAME);
-			$settings = $this->getProjectSettings();
-			$project = $repository->getAvailableProject($projectId);
-			$settings->setProject($project);
-			$formModel = $this->getExtensionPoints()
-				->getImplementation(CoreExtensions::AREA_REQUEST_FORM, $project->createExtensionPointFilter()->fromSettings($settings, CoreSettings::AREA_REQUEST_FORM)
-			);
-
-			$item = new AreaRequest();
+			list($settings, $project, $formModel) = $this->loadEnvironment($projectId);
+			$item = $this->getAreaRequestFlow()->restoreRequest($request->getSession());
 			$item->setProject($project);
-			$this->territoryRepository->setProject($project);
-
 			$form = $this->createForm(
 				UserAreaRequestForm::class, $item, [
-					'action' => $this->generateUrl('user_area_request_insert_cont', ['projectId' => $projectId]),
+					'action' => $this->generateUrl($this->crudInfo->getInsertPage(), ['step' => 2, 'projectId' => $projectId]),
 					'customFormModel' => $formModel,
 					'projectSettings' => $settings,
 					'territoryRepository' => $this->territoryRepository
 				]
 			);
-
 			$form->handleRequest($request);
-
 			if ($form->isValid()) {
-				$id = $repository->insert($item);
-				return $this->showPageWithMessage($this->trans('The area request has been created.'), 'user_area_request_info', ['id' => $id]);
+				$this->getAreaRequestFlow()->persistRequest($request->getSession(), $item);				
+				return $this->redirectToRoute($this->crudInfo->getInsertPage(), ['step' => 3, 'projectId' => $projectId]);
 			}
 
 			$text = $this->getTextRepository()->getText(CoreTexts::AREA_REQUEST_CREATION_STEP2_TEXT, $request, $project);
 			$projectSpecificText = $settings->get(CoreSettings::AREA_REQUEST_INFO_TEXT)->getValue();
-			$this->breadcrumbs()->entryLink($this->trans('Request a new area', [], 'pages'), $this->crudInfo->getInsertPage());
 			return $this->render($this->crudInfo->getTemplateLocation().'insert-step2.html.twig', array(
-					'text' => $text,
-					'projectSpecificText' => $projectSpecificText,
-					'form' => $form->createView(),
-					'formRenderer' => $formModel->createFormRenderer(),
-					'project' => $project,
+				'text' => $text,
+				'projectSpecificText' => $projectSpecificText,
+				'form' => $form->createView(),
+				'formRenderer' => $formModel->createFormRenderer(),
+				'project' => $project,
 			));
 		} catch (ModelException $ex) {
 			return $this->showPageWithError($this->trans($ex->getMessage()), $this->crudInfo->getIndexPage());
 		}
+	}
+	
+	public function createStep3($projectId, Request $request)
+	{
+		if (!ctype_digit($projectId)) {
+			return $this->redirectToBeginning();
+		}
+		try {
+			list($settings, $project, $formModel) = $this->loadEnvironment($projectId);
+			$item = $this->getAreaRequestFlow()->createContactData($project, $this->getUser());
+			$form = $this->createForm(
+				ContactDataForm::class, $item, [
+					'action' => $this->generateUrl($this->crudInfo->getInsertPage(), ['step' => 3, 'projectId' => $projectId]),
+				]
+			);
+			$form->handleRequest($request);
+			if ($form->isValid()) {
+				$this->getAreaRequestFlow()->persistContactData($request->getSession(), $item);
+				return $this->redirectToRoute($this->crudInfo->getInsertPage(), ['step' => 4, 'projectId' => $projectId]);
+			}
+			return $this->render($this->crudInfo->getTemplateLocation().'insert-step3.html.twig', [
+				'form' => $form->createView(),
+				'project' => $project
+			]);
+		} catch (ModelException $ex) {
+			return $this->showPageWithError($this->trans($ex->getMessage()), $this->crudInfo->getIndexPage());
+		}
+	}
+	
+	public function createStep4($projectId, Request $request)
+	{
+		if (!ctype_digit($projectId)) {
+			return $this->redirectToBeginning();
+		}
+		try {
+			list($settings, $project, $formModel) = $this->loadEnvironment($projectId);			
+			$id = $this->getAreaRequestFlow()->create($request->getSession(), $project, $this->getUser());		
+			return $this->render($this->crudInfo->getTemplateLocation().'insert-step4.html.twig', ['project' => $project, 'id' => $id]);
+		} catch (ModelException $ex) {
+			return $this->showPageWithError($this->trans($ex->getMessage()), $this->crudInfo->getIndexPage());
+		}
+	}
+	
+	private function redirectToBeginning()
+	{
+		return $this->redirectToRoute($this->crudInfo->getInsertPage(), ['step' => 1], 303);
+	}
+	
+	private function loadEnvironment($projectId): array
+	{
+		$settings = $this->getProjectSettings();
+		$project = $this->getAreaRequestRepository()->getAvailableProject($projectId);
+		
+		$settings->setProject($project);
+		$formModel = $this->getExtensionPoints()
+			->getImplementation(CoreExtensions::AREA_REQUEST_FORM, $project->createExtensionPointFilter()->fromSettings($settings, CoreSettings::AREA_REQUEST_FORM)
+		);
+		
+		$this->territoryRepository->setProject($project);
+		return [$settings, $project, $formModel];
+	}
+	
+	private function getAreaRequestRepository(): UserAreaRequestRepository
+	{
+		return $this->get(self::REPOSITORY_NAME);
+	}
+	
+	private function getAreaRequestFlow(): AreaRequestFlow
+	{
+		return $this->get(self::AREA_REQUEST_FLOW);
 	}
 
 	/**

@@ -1,39 +1,38 @@
 {% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
 
 {% block page_title %}
-	{{ 'Request a new area' | trans }}
+	{{ 'Request a new area' | trans([], 'pages') }}
 {% endblock %}
 
 {% block page_content %}
-<div class="row">
-	<div class="col-md-12">
-		<div class="box">
-			<div class="box-header with-border">
-				<h3 class="box-title">{{ text.title }}</h3>
-			</div>
-			<div class="box-body">
-				{{ text.content | raw }}
-			</div>
-		</div>
+	<div class="row">
+		{% include 'CantigaCoreBundle:UserAreaRequest:insert-steps.html.twig' with { currentStep: 2, disablePrevious: false, projectId: project.id } %}
 	</div>
-</div>
-<div class="row">
-	<div class="col-md-12">
-		<div class="box">
-			<div class="box-body">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="box box-success">
 				{{ form_start(form) }}
-				<div class="row">
-					<div class="col-md-6 col-xs-12">
-						{{ form_row(form.name) }}
+				<div class="box-header with-border">
+					<i class="fa fa-info"></i> <h3 class="box-title">Podaj informacje o rejonie</h3>
+				</div>	
+				<div class="box-body">
+					{{ text.content | raw }}
+					<hr/>
+					<div class="row">
+						<div class="col-md-6 col-xs-12">
+							{{ form_row(form.name) }}
+						</div>
+						<div class="col-md-6 col-xs-12">
+							{{ form_row(form.territory) }}
+						</div>
 					</div>
-					<div class="col-md-6 col-xs-12">
-						{{ form_row(form.territory) }}
-					</div>
+					{% include formRenderer.template with { 'formRenderer': formRenderer, 'form': form } only %}
 				</div>
-				{% include formRenderer.template with { 'formRenderer': formRenderer, 'form': form } only %}
+				<div class="box-footer">
+					{{ form_widget(form.save) }}
+				</div>
 				{{ form_end(form) }}
 			</div>
 		</div>
 	</div>
-</div>
 {% endblock %}

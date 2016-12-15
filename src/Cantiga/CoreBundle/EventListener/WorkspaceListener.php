@@ -166,7 +166,7 @@ class WorkspaceListener implements WorkspaceSourceInterface
 		$workspace = $event->getWorkspace();
 		$workspace->addWorkgroup(new Workgroup('profile', 'Profile', 'user', 1));
 		
-		$workspace->addRootItem(new WorkItem('user_area_request_insert', 'Request area', 'thumbs-up'));
+		$workspace->addRootItem(new WorkItem('user_area_request_create', 'Request area', 'thumbs-up'));
 		$workspace->addRootItem(new WorkItem('user_area_request_index', 'Your area requests', 'flag-o'));
 	}
 

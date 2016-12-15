@@ -150,7 +150,6 @@ class AreaRequest implements IdentifiableInterface, InsertableEntityInterface, E
 
 	public function setProject($project)
 	{
-		DataMappers::noOverwritingField($this->project);
 		$this->project = $project;
 		return $this;
 	}
@@ -273,7 +272,6 @@ class AreaRequest implements IdentifiableInterface, InsertableEntityInterface, E
 
 	public function setRequestor($requestor)
 	{
-		DataMappers::noOverwritingField($this->requestor);
 		$this->requestor = $requestor;
 		return $this;
 	}
