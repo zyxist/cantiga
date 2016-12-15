@@ -38,9 +38,9 @@ class AreaGroupController extends AreaPageController
 		$area = $membership->getPlace();
 		$group = $area->getGroup();
 		if (null === $area->getGroup()) {
-			return $this->showPageWithError('AreaNotAssignedToGroupMsg', 'area_dashboard', ['slug' => $this->getSlug()]);
+			return $this->showPageWithError('AreaNotAssignedToGroupMsg', 'place_dashboard', ['slug' => $this->getSlug()]);
 		}
-		
+
 		$this->breadcrumbs()
 			->workgroup('community')
 			->entryLink($this->trans('My group', [], 'pages'), 'area_my_group', ['slug' => $this->getSlug()]);
