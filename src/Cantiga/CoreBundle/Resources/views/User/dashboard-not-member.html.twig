@@ -5,7 +5,7 @@
 			<div class="info-box-content">
 				<span class="info-box-text">{{ 'OpenRegistrationsText' | trans([], 'dashboard') }}</span>
 				<span class="info-box-number">{{ areaRegistrationNum }}</span>
-				<span class="info-box-more"><a href="{{ path('user_area_request_insert') }}">{{ 'Enter' | trans([], 'general') }}</a></span>
+				<span class="info-box-more"><a href="{{ path('user_area_request_create') }}">{{ 'Enter' | trans([], 'general') }}</a></span>
 			</div>
           </div>
 	</div>
@@ -41,7 +41,7 @@
 			<div class="icon">
 				<i class="fa fa-thumbs-o-up"></i>
 			</div>
-			<a href="{{ path('user_area_request_insert_cont', { 'projectId': reg.id } ) }}" class="small-box-footer">
+			<a href="{{ path('user_area_request_create', { 'step': 2, 'projectId': reg.id } ) }}" class="small-box-footer">
 				{{ 'RegisterAreaText' | trans([], 'dashboard') }} <i class="fa fa-arrow-circle-right"></i>
 			</a>
           </div>
