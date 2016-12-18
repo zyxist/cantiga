@@ -109,7 +109,8 @@ class UiBlock
 		$userEvent = $this->dispatcher->dispatch(CantigaEvents::UI_USER, new ShowUserEvent());
 		return $this->tpl->render(
 			'CantigaCoreBundle:Components:user-info.html.twig', array(
-			'user' => $userEvent->getUser()
+			'user' => $userEvent->getUser(),
+			'membership' => $userEvent->getMembership()
 		));
 	}
 	

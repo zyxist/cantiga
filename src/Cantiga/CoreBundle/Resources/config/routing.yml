@@ -51,9 +51,6 @@ _user_dashboard_controller:
 _user_area_request_controller:
     resource: "@CantigaCoreBundle/Controller/UserAreaRequestController.php"
     type:     annotation
-_user_place_controller:
-    resource: "@CantigaCoreBundle/Controller/UserPlaceController.php"
-    type:     annotation
     
 _area_mgmt_controller:
     resource: "@CantigaCoreBundle/Controller/AreaMgmtController.php"

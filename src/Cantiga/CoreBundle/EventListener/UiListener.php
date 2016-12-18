@@ -101,6 +101,9 @@ class UiListener
 			$user = $this->tokenStorage->getToken()->getUser();
 			$event->setUser($user);
 		}
+		if ($this->membershipStorage->hasMembership()) {
+			$event->setMembership($this->membershipStorage->getMembership());
+		}
 	}
 
 	public function showTasks(ShowTasksEvent $event)
