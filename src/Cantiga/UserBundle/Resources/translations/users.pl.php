@@ -30,6 +30,8 @@ return [
 	'AccessOthersContactsFromGroupHintText' => 'Czy zezwolić temu użytkownikowi na dostęp do danych kontaktowych członków podległych rejonów?',
 	'AccessOthersContactsFromProjectHintText' => 'Czy zezwolić temu użytkownikowi na dostęp do danych kontaktowych członków podległych grup i rejonów?',
 	
+	'ContactDataRequiredText' => 'Ten projekt wymaga uzupełnionych informacji kontaktowych.',
+	
 	'NoInvitationText' => 'Nikt nie przysłał Ci żadnych zaproszeń.',
 	'Invite to project' => 'Invite to project',
 	'Invite to group' => 'Invite to group',

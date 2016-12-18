@@ -28,6 +28,7 @@ use Cantiga\UserBundle\Form\UserSettingsForm;
 use Cantiga\UserBundle\Intent\EmailChangeIntent;
 use Cantiga\UserBundle\Intent\PasswordChangeIntent;
 use Cantiga\UserBundle\Intent\UserProfilePhotoIntent;
+use Cantiga\UserBundle\Repository\ContactRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -48,7 +49,7 @@ class ProfileController extends UserPageController
 	{
 		$this->breadcrumbs()->workgroup('profile');
 	}
-	
+
 	/**
 	 * @Route("/contact-data", name="user_profile_contact_data")
 	 */
@@ -59,31 +60,49 @@ class ProfileController extends UserPageController
 			'location' => $this->getUser()->getLocation()
 		]);
 	}
-	
+
 	/**
 	 * @Route("/contact-data/projects", name="user_profile_contact_data_api_projects")
 	 */
 	public function apiLoadProjectContactsAction(Request $request)
 	{
-		return new JsonResponse(['success' => 1, 'projects' => [0 =>
-			['id' => 1, 'name' => 'ABC', 'email' => 'mock@example.com', 'telephone' => '123-456-789', 'notes' => 'Test notes', 'required' => 1],
-		]]);
+		return new JsonResponse(['success' => 1, 'projects' => 
+			$this->getContactRepository()->findAllContactData($this->getUser())
+		]);
 	}
-	
+
 	/**
 	 * @Route("/contact-data/project", name="user_profile_contact_data_api_project_update")
 	 * @Method({"POST"})
 	 */
 	public function apiContactUpdateAction(Request $request)
 	{
-		$id = $request->get('id');
-		$email = $request->get('email');
-		$telephone = $request->get('telephone');
-		$notes = $request->get('notes');
+		try {
+			$id = $request->get('id');
+			$notes = $request->get('notes');
+			$email = filter_var($request->get('email'), FILTER_VALIDATE_EMAIL);
+			$telephone = filter_var($request->get('telephone'), FILTER_SANITIZE_STRING);
+
+			if (false === $email || strlen($email) == 0 || strlen($email) > 100) {
+				throw new \Exception('Please provide a valid e-mail addres no longer than 100 characters.');
+			}
+			if (false === $telephone || strlen($telephone) == 0 || strlen($telephone) > 30) {
+				throw new \Exception('Please provide a valid telephone number no longer than 30 characters.');
+			}
+
+			$contactData = $this->getContactRepository()->findContactData($this->getContactRepository()->getPlaceProjectById($id), $this->getUser());
+			$contactData->setEmail($email)
+				->setTelephone($telephone)
+				->setNotes($notes);
+
+			$this->getContactRepository()->persistContactData($contactData);
 		
-		return new JsonResponse(['success' => 1, 'project' =>
-			['id' => $id, 'name' => 'ABC', 'email' => $email, 'telephone' => $telephone, 'notes' => $notes, 'required' => 1],
-		]);
+			return new JsonResponse(['success' => 1, 'project' =>
+				$contactData->asArray(),
+			]);
+		} catch (\Exception $exception) {
+			return new JsonResponse(['success' => 0, 'error' => $this->trans($exception->getMessage(), [], 'validators')]);
+		}
 	}
 	
 	/**
@@ -199,5 +218,10 @@ class ProfileController extends UserPageController
 				$intent->execute();
 			})
 			->run($this, $request);
+	}
+	
+	private function getContactRepository(): ContactRepository
+	{
+		return $this->get('cantiga.user.repo.contact');
 	}
 }

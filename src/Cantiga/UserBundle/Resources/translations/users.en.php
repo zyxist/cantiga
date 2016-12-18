@@ -30,6 +30,8 @@ return [
 	'AccessOthersContactsFromGroupHintText' => 'Allows this user to additionally see the contact data of members of dependent areas.',
 	'AccessOthersContactsFromProjectHintText' => 'Allows this user to additionally see the contact data of members of dependent groups and areas.',
 	
+	'ContactDataRequiredText' => 'This project requires contact data to be provided.',
+	
 	'NoInvitationText' => 'Nobody has sent you invitations.',
 	'Invite to project' => 'Invite to project',
 	'Invite to group' => 'Invite to group',

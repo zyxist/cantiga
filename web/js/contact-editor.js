@@ -34,7 +34,7 @@
 				modal.find('#contact-data-required').hide();
 			}
 			
-			modal.find('#contact-mail').text(item['email']);
+			modal.find('#contact-mail').val(item['email']);
 			modal.find('#contact-telephone').val(item['telephone']);
 			modal.find('#notes').val(item['notes']);
 			modal.find('#update-modal-save').unbind('click').click(function(data) {

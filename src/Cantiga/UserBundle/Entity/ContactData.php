@@ -102,6 +102,18 @@ class ContactData
 		return $this;
 	}
 	
+	public function asArray(): array
+	{
+		return [
+			'id' => $this->project->getPlace()->getId(),
+			'name' => $this->project->getName(),
+			'email' => $this->email,
+			'telephone' => $this->telephone,
+			'notes' => $this->notes,
+			'required' => 1,
+		];
+	}
+	
 	public function update(Connection $conn)
 	{
 		$contacts = $conn->fetchAssoc('SELECT * FROM `'.CoreTables::CONTACT_TBL.'` WHERE `userId` = :userId AND `placeId` = :placeId FOR UPDATE', [
