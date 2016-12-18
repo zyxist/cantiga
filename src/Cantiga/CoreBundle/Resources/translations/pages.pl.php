@@ -1,5 +1,5 @@
 <?php
-return array(
+return [
 	'Dashboard' => 'Przegląd',
 	'User workspace' => 'Przestrzeń użytkownika',
 	'Area workspace' => 'Przestrzeń rejonu',
@@ -48,9 +48,6 @@ return array(
 	'Group categories' => 'Kategorie grup',
 	'Groups' => 'Grupy',
 	'Areas' => 'Rejony',
-	'Project members' => 'Członkowie projektu',
-	'Group members' => 'Członkowie grupy',
-	'Area members' => 'Członkowie rejonu',
 	'Area statistics' => 'Statystyki rejonów',
 	'Territories' => 'Terytoria',
 	'Magic buttons' => 'Magiczne przyciski',
@@ -68,7 +65,6 @@ return array(
 	'Application texts' => 'Teksty aplikacji',
 	'Mail templates' => 'Szablony e-maili',
 	'Area status' => 'Statusy rejonów',
-	'Project membership' => 'Członkowie projektów',
 	
 	// General pages
 	'Sign out' => 'Wyloguj',
@@ -97,9 +93,6 @@ return array(
 	'Explore submitted area requests' => 'Przeglądaj nadesłane zgłoszenia rejonów',
 	'Organize the areas and users into groups to ease the management' => 'Łącz rejony oraz użytkowników w grupy, aby ułatwić zarządzanie',
 	'Categorize your groups to ease the management and searching' => 'Podziel grupy na kategorie, aby ułatwić zarządzanie i wyszukiwanie',
-	'Manage members of this area' => 'Zarządzaj listą członków tego rejonu',
-	'Manage members of this group' => 'Zarządzaj listą członków tej grupy',
-	'Manage members of this project' => 'Zarządzaj listą członków tego projektu',
 	'Manage available status flags of areas' => 'Zdefiniuj dostępne flagi statusu rejonów',
 	'Manage the areas in this project' => 'Zarządzaj rejonami w tym projekcie',
 	'Analyze the data through charts' => 'Analizuj informacje w postaci wykresów',
@@ -115,4 +108,4 @@ return array(
 	'Manage the system languages available for the users' => 'Zarządzaj językami systemowymi dostępnymi dla użytkowników',
 	'Manage texts displayed in various places of the application' => 'Zarządzaj tekstami wyświetlanymi w różnych częściach aplikacji',
 	'Manage the messages sent to the users' => 'Zarządzaj treścią wiadomości wysyłanych do użytkowników',
-);
+];
