@@ -19,6 +19,7 @@
 namespace Cantiga\UserBundle\Controller;
 
 use Cantiga\Components\Hierarchy\HierarchicalInterface;
+use Cantiga\CoreBundle\Api\Controller\WorkspaceController;
 use Cantiga\CoreBundle\Entity\Invitation;
 use Cantiga\CoreBundle\Form\InvitationForm;
 use Cantiga\Metamodel\Exception\ModelException;
