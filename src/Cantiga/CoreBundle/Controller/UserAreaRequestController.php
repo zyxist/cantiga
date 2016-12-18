@@ -241,12 +241,13 @@ class UserAreaRequestController extends UserPageController
 	
 	public function createStep4($projectId, Request $request)
 	{
-		if (!ctype_digit($projectId)) {
+		$session = $request->getSession();
+		if (!ctype_digit($projectId) || !$this->getAreaRequestFlow()->isCompleted($session)) {
 			return $this->redirectToBeginning();
 		}
 		try {
 			list($settings, $project, $formModel) = $this->loadEnvironment($projectId);			
-			$id = $this->getAreaRequestFlow()->create($request->getSession(), $project, $this->getUser());		
+			$id = $this->getAreaRequestFlow()->create($session, $project, $this->getUser());		
 			return $this->render($this->crudInfo->getTemplateLocation().'insert-step4.html.twig', ['project' => $project, 'id' => $id]);
 		} catch (ModelException $ex) {
 			return $this->showPageWithError($this->trans($ex->getMessage()), $this->crudInfo->getIndexPage());

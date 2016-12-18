@@ -80,6 +80,11 @@ class AreaRequestFlow
 		$session->set(self::CONTACT_KEY, serialize($contactData));
 	}
 	
+	public function isCompleted(Session $session): bool
+	{
+		return $session->has(self::REQUEST_KEY) && $session->has(self::CONTACT_KEY);
+	}
+	
 	public function create(Session $session, HierarchicalInterface $project, CantigaUserRefInterface $requestor): int
 	{
 		list($areaRequest, $contactData) = $this->unpackObjects($session, $project, $requestor);
