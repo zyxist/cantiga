@@ -18,7 +18,6 @@
  */
 namespace Cantiga\UserBundle\Controller;
 
-use Cantiga\Components\Hierarchy\Entity\Membership;
 use Cantiga\Components\Hierarchy\HierarchicalInterface;
 use Cantiga\CoreBundle\Api\Controller\WorkspaceController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;

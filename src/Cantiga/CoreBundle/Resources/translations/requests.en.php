@@ -9,6 +9,7 @@ return [
 	'ProvideContactDataText' => 'Provide contact data',
 	'WaitForVerificationText' => 'Wait for verification of the request',
 	
+	'InvitationProvideContactDataInformationText' => 'The project 0, which the invitation is associated with, requires you to provide your contact data. We collect it for the purpose of the collaboration on the project.',
 	'ProvideContactDataInformationText' => 'To create an area in project 0 you need to provide your contact data. We collect it for the purpose of the verification of the requests, and further collaboration on a project.',
 	'EditInfoText' => 'To edit the contact data at any time, and learn who can see them, visit the following page:',
 	'ContactDataLinkName' => 'Your profile > Contact data',

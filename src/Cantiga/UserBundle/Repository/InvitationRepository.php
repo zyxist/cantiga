@@ -18,13 +18,14 @@
  */
 namespace Cantiga\UserBundle\Repository;
 
+use Cantiga\Components\Hierarchy\MembershipRepositoryInterface;
+use Cantiga\Components\Hierarchy\User\CantigaUserRefInterface;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Invitation;
 use Cantiga\CoreBundle\Entity\User;
 use Cantiga\CoreBundle\Event\CantigaEvents;
 use Cantiga\CoreBundle\Event\InvitationEvent;
 use Cantiga\CoreBundle\Event\UserEvent;
-use Cantiga\Components\Hierarchy\MembershipRepositoryInterface;
 use Cantiga\Metamodel\Exception\DuplicateItemException;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Transaction;
@@ -103,6 +104,28 @@ class InvitationRepository
 			. 'INNER JOIN `'.CoreTables::USER_TBL.'` u ON u.`id` = i.`inviterId` '
 			. 'WHERE i.`userId` = :userId '
 			. 'ORDER BY i.`id` DESC', [':userId' => $user->getId()]);
+	}
+	
+	/**
+	 * Finds the invitation of the given ID. An exception is thrown, if the invitation does not exist.
+	 * 
+	 * @param int $id ID
+	 * @param CantigaUserRefInterface $user Invited user.
+	 * @return Found invitation
+	 */
+	public function getItem($id, CantigaUserRefInterface $user): Invitation
+	{
+		$this->transaction->requestTransaction();
+		try {
+			$item = Invitation::fetchByUser($this->conn, $id, $user);
+			if (false === $item) {
+				throw new ItemNotFoundException('The specified invitation has not been found.', $id);
+			}
+			return $item;			
+		} catch (Exception $ex) {
+			$this->transaction->requestRollback();
+			throw $ex;
+		}
 	}
 	
 	/**

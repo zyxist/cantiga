@@ -1,0 +1,36 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ 'Invitation: 0' | trans([invitation.place.name], 'pages') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ 'Provide contact data' | trans([], 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+	<div class="row">
+		<div class="col-lg-6 col-md-12 col-lg-offset-3 col-md-offset-0">
+			<div class="box box-success">
+				{{ form_start(form) }}
+				<div class="box-header with-border">
+					<i class="fa fa-phone"></i> <h3 class="box-title">{{ 'ProvideContactDataText' | trans([], 'requests') }}</h3>
+				</div>				
+				<div class="box-body">
+					<p>{{ 'InvitationProvideContactDataInformationText' | trans([project.name, invitation.place.name], 'requests') }}</p>
+					<p>
+						{{ 'EditInfoText' | trans([], 'requests') }} <a href="#">{{ 'ContactDataLinkName' | trans([], 'requests') }}</a>
+					</p>
+					<hr/>
+					{{ form_row(form.email) }}
+					{{ form_row(form.telephone) }}
+					{{ form_row(form.notes) }}
+				</div>
+				<div class="box-footer">
+					{{ form_widget(form.save) }}
+				</div>
+				{{ form_end(form) }}
+			</div>
+		</div>
+	</div>
+{% endblock %}

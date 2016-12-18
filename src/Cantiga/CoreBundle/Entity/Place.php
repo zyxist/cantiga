@@ -138,9 +138,9 @@ class Place implements IdentifiableInterface, InsertableEntityInterface, Editabl
 		return $this->memberNum;
 	}
 
-	public function getRootPlaceId()
+	public function getRootPlaceId(): int
 	{
-		return $this->rootPlaceId;
+		return (int) $this->rootPlaceId;
 	}
 
 	public function setMemberNum($memberNum): self

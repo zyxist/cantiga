@@ -10,6 +10,8 @@ return [
 	'InviteToGroupTitle: 0' => 'Zaproś do grupy: 0',
 	'InviteToProjectTitle: 0' => 'Zaproś do projektu: 0',
 	
+	'Invitation: 0' => 'Zaproszenie: 0',
+	
 	// subtitles
 	'Explore your colleagues' => 'Poznaj swoich współpracowników',
 	'View member profile' => 'Oglądaj profil współpracownika',
@@ -23,4 +25,6 @@ return [
 	'InviteNewPeopleAreaText' => 'Zaproś nowe osoby do współpracy w rejonie',
 	'InviteNewPeopleGroupText' => 'Zaproś nowe osoby do współpracy w grupie',
 	'InviteNewPeopleProjectText' => 'Zaproś nowe osoby do współpracy w projekcie',
+	
+	'Provide contact data' => 'Uzupełnij dane kontaktowe'
 ];

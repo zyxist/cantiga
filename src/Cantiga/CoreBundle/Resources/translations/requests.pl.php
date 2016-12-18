@@ -9,6 +9,7 @@ return [
 	'ProvideContactDataText' => 'Uzupełnij dane kontaktowe',
 	'WaitForVerificationText' => 'Zaczekaj na weryfikację zgłoszenia',
 	
+	'InvitationProvideContactDataInformationText' => 'Projekt 0, z którym związane jest to zaproszenie, wymaga podania poprawnych danych kontaktowych. Zbieramy je, aby mieć możliwość kontaktowania się z Tobą w ramach prac nad projektem.',
 	'ProvideContactDataInformationText' => 'Do utworzenia rejonu w projekcie 0 wymagane jest podanie poprawnych danych kontaktowych. Zbieramy je w celu weryfikacji zgłoszenia oraz aby móc skontaktować się z Tobą w ramach prac nad projektem.',
 	'EditInfoText' => 'Aby edytować w późniejszym czasie swoje dane oraz zapoznać się z tym, kto ma do nich dostęp, zajrzyj na następującą stronę:',
 	'ContactDataLinkName' => 'Twój profil > Dane kontaktowe',

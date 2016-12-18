@@ -20,6 +20,8 @@ namespace Cantiga\UserBundle\Repository;
 
 use Cantiga\Components\Hierarchy\HierarchicalInterface;
 use Cantiga\Components\Hierarchy\User\CantigaUserRefInterface;
+use Cantiga\CoreBundle\Entity\Place;
+use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\Metamodel\Transaction;
 use Cantiga\UserBundle\Entity\ContactData;
 use Doctrine\DBAL\Connection;
@@ -48,7 +50,7 @@ class ContactRepository
 	 * Finds the contact data for the given project. Empty entity is returned, if the user has not configured
 	 * any contact data for this project yet.
 	 * 
-	 * @param \Cantiga\Components\Hierarchy\HierarchicalInterface $project
+	 * @param HierarchicalInterface $project
 	 * @param \Cantiga\UserBundle\Repository\CantigaUserRefInterface $user
 	 * @return Contact data entity
 	 */
@@ -67,6 +69,27 @@ class ContactRepository
 		$this->transaction->requestTransaction();
 		try {
 			$contactData->update($this->conn);
+		} catch (Exception $ex) {
+			$this->transaction->requestRollback();
+		}
+	}
+	
+	/**
+	 * Contact data is linked to projects, whereas usually we have an access to the instance of the related
+	 * place. This method allows finding the project associated with the given place.
+	 * 
+	 * @param \Cantiga\UserBundle\Repository\Place $place
+	 * @return Associated project.
+	 */
+	public function getPlaceProject(Place $place): Project
+	{
+		$this->transaction->requestTransaction();
+		try {
+			$project = Project::fetchByPlaceRef($this->conn, $place->getRootPlaceId());
+			if (false === $project) {
+				throw new ItemNotFoundException('The specified project has not been found.');
+			}
+			return $project;
 		} catch (Exception $ex) {
 			$this->transaction->requestRollback();
 		}

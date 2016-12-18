@@ -111,13 +111,28 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 		return $item;
 	}
 
-	public static function fetchByPlaceRef(Connection $conn, PlaceRef $place)
+	/**
+	 * Fetches the project by the place. The place can be given either as an object, or as an ID.
+	 * 
+	 * @param Connection $conn
+	 * @param PlaceRef|int $place
+	 * @return Project instance or FALSE
+	 */
+	public static function fetchByPlaceRef(Connection $conn, $place)
 	{
+		if (is_int($place)) {
+			$placeId = (int) $place;
+		} elseif ($place instanceof PlaceRef) {
+			$placeId = $place->getId();
+		} else {
+			throw new \InvalidArgumentException('The second argument of Project::fetchByPlaceRef() must be PlaceRef instance or integer.');
+		}
+	
 		$data = $conn->fetchAssoc('SELECT p.*, '
 			. self::createPlaceFieldList()
 			. 'FROM `'.CoreTables::PROJECT_TBL.'` p '
 			. self::createPlaceJoin('p')
-			. 'WHERE p.`placeId` = :placeId', [':placeId' => $place->getId()]);
+			. 'WHERE p.`placeId` = :placeId', [':placeId' => $placeId]);
 		if(false === $data) {
 			return false;
 		}
@@ -125,6 +140,8 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 		$project->place = Place::fromArray($data, 'place');
 		return $project;
 	}
+	
+
 	
 	/**
 	 * @param Connection $conn
