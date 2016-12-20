@@ -1,17 +1,22 @@
-<h4>{{ 'Recent area requests' | trans }}</h4>
-<div class="box">
-	<div class="box-body no-padding">
-		<table class="table table-hover">
-			<tbody>
-				{% for request in requests %}
-				<tr>
-					<td><a href="{{ spath('project_area_request_info', {'id': request.id} ) }}">{{ request.name }}</a></td>
-					<td><img src="{{ asset(avatar(request, 32)) }}" class="img-circle" width="24" /> {{ request.username }}</td>
-					<td width="70"><span class="label label-{{request.statusLabel}}">{{ request.statusText | trans([], 'statuses') }}</span></td>
-					<td>{{ ago(request.createdAt) }}</td>
-				</tr>
-				{% endfor %}
-			</tbody>	
-		</table>
-	</div>	
+<div class="col-lg-12">
+	<div class="box box-primary">
+		<div class="box-header with-border">
+			<i class="fa fa-handshake-o"></i>
+			<h3 class="box-title">{{ 'Recent area requests' | trans }}</h3>
+		</div>
+		<div class="box-body no-padding">
+			<table class="table table-hover">
+				<tbody>
+					{% for request in requests %}
+					<tr>
+						<td><a href="{{ spath('project_area_request_info', {'id': request.id} ) }}">{{ request.name }}</a></td>
+						<td><img src="{{ asset(avatar(request, 32)) }}" class="img-circle" width="24" /> {{ request.username }}</td>
+						<td width="70"><span class="label label-{{request.statusLabel}}">{{ request.statusText | trans([], 'statuses') }}</span></td>
+						<td>{{ ago(request.createdAt) }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>	
+			</table>
+		</div>
+	</div>
 </div>
