@@ -213,9 +213,25 @@ class MilestoneStatusRepository
 		}
 	}
 	
-	public function findClosestDeadline(Place $entity, Project $project)
+	public function findNearestMilestones(Place $place, Project $project, $timestamp): array
 	{
-		return Milestone::fetchClosestDeadline($this->conn, $entity, $project);
+		$args = [':placeId' => $place->getId(), ':projectId' => $project->getId(), ':now' => $timestamp];
+		$pastMilestones = array_reverse($this->conn->fetchAll('SELECT m.`id`, m.`name`, m.`deadline`, s.`progress`, 0 AS `future` '
+				. 'FROM `'.MilestoneTables::MILESTONE_TBL.'` m '
+				. 'INNER JOIN `'.MilestoneTables::MILESTONE_STATUS_TBL.'` s ON m.`id` = s.`milestoneId` '
+				. 'WHERE s.`entityId` = :placeId AND m.`projectId` = :projectId AND m.`deadline` < :now '
+				. 'ORDER BY m.`deadline` DESC, m.`displayOrder` DESC LIMIT 2', $args));
+		$futureMilestoneLimit = 5 - sizeof($pastMilestones);
+		$futureMilestones = $this->conn->fetchAll('SELECT m.`id`, m.`name`, m.`deadline`, s.`progress`, 1 AS `future` '
+				. 'FROM `'.MilestoneTables::MILESTONE_TBL.'` m '
+				. 'INNER JOIN `'.MilestoneTables::MILESTONE_STATUS_TBL.'` s ON m.`id` = s.`milestoneId` '
+				. 'WHERE s.`entityId` = :placeId AND m.`projectId` = :projectId AND m.`deadline` > :now '
+				. 'ORDER BY m.`deadline`, m.`displayOrder` LIMIT '.$futureMilestoneLimit, $args);
+		$final = array_merge($pastMilestones, $futureMilestones);
+		foreach ($final as &$item) {
+			$item['progressColor'] = Milestone::getProgressColor($item['progress']);
+		}
+		return $final;
 	}
 	
 	public function isAllowed(Place $entity, HierarchicalInterface $who, $editable = false)

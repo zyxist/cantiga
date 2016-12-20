@@ -24,6 +24,7 @@ use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Group;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\Metamodel\Transaction;
+use Cantiga\MilestoneBundle\Entity\Milestone;
 use Cantiga\MilestoneBundle\MilestoneTables;
 use Doctrine\DBAL\Connection;
 use PDO;
@@ -143,15 +144,7 @@ class MilestoneSummaryRepository
 		} else {
 			$result['progress'] = round($result['completedNum'] / $totalMilestones * 100);
 		}
-		if ($result['progress'] < 50) {
-			$result['progressColor'] = 'danger';
-			$result['badgeColor'] = 'red';
-		} elseif ($result['progress'] < 80) {
-			$result['progressColor'] = 'warning';
-			$result['badgeColor'] = 'orange';
-		} else {
-			$result['progressColor'] = 'success';
-			$result['badgeColor'] = 'green';
-		}
+		$result['progressColor'] = Milestone::getProgressColor($result['progress']);
+		$result['badgeColor'] = Milestone::getBadgeColor($result['progress']);
 	}
 }

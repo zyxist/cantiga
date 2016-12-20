@@ -75,18 +75,6 @@ class Milestone implements IdentifiableInterface, InsertableEntityInterface, Edi
 		return $item;
 	}
 	
-	public static function fetchClosestDeadline(Connection $conn, Place $entity, Project $project)
-	{
-		$data = $conn->fetchAssoc('SELECT * FROM `'.MilestoneTables::MILESTONE_TBL.'` WHERE `deadline` > :currentTime AND `projectId` = :projectId AND `entityType` = :entityType ORDER BY `deadline`', [
-			':currentTime' => time(), ':projectId' => $project->getId(), ':entityType' => $entity->getType()]);
-		if (empty($data)) {
-			return false;
-		}
-		$item = self::fromArray($data);
-		$item->project = $project;
-		return $item;
-	}
-	
 	public static function populateEntities(Connection $conn, Place $newEntity, Project $project)
 	{
 		$conn->insert(MilestoneTables::MILESTONE_PROGRESS_TBL, ['entityId' => $newEntity->getId(), 'completedNum' => 0]);
@@ -441,6 +429,31 @@ class Milestone implements IdentifiableInterface, InsertableEntityInterface, Edi
 			'progress' => $progress,
 			'completedAt' => $completedAt
 		], $timeFormatter, $editable);
+	}
+	
+	public static function getProgressColor($progress): string
+	{
+		if ($progress < 50) {
+			return 'danger';
+			$result['badgeColor'] = 'red';
+		} elseif ($progress < 80) {
+			return 'warning';
+			$result['badgeColor'] = 'orange';
+		} else {
+			return 'success';
+			$result['badgeColor'] = 'green';
+		}
+	}
+	
+	public static function getBadgeColor($progress): string
+	{
+		if ($progress < 50) {
+			return 'red';
+		} elseif ($progress < 80) {
+			return 'orange';
+		} else {
+			return 'green';
+		}
 	}
 	
 	public static function processStatus(array $row, TimeFormatterInterface $timeFormatter, $editable)

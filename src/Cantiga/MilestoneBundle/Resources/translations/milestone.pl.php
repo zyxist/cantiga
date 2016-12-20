@@ -2,6 +2,7 @@
 return [
 	'Overall progress' => 'Łączny postęp',
 	'Select:' => 'Wybierz:',
+	'Incoming deadlines' => 'Nadchodzące terminy',
 	'Milestone' => 'Kamień milowy',
 	'Progress' => 'Postęp',
 	'Deadline' => 'Termin ukończenia',

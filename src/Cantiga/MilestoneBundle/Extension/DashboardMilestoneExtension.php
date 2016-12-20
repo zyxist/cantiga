@@ -58,8 +58,8 @@ class DashboardMilestoneExtension implements DashboardExtensionInterface
 	{
 		$place = $this->membershipStorage->getMembership()->getPlace()->getPlace();
 		return $this->templating->render('CantigaMilestoneBundle:Dashboard:milestone-progress.html.twig', [
+			'milestones' => $this->repository->findNearestMilestones($place, $project, time()),
 			'progress' => $this->repository->computeTotalProgress($place, $project),
-			'incomingDeadline' => $this->repository->findClosestDeadline($place, $project),
 			'milestoneEditorPage' => lcfirst($place->getType()).'_milestone_editor',
 		]);
 	}
