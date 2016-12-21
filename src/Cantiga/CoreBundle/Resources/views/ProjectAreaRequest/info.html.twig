@@ -95,7 +95,21 @@
 										<td width="30%">{{ 'Location' | trans }}</td>
 										<td>{{ item.requestor.location }}</td>
 									</tr>
-								</tbody>								
+									{% if membership.showDownstreamContactData and item.contactData %}
+									<tr>
+										<td width="30%">{{ 'E-mail' | trans([], 'users') }}</td>
+										<td><a href="mailto:{{ item.contactData.email }}">{{ item.contactData.email }}</a></td>
+									</tr>
+									<tr>
+										<td width="30%">{{ 'Phone number' | trans([], 'users') }}</td>
+										<td>{{ item.contactData.telephone }}</td>
+									</tr>
+									<tr>
+										<td width="30%">{{ 'About' | trans([], 'users') }}</td>
+										<td>{{ item.contactData.notes }}</td>
+									</tr>
+									{% endif %}
+								</tbody>				
 							</table>
 						</div>
 					</div>

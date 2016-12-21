@@ -18,6 +18,7 @@
  */
 namespace Cantiga\CoreBundle\Repository;
 
+use Cantiga\Components\Hierarchy\MembershipRoleResolverInterface;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\AreaRequest;
 use Cantiga\CoreBundle\Entity\Project;
@@ -29,11 +30,11 @@ use Cantiga\CoreBundle\Event\CantigaEvents;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Exception\ModelException;
-use Cantiga\Components\Hierarchy\MembershipRoleResolverInterface;
 use Cantiga\Metamodel\QueryBuilder;
 use Cantiga\Metamodel\QueryClause;
 use Cantiga\Metamodel\TimeFormatterInterface;
 use Cantiga\Metamodel\Transaction;
+use Cantiga\UserBundle\Entity\ContactData;
 use Doctrine\DBAL\Connection;
 use Exception;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -84,10 +85,7 @@ class ProjectAreaRequestRepository
 		$this->project = $project;
 	}
 	
-	/**
-	 * @return DataTable
-	 */
-	public function createDataTable()
+	public function createDataTable(): DataTable
 	{
 		$dt = new DataTable();
 		$dt->id('id', 'i.id')
@@ -140,18 +138,20 @@ class ProjectAreaRequestRepository
 		);
 	}
 	
-	/**
-	 * @return AreaRequest
-	 */
-	public function getItem($id)
+	public function getItem($id): AreaRequest
 	{
 		$this->transaction->requestTransaction();
-		$item = AreaRequest::fetchByProject($this->conn, $id, $this->project);
-		if(null === $item) {
+		try {
+			$item = AreaRequest::fetchByProject($this->conn, $id, $this->project);
+			if(null === $item) {
+				throw new ItemNotFoundException('The specified item has not been found.', $id);
+			}
+			$item->setContactData(ContactData::findContactData($this->conn, $this->project, $item->getRequestor()));
+			return $item;
+		} catch (Exception $exception) {
 			$this->transaction->requestRollback();
-			throw new ItemNotFoundException('The specified item has not been found.', $id);
+			throw $exception;
 		}
-		return $item;
 	}
 	
 	public function getFeedback(AreaRequest $item)

@@ -18,15 +18,16 @@
  */
 namespace Cantiga\CoreBundle\Entity;
 
+use Cantiga\Components\Hierarchy\MembershipRoleResolverInterface;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\Metamodel\Capabilities\EditableEntityInterface;
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
 use Cantiga\Metamodel\Capabilities\InsertableEntityInterface;
 use Cantiga\Metamodel\Capabilities\RemovableEntityInterface;
 use Cantiga\Metamodel\DataMappers;
-use Cantiga\Components\Hierarchy\MembershipRoleResolverInterface;
 use Cantiga\Metamodel\QueryClause;
 use Cantiga\Metamodel\TimeFormatterInterface;
+use Cantiga\UserBundle\Entity\ContactData;
 use Doctrine\DBAL\Connection;
 use PDO;
 use Symfony\Component\Validator\Constraints\Length;
@@ -53,6 +54,7 @@ class AreaRequest implements IdentifiableInterface, InsertableEntityInterface, E
 	private $commentNum;
 	private $postedMessage = null;
 	
+	private $contactData;
 	private $oldTerritory;
 	
 	public static function fetchByRequestor(Connection $conn, $id, User $requestor)
@@ -222,6 +224,17 @@ class AreaRequest implements IdentifiableInterface, InsertableEntityInterface, E
 		return $this->verifier;
 	}
 	
+	public function getContactData()
+	{
+		return $this->contactData;
+	}
+
+	public function setContactData(ContactData $contactData): self
+	{
+		$this->contactData = $contactData;
+		return $this;
+	}
+		
 	public static function statusLabel($status)
 	{
 		switch($status) {

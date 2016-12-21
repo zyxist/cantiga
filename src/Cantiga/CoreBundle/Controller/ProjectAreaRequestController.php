@@ -20,6 +20,7 @@
 
 namespace Cantiga\CoreBundle\Controller;
 
+use Cantiga\Components\Hierarchy\Entity\Membership;
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
 use Cantiga\CoreBundle\Api\Actions\InfoAction;
 use Cantiga\CoreBundle\Api\Actions\QuestionHelper;
@@ -119,10 +120,11 @@ class ProjectAreaRequestController extends ProjectPageController
 	/**
 	 * @Route("/{id}/info", name="project_area_request_info")
 	 */
-	public function infoAction($id, Request $request)
+	public function infoAction($id, Request $request, Membership $membership)
 	{
 		$action = new InfoAction($this->crudInfo);
 		$action->slug($this->getSlug());
+		$action->set('membership', $membership);
 		return $action->run($this, $id, function(AreaRequest $item) use ($request) {
 				$formModel = $this->extensionPointFromSettings(CoreExtensions::AREA_REQUEST_FORM, CoreSettings::AREA_REQUEST_FORM);
 				return [
