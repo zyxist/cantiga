@@ -168,6 +168,7 @@ class DiscussionController extends WorkspaceController
 			$day['timeFormatted'] = $timeFormatter->format(TimeFormatter::FORMAT_DATE_LONG, $day['time']);
 			foreach ($day['posts'] as &$post) {
 				$post['createdAtFormatted'] = $timeFormatter->format(TimeFormatter::FORMAT_LONG, $post['createdAt']);
+				$post['profileUrl'] = $this->generateUrl('memberlist_profile', ['slug' => $this->getSlug(), 'id' => $post['userId']]);
 			}
 		}
 		return $recentPosts;

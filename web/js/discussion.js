@@ -24,7 +24,7 @@
 				for (j in data.days[i]['posts']) {
 					var icon = $('<i/>', {'class': 'fa fa-envelope bg-blue'});
 					var postTime = $('<span class="time"><i class="fa fa-clock-o"> '+data.days[i]['posts'][j]['createdAtFormatted']+'</i>');
-					var postHeader = $('<h3 class="timeline-header"><img src="'+createAvatarPath(data.days[i]['posts'][j]['avatar'])+'" alt="av" width="24" class="img-circle" /> <a href="#">'+data.days[i]['posts'][j]['userName']+'</a></h3>');
+					var postHeader = $('<h3 class="timeline-header"><img src="'+createAvatarPath(data.days[i]['posts'][j]['avatar'])+'" alt="av" width="24" class="img-circle" /> <a href="'+data.days[i]['posts'][j]['profileUrl']+'">'+data.days[i]['posts'][j]['userName']+'</a></h3>');
 					var postContent = $('<div class="timeline-body">' + data.days[i]['posts'][j]['content'] + '</div>');
 					var postFooter = $('<div class="timeline-footer" />');
 					var timelineItem = $('<div/>', {'class': 'timeline-item'}).append(postTime).append(postHeader).append(postContent).append(postFooter);

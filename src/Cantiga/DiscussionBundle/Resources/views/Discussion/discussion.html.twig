@@ -32,7 +32,7 @@
 					<i class="fa fa-envelope bg-blue"></i>
 					<div class="timeline-item">
 						<span class="time"><i class="fa fa-clock-o"></i> {{ format_time(TimeFormatter.FORMAT_LONG, post.createdAt) }}</span>
-						<h3 class="timeline-header"><img src="{{ asset(avatar(post, 32)) }}" alt="av" width="24" class="img-circle" /> <a href="#">{{ post.userName }}</a></h3>
+						<h3 class="timeline-header"><img src="{{ asset(avatar(post, 32)) }}" alt="av" width="24" class="img-circle" /> <a href="{{ spath('memberlist_profile', {'id': post.userId }) }}">{{ post.userName }}</a></h3>
 
 						<div class="timeline-body">
 							{{ post.content | raw }}
