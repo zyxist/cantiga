@@ -1,6 +1,15 @@
-<h4>{{ 'Important links' | trans([], 'pages') }}</h4>
-<div class="list-group">
-	{% for link in links %}
-	<a href="{{link.url}}" class="list-group-item">{{link.name}}</a>
-	{% endfor %}
+<div class="col-lg-12">
+	<div class="box box-purple">
+		<div class="box-header with-border">
+			<i class="fa fa-link"></i>
+			<h3 class="box-title">{{ 'Important links' | trans([], 'pages') }}</h3>
+		</div>
+		<div class="box-body">
+			<div class="list-group">
+				{% for link in links %}
+				<a href="{{link.url}}" class="list-group-item">{{link.name}}</a>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
 </div>
