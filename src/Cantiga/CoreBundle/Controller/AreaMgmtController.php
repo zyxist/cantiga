@@ -18,6 +18,7 @@
  */
 namespace Cantiga\CoreBundle\Controller;
 
+use Cantiga\Components\Hierarchy\Entity\Member;
 use Cantiga\Components\Hierarchy\Entity\Membership;
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
 use Cantiga\CoreBundle\Api\Actions\EditAction;
@@ -107,7 +108,7 @@ class AreaMgmtController extends WorkspaceController
 	/**
 	 * @Route("/list", name="area_mgmt_api_list")
 	 */
-	public function ajaxListAction(Request $request)
+	public function apiListAction(Request $request)
 	{
 		$filter = $this->get(self::FILTER_NAME);
 		$filter->setTargetProject($this->getActiveProject());
@@ -128,12 +129,20 @@ class AreaMgmtController extends WorkspaceController
 	/**
 	 * @Route("/{id}/members", name="area_mgmt_api_members")
 	 */
-	public function ajaxMembersAction($id, Request $request)
+	public function apiMembersAction($id, Request $request, Membership $membership)
 	{
 		try {
 			$repository = $this->get(self::REPOSITORY_NAME);
 			$item = $repository->getItem($id);
-			return new JsonResponse(['status' => 1, 'data' => $repository->findMembers($item)]);
+			return new JsonResponse(['status' => 1, 'data' => Member::collectionAsArray($repository->findMembers($item), function(array $user) use($membership) {
+				$user['url'] = $this->generateUrl('memberlist_profile', ['slug' => $this->getSlug(), 'id' => $user['id']]);
+				if (!$membership->getShowDownstreamContactData()) {
+					$user['contactMail'] = '';
+					$user['contactTelephone'] = '';
+					$user['userNotes'] = '';
+				}
+				return $user;
+			})]);
 		} catch (ItemNotFoundException $exception) {
 			return new JsonResponse(['status' => 0]);
 		}

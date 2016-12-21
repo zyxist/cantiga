@@ -20,9 +20,9 @@ declare(strict_types=1);
 namespace Cantiga\CoreBundle\Repository;
 
 use Cantiga\Components\Hierarchy\HierarchicalInterface;
+use Cantiga\Components\Hierarchy\MembershipRoleResolverInterface;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Area;
-use Cantiga\CoreBundle\Entity\User;
 use Cantiga\CoreBundle\Event\AreaEvent;
 use Cantiga\CoreBundle\Event\CantigaEvents;
 use Cantiga\CoreBundle\Filter\AreaFilter;
@@ -32,6 +32,7 @@ use Cantiga\Metamodel\QueryBuilder;
 use Cantiga\Metamodel\QueryClause;
 use Cantiga\Metamodel\Transaction;
 use Doctrine\DBAL\Connection;
+use Exception;
 use PDO;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -54,16 +55,21 @@ class AreaMgmtRepository
 	 */
 	private $eventDispatcher;
 	/**
+	 * @var MembershipRoleResolverInterface
+	 */
+	private $roleResolver;
+	/**
 	 * Parent place
 	 * @var HierarchicalInterface
 	 */
 	private $place;
 	
-	public function __construct(Connection $conn, Transaction $transaction, EventDispatcherInterface $eventDispatcher)
+	public function __construct(Connection $conn, Transaction $transaction, EventDispatcherInterface $eventDispatcher, MembershipRoleResolverInterface $roleResolver)
 	{
 		$this->conn = $conn;
 		$this->transaction = $transaction;
 		$this->eventDispatcher = $eventDispatcher;
+		$this->roleResolver = $roleResolver;
 	}
 	
 	public function setParentPlace(HierarchicalInterface $place)
@@ -160,17 +166,13 @@ class AreaMgmtRepository
 	
 	public function findMembers(Area $area): array
 	{
-		$items = $this->conn->fetchAll('SELECT u.name, u.avatar, p.location, p.telephone, p.publicMail, p.privShowTelephone, p.privShowPublicMail, m.note '
-			. 'FROM `'.CoreTables::USER_TBL.'` u '
-			. 'INNER JOIN `'.CoreTables::USER_PROFILE_TBL.'` p ON p.`userId` = u.`id` '
-			. 'INNER JOIN `'.CoreTables::AREA_MEMBER_TBL.'` m ON m.`userId` = u.`id` '
-			. 'WHERE m.`areaId` = :areaId ORDER BY m.`role` DESC, u.`name`', [':areaId' => $area->getId()]);
-		
-		foreach ($items as &$item) {
-			$item['publicMail'] = (User::evaluateUserPrivacy($item['privShowPublicMail'], $this->project) ? $item['publicMail'] : '');
-			$item['telephone'] = (User::evaluateUserPrivacy($item['privShowTelephone'], $this->project) ? $item['telephone'] : '');
+		$this->transaction->requestTransaction();
+		try {
+			return $area->getPlace()->findMembers($this->conn, $this->roleResolver);
+		} catch(Exception $exception) {
+			$this->transaction->requestRollback();
+			throw $exception;
 		}
-		return $items;
 	}
 	
 	public function insert(Area $item): int

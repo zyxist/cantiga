@@ -48,7 +48,7 @@ trait PlaceTrait
 	
 	protected static function createPlaceFieldList()
 	{
-		return 'e.`id` AS `place_id`, e.`name` AS `place_name`, e.`type` AS `place_type`, e.`removedAt` AS `place_removedAt` ';
+		return 'e.`id` AS `place_id`, e.`name` AS `place_name`, e.`type` AS `place_type`, e.`removedAt` AS `place_removedAt`, e.`rootPlaceId` AS `place_rootPlaceId` ';
 	}
 	
 	protected static function createPlaceJoin($primaryAlias)

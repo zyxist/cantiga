@@ -60,11 +60,17 @@ class Member extends AbstractProfileView
 		return $array;
 	}
 	
-	public static function collectionAsArray(array $memberItems): array
+	public static function collectionAsArray(array $memberItems, $callback = null): array
 	{
 		$result = [];
-		foreach ($memberItems as $item) {
-			$result[] = $item->asArray();
+		if (!empty($callback)) {
+			foreach ($memberItems as $item) {
+				$result[] = $callback($item->asArray());
+			}
+		} else {
+			foreach ($memberItems as $item) {
+				$result[] = $item->asArray();
+			}
 		}
 		return $result;
 	}

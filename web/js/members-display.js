@@ -39,19 +39,14 @@
 			for (i in data) {
 				var tr = $('<tr/>');
 				tr.append($('<td/>', {'width': '32px'}).append($('<img/>', {'src': createAvatarPath(data[i]['avatar']), 'class': 'img-circle', 'width': '32px'})));
-				tr.append($('<td/>').append(data[i]['name']));
+				tr.append($('<td><a href="'+data[i]['url']+'">'+data[i]['name']+'</a></td>'));
 				tr.append($('<td/>').append(data[i]['location']));
-				if (data[i]['publicMail']) {
-					tr.append($('<td/>').append($('<a/>', {'href': 'mailto:'+data[i]['publicMail']}).append(data[i]['publicMail'])));
-				} else {
-					tr.append($('<td/>').append('--'));
-				}
-				if (data[i]['telephone']) {
-					tr.append($('<td/>').append(data[i]['telephone']));
-				} else {
-					tr.append($('<td/>').append('--'));
-				}
 				tr.append($('<td/>').append(data[i]['note']));
+				if (data[i]['contactMail']) {
+					tr.append($('<td/>').append($('<a/>', {'href': 'mailto:'+data[i]['contactMail']}).append(data[i]['contactMail'])));
+				} else {
+					tr.append($('<td/>').append('---'));
+				}
 				tbody.append(tr);
 			}
 		}

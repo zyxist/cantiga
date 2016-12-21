@@ -224,7 +224,11 @@ class Place implements IdentifiableInterface, InsertableEntityInterface, Editabl
 			. 'LEFT JOIN `'.CoreTables::CONTACT_TBL.'` c ON c.`userId` = i.`id` AND c.`placeId` = :placeId1 '
 			. 'WHERE m.`placeId` = :placeId2 AND i.`active` = 1 AND i.`removed` = 0 '
 			. 'ORDER BY i.`name`');
-		$stmt->bindValue(':placeId1', $this->getId());
+		if ($this->type == 'Project') {
+			$stmt->bindValue(':placeId1', $this->getId());
+		} else {
+			$stmt->bindValue(':placeId1', $this->rootPlaceId);
+		}
 		$stmt->bindValue(':placeId2', $this->getId());
 		$stmt->execute();
 		$results = [];
@@ -247,7 +251,7 @@ class Place implements IdentifiableInterface, InsertableEntityInterface, Editabl
 			. 'LEFT JOIN `'.CoreTables::CONTACT_TBL.'` c ON c.`userId` = i.`id` AND c.`placeId` = :placeId1 '
 			. 'WHERE m.`placeId` = :placeId2 AND i.`active` = 1 AND i.`removed` = 0 AND i.`id` = :userId '
 			. 'ORDER BY i.`name`');
-		$stmt->bindValue(':placeId1', $this->getId());
+		$stmt->bindValue(':placeId1', $this->rootPlaceId);
 		$stmt->bindValue(':placeId2', $this->getId());
 		$stmt->bindValue(':userId', $id);
 		$stmt->execute();

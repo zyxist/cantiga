@@ -125,7 +125,7 @@ services:
         arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher"]
     cantiga.core.repo.area_mgmt:
         class:     Cantiga\CoreBundle\Repository\AreaMgmtRepository
-        arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher"]
+        arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher", "@cantiga.roles"]
     cantiga.core.repo.project_area_status:
         class:     Cantiga\CoreBundle\Repository\ProjectAreaStatusRepository
         arguments: ["@database_connection", "@cantiga.transaction"]
