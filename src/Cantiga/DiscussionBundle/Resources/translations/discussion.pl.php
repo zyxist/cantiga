@@ -26,6 +26,9 @@ return [
 	'Group members can post?' => 'Członkowie grup mogą pisać?',
 	'Area members can post?' => 'Członkowie rejonów mogą pisać?',
 	'Create separate discussions for each group or area within the channel.' => 'Utwórz oddzielne dyskusje dla każdej grupy lub rejonu w obrębie jednego kanału.',
+	'ChannelDescriptionText' => 'Opis kanału',
+	'WriteMessageTitle' => 'Napisz wiadomość',
+	'WriteMessageButton' => 'Napisz wiadomość',
 	
 	'Appearance' => 'Wygląd',
 	'Settings' => 'Ustawienia',

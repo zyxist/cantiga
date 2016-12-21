@@ -9,16 +9,31 @@
 {% endblock %}
 
 {% block page_content %}
-<p>{{ channel.description }}</p>
+
 {% if canPost %}
-<form role="form" id="discussion-form" style="margin-bottom: 5px; overflow: hidden; ">
-	<textarea id="discussion-content" class="form-control" style="width: 100%" rows="6"></textarea>
-	<p><button type="submit" class="btn btn-info pull-left" style="width: 100%">{{ 'Send' | trans([], 'general') }}</button></p>
-</form>
+
 {% else %}
 <p class="text-muted">{{ 'ReadOnlyDiscussionText' | trans([], 'discussion') }}</p>
 {% endif %}
 <div class="row">
+	<div class="col-xs-12">
+		<div class="box box-primary">
+			<div class="box-header with-border">
+				<i class="fa fa-comment"></i>
+				<h3 class="box-title">{{ 'ChannelDescriptionText' | trans([], 'discussion') }}</h3>
+			</div>
+			<div class="box-body">
+				<p>{{ channel.description }}</p>
+			</div>
+			<div class="box-footer">
+				{% if canPost %}
+				<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#compose-modal">{{ 'WriteMessageButton' | trans([], 'discussion') }}</button>
+				{% else %}
+				<p class="text-muted">{{ 'ReadOnlyDiscussionText' | trans([], 'discussion') }}</p>
+				{% endif %}
+			</div>
+		</div>
+	</div>
 	<div class="col-xs-12">
 		<ul class="timeline" id="discussion-timeline">
 			{% for day in discussion %}
@@ -48,6 +63,28 @@
 		<button class="btn btn-primary" style="width: 100%" id="discussion-more">{{ 'More' | trans([], 'general') }}</button>
 	</div>
 </div>
+{% if canPost %}
+<div class="modal fade" id="compose-modal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form role="form" id="discussion-form" class="form">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">{{ 'WriteMessageTitle' | trans([], 'discussion') }}</h4>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<textarea id="discussion-content" class="form-control" style="width: 100%" rows="15"></textarea>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="submit" class="btn btn-primary">{{ 'Send' | trans([], 'general') }}</button>
+			</div>
+			</form>
+		</div>
+	</div>
+</div>
+{% endif %}
 {% endblock page_content %}
 
 {% block stylesheets %}
@@ -70,6 +107,7 @@
 				discussionMore: '#discussion-more',
 				discussionBody: '#discussion-timeline',
 				discussionForm: '#discussion-form',
+				discussionModal: '#compose-modal',
 				discussionFeedUrl: '{{ spath('discussion_api_feed', {'id': channel.id} ) }}',
 				discussionPostUrl: '{{ spath('discussion_api_post', {'id': channel.id} ) }}',
 				canPost: {{ canPost }},

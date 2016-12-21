@@ -54,6 +54,7 @@
 					},
 					success: function (data) {
 						$(opts['discussionForm']).find('#discussion-content').summernote('reset');
+						$(opts['discussionModal']).modal('hide');
 						render(data);
 					}
 				});
@@ -82,6 +83,7 @@
 		discussionMore: null,
 		discussionBody: null,
 		discussionForm: null,
+		discussionModal: null,
 		discussionFeedUrl: null,
 		discussionPostUrl: null,
 		canPost: 1,

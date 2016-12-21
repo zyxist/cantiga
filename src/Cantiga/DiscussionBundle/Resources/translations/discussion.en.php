@@ -26,6 +26,9 @@ return [
 	'Group members can post?' => 'Group members can post?',
 	'Area members can post?' => 'Area members can post?',
 	'Create separate discussions for each group or area within the channel.' => 'Create separate discussions for each group or area within the channel.',
+	'ChannelDescriptionText' => 'Channel description',
+	'WriteMessageTitle' => 'Write a message',
+	'WriteMessageButton' => 'Write a message',
 	
 	'Appearance' => 'Appearance',
 	'Settings' => 'Settings',
