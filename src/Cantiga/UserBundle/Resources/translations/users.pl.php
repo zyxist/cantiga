@@ -18,7 +18,14 @@ return [
 	'ChangePasswordText' => 'Aby zmienić hasło, musisz podać swoje dotychczasowe hasło. Dodatkowo, na Twój adres e-mail zostanie wysłana wiadomość z odnośnikiem aktywacyjnym. Dopiero po kliknięciu w niego Twoje nowe hasło stanie się aktywne.',
 
 	'Current photo' => 'Obecne zdjęcie',
-	'Upload new photo' => 'Załaduj nowe zdjęcie',	
+	'Upload new photo' => 'Załaduj nowe zdjęcie',
+
+	'Membership' => 'Członkostwo',
+	'MemberOfAnotherPlaceDesc' => 'Członek jednego z miejsc w projekcie',
+	'MemberOfFollowingPlacesText' => 'Ten użytkownik jest członkiem następujących miejsc związanych z projektem:',
+	'Place type' => 'Rodzaj miejsca',
+	'Function' => 'Funkcja',
+	'About' => 'O sobie',
 	
 	'Contact data' => 'Dane kontaktowe',
 	'NoteHintText' => 'Polecamy wpisywać tutaj funkcję, za jaką odpowiada dany członek - jest ona wyświetlana w profilach oraz na listach użytkowników.',

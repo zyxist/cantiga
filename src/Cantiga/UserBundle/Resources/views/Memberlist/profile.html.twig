@@ -10,7 +10,7 @@
 
 {% block page_content %}
 	<div class="row">
-		<div class="col-md-3">
+		<div class="col-md-3 col-sm-12">
 			<div class="box box-widget widget-user-2">
 				<div class="widget-user-header bg-primary">
 					<div class="widget-user-image">
@@ -24,26 +24,27 @@
 						<li class="list-summary-item">{{ 'Role' | trans([], 'users' ) }} <span class="pull-right">{{ member.memberInfo.role.name | trans }}</span></li>
 						<li class="list-summary-item">{{ 'Location' | trans([], 'users' ) }} <span class="pull-right">{{ member.location }}</span></li>
 						<li class="list-summary-item">{{ 'Last visit' | trans([], 'users' ) }} <span class="pull-right">{{ ago(member.lastVisit) }}</span></li>
-						{% if viewContactInformation %}
-							{% if member.contactMail %}
-							<li class="list-summary-item">{{ 'E-mail' | trans([], 'users' ) }} <span class="pull-right"><a href="mailto:{{ member.contactMail }}">{{ member.contactMail }}</a></span></li>
-							{% endif %}
-							{% if member.contactTelephone %}
-							<li class="list-summary-item">{{ 'Phone number' | trans([], 'users' ) }} <span class="pull-right">{{ member.contactTelephone }}</span></li>
-							{% endif %}
+						{% if member.contactMail %}
+						<li class="list-summary-item">{{ 'E-mail' | trans([], 'users' ) }} <span class="pull-right"><a href="mailto:{{ member.contactMail }}">{{ member.contactMail }}</a></span></li>
+						{% endif %}
+						{% if member.contactTelephone %}
+						<li class="list-summary-item">{{ 'Phone number' | trans([], 'users' ) }} <span class="pull-right">{{ member.contactTelephone }}</span></li>
 						{% endif %}
 					</ul>
 				</div>
 			</div>
 			{% if member.notes %}
 			<div class="box box-widget">
+				<div class="box-header with-border">
+					<i class="fa fa-pencil"></i> <h3 class="box-title">{{ 'About' | trans([], 'users') }}</h3>
+				</div>
 				<div class="box-body">
 					{{ member.notes }}
 				</div>
 			</div>
 			{% endif %}
 		</div>
-		<div class="col-md-9">
+		<div class="col-md-9 col-sm-12">
 			<div class="nav-tabs-custom">
 				<ul class="nav nav-tabs">
 					{% for extension in extensions %}

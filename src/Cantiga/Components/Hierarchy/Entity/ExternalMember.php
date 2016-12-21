@@ -20,52 +20,20 @@ declare(strict_types=1);
 namespace Cantiga\Components\Hierarchy\Entity;
 
 /**
- * Member of the same entity, as us. We can see his/her contact information.
+ * Member of another place.
  */
-class Member extends AbstractProfileView
+class ExternalMember extends AbstractProfileView
 {
-	/**
-	 * @var MemberInfo
-	 */
-	private $memberInfo;
-	/**
-	 * @var array
-	 */
 	private $places;
 	
-	public function __construct(array $data, MemberInfo $memberInfo, array $places = [])
+	public function __construct (array $data, array $places)
 	{
 		parent::__construct($data);
-		$this->memberInfo = $memberInfo;
 		$this->places = $places;
-	}
-	
-	public function getMemberInfo(): MemberInfo
-	{
-		return $this->memberInfo;
 	}
 	
 	public function getPlaces(): array
 	{
 		return $this->places;
-	}
-	
-	public function asArray(): array
-	{
-		$array = parent::asArray();
-		$array['role'] = $this->memberInfo->getRole()->getId();
-		$array['roleName'] = $this->memberInfo->getRole()->getName();
-		$array['note'] = $this->memberInfo->getNote() ?? '';
-		$array['showDownstreamContactData'] = $this->memberInfo->getShowDownstreamContactData() ?? 0;
-		return $array;
-	}
-	
-	public static function collectionAsArray(array $memberItems): array
-	{
-		$result = [];
-		foreach ($memberItems as $item) {
-			$result[] = $item->asArray();
-		}
-		return $result;
 	}
 }

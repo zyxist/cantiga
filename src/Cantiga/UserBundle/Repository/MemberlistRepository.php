@@ -18,12 +18,17 @@
  */
 namespace Cantiga\UserBundle\Repository;
 
+use Cantiga\Components\Hierarchy\Entity\AbstractProfileView;
+use Cantiga\Components\Hierarchy\Entity\ExternalMember;
 use Cantiga\Components\Hierarchy\Entity\Member;
+use Cantiga\Components\Hierarchy\Entity\MemberInfo;
+use Cantiga\Components\Hierarchy\Entity\PlaceRef;
+use Cantiga\Components\Hierarchy\HierarchicalInterface;
 use Cantiga\Components\Hierarchy\MembershipEntityInterface;
 use Cantiga\Components\Hierarchy\MembershipRoleResolverInterface;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Transaction;
-use Doctrine\DBAL\Connection;
+use Cantiga\UserBundle\Database\MemberlistAdapter;
 use Exception;
 
 /**
@@ -32,9 +37,9 @@ use Exception;
 class MemberlistRepository
 {
 	/**
-	 * @var Connection 
+	 * @var MemberlistAdapter 
 	 */
-	protected $conn;
+	protected $adapter;
 	/**
 	 * @var Transaction
 	 */
@@ -44,9 +49,9 @@ class MemberlistRepository
 	 */
 	protected $roleResolver;
 	
-	public function __construct(Connection $conn, Transaction $transaction, MembershipRoleResolverInterface $roleResolver)
+	public function __construct(MemberlistAdapter $adapter, Transaction $transaction, MembershipRoleResolverInterface $roleResolver)
 	{
-		$this->conn = $conn;
+		$this->adapter = $adapter;
 		$this->transaction = $transaction;
 		$this->roleResolver = $roleResolver;
 	}
@@ -57,26 +62,51 @@ class MemberlistRepository
 	 */
 	public function findMembers(MembershipEntityInterface $membershipEntity)
 	{
-		return $membershipEntity->findMembers($this->conn, $this->roleResolver);
+		return $membershipEntity->findMembers($this->adapter->getConnection(), $this->roleResolver);
 	}
 	
 	/**
-	 * @param $membershipEntity Entity whose members we want to view
+	 * Finds the member of one of the places associated with the current project. Returns either
+	 * {@link Member} or {@link ExternalMember} instances, depending on the relationship of the
+	 * user to the current place.
+	 * 
+	 * @param $project Current project
 	 * @param $id Member ID
 	 * @return Member
+	 * @throws ItemNotFoundException Member not found.
 	 */
-	public function getItem(MembershipEntityInterface $membershipEntity, int $id): Member
+	public function getItem(HierarchicalInterface $project, MembershipEntityInterface $currentPlace, int $id): AbstractProfileView
 	{
 		$this->transaction->requestTransaction();
 		try {
-			$member = $membershipEntity->findMember($this->conn, $this->roleResolver, $id);
-			if (false === $member) {
-				throw new ItemNotFoundException('The specified member has not been found.');
-			}
-			return $member;
+			return $this->loadMember($project, $currentPlace, $id);
 		} catch(Exception $exception) {
 			$this->transaction->requestRollback();
 			throw $exception;
+		}
+	}
+	
+	private function loadMember(HierarchicalInterface $project, MembershipEntityInterface $currentPlace, int $id): AbstractProfileView
+	{
+		$projectPlaceId = $project->getPlace()->getId();
+		$member = $this->adapter->getUserProfile($id, $projectPlaceId);
+		$associatedProjectPlaces = $this->adapter->findUserPlaces($id, $projectPlaceId);
+		if (empty($member) || sizeof($associatedProjectPlaces) == 0) {
+			throw new ItemNotFoundException('The specified member has not been found.');
+		}
+		$places = [];
+		$currentMemberInfo = null;
+		foreach ($associatedProjectPlaces as $p) {
+			if ($p['id'] == $currentPlace->getId()) {
+				$currentMemberInfo = new MemberInfo($this->roleResolver->getRole($p['type'], $p['role']), $p['note'], (bool) $p['showDownstreamContactData']);
+			}
+			$places[] = new PlaceRef($p['id'], $p['name'], $p['type'], $p['slug'], $this->roleResolver->getRole($p['type'], $p['role']), $p['note'], (bool) $p['showDownstreamContactData']);
+		}
+		
+		if (null === $currentMemberInfo) {
+			return new ExternalMember($member, $places);
+		} else {
+			return new Member($member, $currentMemberInfo, $places);
 		}
 	}
 }

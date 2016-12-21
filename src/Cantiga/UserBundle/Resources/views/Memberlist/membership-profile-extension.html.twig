@@ -1,0 +1,19 @@
+<p>{{ 'MemberOfFollowingPlacesText' | trans([], 'users') }}</p>
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th width="30%">{{ 'Place type' | trans([], 'users') }}</th>
+			<th width="35%">{{ 'Name' | trans }}</th>
+			<th width="35%">{{ 'Function' | trans([], 'users') }}</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for place in member.places %}
+		<tr>
+			<td>{{ place.type | trans }}</td>
+			<td>{{ place.name }}</td>
+			<td>{{ place.note }}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>

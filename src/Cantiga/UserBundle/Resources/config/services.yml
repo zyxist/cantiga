@@ -9,7 +9,7 @@ services:
         class:     Cantiga\UserBundle\Membership\MembershipStorage
     cantiga.user.repo.memberlist:
         class:     Cantiga\UserBundle\Repository\MemberlistRepository
-        arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.roles"]
+        arguments: ["@cantiga.user.adapter", "@cantiga.transaction", "@cantiga.roles"]
     cantiga.user.repo.contact:
         class:     Cantiga\UserBundle\Repository\ContactRepository
         arguments: ["@database_connection", "@cantiga.transaction"]
@@ -29,6 +29,9 @@ services:
         tags:
             - { name: kernel.event_listener, event: cantiga.user.activated, method: onUserActivated }
             - { name: kernel.event_listener, event: cantiga.user.removed, method: onUserRemoved }
+    cantiga.user.adapter:
+        class:     Cantiga\UserBundle\Database\MemberlistAdapter
+        arguments: ["@database_connection"]
     cantiga.user.workspace_listener:
         class: Cantiga\UserBundle\EventListener\WorkspaceListener
         tags:
@@ -48,8 +51,19 @@ services:
          public: false
          tags:
             - { name: security.voter }
+    cantiga.user.right.voter:
+         class: Cantiga\UserBundle\Auth\RightVoter
+         arguments: ["@cantiga.user.membership.storage", "@cantiga.user.adapter"]
+         public: false
+         tags:
+            - { name: security.voter }
     cantiga.user.membership.argument-resolver:
          class: Cantiga\UserBundle\ArgumentResolver\MembershipArgumentResolver
          arguments: ["@cantiga.user.membership.storage"]
          tags:
             - { name: controller.argument_value_resolver, priority: 50 }
+    cantiga.user.profile.membership:
+         class: Cantiga\UserBundle\Extension\MembershipProfileExtension
+         arguments: ["@templating", "@translator"]
+         tags:
+              - { name: cantiga.extension, point: user.profile }

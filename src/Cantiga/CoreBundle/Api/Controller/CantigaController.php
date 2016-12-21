@@ -175,8 +175,10 @@ class CantigaController extends Controller
 	 */
 	public function showMessage(string $title, string $message): Response
 	{
-		return $this->render('CantigaCorebundle:layout:message.html.twig', array(
+		return $this->render('CantigaCoreBundle:layout:message.html.twig', array(
 			'pageTitle' => $title,
+			'pageSubtitle' => '',
+			'messageTitle' => $this->trans('Message', [], 'general'),
 			'message' => $message
 		));
 	}

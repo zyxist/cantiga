@@ -20,6 +20,13 @@ return [
 	'Current photo' => 'Current photo',
 	'Upload new photo' => 'Upload new photo',
 	
+	'Membership' => 'Membership',
+	'MemberOfAnotherPlaceDesc' => 'Member of another place in the project',
+	'MemberOfFollowingPlacesText' => 'This user is a member of the following places in the project:',
+	'Place type' => 'Rodzaj miejsca',
+	'Function' => 'Funkcja',
+	'About' => 'About',
+	
 	'Contact data' => 'Contact data',
 	'NoteHintText' => 'E.g. the role of the given member in the team - it is displayed in the user profiles and member lists.',
 	'The invitation has been sent.' => 'The invitation has been sent.',

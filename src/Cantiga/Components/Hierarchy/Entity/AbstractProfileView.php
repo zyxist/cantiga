@@ -87,8 +87,6 @@ abstract class AbstractProfileView implements CantigaUserRefInterface
 		return $this->notes;
 	}
 	
-	abstract public function canViewContactInformation(AbstractMemberInfo $viewingMember): bool;
-	
 	public function asArray(): array
 	{
 		return [

@@ -18,6 +18,7 @@
  */
 namespace Cantiga\UserBundle\Controller;
 
+use Cantiga\Components\Hierarchy\Entity\ExternalMember;
 use Cantiga\Components\Hierarchy\Entity\Membership;
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
 use Cantiga\CoreBundle\Api\Controller\ProjectAwareControllerInterface;
@@ -80,15 +81,22 @@ class MemberlistController extends WorkspaceController
 	{
 		try {
 			$repository = $this->get(self::REPOSITORY_NAME);
-			$member = $repository->getItem($membership->getPlace()->getPlace(), $id);
+			$member = $repository->getItem($this->getActiveProject(), $membership->getPlace()->getPlace(), $id);
 			$this->breadcrumbs()
 				->link($member->getName(), $this->crudInfo->getInfoPage(), ['slug' => $this->getSlug(), 'id' => $id]);
-			return $this->render($this->crudInfo->getTemplateLocation() . 'profile.html.twig', array(
-				'member' => $member,
-				'viewContactInformation' => $member->canViewContactInformation($membership),
-				'extensions' => $this->findProfileExtensions(UserExtensions::PROFILE_EXTENSION),
-				'locale' => $request->getLocale(),
-			));
+			
+			if ($member instanceof ExternalMember) {
+				return $this->render($this->crudInfo->getTemplateLocation() . 'external-profile.html.twig', array(
+					'member' => $member,
+					'locale' => $request->getLocale(),
+				));
+			} else {
+				return $this->render($this->crudInfo->getTemplateLocation() . 'profile.html.twig', array(
+					'member' => $member,
+					'extensions' => $this->findProfileExtensions(UserExtensions::PROFILE_EXTENSION),
+					'locale' => $request->getLocale(),
+				));
+			}
 		} catch (ItemNotFoundException $ex) {
 			return $this->showMessage($this->crudInfo->getPageTitle(), $this->trans('NoSuchMemberText', [], 'users'));
 		} catch (ModelException $exception) {

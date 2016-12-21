@@ -1,0 +1,79 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ member.name }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ 'View member profile' | trans({}, 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+	<div class="row">
+		<div class="col-md-4 col-md-offset-4">
+			<div class="box box-widget widget-user-2">
+				<div class="widget-user-header bg-primary">
+					<div class="widget-user-image">
+						<img class="img-circle" src="{{ asset(avatar(member)) }}" alt="av">
+					</div>
+					<h3 class="widget-user-username">{{ member.name }}</h3>
+					<h5 class="widget-user-desc">{{ 'MemberOfAnotherPlaceDesc' | trans([], 'users') }}</h5>
+				</div>
+				
+				<div class="box-footer no-padding">
+					<ul class="list-summary">
+						<li class="list-summary-item">{{ 'Location' | trans([], 'users' ) }} <span class="pull-right">{{ member.location }}</span></li>
+						{% if is_granted('RIGHT_VIEW_CONTACT_DATA', member) %}
+							<li class="list-summary-item">{{ 'Last visit' | trans([], 'users' ) }} <span class="pull-right">{{ ago(member.lastVisit) }}</span></li>
+							{% if member.contactMail %}
+							<li class="list-summary-item">{{ 'E-mail' | trans([], 'users' ) }} <span class="pull-right"><a href="mailto:{{ member.contactMail }}">{{ member.contactMail }}</a></span></li>
+							{% endif %}
+							{% if member.contactTelephone %}
+							<li class="list-summary-item">{{ 'Phone number' | trans([], 'users' ) }} <span class="pull-right">{{ member.contactTelephone }}</span></li>
+							{% endif %}
+						{% endif %}
+					</ul>
+				</div>
+				
+			</div>
+
+			<div class="box box-widget">
+				<div class="box-header with-border">
+					<i class="fa fa-cubes"></i> <h3 class="box-title">{{ 'Membership' | trans([], 'users') }}</h3>
+				</div>
+				<div class="box-body no-padding">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th width="30%">{{ 'Place type' | trans([], 'users') }}</th>
+								<th width="35%">{{ 'Name' | trans }}</th>
+								<th width="35%">{{ 'Function' | trans([], 'users') }}</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for place in member.places %}
+							<tr>
+								<td>{{ place.type | trans }}</td>
+								<td>{{ place.name }}</td>
+								<td>{{ place.note }}</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			{% if is_granted('RIGHT_VIEW_CONTACT_DATA', member) and member.notes %}
+			<div class="box box-widget">
+				<div class="box-header with-border">
+					<i class="fa fa-pencil"></i> <h3 class="box-title">{{ 'About' | trans([], 'users') }}</h3>
+				</div>
+				<div class="box-body">
+					{{ member.notes }}
+				</div>
+			</div>
+			{% endif %}
+		</div>
+	</div>
+{% endblock %}
+
