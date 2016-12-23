@@ -4,6 +4,8 @@
 Cantiga Project
 ===============
 
+[![Join the chat at https://gitter.im/zyxist/cantiga](https://badges.gitter.im/zyxist/cantiga.svg)](https://gitter.im/zyxist/cantiga?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Cantiga Project is an open-source membership management software. Its primary target are non-profit organizations which not only organize
 various social projects/events, but also offer them to other local communities as a franchise. The software provides tools for the franchise management:
 
