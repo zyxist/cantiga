@@ -37,8 +37,9 @@ return array(
 	'Error' => 'Error',
 	'Prune' => 'Prune',
 	'Find' => 'Find',
-	'Filter results' => 'ilter results',
+	'Filter results' => 'Filter results',
 	'Details' => 'Details',
+	'Close' => 'Close',
 
 	'Indeed, remove it' => 'Indeed, remove it',
 	'Edit: 0' => 'Edit: 0',

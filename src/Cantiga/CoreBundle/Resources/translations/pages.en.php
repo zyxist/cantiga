@@ -6,6 +6,7 @@ return [
 	'Group workspace' => 'Group workspace',
 	'Project workspace' => 'Project workspace',
 	'Admin workspace' => 'Admin workspace',
+	'NAVIGATION' => 'NAVIGATION',
 	
 	'Home' => 'Home',
 	'Requests' => 'Requests',
@@ -38,6 +39,7 @@ return [
 	'My group' => 'My group',
 	'My group: 0' => 'My group: 0',
 	'Profile editor' => 'Profile editor',
+	'Area members' => 'Area members',
 	
 	// Project workspace menu items
 	'Community' => 'Community',

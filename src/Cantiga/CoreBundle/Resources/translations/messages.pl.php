@@ -223,20 +223,11 @@ return array(
 	'Area reg.?' => 'Rejestr. rej.?',
 	
 	// Admin Project membership,
-	'Do you really want to revoke the membership for this user?' => 'Czy na pewno chcesz usunąć tego użytkownika z listy członków?',
-	'Confirm removal' => 'Potwierdź usunięcie',
-	'Set a new role' => 'Ustaw nową rolę',
-	'Select a new role' => 'Wybierz rolę',
-	'Add a member' => 'Dodaj członka',
-	'Start typing the member e-mail...' => 'Zacznij wpisywanie adresu e-mail członka...',
-	'Member role' => 'Rola nowego członka',
 	'Role' => 'Rola',
 	'Visitor' => 'Wizytator',
 	'Personal data access' => 'Dostęp do danych osobowych',
 	'Member' => 'Członek',
 	'Manager' => 'Zarządca',
-	'Change role' => 'Zmień rolę',
-	'Enter some note' => 'Wpisz jakąś uwagę',
 	
 	// Admin application texts
 	'Content' => 'Treść',

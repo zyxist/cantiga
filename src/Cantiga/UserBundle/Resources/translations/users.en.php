@@ -28,6 +28,7 @@ return [
 	'About' => 'About',
 	'AboutHintText' => 'Provide some information about yourself.',
 	
+	'Confirm removal' => 'Confirm removal',
 	'Contact data' => 'Contact data',
 	'NoteHintText' => 'E.g. the role of the given member in the team - it is displayed in the user profiles and member lists.',
 	'The invitation has been sent.' => 'The invitation has been sent.',

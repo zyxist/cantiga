@@ -39,6 +39,7 @@ return array(
 	'Find' => 'Znajdź',
 	'Filter results' => 'Filtruj wyniki',
 	'Details' => 'Szczegóły',
+	'Close' => 'Zamknij',
 
 	'Indeed, remove it' => 'Zaiste, usuń',
 	'Edit: 0' => 'Edytuj: 0',

@@ -19,12 +19,11 @@ return [
 	'UpdateProgressText' => 'Zaktualizuj postęp prac nad tym kamieniem milowym.',
 	'Update progress' => 'Postęp (w procentach)',
 	'Place' => 'Miejsce',
+	'Complete milestone' => 'Ukończ kamień milowy',
 	'Completed milestones' => 'Ukończonych',
 	'View areas' => 'Zobacz rejony',
 	'View groups' => 'Zobacz grupy',
 	
-	'Name' => 'Nazwa',
-	'Save' => 'Zapisz',
 	'New status' => 'Nowy status',
 	'Previous status' => 'Poprzedni status',
 	'Required milestones' => 'Wymagane kamienie milowe',

@@ -10,6 +10,9 @@ return array(
 	'PasswordRecoverySuccessText' => 'Your password has been successfully changed. You can now log in with your new password.',
 	'PasswordRecoveryFailureText' => 'This password recovery request is invalid.',
 	
+	'Your workspaces' => 'Your workspaces',
+	'You are a member of:' => 'You are a member of:',
+	
 	// Area group information
 	'AreaNotAssignedToGroupMsg' => 'This area is not assigned to any group yet. Once the assignment is done, you will find here the information about the group you are a member of.',
 	
@@ -51,6 +54,13 @@ return array(
 	'AreaRequest: 0' => 'Request for area: 0',
 	'PersonAlreadyInvitedErr' => '',
 	
+	// Admin Project membership,
+	'Role' => 'Role',
+	'Visitor' => 'Visitor',
+	'Personal data access' => 'Personal data access',
+	'Member' => 'Member',
+	'Manager' => 'Manager',
+	
 	// Admin user management
 	'UserRemovalQuestionText' => 'Do you really want to remove the user \'0\'? This will clear out all his personal information and membership, but the produced content will be kept intact. You will be able to restore the user at any time later, but the personal information and the membership would have to be configured again.',
 	
@@ -58,4 +68,7 @@ return array(
 	'RegistrationRemovalQuestionText' => 'Do you really want to remove the registration request of user \'0\'?',
 	'PruneRegistrationsQuestionText' => 'Do you want to remove all the registration requests older than 30 days?',
 	'PrunedRegistrations: 0' => 'Pruned registrations: 0',
+	
+	// Area dashboard
+	'Your status' => 'Your status',
 );

@@ -28,6 +28,7 @@ return [
 	'About' => 'O sobie',
 	'AboutHintText' => 'Napisz coś o sobie.',
 	
+	'Confirm removal' => 'Potwierdź usunięcie',
 	'Contact data' => 'Dane kontaktowe',
 	'NoteHintText' => 'Polecamy wpisywać tutaj funkcję, za jaką odpowiada dany członek - jest ona wyświetlana w profilach oraz na listach użytkowników.',
 	'The invitation has been sent.' => 'The invitation has been sent.',

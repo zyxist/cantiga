@@ -43,7 +43,7 @@ class MilestoneForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add('name', TextType::class, array('label' => 'Name'))
+			->add('name', TextType::class, ['label' => 'Name', 'translation_domain' => 'general'])
 			->add('description', TextType::class, array('label' => 'Description'))
 			->add('displayOrder', NumberType::class, array('label' => 'Display order'));
 		if ($options['isNew']) {
@@ -52,7 +52,7 @@ class MilestoneForm extends AbstractType
 		}
 		$builder
 			->add('deadline', DateType::class, array('label' => 'Deadline', 'input' => 'timestamp', 'required' => false))
-			->add('save', SubmitType::class, array('label' => 'Save'));
+			->add('save', SubmitType::class, ['label' => 'Save', 'translation_domain' => 'general']);
 	}
 
 	public function getName()

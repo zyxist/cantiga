@@ -45,12 +45,12 @@ class MilestoneStatusRuleForm extends AbstractType
 		$milestoneChoices = $options['milestoneRepository']->getFormChoices('Area');
 		
 		$builder
-			->add('name', TextType::class, array('label' => 'Name'))
+			->add('name', TextType::class, ['label' => 'Name', 'translation_domain' => 'general'])
 			->add('newStatus', ChoiceType::class, array('label' => 'New status', 'required' => true, 'choices' => $statusChoices))
 			->add('prevStatus', ChoiceType::class, array('label' => 'Previous status', 'required' => true, 'choices' => $statusChoices))
 			->add('milestoneMap', ChoiceType::class, array('label' => 'Required milestones', 'expanded' => true, 'multiple' => true, 'choices' => $milestoneChoices))
 			->add('activationOrder', NumberType::class, array('label' => 'Activation order'))
-			->add('save', SubmitType::class, array('label' => 'Save'));
+			->add('save', SubmitType::class, ['label' => 'Save', 'translation_domain' => 'general']);
 		
 		$builder->get('newStatus')->addModelTransformer(new EntityTransformer($options['statusRepository']));
 		$builder->get('prevStatus')->addModelTransformer(new EntityTransformer($options['statusRepository']));
