@@ -84,9 +84,9 @@ class AdminProjectController extends AdminPageController
 	public function ajaxListAction(Request $request)
 	{
 		$routes = $this->dataRoutes()
-			->link('info_link', 'admin_project_info', ['id' => '::id'])
-			->link('edit_link', 'admin_project_edit', ['id' => '::id'])
-			->link('remove_link', 'admin_project_remove', ['id' => '::id']);
+			->link('info_link', $this->crudInfo->getInfoPage(), ['id' => '::id'])
+			->link('edit_link', $this->crudInfo->getEditPage(), ['id' => '::id'])
+			->link('remove_link', $this->crudInfo->getRemovePage(), ['id' => '::id']);
 
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$dataTable = $repository->createDataTable();

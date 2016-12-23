@@ -68,46 +68,64 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 
 	public static function fetchActive(Connection $conn, $id)
 	{
-		$data = $conn->fetchAssoc('SELECT p.*, '
+		$data = $conn->fetchAssoc('SELECT p.*, a.id AS `parent_id`, a.name AS `parent_name`, '
 			. self::createPlaceFieldList()
 			. 'FROM `'.CoreTables::PROJECT_TBL.'` p '
 			. self::createPlaceJoin('p')
+			. 'LEFT JOIN `'.CoreTables::PROJECT_TBL.'` a ON a.`id` = p.`parentProjectId` '
 			. 'WHERE p.`id` = :id AND p.`archived` = 0', [':id' => $id]);
 		if (false === $data) {
 			return false;
 		}
 		$item = self::fromArray($data);
 		$item->place = Place::fromArray($data, 'place');
+		
+		if (!empty($data['parent_id'])) {
+			$item->parentProject = new ArchivedProjectRef($data['parent_id'], $data['parent_name']);
+		}
+		
 		return $item;
 	}
 	
 	public static function fetchBySlug(Connection $conn, $slug)
 	{
-		$data = $conn->fetchAssoc('SELECT p.*, '
+		$data = $conn->fetchAssoc('SELECT p.*, a.id AS `parent_id`, a.name AS `parent_name`, '
 			. self::createPlaceFieldList()
 			. 'FROM `'.CoreTables::PROJECT_TBL.'` p '
 			. self::createPlaceJoin('p')
+			. 'LEFT JOIN `'.CoreTables::PROJECT_TBL.'` a ON a.`id` = p.`parentProjectId` '
 			. 'WHERE p.`slug` = :slug AND p.`archived` = 0', [':slug' => $slug]);
 		if (false === $data) {
 			return false;
 		}
 		$item = self::fromArray($data);
 		$item->place = Place::fromArray($data, 'place');
+		
+		if (!empty($data['parent_id'])) {
+			$item->parentProject = new ArchivedProjectRef($data['parent_id'], $data['parent_name']);
+		}
+		
 		return $item;
 	}
 	
 	public static function fetch(Connection $conn, $id)
 	{
-		$data = $conn->fetchAssoc('SELECT p.*, '
+		$data = $conn->fetchAssoc('SELECT p.*, a.id AS `parent_id`, a.name AS `parent_name`, '
 			. self::createPlaceFieldList()
 			. 'FROM `'.CoreTables::PROJECT_TBL.'` p '
 			. self::createPlaceJoin('p')
+			. 'LEFT JOIN `'.CoreTables::PROJECT_TBL.'` a ON a.`id` = p.`parentProjectId` '
 			. 'WHERE p.`id` = :id', [':id' => $id]);
 		if (false === $data) {
 			return false;
 		}
 		$item = self::fromArray($data);
 		$item->place = Place::fromArray($data, 'place');
+		
+		if (!empty($data['parent_id'])) {
+			$item->parentProject = new ArchivedProjectRef($data['parent_id'], $data['parent_name']);
+		}
+		
 		return $item;
 	}
 
@@ -258,6 +276,9 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 		return $this->description;
 	}
 
+	/**
+	 * @return ArchivedProjectRef
+	 */
 	public function getParentProject()
 	{
 		return $this->parentProject;

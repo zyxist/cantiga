@@ -221,6 +221,7 @@ return array(
 	'Created at' => 'Utworzono',
 	'Areas?' => 'Rejony?',
 	'Area reg.?' => 'Rejestr. rej.?',
+	'Create a new project' => 'Utwórz nowy projekt',
 	
 	// Admin Project membership,
 	'Role' => 'Rola',

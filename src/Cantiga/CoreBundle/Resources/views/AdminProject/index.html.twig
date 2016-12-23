@@ -1,5 +1,10 @@
 {% extends 'CantigaCoreBundle:layout:list-layout.html.twig' %}
 
+{% block box_header %}
+	<i class="fa fa-lightbulb-o"></i>
+	<h3 class="box-title">{{ 'Projects' | trans([], 'pages') }}</h3>
+{% endblock %}
+
 {% block column_list %}
 <tr>
 	<th width="30">#</th>
@@ -12,9 +17,7 @@
 {% endblock %}
 
 {% block box_footer %}
-<p>
 	<a href="{{ path('admin_project_insert') }}" class="btn btn-success btn-sm" role="button">{{ 'Insert' | trans({}, 'general') }}</a>
-</p>
 {% endblock %}
 
 {% block custom_datatable_config %}

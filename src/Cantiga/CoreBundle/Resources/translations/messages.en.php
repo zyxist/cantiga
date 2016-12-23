@@ -60,6 +60,7 @@ return array(
 	'Personal data access' => 'Personal data access',
 	'Member' => 'Member',
 	'Manager' => 'Manager',
+	'Create a new project' => 'Create a new project',
 	
 	// Admin user management
 	'UserRemovalQuestionText' => 'Do you really want to remove the user \'0\'? This will clear out all his personal information and membership, but the produced content will be kept intact. You will be able to restore the user at any time later, but the personal information and the membership would have to be configured again.',

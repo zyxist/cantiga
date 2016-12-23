@@ -1,40 +1,51 @@
 {% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
 
-{% block box_body %}
-	{{ form_start(form) }}
-	<div class="row">
-		<div class="col-md-7">
-			{{ form_row(form.name) }}
-		</div>
-		<div class="col-md-5">
-			{{ form_row(form.areasAllowed) }}
+{% block page_title %}
+	{{ 'Projects' | trans([], 'pages') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ 'Manage your active projects' | trans([], 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box box-danger">
+			{{ form_start(form) }}
+			<div class="box-header with-border">
+				<i class="fa fa-lightbulb-o"></i>
+				<h3 class="box-title">{{ 'Create a new project' | trans }}</h3>
+			</div>
+			<div class="box-body">
+				<div class="row">
+					<div class="col-lg-6 col-md-12">
+						{{ form_row(form.name) }}
+					</div>
+					<div class="col-lg-6 col-md-12">
+						{{ form_row(form.description) }}
+					</div>
+					<div class="col-lg-6 col-md-12">
+						{{ form_row(form.areasAllowed) }}
+					</div>
+					<div class="col-lg-6 col-md-12">
+						{{ form_row(form.areaRegistrationAllowed) }}
+					</div>
+					<div class="col-lg-6 col-md-12">
+						{{ form_row(form.parentProject) }}
+					</div>
+					<div class="col-lg-12">
+						{{ form_row(form.modules) }}
+					</div>
+				</div>
+			</div>
+			<div class="box-footer">
+				{{ form_widget(form.save) }}
+			</div>
+			{{ form_end(form) }}
 		</div>
 	</div>
-	<div class="row">
-		<div class="col-md-7">
-			{{ form_row(form.description) }}
-		</div>
-		<div class="col-md-5">
-			{{ form_row(form.areaRegistrationAllowed) }}
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-7">
-			{{ form_row(form.parentProject) }}
-		</div>
-		<div class="col-md-5">
-			
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-md-7">
-			{{ form_row(form.modules) }}
-		</div>
-		<div class="col-md-5">
-			
-		</div>
-	</div>
-	{{ form_end(form) }}
+</div>
 {% endblock %}
 
 {% block javascripts_inline %}

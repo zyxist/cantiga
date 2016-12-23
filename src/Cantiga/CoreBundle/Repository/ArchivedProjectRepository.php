@@ -88,20 +88,19 @@ class ArchivedProjectRepository implements EntityTransformerInterface
 		);
 	}
 	
-	/**
-	 * @return Project
-	 */
-	public function getItem($id)
+	public function getItem($id): Project
 	{
 		$this->transaction->requestTransaction();
-		$data = $this->conn->fetchAssoc('SELECT * FROM `'.CoreTables::PROJECT_TBL.'` WHERE `id` = :id', [':id' => $id]);
-		
-		if(null === $data) {
+		try {
+			$project = Project::fetch($this->conn, $id);
+			if (false === $project) {
+				throw new ItemNotFoundException('The specified project has not been found.', $id);
+			}
+			return $project;
+		} catch (Exception $ex) {
 			$this->transaction->requestRollback();
-			throw new ItemNotFoundException('The specified item has not been found.', $id);
+			throw $ex;
 		}
-
-		return Project::fromArray($data);
 	}
 
 	public function transformToEntity($key)
@@ -118,9 +117,9 @@ class ArchivedProjectRepository implements EntityTransformerInterface
 	{
 		$this->transaction->requestTransaction();
 		$stmt = $this->conn->query('SELECT `id`, `name` FROM `'.CoreTables::PROJECT_TBL.'` WHERE `archived` = 1 ORDER BY `name`');
-		$result = array();
+		$result = ['---' => null];
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$result[$row['id']] = $row['name'];
+			$result[$row['name']] = (int) $row['id'];
 		}
 		$stmt->closeCursor();
 		return $result;
