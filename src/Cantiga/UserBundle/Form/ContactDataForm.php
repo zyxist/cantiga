@@ -23,16 +23,22 @@ use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ContactDataForm extends AbstractType
 {
+	public function configureOptions(OptionsResolver $resolver)
+	{
+		$resolver->setDefault('translation_domain', 'users');
+	}
+	
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
 			->add('email', EmailType::class, ['label' => 'E-mail', 'attr' => ['placeholder' => '']])
-			->add('telephone', TextType::class, ['label' => 'Telephone', 'attr' => ['placeholder' => '']])
-			->add('notes', TextType::class, ['label' => 'Additional notes', 'attr' => ['placeholder' => '']])
-			->add('save', SubmitType::class, ['label' => 'Save']);
+			->add('telephone', TextType::class, ['label' => 'Phone number', 'attr' => ['placeholder' => '']])
+			->add('notes', TextType::class, ['label' => 'About', 'attr' => ['placeholder' => 'AboutHintText']])
+			->add('save', SubmitType::class, ['label' => 'Save', 'translation_domain' => 'general']);
 	}
 
 	public function getName()

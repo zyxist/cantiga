@@ -26,6 +26,7 @@ return [
 	'Place type' => 'Rodzaj miejsca',
 	'Function' => 'Funkcja',
 	'About' => 'O sobie',
+	'AboutHintText' => 'Napisz coś o sobie.',
 	
 	'Contact data' => 'Dane kontaktowe',
 	'NoteHintText' => 'Polecamy wpisywać tutaj funkcję, za jaką odpowiada dany członek - jest ona wyświetlana w profilach oraz na listach użytkowników.',

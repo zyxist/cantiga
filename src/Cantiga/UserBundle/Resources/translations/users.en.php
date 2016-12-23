@@ -23,9 +23,10 @@ return [
 	'Membership' => 'Membership',
 	'MemberOfAnotherPlaceDesc' => 'Member of another place in the project',
 	'MemberOfFollowingPlacesText' => 'This user is a member of the following places in the project:',
-	'Place type' => 'Rodzaj miejsca',
-	'Function' => 'Funkcja',
+	'Place type' => 'Place type',
+	'Function' => 'Function',
 	'About' => 'About',
+	'AboutHintText' => 'Provide some information about yourself.',
 	
 	'Contact data' => 'Contact data',
 	'NoteHintText' => 'E.g. the role of the given member in the team - it is displayed in the user profiles and member lists.',
