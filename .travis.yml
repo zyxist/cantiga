@@ -8,7 +8,5 @@ env:
 
 before_script:
   - cp ./app/config/parameters_test.yml.dist ./app/config/parameters_test.yml
-  - cp ./app/Branding.example.php ./app/Branding.php
-  - mkdir ./var/
   - composer install
   - php bin/console cantiga:install:db --env=test --type=$DB
