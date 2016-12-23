@@ -7,6 +7,7 @@ return array(
 	'Remove' => 'Usuń',
 	'Info' => 'Info',
 	'Add' => 'Dodaj',
+	'Update' => 'Zmień',
 	'Insert' => 'Utwórz',
 	'Search' => 'Szukaj',
 	'Clear' => 'Wyczyść',

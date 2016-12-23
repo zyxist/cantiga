@@ -60,4 +60,25 @@ return [
 	'Find invitation' => 'Find invitation',
 	'FindInvitationPlaceholder' => 'Enter the invitation key to join it to your profile...',
 	'PersonAlreadyInvitedErr' => 'The specified person is already invited here.',
+	
+	// contact data editor
+	'ChangeLocationTitle' => 'Change your location',
+	'EnterLocationPlaceholder' => 'Enter your location',
+	'WhoCanSeeContactsTitle' => 'Who can see my contact data?',
+	'CanViewHead' => 'Can view',
+	'CannotViewHead' => 'Cannot view',
+	'YourContactDataTitle' => 'Your contact data',
+	
+	'CHDirectMembers' => 'direct members of the same place as you',
+	'CHDirectMembersExample' => 'e.g. other group/area/project members',
+	'CHUnrelatedMembers' => 'members of unrelated places in the same project',
+	'CHUnrelatedMembersExample' => 'e.g. members of other areas or other groups in the project',
+	'CHSelectedUpstreamMembers' => 'selected members of upstream places',
+	'CHSelectedUpstreamMembersExample' => 'e.g. group leader can view contact data of associated area leaders',
+	'CHDownstreamMembers' => 'members of downstream places',
+	'CHDownstreamMembersExample' => 'e.g. area members cannot view contact data of a group leader',
+	'CHOtherProjectMembersAdmins' => 'members of other projects and system administrators',
+	'CHNote' => 'Note:',
+	'CHNoteContent' => 'You can specify different contact data for each project. In some projects, providing contact data is mandatory.',
+	
 ];

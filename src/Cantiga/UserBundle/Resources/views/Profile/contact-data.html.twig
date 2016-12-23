@@ -1,11 +1,11 @@
 {% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
 
 {% block page_title %}
-	{{ 'Contact data' | trans({}, 'pages') }}
+	{{ 'Contact data' | trans([], 'pages') }}
 {% endblock %}
 
 {% block page_subtitle %}
-	{{ 'Your contact data for other members associated with your profile' | trans({}, 'pages') }}
+	{{ 'Your contact data for other members associated with your profile' | trans([], 'pages') }}
 {% endblock %}
 
 {% block page_content %}
@@ -15,17 +15,17 @@
 			<div class="box box-primary">
 				<div class="box-header with-border">
 					<i class="fa fa-map-marker"></i>
-					<h3 class="box-title">Change your location</h3>
+					<h3 class="box-title">{{ 'ChangeLocationTitle' | trans([], 'users') }}</h3>
 				</div>
 				<form role="form" class="form">
 					<div class="box-body">
 						<div class="form-group">
-							<label for="contact-location">Location</label>
-							<input type="location" class="form-control" id="contact-location" value="{{ location }}" placeholder="Enter your location">
+							<label for="contact-location">{{ 'Location' | trans([], 'users') }}</label>
+							<input type="location" class="form-control" id="contact-location" value="{{ location }}" placeholder="{{ 'EnterLocationPlaceholder' | trans({}, 'users') }}">
 						</div>
 					</div>
 					<div class="box-footer">
-						<button type="submit" class="btn btn-primary" id="location-update-btn" id="update-location-btn">Update</button>
+						<button type="submit" class="btn btn-primary" id="location-update-btn" id="update-location-btn">{{ 'Update' | trans({}, 'general') }}</button>
 					</div>
 				</form>
 				<div class="overlay" style="display: none" id="location-overlay">
@@ -37,43 +37,43 @@
 			<div class="box box-primary">
 				<div class="box-header with-border">
 					<i class="fa fa-info"></i>
-					<h3 class="box-title">Who can see my contact data?</h3>
+					<h3 class="box-title">{{ 'WhoCanSeeContactsTitle' | trans([], 'users') }}</h3>
 				</div>
 				<div class="box-body no-padding">
 					<table class="table table-striped">
 						<thead>
 							<tr>
-								<th>Can view</th>
-								<th>Cannot view</th>
+								<th>{{ 'CanViewHead' | trans([], 'users') }}</th>
+								<th>{{ 'CannotViewHead' | trans([], 'users') }}</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr>
-								<td><span class="text-green">direct members of the same place as you</span><br>
-									<span class="text-sm">e.g. other group/area/project members</span>
+								<td><span class="text-green">{{ 'CHDirectMembers' | trans([], 'users') }}</span><br>
+									<span class="text-sm">{{ 'CHDirectMembersExample' | trans([], 'users') }}</span>
 								</td>
-								<td><span class="text-red">members of unrelated places in the same project</span><br>
-									<span class="text-sm">e.g. members of other areas or other groups in the project</span>
+								<td><span class="text-red">{{ 'CHUnrelatedMembers' | trans([], 'users') }}</span><br>
+									<span class="text-sm">{{ 'CHUnrelatedMembersExample' | trans([], 'users') }}</span>
 								</td>
 							</tr>
 							<tr>
-								<td><span class="text-green">selected members of upstream places</span><br>
-									<span class="text-sm">e.g. group leader can view contact data of area leaders</span>
+								<td><span class="text-green">{{ 'CHSelectedUpstreamMembers' | trans([], 'users') }}</span><br>
+									<span class="text-sm">{{ 'CHSelectedUpstreamMembersExample' | trans([], 'users') }}</span>
 								</td>
-								<td><span class="text-red">members of downstream places</span><br>
-									<span class="text-sm">e.g. area members cannot view contact data of a group leader</span>
+								<td><span class="text-red">{{ 'CHDownstreamMembers' | trans([], 'users') }}</span><br>
+									<span class="text-sm">{{ 'CHDownstreamMembersExample' | trans([], 'users') }}</span>
 								</td>
 							</tr>
 							<tr>
 								<td></td>
-								<td><span class="text-red">members of other projects and system administrators</span></td>
+								<td><span class="text-red">{{ 'CHOtherProjectMembersAdmins' | trans([], 'users') }}</span></td>
 							</tr>
 						</tbody>
 					</table>
 
 				</div>
 				<div class="box-footer">
-					<strong>Note:</strong> You can specify different contact data for each project. In some projects, providing contact data is mandatory.
+					<strong>{{ 'CHNote' | trans([], 'users') }}</strong> {{ 'CHNoteContent' | trans([], 'users') }}
 				</div>
 			</div>
 		</div>
@@ -82,18 +82,18 @@
 		<div class="col-lg-12">
 			<div class="box box-primary">
 				<div class="box-header with-border">
-					<i class="fa fa-address-book"></i>
-					<h3 class="box-title">Your contact data</h3>
+					<i class="fa fa-phone"></i>
+					<h3 class="box-title">{{ 'YourContactDataTitle' | trans([], 'users') }}</h3>
 				</div>
 				<div class="box-body no-padding">
 					<table class="table table-striped">
 						<thead>
 							<tr>
-								<th style="width: 20%">Project</th>
-								<th style="width: 20%">E-mail</th>
-								<th style="width: 20%">Telephone</th>
-								<th>Notes</th>
-								<th style="width: 90px">Actions</th>
+								<th style="width: 20%">{{ 'Project' | trans }}</th>
+								<th style="width: 20%">{{ 'E-mail' | trans([], 'users') }}</th>
+								<th style="width: 20%">{{ 'Phone number' | trans([], 'users') }}</th>
+								<th>{{ 'About' | trans([], 'users') }}</th>
+								<th style="width: 90px">{{ 'Actions' | trans([], 'general') }}</th>
 							</tr>
 						</thead>
 						<tbody id="contacts">
@@ -118,21 +118,21 @@
 						<p id="contact-data-required" class="text-danger">{{ 'ContactDataRequiredText' | trans([], 'users') }}</p>
 						<p id="contact-data-errorbox" class="text-danger"></p>
 						<div class="form-group">
-							<label class="control-label" for="contact-mail">{{ 'Contact e-mail' | trans([], 'users') }}</label>
+							<label class="control-label" for="contact-mail">{{ 'E-mail' | trans([], 'users') }}</label>
 							<input type="email" name="email" id="contact-mail" class="form-control" />
 						</div>
 						<div class="form-group">
-							<label class="control-label" for="contact-telephone">{{ 'Contact e-mail' | trans([], 'users') }}</label>
+							<label class="control-label" for="contact-telephone">{{ 'Phone number' | trans([], 'users') }}</label>
 							<input type="text" name="telephone" id="contact-telephone" class="form-control" />
 						</div>
 						<div class="form-group">
-							<label class="control-label" for="contact-notes">{{ 'Notes' | trans([], 'users') }}</label>
-							<input type="text" name="notes" id="notes" class="form-control" />
+							<label class="control-label" for="contact-notes">{{ 'About' | trans([], 'users') }}</label>
+							<input type="text" name="notes" id="notes" class="form-control" placeholder="{{ 'AboutHintText' | trans([], 'users') }}" />
 						</div>
 					</form>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" id="update-modal-save">{{ 'Save' | trans({}, 'general') }}</button>
+					<button type="button" class="btn btn-primary" id="update-modal-save">{{ 'Save' | trans([], 'general') }}</button>
 				</div>
 			</div>
 		</div>

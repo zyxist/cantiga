@@ -7,6 +7,7 @@ return array(
 	'Remove' => 'Remove',
 	'Info' => 'Info',
 	'Add' => 'Add',
+	'Update' => 'Update',
 	'Insert' => 'Insert',
 	'Search' => 'Search',
 	'Clear' => 'Clear',

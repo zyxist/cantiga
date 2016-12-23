@@ -60,4 +60,24 @@ return [
 	'Find invitation' => 'Znajdź zaproszenie',
 	'FindInvitationPlaceholder' => 'Podaj klucz zaproszenia, aby podłączyć je pod Twój profil...',
 	'PersonAlreadyInvitedErr' => 'Ta osoba jest już tutaj zaproszona.',
+	
+	// contact data editor
+	'ChangeLocationTitle' => 'Zmień swoją lokalizację',
+	'EnterLocationPlaceholder' => 'Wpisz swoją lokalizację',
+	'WhoCanSeeContactsTitle' => 'Kto widzi moje dane kontaktowe?',
+	'CanViewHead' => 'Może widzieć',
+	'CannotViewHead' => 'Nie może widzieć',
+	'YourContactDataTitle' => 'Twoje dane kontaktowe',
+	
+	'CHDirectMembers' => 'członkowie tych samych miejsc co ty',
+	'CHDirectMembersExample' => 'np. inni członkowie Twego rejonu/grupy/projektu',
+	'CHUnrelatedMembers' => 'członkowie innych miejsc w projekcie',
+	'CHUnrelatedMembersExample' => 'np. członkowie innych rejonów lub grup',
+	'CHSelectedUpstreamMembers' => 'wybrani członkowie nadrzędnych miejsc',
+	'CHSelectedUpstreamMembersExample' => 'np. lider grupy może widzieć dane kontaktowe podległych liderów rejonów',
+	'CHDownstreamMembers' => 'członkowie podrzędnych miejsc',
+	'CHDownstreamMembersExample' => 'np. członkowie rejonu nie widzą danych kontaktowych lidera grupy',
+	'CHOtherProjectMembersAdmins' => 'członkowie innych projektów oraz administratorzy',
+	'CHNote' => 'Uwaga:',
+	'CHNoteContent' => 'W każdym projekcie możesz podać inne dane kontaktowe. W niektórych projektach podanie danych kontaktowych jest obowiązkowe.',
 ];
