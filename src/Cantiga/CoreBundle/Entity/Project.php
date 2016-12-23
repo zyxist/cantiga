@@ -407,6 +407,7 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 		$this->place->setType('Project');
 		$this->place->setName($this->name);
 		$this->place->setSlug($this->slug);
+		$this->place->setRootPlaceId(NULL);
 		$this->place->insert($conn);
 		
 		$conn->insert(
