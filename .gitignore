@@ -9,7 +9,7 @@
 !var/.gitkeep
 /build/
 /vendor/
-/var/
+/var
 /composer.phar
 /nbproject/
 /app/config/parameters_test.yml

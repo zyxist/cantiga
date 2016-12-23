@@ -6,11 +6,11 @@
     "autoload": {
         "psr-4": { "": "src/" },
         "files": [ "app/Branding.php" ],
-	   "classmap": [ "app/AppKernel.php", "app/AppCache.php" ]
+        "classmap": [ "app/AppKernel.php", "app/AppCache.php" ]
     },
     "require": {
         "php": ">=7.0.3",
-        "symfony/symfony": "3.1.1",
+        "symfony/symfony": "3.1.8",
         "doctrine/dbal": "^2.5.4",
         "doctrine/doctrine-bundle": "~1.6",
         "symfony/swiftmailer-bundle": "~2.3",
@@ -23,9 +23,11 @@
         "sensio/generator-bundle": "~3.0.6"
     },
     "scripts": {
+        "pre-install-cmd": [
+            "php -r \"copy('app/Branding.example.php', 'app/Branding.php')\""
+	],
         "post-install-cmd": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
@@ -33,7 +35,6 @@
         ],
         "post-update-cmd": [
             "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
