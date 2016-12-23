@@ -96,7 +96,12 @@ class ContactRepository
 	{
 		$this->transaction->requestTransaction();
 		try {
-			$project = Project::fetchByPlaceRef($this->conn, $place->getRootPlaceId());
+			$id = $place->getRootPlaceId();
+			if (null === $id) {
+				$id = $place->getId();
+			}
+
+			$project = Project::fetchByPlaceRef($this->conn, (int) $id);
 			if (false === $project) {
 				throw new ItemNotFoundException('The specified project has not been found.');
 			}
