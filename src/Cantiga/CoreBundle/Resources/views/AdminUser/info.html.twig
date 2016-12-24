@@ -54,16 +54,8 @@
 						<span class="value">{{ format_time(TimeFormatter.FORMAT_SHORT, item.lastVisit) }} ({{ ago(item.lastVisit) }})</span>
 					</div>
 					<div class="info-item">
-						<h4><i class="fa fa-lightbulb-o"></i> {{ 'Project number' | trans }}</h4>
-						<span class="value">{{ item.projectNum }}</span>
-					</div>
-					<div class="info-item">
-						<h4><i class="fa fa-group"></i> {{ 'Group number' | trans }}</h4>
-						<span class="value">{{ item.groupNum }}</span>
-					</div>
-					<div class="info-item">
-						<h4><i class="fa fa-flag"></i> {{ 'Area number' | trans }}</h4>
-						<span class="value">{{ item.areaNum }}</span>
+						<h4><i class="fa fa-lightbulb-o"></i> {{ 'Places' | trans }}</h4>
+						<span class="value">{{ item.placeNum }}</span>
 					</div>
 				</div>
 			</div>
@@ -78,15 +70,17 @@
 					<table class="table table-hover">
 						<thead>
 							<tr>
+								<th width="15%">{{ 'Place type' | trans([], 'users') }}</th>
 								<th>{{ 'Name' | trans }}</th>
-								<th width="25%">{{ 'Role' | trans }}</th>
-								<th width="25%">{{ 'Note' | trans }}</th>
+								<th width="25%">{{ 'Role' | trans([], 'users') }}</th>
+								<th width="25%">{{ 'Function' | trans([], 'users') }}</th>
 							</tr>
 						</thead>
 						<tbody>
 							{% for place in custom.places %}
 							<tr>
-								<td><a href="{{ path(place.route, {'slug': place.slug}) }}">{{ place.translationKey | trans([place.name]) }}</td>
+								<td>{{ place.type | trans }}</td>
+								<td>{{ place.name }}</td>
 								<td>{{ place.role.name | trans }}</td>
 								<td>{{ place.note }}</td>
 							</tr>

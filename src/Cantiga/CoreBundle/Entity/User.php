@@ -18,6 +18,7 @@
  */
 namespace Cantiga\CoreBundle\Entity;
 
+use Cantiga\Components\Hierarchy\Entity\PlaceRef;
 use Cantiga\Components\Hierarchy\MembershipRoleResolverInterface;
 use Cantiga\Components\Hierarchy\User\CantigaUserRefInterface;
 use Cantiga\CoreBundle\CoreTables;
@@ -32,12 +33,12 @@ use Cantiga\Metamodel\QueryBuilder;
 use Cantiga\Metamodel\QueryClause;
 use Cantiga\Metamodel\QueryElement;
 use Cantiga\Metamodel\QueryOperator;
+use Cantiga\UserBundle\UserTables;
 use Doctrine\DBAL\Connection;
+use PDO;
 use Symfony\Component\Security\Core\Encoder\EncoderFactoryInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 /**
@@ -57,9 +58,7 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 	private $lastVisit;
 	private $avatar;
 	private $registeredAt;
-	private $projectNum ;
-	private $groupNum;
-	private $areaNum;
+	private $placeNum;
 
 	private $location;
 	private $settingsLanguage;
@@ -94,9 +93,7 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 		$user->active = 1;
 		$user->admin = 0;
 		$user->registeredAt = time();
-		$user->areaNum = 0;
-		$user->groupNum = 0;
-		$user->projectNum = 0;
+		$user->placeNum = 0;
 		$user->settingsLanguage = $lang;
 		$user->settingsTimezone = 'UTC';
 		return $user;
@@ -112,8 +109,14 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 		return $user;
 	}
 	
-	public static function fetchByCriteria(Connection $conn, QueryElement $queryElement)
+	public static function fetchByCriteria(Connection $conn, QueryElement $queryElement, bool $allowInactive = false)
 	{
+		if ($allowInactive) {
+			$clause = QueryClause::clause('u.`removed` = 0');
+		} else {
+			$clause = QueryClause::clause('u.`active` = 1 AND u.`removed` = 0');
+		}
+		
 		$qb = QueryBuilder::select()
 			->field('u.*')
 			->field('p.*')
@@ -124,7 +127,7 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 			->join(CoreTables::USER_PROFILE_TBL, 'p', QueryClause::clause('p.`userId` = u.`id`'))
 			->join(CoreTables::LANGUAGE_TBL, 'l', QueryClause::clause('l.`id` = p.`settingsLanguageId`'))
 			->where(QueryOperator::op('AND')
-				->expr(QueryClause::clause('u.`active` = 1 AND u.`removed` = 0'))
+				->expr($clause)
 				->expr($queryElement));
 		$data = $qb->fetchAssoc($conn);
 		if (false === $data) {
@@ -342,25 +345,15 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 		return $this->registeredAt;
 	}
 
-	public function getProjectNum()
+	public function getPlaceNum()
 	{
-		return $this->projectNum;
+		return $this->placeNum;
 	}
 
-	public function getAreaNum()
+	public function setPlaceNum($placeNum): self
 	{
-		return $this->areaNum;
-	}
-	
-	public function getGroupNum()
-	{
-		return $this->groupNum;
-	}
-
-	public function setGroupNum($groupNum)
-	{
-		DataMappers::noOverwritingField($this->groupNum);
-		$this->groupNum = $groupNum;
+		DataMappers::noOverwritingField($this->placeNum);
+		$this->placeNum = $placeNum;
 		return $this;
 	}
 	
@@ -371,20 +364,6 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 		return $this;
 	}
 
-	public function setProjectNum($projectNum)
-	{
-		DataMappers::noOverwritingField($this->projectNum);
-		$this->projectNum = $projectNum;
-		return $this;
-	}
-
-	public function setAreaNum($areaNum)
-	{
-		DataMappers::noOverwritingField($this->areaNum);
-		$this->areaNum = $areaNum;
-		return $this;
-	}
-	
 	public function getAfterLogin()
 	{
 		return $this->afterLogin;
@@ -516,39 +495,29 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 		$conn->update(CoreTables::USER_TBL, ['removed' => 1, 'active' => 0, 'name' => '???'], DataMappers::id($this));
 		$conn->executeQuery('DELETE FROM `'.CoreTables::USER_PROFILE_TBL.'` WHERE `userId` = :id', [':id' => $this->getId()]);
 	}
-
-	public function canShowTelephone()
-	{
-		return $this->evaluatePrivacy($this->privShowTelephone, $this->membership->getItem());
-	}
 	
-	public function canShowPublicMail()
+	public function findPlaces(Connection $conn, MembershipRoleResolverInterface $roleResolver): array
 	{
-		return $this->evaluatePrivacy($this->privShowPublicMail, $this->membership->getItem());
-	}
-	
-	public function canShowNotes()
-	{
-		return $this->evaluatePrivacy($this->privShowNotes, $this->membership->getItem());
-	}
-	
-	private function evaluatePrivacy($setting, $item)
-	{
-		return self::evaluateUserPrivacy($setting, $item);
-	}
-	
-	public static function evaluateUserPrivacy($setting, $item)
-	{
-		if (empty($item)) {
-			return true;
+		$stmt = $conn->prepare('SELECT p.*, m.* '
+			. 'FROM `'.CoreTables::PLACE_TBL.'` p '
+			. 'INNER JOIN `'.UserTables::PLACE_MEMBERS_TBL.'` m ON m.`placeId` = p.`id` '
+			. 'WHERE m.`userId` = :userId '
+			. 'ORDER BY p.`type` DESC, p.`name`');
+		$stmt->bindValue(':userId', $this->getId());
+		$stmt->execute();
+		$results = [];
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			$results[] = new PlaceRef(
+				(int) $row['id'],
+				$row['name'],
+				$row['type'],
+				$row['slug'],
+				$roleResolver->getRole($row['type'], (int) $row['role']),
+				$row['note'],
+				(bool) $row['showDownstreamContactData']
+			);
 		}
-		if ($item instanceof Project) {
-			return $setting >= 4;
-		} elseif ($item instanceof Group) {
-			return $setting == 2 || $setting == 3 || $setting > 6;
-		} elseif ($item instanceof Area) {
-			return $setting == 1 || $setting == 3 || $setting == 5 || $setting == 7;
-		}
-		return false;
+		$stmt->closeCursor();
+		return $results;
 	}
 }

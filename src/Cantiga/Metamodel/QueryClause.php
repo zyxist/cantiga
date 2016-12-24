@@ -16,13 +16,12 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+declare(strict_types=1);
 namespace Cantiga\Metamodel;
 
 /**
  * Represents a single expression in the <tt>WHERE</tt> clause. It can hold up to one
  * data binding.
- *
- * @author Tomasz Jędrzejewski
  */
 class QueryClause implements QueryElement
 {
@@ -30,12 +29,12 @@ class QueryClause implements QueryElement
 	private $bindingName;
 	private $bindingValue;
 	
-	public function __construct($clause)
+	public function __construct(string $clause)
 	{
 		$this->clause = $clause;
 	}
 	
-	public static function clause($clause, $binding = null, $value = null)
+	public static function clause(string $clause, string $binding = null, $value = null): QueryClause
 	{
 		$cc = new QueryClause($clause);
 		if (null !== $binding) {
@@ -52,12 +51,12 @@ class QueryClause implements QueryElement
 		}
 	}
 	
-	public function getClause()
+	public function getClause(): string
 	{
 		return $this->clause;
 	}
 
-	public function build()
+	public function build(): string
 	{
 		return '('.$this->clause.')';
 	}

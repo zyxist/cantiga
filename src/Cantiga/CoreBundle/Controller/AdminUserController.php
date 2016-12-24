@@ -102,9 +102,9 @@ class AdminUserController extends AdminPageController
 	public function ajaxListAction(Request $request)
 	{
 		$routes = $this->dataRoutes()
-			->link('info_link', 'admin_user_info', ['id' => '::id'])
-			->link('edit_link', 'admin_user_edit', ['id' => '::id'])
-			->link('remove_link', 'admin_user_remove', ['id' => '::id']);
+			->link('info_link', $this->crudInfo->getInfoPage(), ['id' => '::id'])
+			->link('edit_link', $this->crudInfo->getEditPage(), ['id' => '::id'])
+			->link('remove_link', $this->crudInfo->getRemovePage(), ['id' => '::id']);
 
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$dataTable = $repository->createDataTable();
@@ -119,15 +119,9 @@ class AdminUserController extends AdminPageController
 	{
 		$action = new InfoAction($this->crudInfo);
 		return $action->run($this, $id, function(User $user) {
-				$loaders = $this->getExtensionPoints()->findImplementations(CoreExtensions::MEMBERSHIP_LOADER, new ExtensionPointFilter());
-				$places = [];
-				foreach ($loaders as $loader) {
-					foreach ($loader->loadProjectRepresentations($user) as $place) {
-						$places[] = $place;
-					}
-				}
-				return ['places' => $places];
-			});
+			$repository = $this->get(self::REPOSITORY_NAME);
+			return ['places' => $repository->findPlaces($user)];
+		});
 	}
 
 	/**

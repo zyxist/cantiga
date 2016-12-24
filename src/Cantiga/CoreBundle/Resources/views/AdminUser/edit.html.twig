@@ -1,22 +1,45 @@
-{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
 
-{% block box_body %}
-	{{ form_start(form) }}
-	<div class="row">
-		<div class="col-md-6 col-xs-12">
-			{{ form_row(form.name) }}
-		</div>
-		<div class="col-md-6 col-xs-12">
-			{{ form_row(form.email) }}
-		</div>
-		<div class="col-md-6 col-xs-12">
-			{{ form_row(form.active) }}
-		</div>
-		<div class="col-md-6 col-xs-12">
-			{{ form_row(form.admin) }}
+{% block page_title %}
+	{{ pageTitle | trans([], 'pages') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ pageSubtitle | trans([], 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box box-danger">
+			{{ form_start(form) }}
+			<div class="box-header with-border">
+				<i class="fa fa-user"></i>
+				<h3 class="box-title">{{ 'Edit: 0' | trans([item.name], 'general') }}</h3>
+			</div>
+			<div class="box-body">
+				<div class="row">
+					<div class="col-md-6 col-xs-12">
+						{{ form_row(form.name) }}
+					</div>
+					<div class="col-md-6 col-xs-12">
+						{{ form_row(form.email) }}
+					</div>
+					<div class="col-md-6 col-xs-12">
+						{{ form_row(form.active) }}
+					</div>
+					<div class="col-md-6 col-xs-12">
+						{{ form_row(form.admin) }}
+					</div>
+				</div>
+			</div>
+			<div class="box-footer">
+				{{ form_widget(form.save) }}
+			</div>
+			{{ form_end(form) }}
 		</div>
 	</div>
-	{{ form_end(form) }}
+</div>
 {% endblock %}
 
 {% block javascripts_inline %}

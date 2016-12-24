@@ -18,7 +18,6 @@ parameters:
     project_group_membership_repository.class: Cantiga\CoreBundle\Repository\ProjectGroupMembershipRepository
     project_membership_repository.class: Cantiga\CoreBundle\Repository\ProjectMembershipRepository
     project_memberlist_repository.class: Cantiga\CoreBundle\Repository\ProjectMemberListRepository
-    AdminUserRepository.class: Cantiga\CoreBundle\Repository\AdminUserRepository
     UserRegistrationRepository.class: Cantiga\CoreBundle\Repository\UserRegistrationRepository
     user_area_request_repository.class: Cantiga\CoreBundle\Repository\UserAreaRequestRepository
     project_area_request_repository.class: Cantiga\CoreBundle\Repository\ProjectAreaRequestRepository
@@ -101,7 +100,7 @@ services:
         arguments: ["@database_connection", "@cantiga.transaction"]
     cantiga.core.repo.admin_user:                                                                                                                                                       
         class:     Cantiga\CoreBundle\Repository\AdminUserRepository                                                                                                                                     
-        arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher", "@cantiga.time"]
+        arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher", "@cantiga.time", "@cantiga.roles"]
     cantiga.core.repo.project:                                                                                                                                                     
         class:     Cantiga\CoreBundle\Repository\ProjectRepository
         arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.time", "@event_dispatcher", "@cantiga.project.settings.database_storage"]

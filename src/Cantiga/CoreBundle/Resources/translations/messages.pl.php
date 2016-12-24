@@ -184,8 +184,6 @@ return array(
 	// Admin Users
 	'UserRemovalQuestionText' => 'Czy na pewno chcesz usunąć użytkownika "0"? Spowoduje to usunięcie wszystkich danych osobowych, ustawień i informacji o członkostwie, ale pozostawi wszystkie wyprodukowane przez tego użytkownika dane. Będziesz mógł odtworzyć to konto w późniejszym czasie, jednak skasowane informacje będą musiały być skonfigurowane ponownie.',
 	'User details: 0' => 'Szczegóły użytkownika: 0',
-	'Project number' => 'Liczba projektów',
-	'Group number' => 'Liczba grup',
 	'Registered at' => 'Data rejestracji',
 	'Active?' => 'Aktywny?',
 	'Admin?' => 'Admin?',

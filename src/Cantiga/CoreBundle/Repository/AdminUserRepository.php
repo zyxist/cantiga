@@ -18,6 +18,7 @@
  */
 namespace Cantiga\CoreBundle\Repository;
 
+use Cantiga\Components\Hierarchy\MembershipRoleResolverInterface;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\User;
 use Cantiga\CoreBundle\Event\CantigaEvents;
@@ -51,13 +52,18 @@ class AdminUserRepository implements EntityTransformerInterface
 	 * @var TimeFormatterInterface
 	 */
 	private $timeFormatter;
+	/**
+	 * @var MembershipRoleResolverInterface 
+	 */
+	private $roleResolver;
 	
-	public function __construct(Connection $conn, Transaction $transaction, EventDispatcherInterface $eventDispatcher, TimeFormatterInterface $timeFormatter)
+	public function __construct(Connection $conn, Transaction $transaction, EventDispatcherInterface $eventDispatcher, TimeFormatterInterface $timeFormatter, MembershipRoleResolverInterface $roleResolver)
 	{
 		$this->conn = $conn;
 		$this->transaction = $transaction;
 		$this->eventDispatcher = $eventDispatcher;
 		$this->timeFormatter = $timeFormatter;
+		$this->roleResolver = $roleResolver;
 	}
 	
 	/**
@@ -69,9 +75,7 @@ class AdminUserRepository implements EntityTransformerInterface
 		$dt->id('id', 'i.id')
 			->searchableColumn('name', 'i.name')
 			->column('registeredAt', 'i.registeredAt')
-			->column('projectNum', 'i.projectNum')
-			->column('groupNum', 'i.groupNum')
-			->column('areaNum', 'i.areaNum')
+			->column('placeNum', 'i.placeNum')
 			->column('active', 'i.active')
 			->column('admin', 'i.admin');
 		return $dt;
@@ -83,9 +87,7 @@ class AdminUserRepository implements EntityTransformerInterface
 			->field('i.id', 'id')
 			->field('i.name', 'name')
 			->field('i.registeredAt', 'registeredAt')
-			->field('i.projectNum', 'projectNum')
-			->field('i.groupNum', 'groupNum')
-			->field('i.areaNum', 'areaNum')
+			->field('i.placeNum', 'placeNum')
 			->field('i.active', 'active')
 			->field('i.admin', 'admin')
 			->from(CoreTables::USER_TBL, 'i');
@@ -118,20 +120,30 @@ class AdminUserRepository implements EntityTransformerInterface
 		return $this->conn->fetchColumn('SELECT `id` FROM `'.CoreTables::USER_TBL.'` WHERE `login` = :login OR `email` = :email', [':login' => $login, ':email' => $email]);
 	}
 	
-	/**
-	 * @return User
-	 */
-	public function getItem($id): User
+	public function getItem(int $id): User
 	{
 		$this->transaction->requestTransaction();
-		$data = $this->conn->fetchAssoc('SELECT * FROM `'.CoreTables::USER_TBL.'` WHERE `id` = :id', [':id' => $id]);
-		
-		if(null === $data) {
+		try {
+			$user = User::fetchByCriteria($this->conn, QueryClause::clause('u.`id` = :userId', ':userId', $id), true);
+			if (false === $user) {
+				throw new ItemNotFoundException('The specified user has not been found.', $id);
+			}
+			return $user;
+		} catch (Exception $ex) {
 			$this->transaction->requestRollback();
-			throw new ItemNotFoundException('The specified item has not been found.', $id);
+			throw $ex;
 		}
-
-		return User::fromArray($data);
+	}
+	
+	public function findPlaces(User $user): array
+	{
+		$this->transaction->requestTransaction();
+		try {
+			return $user->findPlaces($this->conn, $this->roleResolver);
+		} catch (Exception $ex) {
+			$this->transaction->requestRollback();
+			throw $ex;
+		}
 	}
 	
 	public function update(User $item)
@@ -163,7 +175,7 @@ class AdminUserRepository implements EntityTransformerInterface
 		$stmt = $this->conn->query('SELECT `id`, `name` FROM `'.CoreTables::USER_TBL.'` ORDER BY `name`');
 		$result = array();
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$result[$row['id']] = $row['name'];
+			$result[$row['name']] = $row['id'];
 		}
 		$stmt->closeCursor();
 		return $result;

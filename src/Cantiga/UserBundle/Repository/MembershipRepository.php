@@ -21,7 +21,6 @@ namespace Cantiga\UserBundle\Repository;
 
 use Cantiga\Components\Hierarchy\Entity\Member;
 use Cantiga\Components\Hierarchy\Entity\MembershipRole;
-use Cantiga\Components\Hierarchy\Entity\PlaceRef;
 use Cantiga\Components\Hierarchy\MembershipEntityInterface;
 use Cantiga\Components\Hierarchy\MembershipRepositoryInterface;
 use Cantiga\Components\Hierarchy\MembershipRoleResolverInterface;
@@ -31,10 +30,8 @@ use Cantiga\CoreBundle\Entity\Invitation;
 use Cantiga\CoreBundle\Entity\User;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Transaction;
-use Cantiga\UserBundle\UserTables;
 use Doctrine\DBAL\Connection;
 use Exception;
-use PDO;
 
 /**
  * Management of the place members, including invitations.
@@ -63,27 +60,10 @@ class MembershipRepository implements MembershipRepositoryInterface
 	
 	public function getUserPlaces(CantigaUserRefInterface $user): array
 	{
-		$stmt = $this->conn->prepare('SELECT p.*, m.* '
-			. 'FROM `'.CoreTables::PLACE_TBL.'` p '
-			. 'INNER JOIN `'.UserTables::PLACE_MEMBERS_TBL.'` m ON m.`placeId` = p.`id` '
-			. 'WHERE m.`userId` = :userId '
-			. 'ORDER BY p.`type` DESC, p.`name`');
-		$stmt->bindValue(':userId', $user->getId());
-		$stmt->execute();
-		$results = [];
-		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$results[] = new PlaceRef(
-				(int) $row['id'],
-				$row['name'],
-				$row['type'],
-				$row['slug'],
-				$this->roleResolver->getRole($row['type'], (int) $row['role']),
-				$row['note'],
-				(bool) $row['showDownstreamContactData']
-			);
+		if ($user instanceof User) {
+			return $user->findPlaces($this->conn, $this->roleResolver);
 		}
-		$stmt->closeCursor();
-		return $results;
+		return [];
 	}
 	
 	public function getMember(MembershipEntityInterface $place, int $id): CantigaUserRefInterface
