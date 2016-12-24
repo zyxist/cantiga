@@ -51,6 +51,9 @@ class Place implements IdentifiableInterface, InsertableEntityInterface, Editabl
 	private $removedAt;
 	private $memberNum;
 	private $rootPlaceId;
+	private $archived = false;
+	
+	private $pendingArchivization = false;
 	
 	public static function fetchById(Connection $conn, $id)
 	{
@@ -137,6 +140,11 @@ class Place implements IdentifiableInterface, InsertableEntityInterface, Editabl
 	{
 		return $this->memberNum;
 	}
+	
+	public function isRoot(): bool
+	{
+		return null !== $this->rootPlaceId;
+	}
 
 	public function getRootPlaceId()
 	{
@@ -153,6 +161,25 @@ class Place implements IdentifiableInterface, InsertableEntityInterface, Editabl
 	{
 		$this->rootPlaceId = $rootPlaceId;
 		return $this;
+	}
+	
+	public function getArchived(): bool
+	{
+		return (bool) $this->archived;
+	}
+	
+	public function setArchived($archived)
+	{
+		$this->archived = (bool) $archived;
+		return $this;
+	}
+	
+	public function archivize()
+	{
+		if (!$this->archived) {
+			$this->archived = true;
+			$this->pendingArchivization = true;
+		}
 	}
 
 	public function canRemove()
@@ -171,11 +198,20 @@ class Place implements IdentifiableInterface, InsertableEntityInterface, Editabl
 
 	public function update(Connection $conn)
 	{
-		return $conn->update(
-			CoreTables::PLACE_TBL,
-			DataMappers::pick($this, ['name']),
-			DataMappers::pick($this, ['id'])
-		);
+		if ($this->pendingArchivization) {
+			$conn->executeUpdate('UPDATE `'.CoreTables::PLACE_TBL.'` SET `archived` = 1 WHERE `rootPlaceId` = :rootPlaceId', [':rootPlaceId' => $this->getId()]);
+			return $conn->update(
+				CoreTables::PLACE_TBL,
+				DataMappers::pick($this, ['name', 'archived']),
+				DataMappers::pick($this, ['id'])
+			);
+		} else {
+			return $conn->update(
+				CoreTables::PLACE_TBL,
+				DataMappers::pick($this, ['name']),
+				DataMappers::pick($this, ['id'])
+			);
+		}
 	}
 	
 	public function remove(Connection $conn)

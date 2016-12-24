@@ -30,14 +30,16 @@ class PlaceRef extends AbstractMemberInfo implements PlaceRefInterface
 	private $name;
 	private $type;
 	private $slug;
+	private $archived;
 	
-	public function __construct(int $id, string $name, string $type, string $slug, MembershipRole $role = null, string $note = '', bool $showDownstreamContactInfo = false)
+	public function __construct(int $id, string $name, string $type, string $slug, bool $archived, MembershipRole $role = null, string $note = '', bool $showDownstreamContactInfo = false)
 	{
 		parent::__construct($role, $note, $showDownstreamContactInfo);
 		$this->id = $id;
 		$this->name = $name;
 		$this->type = $type;
 		$this->slug = $slug;
+		$this->archived = $archived;
 	}
 	
 	public function getId(): int
@@ -58,5 +60,10 @@ class PlaceRef extends AbstractMemberInfo implements PlaceRefInterface
 	public function getSlug(): string
 	{
 		return $this->slug;
+	}
+	
+	public function getArchived(): bool
+	{
+		return $this->archived;
 	}
 }

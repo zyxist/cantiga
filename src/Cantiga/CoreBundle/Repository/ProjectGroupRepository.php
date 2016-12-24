@@ -208,7 +208,7 @@ class ProjectGroupRepository implements EntityTransformerInterface
 		$stmt->bindValue(':projectId', $this->project->getId());
 		$stmt->execute();
 		$result = array();
-		$result[0] = '---';
+		$result['---'] = null;
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 			$result[$row['name']] = $row['id'];
 		}

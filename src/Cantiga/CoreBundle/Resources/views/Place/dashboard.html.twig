@@ -10,6 +10,20 @@
 
 {% block page_content %}
 	<div class="row">
+		{% if place.place.archived %}
+		<div class="col-lg-12">
+			<div class="alert alert-warning">
+				<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+				<h4><i class="icon fa fa-warning"></i> {{ 'Warning' | trans([], 'general') }}</h4>
+				{% if place.place.isRoot() %}
+					{{ 'ProjectAlreadyCompletedWarning' | trans }}
+					
+				{% else %}
+					{{ 'PlaceProjectAlreadyCompletedWarning' | trans }}
+				{% endif %}
+			</div>
+		</div>
+		{% endif %}
 		<div class="col-md-12">
 			<div class="row">
 			{{ topExtensions | raw }}

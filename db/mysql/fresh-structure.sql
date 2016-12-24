@@ -342,9 +342,11 @@ CREATE TABLE IF NOT EXISTS `cantiga_places` (
   `removedAt` int(11) DEFAULT NULL,
   `memberNum` int(11) DEFAULT 0,
   `rootPlaceId` int(11) NULL,
+  `archived` TINYINT NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `slug` (`slug`),
-  KEY `rootPlaceId` (`rootPlaceId`)
+  KEY `rootPlaceId` (`rootPlaceId`),
+  KEY `archived` (`archived`) USING HASH
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `cantiga_place_members` (

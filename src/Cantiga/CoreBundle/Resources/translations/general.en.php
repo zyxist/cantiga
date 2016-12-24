@@ -40,6 +40,7 @@ return array(
 	'Filter results' => 'Filter results',
 	'Details' => 'Details',
 	'Close' => 'Close',
+	'Warning' => 'Warning',
 
 	'Indeed, remove it' => 'Indeed, remove it',
 	'Edit: 0' => 'Edit: 0',

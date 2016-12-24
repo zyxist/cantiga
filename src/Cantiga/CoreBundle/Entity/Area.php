@@ -72,13 +72,13 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 			. 'FROM `'.CoreTables::AREA_TBL.'` a '
 			. 'INNER JOIN `'.CoreTables::TERRITORY_TBL.'` t ON t.`id` = a.`territoryId` '
 			. self::createPlaceJoin('a')
-			. 'INNER JOIN `'.CoreTables::PROJECT_TBL.'` p ON p.`id` = a.`projectId` WHERE a.`id` = :id AND p.`archived` = 0', [':id' => $id]);
+			. 'INNER JOIN `'.CoreTables::PROJECT_TBL.'` p ON p.`id` = a.`projectId` WHERE a.`id` = :id', [':id' => $id]);
 		if(null === $data) {
 			return false;
 		}
 		$item = Area::fromArray($data);
-		$item->project = Project::fetchActive($conn, $data['projectId']);
-		if (false == $item->project) {
+		$item->project = Project::fetch($conn, $data['projectId']);
+		if (false === $item->project) {
 			return false;
 		}
 		
@@ -145,7 +145,7 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 			return false;
 		}
 		$area = self::fromArray($data);
-		$area->project = Project::fetchActive($conn, $data['projectId']);
+		$area->project = Project::fetch($conn, $data['projectId']);
 		$area->place = Place::fromArray($data, 'place');
 		$area->status = $area->oldStatus = AreaStatus::fetchByProject($conn, $data['statusId'], $area->project);
 		$area->setTerritory($area->oldTerritory = Territory::fromArray($data, 'territory'));

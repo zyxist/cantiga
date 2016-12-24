@@ -40,7 +40,8 @@ return array(
 	'Filter results' => 'Filtruj wyniki',
 	'Details' => 'Szczegóły',
 	'Close' => 'Zamknij',
-
+	'Warning' => 'Ostrzeżenie',
+	
 	'Indeed, remove it' => 'Zaiste, usuń',
 	'Edit: 0' => 'Edytuj: 0',
 	'Details: 0' => 'Szczegóły: 0',

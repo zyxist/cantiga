@@ -72,4 +72,9 @@ return array(
 	
 	// Area dashboard
 	'Your status' => 'Your status',
+	
+	// Errors, etc.
+	'The specified area has not been found.' => 'The specified area has not been found.',
+	'ProjectAlreadyCompletedWarning' => 'This project has already finished and is preserved as archived.',
+	'PlaceProjectAlreadyCompletedWarning' => 'The project this place belongs to has already completed and is preserved as archived.',
 );

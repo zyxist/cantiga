@@ -302,4 +302,6 @@ return array(
 	
 	// Errors, etc.
 	'The specified area has not been found.' => 'Podany rejon nie został znaleziony.',
+	'ProjectAlreadyCompletedWarning' => 'Ten projekt został już zakończony i jest dostępny wyłącznie do celów archiwalnych.',
+	'PlaceProjectAlreadyCompletedWarning' => 'Projekt, do którego należy to miejsce, został już zakończony i jest dostępny wyłącznie do celów archiwalnych.',
 );

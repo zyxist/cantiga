@@ -409,6 +409,7 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 			$this->archivedAt = time();
 			$this->archived = true;
 			$this->pendingArchivization = true;
+			$this->place->archivize();
 		}
 	}
 	

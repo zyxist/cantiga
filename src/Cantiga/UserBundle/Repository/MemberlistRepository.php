@@ -100,7 +100,7 @@ class MemberlistRepository
 			if ($p['id'] == $currentPlace->getId()) {
 				$currentMemberInfo = new MemberInfo($this->roleResolver->getRole($p['type'], $p['role']), $p['note'], (bool) $p['showDownstreamContactData']);
 			}
-			$places[] = new PlaceRef($p['id'], $p['name'], $p['type'], $p['slug'], $this->roleResolver->getRole($p['type'], $p['role']), $p['note'], (bool) $p['showDownstreamContactData']);
+			$places[] = new PlaceRef($p['id'], $p['name'], $p['type'], $p['slug'], (bool) $p['archived'], $this->roleResolver->getRole($p['type'], $p['role']), $p['note'], (bool) $p['showDownstreamContactData']);
 		}
 		
 		if (null === $currentMemberInfo) {

@@ -26,4 +26,5 @@ interface PlaceRefInterface extends IdentifiableInterface
 	public function getName(): string;
 	public function getType(): string;
 	public function getSlug(): string;
+	public function getArchived(): bool;
 }

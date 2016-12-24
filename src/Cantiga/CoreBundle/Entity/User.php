@@ -512,6 +512,7 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 				$row['name'],
 				$row['type'],
 				$row['slug'],
+				(bool) $row['archived'],
 				$roleResolver->getRole($row['type'], (int) $row['role']),
 				$row['note'],
 				(bool) $row['showDownstreamContactData']
