@@ -1,63 +1,82 @@
-{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
 
-{% block box_header %}
-	<h4>{{ 'Create a new discussion channel' | trans([], 'discussion') }}</h4>
+{% block page_title %}
+	{{ 'Discussion channels' | trans([], 'pages') }}
 {% endblock %}
 
-{% block box_body %}
-	{{ form_start(form) }}
-	<fieldset>
-		<legend>{{ 'Appearance' | trans([], 'discussion') }}</legend>
-		<div class="row">
-			<div class="col-md-6 col-xs-12">
-				{{ form_row(form.name) }}
+{% block page_subtitle %}
+	{{ 'Manage the discussion channels' | trans([], 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box box-primary">
+			{{ form_start(form) }}
+			<div class="box-header with-border">
+				<i class="fa fa-comment-o"></i>
+				<h3 class="box-title">{{ 'Create a new discussion channel' | trans([], 'discussion') }}</h3>
 			</div>
-			<div class="col-md-6 col-xs-12">
-				{{ form_row(form.description) }}
+			<div class="box-body">
+				<fieldset>
+					<legend>{{ 'Appearance' | trans([], 'discussion') }}</legend>
+					<div class="row">
+						<div class="col-md-6 col-xs-12">
+							{{ form_row(form.name) }}
+						</div>
+						<div class="col-md-6 col-xs-12">
+							{{ form_row(form.description) }}
+						</div>
+						<div class="col-md-6 col-xs-12">
+							{{ form_row(form.color) }}
+						</div>
+						<div class="col-md-6 col-xs-12">
+							{{ form_row(form.icon) }}
+						</div>
+					</div>
+				</fieldset>
+				<fieldset>
+					<legend>{{ 'Settings' | trans([], 'discussion') }}</legend>
+					<div class="row">
+						<div class="col-md-6 col-xs-12">
+							{{ form_row(form.discussionGrouping) }}
+						</div>
+						<div class="col-md-6 col-xs-12">
+							{{ form_row(form.enabled) }}
+						</div>
+					</div>
+				</fieldset>
+				<fieldset>
+					<legend>{{ 'Permissions' | trans([], 'discussion') }}</legend>
+					<div class="row">
+						<div class="col-md-4 col-xs-12">
+							{{ form_row(form.projectVisible) }}
+						</div>
+						<div class="col-md-4 col-xs-12">
+							{{ form_row(form.groupVisible) }}
+						</div>
+						<div class="col-md-4 col-xs-12">
+							{{ form_row(form.areaVisible) }}
+						</div>
+						<div class="col-md-4 col-xs-12">
+							{{ form_row(form.projectPosting) }}
+						</div>
+						<div class="col-md-4 col-xs-12">
+							{{ form_row(form.groupPosting) }}
+						</div>
+						<div class="col-md-4 col-xs-12">
+							{{ form_row(form.areaPosting) }}
+						</div>
+					</div>
+				</fieldset>
 			</div>
-			<div class="col-md-6 col-xs-12">
-				{{ form_row(form.color) }}
+			<div class="box-footer">
+				{{ form_widget(form.save) }}
 			</div>
-			<div class="col-md-6 col-xs-12">
-				{{ form_row(form.icon) }}
-			</div>
+			{{ form_end(form) }}
 		</div>
-	</fieldset>
-	<fieldset>
-		<legend>{{ 'Settings' | trans([], 'discussion') }}</legend>
-		<div class="row">
-			<div class="col-md-6 col-xs-12">
-				{{ form_row(form.discussionGrouping) }}
-			</div>
-			<div class="col-md-6 col-xs-12">
-				{{ form_row(form.enabled) }}
-			</div>
-		</div>
-	</fieldset>
-	<fieldset>
-		<legend>{{ 'Permissions' | trans([], 'discussion') }}</legend>
-		<div class="row">
-			<div class="col-md-4 col-xs-12">
-				{{ form_row(form.projectVisible) }}
-			</div>
-			<div class="col-md-4 col-xs-12">
-				{{ form_row(form.groupVisible) }}
-			</div>
-			<div class="col-md-4 col-xs-12">
-				{{ form_row(form.areaVisible) }}
-			</div>
-			<div class="col-md-4 col-xs-12">
-				{{ form_row(form.projectPosting) }}
-			</div>
-			<div class="col-md-4 col-xs-12">
-				{{ form_row(form.groupPosting) }}
-			</div>
-			<div class="col-md-4 col-xs-12">
-				{{ form_row(form.areaPosting) }}
-			</div>
-		</div>
-	</fieldset>
-	{{ form_end(form) }}
+	</div>
+</div>
 {% endblock %}
 
 {% block javascripts_inline %}
