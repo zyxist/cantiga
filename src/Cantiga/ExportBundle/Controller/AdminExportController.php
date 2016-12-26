@@ -135,9 +135,10 @@ class AdminExportController extends AdminPageController
 	 */
 	public function insertAction(Request $request)
 	{
-		$action = new InsertAction($this->crudInfo, new DataExport(), new DataExportForm(
-			$this->get('cantiga.core.repo.project'), $this->get('cantiga.core.repo.project_area_status')
-		));
+		$action = new InsertAction($this->crudInfo, new DataExport(), DataExportForm::class, [
+			'projectRepository' => $this->get('cantiga.core.repo.project'),
+			'areaStatusRepository' => $this->get('cantiga.core.repo.project_area_status')
+		]);
 		return $action->run($this, $request);
 	}
 
@@ -146,9 +147,10 @@ class AdminExportController extends AdminPageController
 	 */
 	public function editAction($id, Request $request)
 	{
-		$action = new EditAction($this->crudInfo, new DataExportForm(
-			$this->get('cantiga.core.repo.project'), $this->get('cantiga.core.repo.project_area_status')
-		));
+		$action = new EditAction($this->crudInfo, DataExportForm::class, [
+			'projectRepository' => $this->get('cantiga.core.repo.project'),
+			'areaStatusRepository' => $this->get('cantiga.core.repo.project_area_status')
+		]);
 		return $action->run($this, $id, $request);
 	}
 

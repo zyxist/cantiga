@@ -35,23 +35,22 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DataExportForm extends AbstractType
 {
-
-	private $projectRepository;
-	private $areaStatusRepository;
-
-	public function __construct(ProjectRepository $projectRepository, ProjectAreaStatusRepository $areaStatusRepository)
+	public function configureOptions(OptionsResolver $resolver)
 	{
-		$this->projectRepository = $projectRepository;
-		$this->areaStatusRepository = $areaStatusRepository;
+		$resolver->setDefined(['projectRepository', 'areaStatusRepository']);
+		$resolver->setRequired(['projectRepository', 'areaStatusRepository']);
+		$resolver->addAllowedTypes('projectRepository', ProjectRepository::class);
+		$resolver->addAllowedTypes('areaStatusRepository', ProjectAreaStatusRepository::class);
 	}
 
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$projects = $this->projectRepository->getFormChoices();
-		$first = key($projects);		
+		$projects = $options['projectRepository']->getFormChoices();
+		$first = reset($projects);		
 		
 		$builder
 			->add('name', TextType::class, array('label' => 'Name'))
@@ -62,14 +61,14 @@ class DataExportForm extends AbstractType
 			->add('notes', TextareaType::class, ['label' => 'Notes'])
 			->add('save', SubmitType::class, array('label' => 'Save'));
 
-		$builder->get('project')->addModelTransformer(new EntityTransformer($this->projectRepository));
+		$builder->get('project')->addModelTransformer(new EntityTransformer($options['projectRepository']));
 
-		$formModifier = function (FormInterface $form, Project $project = null) use($first) {
+		$formModifier = function (FormInterface $form, Project $project = null) use($options, $first) {
 			if (null === $project && false !== $first) {
-				$project = $this->projectRepository->getItem($first);
+				$project = $options['projectRepository']->getItem($first);
 			}
-			$statuses = (null === $project ? [] : $this->areaStatusRepository->getFormChoices($project));
-			$form->add('areaStatus', new ChoiceType, ['label' => 'Area status', 'choices' => $statuses]);
+			$statuses = (null === $project ? [] : $options['areaStatusRepository']->getFormChoices($project));
+			$form->add('areaStatus', ChoiceType::class, ['label' => 'Area status', 'choices' => $statuses]);
 		};
 
 		$builder->addEventListener(
@@ -83,11 +82,11 @@ class DataExportForm extends AbstractType
 			}
 		);
 		$builder->addEventListener(
-			FormEvents::SUBMIT, function (FormEvent $event) {
+			FormEvents::SUBMIT, function (FormEvent $event) use($options) {
 				$data = $event->getData();
 				if (!empty($data->getAreaStatus()) && null !== $data->getProject()) {
-					$this->areaStatusRepository->setProject($data->getProject());
-					$data->setAreaStatus($this->areaStatusRepository->getItem($data->getAreaStatus()));
+					$options['areaStatusRepository']->setProject($data->getProject());
+					$data->setAreaStatus($options['areaStatusRepository']->getItem($data->getAreaStatus()));
 				}
 			}
 		);
