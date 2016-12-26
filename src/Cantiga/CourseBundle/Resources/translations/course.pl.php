@@ -12,6 +12,7 @@ return array(
 	'Area result' => 'Wynik rejonu',
 	'Your score' => 'Twój wynik',
 	'Area score' => 'Wynik rejonu',
+	'Completion' => 'Ukończenie',
 	'Completion date' => 'Data ukończenia szkolenia',
 	'Completed at' => 'Ukończony',
 	'Status' => 'Status',
@@ -21,8 +22,7 @@ return array(
 	'Passed courses' => 'Zdanych szkoleń',
 	'Failed courses' => 'Niezdanych szkoleń',
 	'Progress' => 'Postęp',
-	'Upload the test' => 'Załaduj pytania testowe',
-	
+	'UploadTestAction' => 'Załaduj pytania testowe',
 	'Ready' => 'Gotowe',
 	'CloseRefreshWarningText' => 'Nie zamykaj, ani nie odświeżaj tej strony bez kliknięcia "Gotowe"! Uniemożliwi to ukończenie testu i zablokuje kolejne próby na 24 godziny!',
 	'Remaining time' => 'Pozostały czas',

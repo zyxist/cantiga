@@ -27,8 +27,8 @@ class CourseTestUploadForm extends AbstractType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->add('file', FileType::class, array('label' => 'XML file', 'required' => true))
-			->add('save', SubmitType::class, array('label' => 'Upload questions'));
+		$builder->add('file', FileType::class, array('label' => 'XMLFileLabel', 'required' => true))
+			->add('save', SubmitType::class, array('label' => 'UploadQuestionsButton'));
 	}
 	
 	public function getName()

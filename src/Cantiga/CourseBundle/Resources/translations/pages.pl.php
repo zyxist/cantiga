@@ -1,6 +1,8 @@
 <?php
 return [
 	'Courses' => 'Szkolenia',
+	'Upload test: 0' => 'Załąduj pytania testowe: 0',
+	'Create a new course' => 'Dodaj nowe szkolenie',
 	'Manage the on-line courses for areas' => 'Zarządzaj szkoleniami dla rejonów',
 	'Take the on-line courses' => 'Wykonuj szkolenia on-line',
 	'Take the on-line course' => 'Wykonaj szkolenie on-line',

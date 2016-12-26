@@ -22,20 +22,19 @@
 		</div>
 	</div>
 	<div class="col-lg-4 col-md-12 col-xs-12">
-		<div class="row">
-			<div class="box">
-				<div class="box-body">
-					{% if item.hasTest() %}
+		<div class="box">
+			<div class="box-body">
+				{% if item.hasTest() %}
 					{% if result.isSolved() %}
-					<h4>{{ 'Your result' | trans([], 'course') }}</h4>
+						<h4>{{ 'Your result' | trans([], 'course') }}</h4>
 						<table class="table">
 							<tbody>
 								<tr>
 									<td width="30%">{{ 'Course status' | trans([], 'course') }}</td>
 									{% if result.getResult() == 1 %}
-									<td class="success">{{ 'Passed' | trans([], 'course') }}</td>
+										<td class="success">{{ 'Passed' | trans([], 'course') }}</td>
 									{% else %}
-									<td class="danger">{{ 'Failed' | trans([], 'course') }}</td>	
+										<td class="danger">{{ 'Failed' | trans([], 'course') }}</td>	
 									{% endif %}
 								</tr>
 								<tr>
@@ -49,27 +48,27 @@
 							</tbody>
 						</table>
 					{% else %}
-					<h4>{{ 'Test' | trans([], 'course') }}</h4>
-					<p>{{ 'CourseTestNeededText' | trans }}</p>
-					{% if item.deadline %}
-					<p class="lead">{{'Deadline for completing the test' | trans }}: {{ format_time(TimeFormatter.FORMAT_DATE_LONG, item.deadline) }}</p>
-					{% endif %}
+						<h4>{{ 'Test' | trans([], 'course') }}</h4>
+						<p>{{ 'CourseTestNeededText' | trans }}</p>
+						{% if item.deadline %}
+							<p class="lead">{{'Deadline for completing the test' | trans }}: {{ format_time(TimeFormatter.FORMAT_DATE_LONG, item.deadline) }}</p>
+						{% endif %}
 					{% endif %}
 
 					{% if result.canBeStarted() %}	
-					<a href="{{ spath('area_course_test', {'id': item.id})}}" class="btn btn-primary" role="button">{{ 'Start the test!' | trans }}</a>
+						<a href="{{ spath('area_course_test', {'id': item.id})}}" class="btn btn-primary" role="button">{{ 'Start the test!' | trans }}</a>
 					{% endif %}
-					{% else %}
-					<h4>Ukończenie</h4>
+				{% else %}
+					<h4>{{ 'Completion' | trans([], 'course') }}</h4>
 					{% if result.isSolved() %}
 						<table class="table">
 							<tbody>
 								<tr>
-									<td width="30%">Twój status</td>
+									<td width="30%">{{ 'Your score' | trans([], 'course') }}</td>
 									{% if result.getResult() == 1 %}
-									<td class="success">{{ 'Passed' | trans([], 'course') }}</td>
+										<td class="success">{{ 'Passed' | trans([], 'course') }}</td>
 									{% else %}
-									<td class="danger">{{ 'Failed' | trans([], 'course') }}</td>	
+										<td class="danger">{{ 'Failed' | trans([], 'course') }}</td>	
 									{% endif %}
 								</tr>
 								<tr>
@@ -79,29 +78,29 @@
 							</tbody>
 						</table>
 					{% else %}
-					{% if item.deadline %}
-					<p>{{ 'CourseTestNotNeededText: 0' | trans([ format_time(TimeFormatter.FORMAT_DATE_LONG, item.deadline)]) }}</p>
-					{% else %}
-					<p>{{ 'CourseTestNotNeededText' | trans }}</p>
+						{% if item.deadline %}
+							<p>{{ 'CourseTestNotNeededText: 0' | trans([ format_time(TimeFormatter.FORMAT_DATE_LONG, item.deadline)]) }}</p>
+						{% else %}
+							<p>{{ 'CourseTestNotNeededText' | trans }}</p>
+						{% endif %}
+						<a href="{{ spath('area_course_complete', {'id': item.id})}}" class="btn btn-primary" role="button">{{ 'Confirm course completion' | trans }}</a>
 					{% endif %}
-					<a href="{{ spath('area_course_complete', {'id': item.id})}}" class="btn btn-primary" role="button">{{ 'Confirm course completion' | trans }}</a>
-					{% endif %}
-					{% endif %}
-				</div>
+				{% endif %}
 			</div>
-			<div class="box">
-				<div class="box-body">
-					<h4>{{ 'Area result' | trans([], 'course') }}</h4>
-					{% if areaResult.isSolved() %}
+		</div>
+		<div class="box">
+			<div class="box-body">
+				<h4>{{ 'Area result' | trans([], 'course') }}</h4>
+				{% if areaResult.isSolved() %}
 					<p>{{ 'AreaResultInfoText' | trans([], 'course') }}</p>
 					<table class="table">
 						<tbody>
 							<tr>
 								<td width="30%">{{ 'Course status' | trans([], 'course') }}</td>
 								{% if areaResult.getResult() == 1 %}
-								<td class="success">{{ 'Passed' | trans([], 'course') }}</td>
+									<td class="success">{{ 'Passed' | trans([], 'course') }}</td>
 								{% else %}
-								<td class="danger">{{ 'Failed' | trans([], 'course') }}</td>	
+									<td class="danger">{{ 'Failed' | trans([], 'course') }}</td>	
 								{% endif %}
 							</tr>
 							<tr>
@@ -114,10 +113,9 @@
 							</tr>
 						</tbody>
 					</table>
-					{% else %}
+				{% else %}
 					<p>{{'NobodyHasStartedTheTestText' | trans([], 'course') }}</p>
-					{% endif %}
-				</div>
+				{% endif %}
 			</div>
 		</div>
 	</div>

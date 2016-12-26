@@ -1,6 +1,30 @@
 <?php
-return [
+return array(
+	'Passed' => 'PAssed',
+	'Failed' => 'Failed',	
+	'Not started' => 'Not started',
+	'Test' => 'Test',
+	'Test: 0' => 'Test: 0',
 	'NobodyHasStartedTheTestText' => 'Nobody from your area has attempted to complete the course. The area is considered to complete the course, if at least one person from this area completes it with a positive result.',
 	'AreaResultInfoText' => 'The area is considered to complete the course, if at least one person from this area completes it with a positive result.',
+	'Course status' => 'Course status',
+	'Your result' => 'Your result',
+	'Area result' => 'Area result',
+	'Your score' => 'Your score',
+	'Area score' => 'Area score',
+	'Completion' => 'Completion',
+	'Completion date' => 'Completion date',
+	'Completed at' => 'Completed at',
+	'Status' => 'Status',
+	'Course' => 'Course',
+	'Member result' => 'Member result',
+	'Trial number' => 'Trial number',
+	'Passed courses' => 'Passed courses',
+	'Failed courses' => 'Failed courses',
+	'Progress' => 'Progress',
+	'UploadTestAction' => 'Upload test',
+	'Ready' => 'Ready',
 	'CloseRefreshWarningText' => 'Please neither close nor refresh this page until you click "Ready"! It will make impossible to complete this test and block futher attempts for the next 24 hours!',
-];
+	'Remaining time' => 'Remaining time',
+	'Completed courses' => 'Completed courses',
+);

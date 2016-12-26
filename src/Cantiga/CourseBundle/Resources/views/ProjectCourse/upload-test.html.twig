@@ -1,14 +1,26 @@
 {% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
 
-{% block box_header %}
-	<h4>{{ 'Upload test: 0' | trans([item.name]) }}</h4>
+{% block page_title %}
+	{{ 'Courses' | trans([], 'pages') }}
 {% endblock %}
 
-{% block box_body %}
-	
-	<p>{{ 'ExampleTestFileText' | trans }}</p>
-	
-	<pre>
+{% block page_subtitle %}
+	{{ 'Manage the on-line courses for areas' | trans([], 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box box-primary">
+			{{ form_start(form) }}
+			<div class="box-header with-border">
+				<i class="fa fa-graduation-cap"></i>
+				<h3 class="box-title">{{ 'Upload test: 0' | trans([item.name], 'pages') }}</h3>
+			</div>
+			<div class="box-body">
+				<p>{{ 'ExampleTestFileText' | trans }}</p>
+
+				<pre>
 &lt;?xml version="1.0"?&gt;
 &lt;test question-number="10"&gt;
 	&lt;question content="Is this a correct answer?"&gt;
@@ -24,8 +36,13 @@
 		&lt;answer&gt;7&lt;/answer&gt;
 	&lt;/question&gt;
 &lt;/test&gt;</pre>
-
-	{{ form_start(form) }}
-		{{ form_row(form.file) }}
-	{{ form_end(form) }}
+				{{ form_row(form.file) }}
+			</div>
+			<div class="box-footer">
+				{{ form_widget(form.save) }}
+			</div>
+			{{ form_end(form) }}
+		</div>
+	</div>
+</div>
 {% endblock %}

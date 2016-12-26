@@ -38,13 +38,13 @@ class CourseForm extends AbstractType
 	{
 		$builder
 			->add('name', TextType::class, array('label' => 'Name'))
-			->add('description', TextType::class, array('label' => 'Course description', 'attr' => array('help_text' => 'Visible to the course participants')))
-			->add('authorName', TextType::class, array('label' => 'Autor of the course'))
-			->add('authorEmail', EmailType::class, array('label' => 'Author e-mail'))
+			->add('description', TextType::class, array('label' => 'Course description', 'attr' => array('help_text' => 'VisibleToParticipantsHint')))
+			->add('authorName', TextType::class, array('label' => 'CourseAuthorLabel'))
+			->add('authorEmail', EmailType::class, array('label' => 'CourseAuthorEmailLabel'))
 			->add('presentationLink', UrlType::class, array('label' => 'Presentation URL', 'attr' => array('help_text' => 'Google Slides, Prezi')))
 			->add('deadline', DateType::class, array('label' => 'Deadline', 'input' => 'timestamp', 'required' => false))
 			->add('displayOrder', NumberType::class, array('label' => 'Display order'))
-			->add('notes', TextareaType::class, array('label' => 'Notes', 'required' => false, 'attr' => array('help_text' => 'Not visible to the course participants', 'rows' => 10)))
+			->add('notes', TextareaType::class, array('label' => 'Notes', 'required' => false, 'attr' => array('help_text' => 'NotVisibleToParticipantsHint', 'rows' => 10)))
 			->add('isPublished', BooleanType::class, array('label' => 'Is published?', 'required' => false))
 			->add('save', SubmitType::class, array('label' => 'Save'));
 	}

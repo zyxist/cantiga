@@ -28,7 +28,7 @@
 								<span class="sr-only">{{ 'Toggle dropdown' | trans([], 'general') }}</span>
 							</button>
 							<ul class="dropdown-menu" role="menu">
-								<li><a href="{{ spath('project_course_upload_test', {'id' : item.id }) }}">{{ 'Upload the test' | trans([], 'course') }}</a></li>
+								<li><a href="{{ spath('project_course_upload_test', {'id' : item.id }) }}">{{ 'UploadTestAction' | trans([], 'course') }}</a></li>
 								<li><a href="{{ spath(editPage, {'id' : item.id }) }}">{{ 'Edit' | trans([], 'general') }}</a></li>
 								{% if item.canRemove() %}
 								<li><a href="{{ spath(removePage, {'id' : item.id }) }}">{{ 'Remove' | trans([], 'general') }}</a></li>
@@ -97,7 +97,7 @@
 					{% if item.hasTest() %}
 						<pre>{{ item.getTest().getContent() }}</pre>
 					{% else %}
-						<p>{{ 'The test has not been published for this course.' | trans }}</p>
+						<p>{{ 'TestNotPublishedText' | trans }}</p>
 					{% endif %}
 				</div>
 			</div>

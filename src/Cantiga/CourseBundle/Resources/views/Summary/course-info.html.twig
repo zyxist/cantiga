@@ -82,7 +82,7 @@
 					{% if item.hasTest() %}
 						<pre>{{ item.getTest().getContent() }}</pre>
 					{% else %}
-						<p>{{ 'The test has not been published for this course.' | trans }}</p>
+						<p>{{ 'TestNotPublishedText' | trans }}</p>
 					{% endif %}
 				</div>
 			</div>
