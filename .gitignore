@@ -14,3 +14,4 @@
 /nbproject/
 /app/config/parameters_test.yml
 /uploads/
+/docs/build/**
