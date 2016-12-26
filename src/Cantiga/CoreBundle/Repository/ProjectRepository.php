@@ -170,7 +170,7 @@ class ProjectRepository implements EntityTransformerInterface
 		$stmt = $this->conn->query('SELECT `id`, `name` FROM `'.CoreTables::PROJECT_TBL.'` WHERE `archived` = 0 ORDER BY `name`');
 		$result = array();
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$result[$row['id']] = $row['name'];
+			$result[$row['name']] = $row['id'];
 		}
 		$stmt->closeCursor();
 		return $result;
