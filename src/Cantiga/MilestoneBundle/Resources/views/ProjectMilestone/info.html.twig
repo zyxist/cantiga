@@ -1,46 +1,59 @@
-{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
 
-{% block box_header %}
-	<h4>{{ 'Details: 0' | trans([item.name], 'general') }}</h4>
+{% block page_title %}
+	{{ 'Milestones' | trans([], 'pages') }}
 {% endblock %}
 
-{% block box_body %}
-<table class="table table-hover">
-	<tbody>
-		<tr>
-			<td width="30%">{{ 'Name' | trans }}</td>
-			<td>{{ item.name }}</td>
-		</tr>
-		<tr>
-			<td width="30%">{{ 'Description' | trans }}</td>
-			<td>{{ item.description }}</td>
-		</tr>
-		<tr>
-			<td width="30%">{{ 'Where shown?' | trans }}</td>
-			<td>{{ item.getEntityType() | trans }}</td>
-		</tr>
-		<tr>
-			<td width="30%">{{ 'How to count progress?' | trans }}</td>
-			<td>{{ item.getTypeText() | trans }}</td>
-		</tr>
-		<tr>
-			<td width="30%">{{ 'Order' | trans }}</td>
-			<td>{{ item.displayOrder }}</td>
-		</tr>
-		<tr>
-			<td width="30%">{{ 'Deadline' | trans }}</td>
-			<td>{{ format_time(TimeFormatter.FORMAT_DATE_LONG, item.deadline) }}</td>
-		</tr>
-	</tbody>
-</table>
+{% block page_subtitle %}
+	{{ 'Manage the milestones for groups and areas' | trans([], 'pages') }}
 {% endblock %}
 
-{% block box_footer %}
-<p>
-	<a href="{{ spath(indexPage) }}" class="btn btn-default btn-sm" role="button">{{ 'Back' | trans({}, 'general') }}</a>
-	<a href="{{ spath(editPage, {'id': item.id }) }}" class="btn btn-warning btn-sm" role="button">{{ 'Edit' | trans({}, 'general') }}</a>
-	{% if item.canRemove() %}
-	<a href="{{ spath(removePage, {'id': item.id }) }}" class="btn btn-danger btn-sm" role="button">{{ 'Remove' | trans({}, 'general') }}</a>
-	{% endif %}
-</p>
+{% block page_content %}
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box box-primary">
+			<div class="box-header with-border">
+				<i class="fa fa-flag-checkered"></i>
+				<h3 class="box-title">{{ 'Details: 0' | trans([item.name], 'general') }}</h3>
+			</div>
+			<div class="box-body no-padding">
+				<table class="table table-hover">
+					<tbody>
+						<tr>
+							<td width="30%">{{ 'Name' | trans }}</td>
+							<td>{{ item.name }}</td>
+						</tr>
+						<tr>
+							<td width="30%">{{ 'Description' | trans }}</td>
+							<td>{{ item.description }}</td>
+						</tr>
+						<tr>
+							<td width="30%">{{ 'Where shown?' | trans }}</td>
+							<td>{{ item.getEntityType() | trans }}</td>
+						</tr>
+						<tr>
+							<td width="30%">{{ 'How to count progress?' | trans }}</td>
+							<td>{{ item.getTypeText() | trans }}</td>
+						</tr>
+						<tr>
+							<td width="30%">{{ 'Order' | trans }}</td>
+							<td>{{ item.displayOrder }}</td>
+						</tr>
+						<tr>
+							<td width="30%">{{ 'Deadline' | trans }}</td>
+							<td>{{ format_time(TimeFormatter.FORMAT_DATE_LONG, item.deadline) }}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="box-footer">
+				<a href="{{ spath(indexPage) }}" class="btn btn-default btn-sm" role="button">{{ 'Back' | trans({}, 'general') }}</a>
+				<a href="{{ spath(editPage, {'id': item.id }) }}" class="btn btn-warning btn-sm" role="button">{{ 'Edit' | trans({}, 'general') }}</a>
+				{% if item.canRemove() %}
+					<a href="{{ spath(removePage, {'id': item.id }) }}" class="btn btn-danger btn-sm" role="button">{{ 'Remove' | trans({}, 'general') }}</a>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+</div>
 {% endblock %}

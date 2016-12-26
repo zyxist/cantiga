@@ -1,29 +1,43 @@
-{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
 
-{% block box_header %}
-	<h4>{{ 'Edit: 0' | trans([item.name], 'general') }}</h4>
+{% block page_title %}
+	{{ 'Milestones' | trans([], 'pages') }}
 {% endblock %}
 
-{% block box_body %}
+{% block page_subtitle %}
+	{{ 'Manage the milestones for groups and areas' | trans([], 'pages') }}
+{% endblock %}
 
-	{{ form_start(form) }}
-	<div class="row">
-		<div class="col-md-6 col-xs-12">
-			{{ form_row(form.name) }}
-		</div>
-		<div class="col-md-6 col-xs-12">
-			{{ form_row(form.description) }}
-		</div>
-		<div class="col-md-6 col-xs-12">
-			{{ form_row(form.displayOrder) }}
-		</div>
-		<div class="col-md-6 col-xs-12">
-			{{ form_row(form.deadline) }}
+{% block page_content %}
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box box-primary">
+			{{ form_start(form) }}
+			<div class="box-header with-border">
+				<i class="fa fa-flag-checkered"></i>
+				<h3 class="box-title">{{ 'Edit milestone: 0' | trans([item.name], 'pages') }}</h3>
+			</div>
+			<div class="box-body">
+				<div class="row">
+					<div class="col-lg-6 col-xs-12">
+						{{ form_row(form.name) }}
+					</div>
+					<div class="col-lg-6 col-xs-12">
+						{{ form_row(form.description) }}
+					</div>
+					<div class="col-lg-6 col-xs-12">
+						{{ form_row(form.displayOrder) }}
+					</div>
+					<div class="col-lg-6 col-xs-12">
+						{{ form_row(form.deadline) }}
+					</div>
+				</div>
+			</div>
+			<div class="box-footer">
+				{{ form_widget(form.save) }}
+			</div>
+			{{ form_end(form) }}
 		</div>
 	</div>
-	{{ form_end(form) }}
-{% endblock %}
-
-{% block javascripts_inline %}
-{{ use_icheck() }}
+</div>
 {% endblock %}
