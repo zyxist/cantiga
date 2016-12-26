@@ -29,7 +29,7 @@
 	<div class="row">
 	{% if invitations %}
 	{% for invitation in invitations %}
-		<div class="col-md-4 col-xs-12">
+		<div class="col-lg-4 col-md-6 col-sm-12">
 			<div class="box box-primary box-solid">
 				<div class="box-header with-border">
 					<h3 class="box-title">{{ (invitation.placeType~'Nominative: 0') | trans([invitation.placeName]) }}</h3>
@@ -46,7 +46,7 @@
 								<td>{{ ago(invitation.createdAt) }}</td>
 							</tr>
 							<tr>
-								<td width="30%">{{ 'Note' | trans([], 'users') }}</td>
+								<td width="30%">{{ 'Function' | trans([], 'users') }}</td>
 								<td>{{ invitation.note }}</td>
 							</tr>
 						</tbody>

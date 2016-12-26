@@ -43,8 +43,10 @@ class InvitationForm extends AbstractType
 	{
 		$builder
 			->add('email', EmailType::class, ['label' => 'E-mail', 'attr' => ['help_text' => 'The invited person does not have to have an account.']])
-			->add('role', ChoiceType::class, ['label' => 'Role', 'choices' => $this->asChoices($options['roles'])])
-			->add('note', TextType::class, ['label' => 'Note', 
+			->add('role', ChoiceType::class, ['label' => 'Role',
+				'choices' => $this->asChoices($options['roles']),
+				'attr' => ['help_text' => 'RoleHintText']])
+			->add('note', TextType::class, ['label' => 'Function', 
 				'constraints' => [new Length(['min' => 0, 'max' => 30])],
 				'attr' => ['help_text' => 'NoteHintText']]
 			)
