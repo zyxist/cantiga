@@ -57,6 +57,9 @@ services:
     cantiga.time:
         class:     "%time_formatter.class%"
         arguments: ["%defaultTimezone%"]
+    cantiga.importer:
+        class:     Cantiga\CoreBundle\Services\ImporterService
+        arguments: ["@cantiga.user.membership.storage", "@security.token_storage", "@translator"]
     cantiga.files:
         class:     Cantiga\Metamodel\FileRepository
         arguments: ["%targetFileDirectory%"]

@@ -20,6 +20,8 @@
 
 namespace Cantiga\CoreBundle\Controller;
 
+use Cantiga\Components\Hierarchy\Entity\Membership;
+use Cantiga\Components\Hierarchy\Importer\ImporterInterface;
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
 use Cantiga\CoreBundle\Api\Actions\EditAction;
 use Cantiga\CoreBundle\Api\Actions\InfoAction;
@@ -28,6 +30,7 @@ use Cantiga\CoreBundle\Api\Actions\RemoveAction;
 use Cantiga\CoreBundle\Api\Controller\ProjectPageController;
 use Cantiga\CoreBundle\Entity\Territory;
 use Cantiga\CoreBundle\Form\ProjectTerritoryForm;
+use Cantiga\Metamodel\Exception\ModelException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -81,7 +84,8 @@ class ProjectTerritoryController extends ProjectPageController
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'dataTable' => $dataTable,
-			'locale' => $request->getLocale()
+			'locale' => $request->getLocale(),
+			'importer' => $this->getImportService(),
 		));
 	}
 
@@ -142,6 +146,35 @@ class ProjectTerritoryController extends ProjectPageController
 		$action = new RemoveAction($this->crudInfo);
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
+	}
+	
+	/**
+	 * @Route("/import", name="project_territory_import")
+	 */
+	public function importAction(Request $request, Membership $membership)
+	{
+		try {
+			$importer = $this->getImportService();
+			$repository = $this->get(self::REPOSITORY_NAME);
+			if (!$importer->isImportAvailable()) {
+				return $this->showPageWithError($this->trans('ImportNotPossibleText'), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
+			}
+			$question = $importer->getImportQuestion($this->crudInfo->getPageTitle(), 'ImportTerritoriesQuestionText');
+			$question->path($this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
+			$question->respond('project_territory_import', ['slug' => $this->getSlug()]);
+			$question->onSuccess(function() use ($repository, $importer) {
+				$repository->importFrom($importer->getImportSource(), $importer->getImportDestination());
+			});
+			$this->breadcrumbs()->link($this->trans('Import', [], 'general'), 'project_territory_import', ['slug' => $this->getSlug()]);
+			return $question->handleRequest($this, $request);
+		} catch(ModelException $exception) {
+			return $this->showPageWithError($exception->getMessage(), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
+		}
+	}
+	
+	public function getImportService(): ImporterInterface
+	{
+		return $this->get('cantiga.importer');
 	}
 
 }

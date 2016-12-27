@@ -18,6 +18,7 @@
  */
 namespace Cantiga\CoreBundle\Repository;
 
+use Cantiga\Components\Hierarchy\HierarchicalInterface;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Entity\Territory;
@@ -144,6 +145,31 @@ class ProjectTerritoryRepository implements EntityTransformerInterface
 		$this->transaction->requestTransaction();
 		try {
 			return $item->remove($this->conn);
+		} catch(Exception $ex) {
+			$this->transaction->requestRollback();
+			throw $ex;
+		}
+	}
+	
+	public function importFrom(HierarchicalInterface $source, HierarchicalInterface $destination)
+	{
+		$this->transaction->requestTransaction();
+		try {
+			$sourceTerritories = $this->conn->fetchAll('SELECT `name`, `locale` FROM `'.CoreTables::TERRITORY_TBL.'` WHERE `projectId` = :sourceProjectId FOR UPDATE', [':sourceProjectId' => $source->getId()]);
+			$destinationTerritories = $this->conn->fetchAll('SELECT `name` FROM `'.CoreTables::TERRITORY_TBL.'` WHERE `projectId` = :dstProjectId FOR UPDATE', [':dstProjectId' => $destination->getId()]);
+			$set = [];
+			foreach ($destinationTerritories as $row) {
+				$set[$row['name']] = true;
+			}
+			foreach ($sourceTerritories as $territory) {
+				if (!isset($set[$territory['name']])) {
+					$item = new Territory();
+					$item->setProject($destination);
+					$item->setName($territory['name']);
+					$item->setLocale($territory['locale']);
+					$item->insert($this->conn);
+				}
+			}
 		} catch(Exception $ex) {
 			$this->transaction->requestRollback();
 			throw $ex;

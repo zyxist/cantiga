@@ -21,6 +21,7 @@ namespace Cantiga\CoreBundle\Repository\Place;
 use Cantiga\Components\Hierarchy\Entity\PlaceRef;
 use Cantiga\Components\Hierarchy\HierarchicalInterface;
 use Cantiga\Components\Hierarchy\PlaceLoaderInterface;
+use Cantiga\Components\Hierarchy\User\CantigaUserRefInterface;
 use Cantiga\CoreBundle\Entity\Group;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Doctrine\DBAL\Connection;
@@ -50,5 +51,10 @@ class GroupLoader implements PlaceLoaderInterface
 			throw new ItemNotFoundException('No such group.', $id);
 		}
 		return $group;
+	}
+	
+	public function loadPlaceForImport(HierarchicalInterface $currentPlace, CantigaUserRefInterface $member)
+	{
+		
 	}
 }

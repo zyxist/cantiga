@@ -305,6 +305,10 @@ return array(
 	'ProjectAlreadyCompletedWarning' => 'Ten projekt został już zakończony i jest dostępny wyłącznie do celów archiwalnych.',
 	'PlaceProjectAlreadyCompletedWarning' => 'Projekt, do którego należy to miejsce, został już zakończony i jest dostępny wyłącznie do celów archiwalnych.',
 
+	// Importer
+	'ImportNotPossibleText' => 'Przepraszamy, opcja importu nie jest dostępna w tym projekcie.',
+	'ImportTerritoriesQuestionText' => 'Czy chcesz zaimportować brakujące terytoria z poprzedniego projektu?',
+	
 	// Example area requests
 	'AreaDescriptionLabel' => 'Opis rejonu',
 	'MotivationLabel' => 'Dlaczego chcesz stworzyć rejon?',

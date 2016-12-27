@@ -91,6 +91,10 @@ return array(
 	'ProjectAlreadyCompletedWarning' => 'This project has already finished and is preserved as archived.',
 	'PlaceProjectAlreadyCompletedWarning' => 'The project this place belongs to has already completed and is preserved as archived.',
 	
+	// Importer
+	'ImportNotPossibleText' => 'We are sorry, the import option is not available in this project.',
+	'ImportTerritoriesQuestionText' => 'Do you want to import the missing territories from the older project?',
+	
 	// Example area requests
 	'AreaDescriptionLabel' => 'Area description',
 	'MotivationLabel' => 'Why do you want to create an area?',

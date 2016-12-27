@@ -21,6 +21,7 @@ namespace Cantiga\CoreBundle\Entity;
 use Cantiga\Components\Hierarchy\Entity\PlaceRef;
 use Cantiga\Components\Hierarchy\HierarchicalInterface;
 use Cantiga\Components\Hierarchy\MembershipRoleResolverInterface;
+use Cantiga\Components\Hierarchy\User\CantigaUserRefInterface;
 use Cantiga\CoreBundle\Api\ExtensionPoints\ExtensionPointFilter;
 use Cantiga\CoreBundle\Api\ModuleAwareInterface;
 use Cantiga\CoreBundle\CoreTables;
@@ -32,6 +33,7 @@ use Cantiga\Metamodel\DataMappers;
 use Cantiga\Metamodel\Membership;
 use Cantiga\UserBundle\UserTables;
 use Doctrine\DBAL\Connection;
+use InvalidArgumentException;
 
 class Project implements IdentifiableInterface, InsertableEntityInterface, EditableEntityInterface, HierarchicalInterface
 {
@@ -143,24 +145,47 @@ class Project implements IdentifiableInterface, InsertableEntityInterface, Edita
 		} elseif ($place instanceof PlaceRef) {
 			$placeId = $place->getId();
 		} else {
-			throw new \InvalidArgumentException('The second argument of Project::fetchByPlaceRef() must be PlaceRef instance or integer.');
+			throw new InvalidArgumentException('The second argument of Project::fetchByPlaceRef() must be PlaceRef instance or integer.');
 		}
 	
-		$data = $conn->fetchAssoc('SELECT p.*, '
+		$data = $conn->fetchAssoc('SELECT p.*, a.id AS `parent_id`, a.name AS `parent_name`, '
 			. self::createPlaceFieldList()
 			. 'FROM `'.CoreTables::PROJECT_TBL.'` p '
 			. self::createPlaceJoin('p')
+			. 'LEFT JOIN `'.CoreTables::PROJECT_TBL.'` a ON a.`id` = p.`parentProjectId` '
 			. 'WHERE p.`placeId` = :placeId', [':placeId' => $placeId]);
 		if(false === $data) {
 			return false;
 		}
 		$project = self::fromArray($data);
 		$project->place = Place::fromArray($data, 'place');
+		if (!empty($data['parent_id'])) {
+			$project->parentProject = new ArchivedProjectRef($data['parent_id'], $data['parent_name']);
+		}
+		
 		return $project;
 	}
 	
+	public static function fetchForImport(Connection $conn, Project $currentProject, CantigaUserRefInterface $user)
+	{	
+		if (null === $currentProject->getParentProject()) {
+			return false;
+		}
+		
+		$data = $conn->fetchAssoc('SELECT p.*, '
+			. self::createPlaceFieldList()
+			. 'FROM `'.CoreTables::PROJECT_TBL.'` p '
+			. self::createPlaceJoin('p')
+			. 'INNER JOIN `'.UserTables::PLACE_MEMBERS_TBL.'` m ON m.`placeId` = e.`id` '
+			. 'WHERE p.`id` = :parentProjectId AND m.`userId` = :userId', [':parentProjectId' => $currentProject->getParentProject()->getId(), ':userId' => $user->getId()]);
+		if (false === $data) {
+			return false;
+		}
+		$project = self::fromArray($data);
+		$project->place = Place::fromArray($data, 'place');
+		return $project;
+	}
 
-	
 	/**
 	 * @param Connection $conn
 	 * @param int $projectId

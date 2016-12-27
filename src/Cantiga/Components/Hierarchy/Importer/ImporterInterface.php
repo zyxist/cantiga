@@ -17,15 +17,30 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 declare(strict_types=1);
-namespace Cantiga\Components\Hierarchy;
+namespace Cantiga\Components\Hierarchy\Importer;
 
-use Cantiga\Components\Hierarchy\Entity\PlaceRef;
 use Cantiga\Components\Hierarchy\HierarchicalInterface;
-use Cantiga\Components\Hierarchy\User\CantigaUserRefInterface;
+use Cantiga\CoreBundle\Api\Actions\QuestionHelper;
 
-interface PlaceLoaderInterface
-{
-	public function loadPlaceById(int $id): HierarchicalInterface;
-	public function loadPlace(PlaceRef $place): HierarchicalInterface;
-	public function loadPlaceForImport(HierarchicalInterface $currentPlace, CantigaUserRefInterface $member);
+/**
+ * Helper service for handling imports from old projects.
+ */
+interface ImporterInterface {
+	/**
+	 * Checks whether it is possible to import anything from the current project.
+	 */
+	public function isImportAvailable(): bool;
+	/**
+	 * Generates a label that can be used for creating "Import from XYZ" button.
+	 */
+	public function getImportLabel(): string;
+	
+	public function getImportSource(): HierarchicalInterface;
+	public function getImportDestination(): HierarchicalInterface;
+	/**
+	 * Constructs a question helper for confirming the import. The question
+	 * will be automatically translated, using <tt>messages</tt> translation
+	 * domain.
+	 */
+	public function getImportQuestion(string $pageTitle, string $question): QuestionHelper;
 }

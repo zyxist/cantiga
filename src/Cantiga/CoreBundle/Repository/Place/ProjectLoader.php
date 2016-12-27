@@ -21,7 +21,9 @@ namespace Cantiga\CoreBundle\Repository\Place;
 use Cantiga\Components\Hierarchy\Entity\PlaceRef;
 use Cantiga\Components\Hierarchy\HierarchicalInterface;
 use Cantiga\Components\Hierarchy\PlaceLoaderInterface;
+use Cantiga\Components\Hierarchy\User\CantigaUserRefInterface;
 use Cantiga\CoreBundle\Entity\Project;
+use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Doctrine\DBAL\Connection;
 
 class ProjectLoader implements PlaceLoaderInterface
@@ -49,5 +51,10 @@ class ProjectLoader implements PlaceLoaderInterface
 			throw new ItemNotFoundException('No such project.', $id);
 		}
 		return $project;
+	}
+	
+	public function loadPlaceForImport(HierarchicalInterface $currentPlace, CantigaUserRefInterface $member)
+	{
+		return Project::fetchForImport($this->conn, $currentPlace, $member);
 	}
 }
