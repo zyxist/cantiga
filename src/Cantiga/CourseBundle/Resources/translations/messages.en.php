@@ -40,4 +40,5 @@ return array(
 	'TestTimeHasPassedMsg' => 'The time has passed, sorry.',
 	'CourseHasTestMsg' => 'This course has a test, please solve it.',
 	'CourseCompletedConfirmationMsg' => 'You have confirmed completing the course, thank you.',
+	'ImportCourseQuestionText' => 'Do you want to import all the missing courses and their tests from the older project?',
 );

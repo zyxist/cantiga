@@ -13,9 +13,10 @@
 {% endblock %}
 
 {% block box_footer %}
-<p>
 	<a href="{{ spath(insertPage) }}" class="btn btn-success btn-sm" role="button">{{ 'Insert' | trans({}, 'general') }}</a>
-</p>
+	{% if importer.isImportAvailable() %}
+	<a href="{{ spath('project_course_import') }}" class="btn btn-danger btn-sm" role="button">{{ importer.getImportLabel() }}</a>
+	{% endif %}
 {% endblock %}
 
 {% block custom_datatable_config %}

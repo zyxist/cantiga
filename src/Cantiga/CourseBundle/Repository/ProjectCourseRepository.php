@@ -18,15 +18,17 @@
  */
 namespace Cantiga\CourseBundle\Repository;
 
+use Cantiga\Components\Hierarchy\HierarchicalInterface;
 use Cantiga\CoreBundle\Entity\Project;
+use Cantiga\CourseBundle\CourseTables;
+use Cantiga\CourseBundle\Entity\Course;
+use Cantiga\CourseBundle\Entity\CourseTest;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\QueryBuilder;
 use Cantiga\Metamodel\QueryClause;
 use Cantiga\Metamodel\TimeFormatterInterface;
 use Cantiga\Metamodel\Transaction;
-use Cantiga\CourseBundle\Entity\Course;
-use Cantiga\CourseBundle\CourseTables;
 use Doctrine\DBAL\Connection;
 
 class ProjectCourseRepository
@@ -163,6 +165,44 @@ class ProjectCourseRepository
 		$this->transaction->requestTransaction();
 		try {
 			return $item->remove($this->conn);
+		} catch(Exception $ex) {
+			$this->transaction->requestRollback();
+			throw $ex;
+		}
+	}
+	
+	public function importFrom(HierarchicalInterface $source, HierarchicalInterface $destination)
+	{
+		$this->transaction->requestTransaction();
+		try {
+			$sourceCourse = $this->conn->fetchAll('SELECT t.*, c.* FROM `'.CourseTables::COURSE_TBL.'` c '
+				. 'LEFT JOIN `'.CourseTables::COURSE_TEST_TBL.'` t ON t.`courseId` = c.`id` '
+				. 'WHERE c.`projectId` = :sourceProjectId FOR UPDATE', [':sourceProjectId' => $source->getId()]);
+			$destinationCourse = $this->conn->fetchAll('SELECT `presentationLink` FROM `'.CourseTables::COURSE_TBL.'` WHERE `projectId` = :dstProjectId FOR UPDATE', [':dstProjectId' => $destination->getId()]);
+			$set = [];
+			foreach ($destinationCourse as $row) {
+				$set[$row['presentationLink']] = true;
+			}
+			foreach ($sourceCourse as $course) {
+				if (!isset($set[$course['presentationLink']])) {
+					$item = new Course();
+					$item->setProject($destination);
+					$item->setName($course['name']);
+					$item->setDescription($course['description']);
+					$item->setDeadline($course['deadline']);
+					$item->setPresentationLink($course['presentationLink']);
+					$item->setAuthorName($course['authorName']);
+					$item->setAuthorEmail($course['authorEmail']);
+					$item->setNotes($course['notes']);
+					$item->setIsPublished(false);
+					$id = $item->insert($this->conn);
+					
+					if (!empty($course['testStructure'])) {
+						$test = new CourseTest($item, $course['testStructure']);
+						$test->save($this->conn);
+					}
+				}
+			}
 		} catch(Exception $ex) {
 			$this->transaction->requestRollback();
 			throw $ex;

@@ -40,4 +40,5 @@ return array(
 	'TestTimeHasPassedMsg' => 'Upłynął czas na ukończenie tego testu, przepraszamy.',
 	'CourseHasTestMsg' => 'To szkolenie posiada test, prosimy go rozwiązać.',
 	'CourseCompletedConfirmationMsg' => 'Dziękujemy, potwierdziłeś ukończenie szkolenia.',
+	'ImportCourseQuestionText' => 'Czy chcesz zaimportować wszystkie brakujące szkolenia i testy do nich z poprzedniego projektu?',
 );

@@ -20,6 +20,8 @@
 
 namespace Cantiga\CourseBundle\Controller;
 
+use Cantiga\Components\Hierarchy\Entity\Membership;
+use Cantiga\Components\Hierarchy\Importer\ImporterInterface;
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
 use Cantiga\CoreBundle\Api\Actions\EditAction;
 use Cantiga\CoreBundle\Api\Actions\InfoAction;
@@ -28,9 +30,9 @@ use Cantiga\CoreBundle\Api\Actions\RemoveAction;
 use Cantiga\CoreBundle\Api\Controller\ProjectPageController;
 use Cantiga\CourseBundle\CourseSettings;
 use Cantiga\CourseBundle\Entity\Course;
+use Cantiga\CourseBundle\Entity\CourseTest;
 use Cantiga\CourseBundle\Form\CourseForm;
 use Cantiga\CourseBundle\Form\CourseTestUploadForm;
-use Cantiga\CourseBundle\Entity\CourseTest;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Exception\ModelException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -90,7 +92,8 @@ class ProjectCourseController extends ProjectPageController
 			'dataTable' => $dataTable,
 			'locale' => $request->getLocale(),
 			'insertPage' => $this->crudInfo->getInsertPage(),
-			'ajaxListPage' => 'project_course_ajax_list'
+			'ajaxListPage' => 'project_course_ajax_list',
+			'importer' => $this->getImportService(),
 		));
 	}
 
@@ -152,6 +155,30 @@ class ProjectCourseController extends ProjectPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
 	}
+	
+	/**
+	 * @Route("/import", name="project_course_import")
+	 */
+	public function importAction(Request $request, Membership $membership)
+	{
+		try {
+			$importer = $this->getImportService();
+			$repository = $this->get(self::REPOSITORY_NAME);
+			if (!$importer->isImportAvailable()) {
+				return $this->showPageWithError($this->trans('ImportNotPossibleText'), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
+			}
+			$question = $importer->getImportQuestion($this->crudInfo->getPageTitle(), 'ImportCourseQuestionText');
+			$question->path($this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
+			$question->respond('project_course_import', ['slug' => $this->getSlug()]);
+			$question->onSuccess(function() use ($repository, $importer) {
+				$repository->importFrom($importer->getImportSource(), $importer->getImportDestination());
+			});
+			$this->breadcrumbs()->link($this->trans('Import', [], 'general'), 'project_course_import', ['slug' => $this->getSlug()]);
+			return $question->handleRequest($this, $request);
+		} catch(ModelException $exception) {
+			return $this->showPageWithError($exception->getMessage(), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
+		}
+	}
 
 	/**
 	 * @Route("/{id}/upload-test", name="project_course_upload_test")
@@ -202,6 +229,11 @@ class ProjectCourseController extends ProjectPageController
 	private function getMinQuestionNum()
 	{
 		return (int) $this->getProjectSettings()->get(CourseSettings::MIN_QUESTION_NUM)->getValue();
+	}
+	
+	public function getImportService(): ImporterInterface
+	{
+		return $this->get('cantiga.importer');
 	}
 
 }
