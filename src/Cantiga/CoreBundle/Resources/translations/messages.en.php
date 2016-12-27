@@ -94,6 +94,7 @@ return array(
 	// Importer
 	'ImportNotPossibleText' => 'We are sorry, the import option is not available in this project.',
 	'ImportTerritoriesQuestionText' => 'Do you want to import the missing territories from the older project?',
+	'ImportAreaStatusQuestionText' => 'Do you want to import the missing area status rows from the older project?',
 	
 	// Example area requests
 	'AreaDescriptionLabel' => 'Area description',

@@ -308,6 +308,7 @@ return array(
 	// Importer
 	'ImportNotPossibleText' => 'Przepraszamy, opcja importu nie jest dostępna w tym projekcie.',
 	'ImportTerritoriesQuestionText' => 'Czy chcesz zaimportować brakujące terytoria z poprzedniego projektu?',
+	'ImportAreaStatusQuestionText' => 'Czy chcesz zaimportować brakujące statusy rejonów z poprzedniego projektu?',
 	
 	// Example area requests
 	'AreaDescriptionLabel' => 'Opis rejonu',

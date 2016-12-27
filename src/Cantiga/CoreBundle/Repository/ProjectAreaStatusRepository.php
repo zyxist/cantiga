@@ -18,6 +18,7 @@
  */
 namespace Cantiga\CoreBundle\Repository;
 
+use Cantiga\Components\Hierarchy\HierarchicalInterface;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\AreaStatus;
 use Cantiga\CoreBundle\Entity\Project;
@@ -140,6 +141,32 @@ class ProjectAreaStatusRepository implements EntityTransformerInterface
 		$this->transaction->requestTransaction();
 		try {
 			return $item->remove($this->conn);
+		} catch(Exception $ex) {
+			$this->transaction->requestRollback();
+			throw $ex;
+		}
+	}
+	
+	public function importFrom(HierarchicalInterface $source, HierarchicalInterface $destination)
+	{
+		$this->transaction->requestTransaction();
+		try {
+			$sourceStatus = $this->conn->fetchAll('SELECT `name`, `label`, `isDefault` FROM `'.CoreTables::AREA_STATUS_TBL.'` WHERE `projectId` = :sourceProjectId FOR UPDATE', [':sourceProjectId' => $source->getId()]);
+			$destinationStatus = $this->conn->fetchAll('SELECT `name` FROM `'.CoreTables::AREA_STATUS_TBL.'` WHERE `projectId` = :dstProjectId FOR UPDATE', [':dstProjectId' => $destination->getId()]);
+			$set = [];
+			foreach ($destinationStatus as $row) {
+				$set[$row['name']] = true;
+			}
+			foreach ($sourceStatus as $status) {
+				if (!isset($set[$status['name']])) {
+					$item = new AreaStatus();
+					$item->setProject($destination);
+					$item->setName($status['name']);
+					$item->setLabel($status['label']);
+					$item->setIsDefault((bool) $status['isDefault']);
+					$item->insert($this->conn);
+				}
+			}
 		} catch(Exception $ex) {
 			$this->transaction->requestRollback();
 			throw $ex;
