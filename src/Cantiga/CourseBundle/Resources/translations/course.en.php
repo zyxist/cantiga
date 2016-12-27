@@ -27,4 +27,5 @@ return array(
 	'CloseRefreshWarningText' => 'Please neither close nor refresh this page until you click "Ready"! It will make impossible to complete this test and block futher attempts for the next 24 hours!',
 	'Remaining time' => 'Remaining time',
 	'Completed courses' => 'Completed courses',
+	'View all courses' => 'View all courses',
 );

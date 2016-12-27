@@ -35,6 +35,8 @@ class AppText implements IdentifiableInterface, InsertableEntityInterface, Edita
 	private $locale;
 	private $project;
 	
+	private $isEmpty = false;
+	
 	/**
 	 * @param Connection $conn
 	 * @param int $id
@@ -177,6 +179,22 @@ class AppText implements IdentifiableInterface, InsertableEntityInterface, Edita
 	{
 		$this->locale = $locale;
 		return $this;
+	}
+	
+	/**
+	 * Indicates that the user-defined text has not been found in the database, and the
+	 * default entity is returned.
+	 * 
+	 * @return bool
+	 */
+	public function isEmpty(): bool
+	{
+		return $this->isEmpty;
+	}
+	
+	public function markEmpty()
+	{
+		$this->isEmpty = true;
 	}
 
 	public function insert(Connection $conn)

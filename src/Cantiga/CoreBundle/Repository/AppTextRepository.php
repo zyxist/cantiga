@@ -136,6 +136,7 @@ class AppTextRepository implements EntityTransformerInterface
 			$item->setContent('No content');
 			$item->setLocale($locale);
 			$item->setPlace($place);
+			$item->markEmpty();
 		}
 		return $item;
 	}

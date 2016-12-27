@@ -31,10 +31,10 @@ class AppTextForm extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		$builder
-			->add('place', ChoiceType::class, array('label' => 'Place', 'choices' => AppTexts::getNames(), 'attr' => array('help_text' => 'Place where the text is displayed.')))
-			->add('title', TextType::class, array('label' => 'Title', 'attr' => array('help_text' => 'Some places do not need to show any title.')))
+			->add('place', ChoiceType::class, array('label' => 'Place', 'choices' => AppTexts::getNames(), 'attr' => array('help_text' => 'AppTextPlaceHint')))
+			->add('title', TextType::class, array('label' => 'Title', 'attr' => array('help_text' => 'AppTextTitleHint')))
 			->add('content', TextareaType::class, array('label' => 'Content', 'attr' => ['rows' => 20]))
-			->add('locale', TextType::class, array('label' => 'Locale', 'attr' => array('help_text' => 'Must match one of the installed languages.')))
+			->add('locale', TextType::class, array('label' => 'Locale', 'attr' => array('help_text' => 'AppTextLocaleHint')))
 			->add('save', SubmitType::class, array('label' => 'Save'));
 	}
 

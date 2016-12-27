@@ -53,6 +53,7 @@ return [
 	'Area statistics' => 'Statystyki rejonów',
 	'Territories' => 'Terytoria',
 	'Magic buttons' => 'Magiczne przyciski',
+	'Project members' => 'Członkowie projektu',
 	
 	// Admin workspace menu items
 	'Administration' => 'Administracja',

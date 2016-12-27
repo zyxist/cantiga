@@ -1,41 +1,53 @@
-{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
 
-{% block box_header %}
-	<h4>{{ 'Details: 0' | trans([item.title], 'general') }}</h4>
+{% block page_title %}
+	{{ pageTitle | trans([], 'pages') }}
 {% endblock %}
 
-{% block box_body %}
+{% block page_subtitle %}
+	{{ pageSubtitle | trans([], 'pages') }}
+{% endblock %}
+
+{% block page_content %}
 <div class="row">
-	<div class="col-md-5 col-xs-12">
-		<table class="table table-hover">
-			<tbody>
-				<tr>
-					<td width="30%">{{ 'Title' | trans }}</td>
-					<td>{{ item.title }}</td>
-				</tr>
-				<tr>
-					<td width="30%">{{ 'Place' | trans }}</td>
-					<td>{{ item.place }}</td>
-				</tr>
-				<tr>
-					<td width="30%">{{ 'Locale' | trans }}</td>
-					<td>{{ item.locale }}</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-	<div class="col-md-7 col-xs-12">
-		<h4>{{ 'Text content' | trans }}</h4>
-		{{ item.content | raw }}
+	<div class="col-xs-12">
+		<div class="box box-primary">
+			<div class="box-header with-border">
+				<i class="fa fa-file-text-o"></i>
+				<h3 class="box-title">{{ 'Details: 0' | trans([item.title], 'general') }}</h3>
+			</div>
+			<div class="box-body no-padding">
+				<div class="row">
+					<div class="col-md-5 col-xs-12">
+						<table class="table table-hover">
+							<tbody>
+								<tr>
+									<td width="30%">{{ 'Title' | trans }}</td>
+									<td>{{ item.title }}</td>
+								</tr>
+								<tr>
+									<td width="30%">{{ 'Place' | trans }}</td>
+									<td>{{ item.place }}</td>
+								</tr>
+								<tr>
+									<td width="30%">{{ 'Locale' | trans }}</td>
+									<td>{{ item.locale }}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="col-md-7 col-xs-12">
+						<h4>{{ 'Text content' | trans }}</h4>
+						{{ item.content | raw }}
+					</div>
+				</div>
+			</div>
+			<div class="box-footer">
+				<a href="{{ spath(indexPage) }}" class="btn btn-default btn-sm" role="button">{{ 'Back' | trans({}, 'general') }}</a>
+				<a href="{{ spath(editPage, {'id': item.id }) }}" class="btn btn-warning btn-sm" role="button">{{ 'Edit' | trans({}, 'general') }}</a>
+				<a href="{{ spath(removePage, {'id': item.id }) }}" class="btn btn-danger btn-sm" role="button">{{ 'Remove' | trans({}, 'general') }}</a>
+			</div>
+		</div>
 	</div>
 </div>
-
-{% endblock %}
-
-{% block box_footer %}
-<p>
-	<a href="{{ spath(indexPage) }}" class="btn btn-default btn-sm" role="button">{{ 'Back' | trans({}, 'general') }}</a>
-	<a href="{{ spath(editPage, {'id': item.id }) }}" class="btn btn-warning btn-sm" role="button">{{ 'Edit' | trans({}, 'general') }}</a>
-	<a href="{{ spath(removePage, {'id': item.id }) }}" class="btn btn-danger btn-sm" role="button">{{ 'Remove' | trans({}, 'general') }}</a>
-</p>
 {% endblock %}

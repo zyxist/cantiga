@@ -68,7 +68,7 @@ class AreaCourseController extends AreaPageController
 	/**
 	 * @Route("/index", name="area_course_index")
 	 */
-	public function indexAction(Request $request)
+	public function indexAction(Request $request, Membership $membership)
 	{
 		$repository = $this->get(self::REPOSITORY_NAME);
 		$text = $this->getTextRepository()->getText(CourseTexts::AREA_COURSE_LIST_TEXT, $request, $this->getActiveProject());
@@ -77,7 +77,8 @@ class AreaCourseController extends AreaPageController
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),
 			'courseListText' => $text,
 			'infoPage' => $this->crudInfo->getInfoPage(),
-			'items' => $repository->findAvailableCourses($this->getUser())
+			'items' => $repository->findAvailableCourses($this->getUser()),
+			'area' => $membership->getPlace()
 		));
 	}
 

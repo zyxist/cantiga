@@ -1,35 +1,48 @@
-{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
 
 {% block page_title %}
 {{ project.name }}
 {% endblock %}
 
-
 {% block page_subtitle %}
 {{ 'Manage project settings' | trans({}, 'pages') }}
 {% endblock %}
 
-{% block box_body %}
-	{{ form_start(form) }}
-	{% for module, settings in projectSettings %}
-	<fieldset>
-		{% if module == 'core' %}
-		<legend>{{ 'Core settings' | trans([], 'settings') }}</legend>
-		{% else %}
-		<legend>{{ modules[module].name | trans([], 'settings') }}</legend>
-		{% endif %}
-		{% for row in settings | batch(2) %}
-		<div class="row">
-			{% for setting in row %}
-			<div class="col-md-6">
-				{{ form_row(form.offsetGet(setting.key)) }}
+{% block page_content %}
+<div class="row">
+	<div class="col-xs-12">
+		{{ form_start(form) }}
+		{% for module, settings in projectSettings %}
+		<div class="box box-primary">
+			<div class="box-header with-border">
+				<i class="fa fa-wrench"></i>
+				{% if module == 'core' %}
+				<h3 class="box-title">{{ 'Core settings' | trans([], 'settings') }}</h3>
+				{% else %}
+				<h3 class="box-title">{{ modules[module].name | trans([], 'settings') }}</h3>
+				{% endif %}
 			</div>
-			{% endfor %}
+			<div class="box-body">
+				{% for row in settings | batch(2) %}
+					<div class="row">
+						{% for setting in row %}
+							<div class="col-md-6">
+								{{ form_row(form.offsetGet(setting.key)) }}
+							</div>
+						{% endfor %}
+					</div>
+				{% endfor %}
+			</div>
 		</div>
 		{% endfor %}
-	</fieldset>
-	{% endfor %}
-	{{ form_end(form) }}
+		<div class="box box-solid">
+			<div class="box-body">
+				{{ form_widget(form.save) }}
+			</div>
+		</div>
+		{{ form_end(form) }}
+	</div>
+</div>
 {% endblock %}
 
 {% block javascripts_inline %}

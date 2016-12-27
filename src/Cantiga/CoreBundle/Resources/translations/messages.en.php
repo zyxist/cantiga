@@ -62,6 +62,19 @@ return array(
 	'Manager' => 'Manager',
 	'Create a new project' => 'Create a new project',
 	
+	// Admin application texts
+	'Content' => 'Content',
+	'Create new application text' => 'Create new application text',
+	'DifferentLanguageVersionsInfoText' => 'To create different language versions of the same text, create multiple application texts assigned to the same place, but with different locale code.',
+	'AppTextPlaceHint' => 'Place where the text is displayed.',
+	'AppTextTitleHint' => 'Some places do not need to show any title.',
+	'AppTextLocaleHint' => 'Must match one of the installed languages.',
+	'Text content' => 'Text content',
+	'The text \'0\' has been created.' => 'The text \'0\' has been created.',
+	'The text \'0\' has been updated.' => 'The text \'0\' has been updated.',
+	'The text \'0\' has been removed.' => 'The text \'0\' has been removed.',
+	'Do you really want to remove \'0\' text?' => 'Do you really want to remove \'0\' text?',
+	
 	// Admin user management
 	'UserRemovalQuestionText' => 'Do you really want to remove the user \'0\'? This will clear out all his personal information and membership, but the produced content will be kept intact. You will be able to restore the user at any time later, but the personal information and the membership would have to be configured again.',
 	

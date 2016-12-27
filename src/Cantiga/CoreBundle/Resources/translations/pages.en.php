@@ -53,6 +53,7 @@ return [
 	'Area statistics' => 'Area statistics',
 	'Territories' => 'Territories',
 	'Magic buttons' => 'Magic buttons',
+	'Project members' => 'Project members',
 	
 	// Admin workspace menu items
 	'Administration' => 'Administration',

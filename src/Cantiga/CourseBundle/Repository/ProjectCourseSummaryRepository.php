@@ -28,7 +28,7 @@ class ProjectCourseSummaryRepository extends AbstractCourseSummaryRepository
 	{
 		$this->transaction->requestTransaction();
 		try {
-			$item = Area::fetchByProject($this->conn, $id, $this->project);
+			$item = Area::fetchByPlace($this->conn, $id, $this->project);
 			if(false === $item) {
 				$this->transaction->requestRollback();
 				throw new ItemNotFoundException('The specified item has not been found.', $id);

@@ -1,28 +1,47 @@
 {% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
 
-{% block box_header %}
-	<h4>{{ 'Edit: 0' | trans([item.title], 'general') }}</h4>
+{% block page_title %}
+	{{ pageTitle | trans([], 'pages') }}
 {% endblock %}
 
-{% block box_body %}
-	{{ form_start(form) }}
-	<div class="row">
-		<div class="col-md-3 col-xs-12">
-			{{ form_row(form.place, { 'label_col': 4, 'widget_col': 8}) }}
-		</div>
-		<div class="col-md-6 col-xs-12">
-			{{ form_row(form.title, { 'label_col': 4, 'widget_col': 8}) }}
-		</div>
-		<div class="col-md-3 col-xs-12">
-			{{ form_row(form.locale, { 'label_col': 4, 'widget_col': 8}) }}
+{% block page_subtitle %}
+	{{ pageSubtitle | trans([], 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box box-primary">
+			{{ form_start(form) }}
+			<div class="box-header with-border">
+				<i class="fa fa-file-text-o"></i>
+				<h3 class="box-title">{{ 'Edit: 0' | trans([item.title], 'general') }}</h3>
+			</div>
+			<div class="box-body">
+				<div class="row">
+					<div class="col-md-3 col-xs-12">
+						{{ form_row(form.place, { 'label_col': 4, 'widget_col': 8}) }}
+					</div>
+					<div class="col-md-6 col-xs-12">
+						{{ form_row(form.title, { 'label_col': 4, 'widget_col': 8}) }}
+					</div>
+					<div class="col-md-3 col-xs-12">
+						{{ form_row(form.locale, { 'label_col': 4, 'widget_col': 8}) }}
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-12 col-xs-12">
+						{{ form_row(form.content, { 'label_col': 4, 'widget_col': 8, 'id': 'content'}) }}
+					</div>
+				</div>
+			</div>
+			<div class="box-footer">
+				{{ form_widget(form.save) }}
+			</div>
+			{{ form_end(form) }}
 		</div>
 	</div>
-	<div class="row">
-		<div class="col-md-12 col-xs-12">
-			{{ form_row(form.content, { 'label_col': 4, 'widget_col': 8, 'id': 'content'}) }}
-		</div>
-	</div>
-	{{ form_end(form) }}
+</div>
 {% endblock %}
 
 {% block stylesheets %}

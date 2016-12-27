@@ -27,4 +27,5 @@ return array(
 	'CloseRefreshWarningText' => 'Nie zamykaj, ani nie odświeżaj tej strony bez kliknięcia "Gotowe"! Uniemożliwi to ukończenie testu i zablokuje kolejne próby na 24 godziny!',
 	'Remaining time' => 'Pozostały czas',
 	'Completed courses' => 'Ukończonych szkoleń',
+	'View all courses' => 'Zobacz wszystkie kursy',
 );

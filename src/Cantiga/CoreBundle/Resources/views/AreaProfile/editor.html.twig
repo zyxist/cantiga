@@ -1,4 +1,4 @@
-{% extends 'CantigaCoreBundle:layout:common-layout.html.twig' %}
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
 
 {% block page_title %}
 	{{ 'Profile editor' | trans([], 'pages') }}
@@ -8,26 +8,38 @@
 	{{ 'Edit the details of your area' | trans([], 'pages') }}
 {% endblock %}
 
-{% block box_body %}
-	{% if text %}
-		{{ text.content | raw }}
-	{% endif %}
-	
-	<div class="progress progress active">
-		<div class="progress-bar progress-bar-{{ progressBarColor }}" role="progressbar" aria-valuenow="{{percentCompleteness}}" aria-valuemin="0" aria-valuemax="100" style="width: {{percentCompleteness}}%">
-			<span class="sr-only">{{percentCompleteness}}%</span>
-		</div>
-	</div>
-	
-	{{ form_start(form) }}
+{% block page_content %}
 	<div class="row">
-		<div class="col-md-3 col-xs-12">
-			{{ form_row(form.name) }}
-		</div>
-		<div class="col-md-3 col-xs-12">
-			{{ form_row(form.territory) }}
+		<div class="col-lg-12">
+			<div class="box box-purple">
+				{{ form_start(form) }}
+				{% if text %}
+				<div class="box-header with-border">
+					{{ text.content | raw }}
+				</div>
+				{% endif %}
+				<div class="box-body">
+					<div class="progress active">
+						<div class="progress-bar progress-bar-{{ progressBarColor }}" role="progressbar" aria-valuenow="{{percentCompleteness}}" aria-valuemin="0" aria-valuemax="100" style="width: {{percentCompleteness}}%">
+							<span class="sr-only">{{percentCompleteness}}%</span>
+						</div>
+					</div>
+					
+					<div class="row">
+						<div class="col-md-3 col-xs-12">
+							{{ form_row(form.name) }}
+						</div>
+						<div class="col-md-3 col-xs-12">
+							{{ form_row(form.territory) }}
+						</div>
+					</div>
+					{% include formRenderer.template with { 'formRenderer': formRenderer, 'form': form } only %}
+				</div>
+				<div class="box-footer">
+					{{ form_widget(form.save) }}
+				</div>
+				{{ form_end(form) }}
+			</div>
 		</div>
 	</div>
-	{% include formRenderer.template with { 'formRenderer': formRenderer, 'form': form } only %}
-	{{ form_end(form) }}
 {% endblock %}
