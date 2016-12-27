@@ -24,35 +24,19 @@ use Cantiga\Metamodel\CustomForm\CustomFormRendererInterface;
 use Cantiga\Metamodel\CustomForm\CustomFormSummaryInterface;
 use Cantiga\Metamodel\CustomForm\DefaultCustomFormRenderer;
 use Cantiga\Metamodel\CustomForm\DefaultCustomFormSummary;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotNull;
-use Symfony\Component\Validator\Constraints\Url;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-/**
- * The default model for area requests contains a couple of commonly needed properties
- * that should cover most of the basic use cases.
- */
-class DefaultAreaRequestModel implements CustomFormModelInterface
+class BasicAreaRequestModel implements CustomFormModelInterface
 {
 	public function constructForm(FormBuilderInterface $builder)
 	{
-		$builder->add('orgName', TextType::class, ['label' => 'OrgNameLabel', 'required' => false, 'constraints' => [
-			new Length(['min' => 2, 'max' => 40])
-		]]);
-		$builder->add('orgWebsite', TextType::class, ['label' => 'OrgWebsiteLabel', 'required' => false, 'constraints' => [
-			new Url()
-		]]);
-		$builder->add('areaDescription', TextareaType::class, array('label' => 'AreaDescriptionLabel', 'constraints' => [
+		$builder->add('description', TextType::class, array('label' => 'Description', 'constraints' => [
 			new NotNull,
-			new Length(['min' => 2, 'max' => 1000])
-		]));
-		$builder->add('motivation', TextareaType::class, array('label' => 'MotivationLabel', 'constraints' => [
-			new NotNull,
-			new Length(['min' => 2, 'max' => 1000])
+			new Length(['min' => 2, 'max' => 250])
 		]));
 	}
 	
@@ -64,19 +48,14 @@ class DefaultAreaRequestModel implements CustomFormModelInterface
 	{
 		$r = new DefaultCustomFormRenderer();
 		$r->group('Area information');
-		$r->fields('areaDescription', 'motivation');
-		$r->group('Your organization', 'YourOrganizationInfoText');
-		$r->fields('orgName', 'orgWebsite');
+		$r->fields('description');
 		return $r;
 	}
 	
 	public function createSummary(): CustomFormSummaryInterface
 	{
 		$s = new DefaultCustomFormSummary();
-		$s->present('areaDescription', 'AreaDescriptionLabel', DefaultCustomFormSummary::TYPE_STRING);
-		$s->present('motivation', 'MotivationLabel', DefaultCustomFormSummary::TYPE_STRING);
-		$s->present('orgName', 'OrgNameLabel', DefaultCustomFormSummary::TYPE_STRING);
-		$s->present('orgWebsite', 'OrgWebsiteLabel', DefaultCustomFormSummary::TYPE_URL);
+		$s->present('description', 'Description', 'string');
 		return $s;
 	}
 }

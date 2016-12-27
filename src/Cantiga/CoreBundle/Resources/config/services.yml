@@ -249,6 +249,14 @@ services:
         arguments: ["glyphicon", "span"]
         tags:
             - { name: twig.extension }
+    cantiga.core.form.basic_area_request:
+        class:     Cantiga\CoreBundle\CustomForm\BasicAreaRequestModel
+        tags:
+            - { name: cantiga.extension, point: core.form.area-request, module: core, description: "Basic area request form" }
+    cantiga.core.form.basic_area:
+        class:     Cantiga\CoreBundle\CustomForm\BasicAreaModel
+        tags:
+            - { name: cantiga.extension, point: core.form.area, module: core, description: "Basic area form" }
     cantiga.core.form.default_area_request:
         class:     Cantiga\CoreBundle\CustomForm\DefaultAreaRequestModel
         tags:

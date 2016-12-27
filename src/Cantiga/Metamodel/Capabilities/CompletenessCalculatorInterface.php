@@ -16,12 +16,11 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+declare(strict_types=1);
 namespace Cantiga\Metamodel\Capabilities;
 
 /**
  * Allows calculating the area profile completeness. 
- *
- * @author Tomasz Jędrzejewski
  */
 interface CompletenessCalculatorInterface
 {
@@ -32,5 +31,5 @@ interface CompletenessCalculatorInterface
 	 * @param array $data Data to use in the calculation
 	 * @return int
 	 */
-	public function calculateCompleteness(array $data);
+	public function calculateCompleteness(array $data): int;
 }

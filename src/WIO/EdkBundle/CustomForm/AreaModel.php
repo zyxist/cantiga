@@ -16,10 +16,13 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+declare(strict_types=1);
 namespace WIO\EdkBundle\CustomForm;
 
 use Cantiga\Metamodel\Capabilities\CompletenessCalculatorInterface;
 use Cantiga\Metamodel\CustomForm\CustomFormModelInterface;
+use Cantiga\Metamodel\CustomForm\CustomFormRendererInterface;
+use Cantiga\Metamodel\CustomForm\CustomFormSummaryInterface;
 use Cantiga\Metamodel\CustomForm\DefaultCustomFormRenderer;
 use Cantiga\Metamodel\CustomForm\DefaultCustomFormSummary;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -34,9 +37,6 @@ use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Constraints\Url;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-/**
- * @author Tomasz Jędrzejewski
- */
 class AreaModel implements CustomFormModelInterface, CompletenessCalculatorInterface
 {
 	private $translator;
@@ -89,7 +89,7 @@ class AreaModel implements CustomFormModelInterface, CompletenessCalculatorInter
 		]));
 	}
 	
-	public function validateForm($data, ExecutionContextInterface $context)
+	public function validateForm(array $data, ExecutionContextInterface $context)
 	{
 		if(empty($data['positionLng']) xor empty($data['positionLat'])) {
 			$context->buildViolation('BothLattitudeAndLongitudeRequiredText')
@@ -100,7 +100,7 @@ class AreaModel implements CustomFormModelInterface, CompletenessCalculatorInter
 		return true;
 	}
 	
-	public function createFormRenderer()
+	public function createFormRenderer(): CustomFormRendererInterface
 	{
 		$r = new DefaultCustomFormRenderer();
 		$r->group('EWC information', 'RequiredFieldsForProfilePublicationText');
@@ -116,7 +116,7 @@ class AreaModel implements CustomFormModelInterface, CompletenessCalculatorInter
 		return $r;
 	}
 	
-	public function createSummary()
+	public function createSummary(): CustomFormSummaryInterface
 	{
 		$s = new DefaultCustomFormSummary();
 		$s->present('ewcDate', 'Date of Extreme Way of the Cross', 'date');
@@ -137,7 +137,7 @@ class AreaModel implements CustomFormModelInterface, CompletenessCalculatorInter
 		return $s;
 	}
 	
-	public function calculateCompleteness(array $data)
+	public function calculateCompleteness(array $data): int
 	{
 		$fieldCollection = ['positionLat', 'ewcDate', 'positionLng', 'parishName', 'parishAddress', 'parishPostal', 'parishCity', 'parishWebsite', 'responsiblePriest', 'responsibleCoordinator', 'contactPhone', 'areaWebsite', 'facebookProfile'];
 	

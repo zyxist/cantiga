@@ -16,6 +16,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+declare(strict_types=1);
 namespace Cantiga\Metamodel\CustomForm;
 
 use ArrayIterator;
@@ -23,22 +24,34 @@ use IteratorAggregate;
 use LogicException;
 
 /**
- * Keeps the rendering information for the custom form, so that we can generate a valid HTML
- * for it.
- *
- * @author Tomasz Jędrzejewski
+ * Configurable custom form rendered which displays the form fields in the FIELDSET groups,
+ * two fields in a row in the widest layout.
  */
 class DefaultCustomFormRenderer implements CustomFormRendererInterface, IteratorAggregate
 {
 	private $structure;
 	private $lastGroup;
 	
-	public function group($groupName, $groupDescription = null)
+	/**
+	 * Starts a new fieldset group. The group shall have a name, and an optional description
+	 * displayed above the fields. The labels can be translated, using the <tt>messages</tt> message
+	 * group.
+	 * 
+	 * @param string $groupName Group label
+	 * @param string $groupDescription Optional group description
+	 */
+	public function group(string $groupName, string $groupDescription = null)
 	{
 		$this->lastGroup = new FieldGroup($groupName, $groupDescription);
 		$this->structure[] = $this->lastGroup;
 	}
 	
+	/**
+	 * Specifies the names of the fields that shall be displayed in the recently created group. The
+	 * method accepts a variadic number of string arguments.
+	 * 
+	 * @throws LogicException
+	 */
 	public function fields() {
 		$names = func_get_args();
 		if (null == $this->lastGroup) {
@@ -49,7 +62,7 @@ class DefaultCustomFormRenderer implements CustomFormRendererInterface, Iterator
 		}
 	}
 	
-	public function getTemplate()
+	public function getTemplate(): string
 	{
 		return 'CantigaCoreBundle:layout:custom-form.html.twig';
 	}

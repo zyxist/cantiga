@@ -16,12 +16,17 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+declare(strict_types=1);
 namespace Cantiga\Metamodel\CustomForm;
 
 /**
- * @author Tomasz Jędrzejewski
+ * Form summary is used for displaying the data entered in the custom forms, on a
+ * detail page. The implementations shall define a template used for rendering, and
+ * render the form data. Typically, we recommend using the
+ * default implementation {@link Cantiga\Metamodel\CustomForm\DefaultCustomFormSummary}
+ * unless you have more specific needs.
  */
 interface CustomFormSummaryInterface
 {
-	public function getTemplate();
+	public function getTemplate(): string;
 }

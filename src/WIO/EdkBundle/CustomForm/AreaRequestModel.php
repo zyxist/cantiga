@@ -16,9 +16,12 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+declare(strict_types=1);
 namespace WIO\EdkBundle\CustomForm;
 
 use Cantiga\Metamodel\CustomForm\CustomFormModelInterface;
+use Cantiga\Metamodel\CustomForm\CustomFormRendererInterface;
+use Cantiga\Metamodel\CustomForm\CustomFormSummaryInterface;
 use Cantiga\Metamodel\CustomForm\DefaultCustomFormRenderer;
 use Cantiga\Metamodel\CustomForm\DefaultCustomFormSummary;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -33,9 +36,6 @@ use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-/**
- * @author Tomasz Jędrzejewski
- */
 class AreaRequestModel implements CustomFormModelInterface
 {
 	private $translator;
@@ -111,7 +111,7 @@ class AreaRequestModel implements CustomFormModelInterface
 		return true;
 	}
 	
-	public function createFormRenderer()
+	public function createFormRenderer(): CustomFormRendererInterface
 	{
 		$r = new DefaultCustomFormRenderer();
 		$r->group('Your Extreme Way');
@@ -126,7 +126,7 @@ class AreaRequestModel implements CustomFormModelInterface
 		return $r;
 	}
 	
-	public function createSummary()
+	public function createSummary(): CustomFormSummaryInterface
 	{
 		$s = new DefaultCustomFormSummary();
 		$s->present('ewcType', 'Type of the way', 'choice', $this->ewcTypes());

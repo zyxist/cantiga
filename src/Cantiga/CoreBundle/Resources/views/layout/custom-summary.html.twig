@@ -8,6 +8,8 @@
 			{{ boolean_mark(item.get(property.name)) }}
 			{% elseif property.type == 'date' %}
 			{{ format_date(item.get(property.name)) }}
+			{% elseif property.type == 'url' %}
+			<a href="{{item.get(property.name)}}">{{item.get(property.name)}}</a>
 			{% elseif property.type == 'callback' %}
 			{{ callback_transform(item.get(property.name), property.callback) }}
 			{% elseif property.type == 'callback-raw' %}

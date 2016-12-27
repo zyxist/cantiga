@@ -16,16 +16,35 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+declare(strict_types=1);
 namespace Cantiga\Metamodel\CustomForm;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
- * @author Tomasz Jędrzejewski
+ * Allows form customization, e.g. for area profile or area requests.
  */
 interface CustomFormModelInterface
 {
+	/**
+	 * Configures the form fields.
+	 * 
+	 * @param FormBuilderInterface $builder
+	 */
 	public function constructForm(FormBuilderInterface $builder);
-	public function validateForm($data, ExecutionContextInterface $context);
-	public function createFormRenderer();
+	/**
+	 * Custom validation code for the form, in addition to the default validators.
+	 * 
+	 * @param array $data Form data
+	 * @param ExecutionContextInterface $context
+	 */
+	public function validateForm(array $data, ExecutionContextInterface $context);
+	/**
+	 * Specifies how the custom form shall be rendered. 
+	 */
+	public function createFormRenderer(): CustomFormRendererInterface;
+	/**
+	 * Specifies how the form data are presented in the detail page.
+	 */
+	public function createSummary(): CustomFormSummaryInterface;
 }

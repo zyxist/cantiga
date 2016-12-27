@@ -23,7 +23,6 @@ use Cantiga\CoreBundle\Api\AppTexts;
 use Cantiga\CoreBundle\Api\Workspaces;
 use Cantiga\CoreBundle\CoreTexts;
 use Cantiga\CoreBundle\DependencyInjection\ExtensionPointPass;
-use Cantiga\CoreBundle\DependencyInjection\MembershipPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

@@ -16,12 +16,15 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
+declare(strict_types=1);
 namespace Cantiga\Metamodel\CustomForm;
 
 /**
- * @author Tomasz Jędrzejewski
+ * Specifies, how the custom form shall be rendered. Typically, we recommend using the
+ * default implementation {@link Cantiga\Metamodel\CustomForm\DefaultCustomFormRenderer}
+ * unless you have more specific needs.
  */
 interface CustomFormRendererInterface
 {
-	public function getTemplate();
+	public function getTemplate(): string;
 }

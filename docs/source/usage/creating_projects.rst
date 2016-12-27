@@ -44,4 +44,9 @@ Review project settings
 
 After accepting the invitation, you will see that the *workspace selector* contains a new option, and the user dashboard shows you the direct link to the workspace of the newly created project. When you enter the project workspace, the color of the *top bar* changes to blue. Take some time to look around. The **Manage** section contains the panels available only for the project managers. One of the links, **Settings** allows you customizing the behavior of the modules enabled for the project.
 
+Some of the important settings are:
+
+* **Area form** - the structure of the area profile can be customized. By default, Cantiga offers two basic types of area forms, and you can create your own form, too. Information about customizing the area forms can be found in :ref:`customize_requests_areas`.
+* **Area request form** - the structure of the area request can be customized. By default, Cantiga offers two basic types of area request forms, and you can create your own form, too. Information about customizing the area forms can be found in :ref:`customize_requests_areas`.
+
 To invite more people to the project, go to **Project members** page.

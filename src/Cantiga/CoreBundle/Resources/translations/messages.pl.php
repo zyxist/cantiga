@@ -304,4 +304,13 @@ return array(
 	'The specified area has not been found.' => 'Podany rejon nie został znaleziony.',
 	'ProjectAlreadyCompletedWarning' => 'Ten projekt został już zakończony i jest dostępny wyłącznie do celów archiwalnych.',
 	'PlaceProjectAlreadyCompletedWarning' => 'Projekt, do którego należy to miejsce, został już zakończony i jest dostępny wyłącznie do celów archiwalnych.',
+
+	// Example area requests
+	'AreaDescriptionLabel' => 'Opis rejonu',
+	'MotivationLabel' => 'Dlaczego chcesz stworzyć rejon?',
+	'AreaWebsiteLabel' => 'Strona WWW rejonu',
+	'AreaFacebookProfileLabel' => 'Profil rejonu na Facebooku',
+	'OrgNameLabel' => 'Nazwa organizacji',
+	'OrgWebsiteLabel' => 'Strona WWW organizacji',
+	'YourOrganizationInfoText' => 'Jeśli jesteś przedstawicielem organizacji, podaj jej nazwę oraz adres strony WWW.',
 );

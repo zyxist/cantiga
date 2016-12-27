@@ -90,4 +90,13 @@ return array(
 	'The specified area has not been found.' => 'The specified area has not been found.',
 	'ProjectAlreadyCompletedWarning' => 'This project has already finished and is preserved as archived.',
 	'PlaceProjectAlreadyCompletedWarning' => 'The project this place belongs to has already completed and is preserved as archived.',
+	
+	// Example area requests
+	'AreaDescriptionLabel' => 'Area description',
+	'MotivationLabel' => 'Why do you want to create an area?',
+	'AreaWebsiteLabel' => 'Area website',
+	'AreaFacebookProfileLabel' => 'Area Facebook profile',
+	'OrgNameLabel' => 'Organization name',
+	'OrgWebsiteLabel' => 'Organization website',
+	'YourOrganizationInfoText' => 'If you are a representative of an organization, please provide the organization name and website address.',
 );
