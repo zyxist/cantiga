@@ -116,6 +116,19 @@ class ExtensionPointFilter
 		return true;
 	}
 	
+	/**
+	 * Checks whether the given module is supported.
+	 * 
+	 * @param string $moduleName
+	 */
+	public function matchesModule(string $moduleName): bool
+	{
+		if (!$this->allModules) {
+			return in_array($moduleName, $this->modules);
+		}
+		return true;
+	}
+	
 	public function getModules(): array
 	{
 		return $this->modules;
