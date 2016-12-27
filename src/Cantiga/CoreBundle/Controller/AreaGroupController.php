@@ -20,6 +20,7 @@ namespace Cantiga\CoreBundle\Controller;
 
 use Cantiga\Components\Hierarchy\Entity\Membership;
 use Cantiga\CoreBundle\Api\Controller\AreaPageController;
+use Cantiga\UserBundle\Repository\MemberlistRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -46,8 +47,13 @@ class AreaGroupController extends AreaPageController
 			->entryLink($this->trans('My group', [], 'pages'), 'area_my_group', ['slug' => $this->getSlug()]);
 		return $this->render('CantigaCoreBundle:AreaGroup:my-group.html.twig', [
 			'group' => $group,
-			'members' => $group->findMemberInformationForEntity($this->get('database_connection'), $area),
+			'members' => $this->getMemberlistRepository()->findMembers($group->getPlace()),
 			'areas' => $group->findAreaSummary($this->get('database_connection'))
 		]);
+	}
+	
+	public function getMemberlistRepository(): MemberlistRepository
+	{
+		return $this->get('cantiga.user.repo.memberlist');
 	}
 }

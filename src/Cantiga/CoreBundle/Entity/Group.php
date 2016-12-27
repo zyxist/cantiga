@@ -324,31 +324,6 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 		return array();
 	}
 	
-	/**
-	 * Displays the information about the group members for members of the given other entity.
-	 * 
-	 * @param Connection $conn
-	 * @param MembershipEntityInterface $entity Another entity that views the information about members.
-	 * @return array
-	 */
-	public function findMemberInformationForEntity(Connection $conn, HierarchicalInterface $entity)
-	{
-		$stmt = $conn->prepare('SELECT u.id, u.name, u.avatar, u.lastVisit, p.location, m.note '
-			. 'FROM `'.CoreTables::USER_TBL.'` u '
-			. 'INNER JOIN `'.CoreTables::USER_PROFILE_TBL.'` p ON p.`userId` = u.`id` '
-			. 'INNER JOIN `'.UserTables::PLACE_MEMBERS_TBL.'` m ON m.`userId` = u.`id` '
-			. 'WHERE m.`placeId` = :placeId ORDER BY m.role DESC, u.name');
-		$stmt->bindValue(':placeId', $this->getPlace()->getId());
-		$stmt->execute();
-		$result = array();
-		
-		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$result[] = $row;
-		}
-		$stmt->closeCursor();
-		return $result;
-	}
-	
 	public function findAreaSummary(Connection $conn)
 	{
 		$stmt = $conn->prepare('SELECT a.id, a.name, s.name AS `statusText` '
