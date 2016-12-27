@@ -55,6 +55,6 @@ class AreaLoader implements PlaceLoaderInterface
 	
 	public function loadPlaceForImport(HierarchicalInterface $currentPlace, CantigaUserRefInterface $member)
 	{
-		
+		return Area::fetchForImport($this->conn, $currentPlace, $member);
 	}
 }

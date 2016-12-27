@@ -20,13 +20,16 @@ namespace Cantiga\CoreBundle\Entity;
 
 use Cantiga\Components\Hierarchy\Entity\PlaceRef;
 use Cantiga\Components\Hierarchy\HierarchicalInterface;
+use Cantiga\Components\Hierarchy\User\CantigaUserRefInterface;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Traits\PlaceTrait;
 use Cantiga\Metamodel\Capabilities\EditableEntityInterface;
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
 use Cantiga\Metamodel\Capabilities\InsertableEntityInterface;
 use Cantiga\Metamodel\DataMappers;
+use Cantiga\UserBundle\UserTables;
 use Doctrine\DBAL\Connection;
+use LogicException;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
@@ -91,6 +94,40 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		return $item;
 	}
 	
+	public static function fetchForImport(Connection $conn, Area $currentArea, CantigaUserRefInterface $user)
+	{
+		if (null === $currentArea->getProject()->getParentProject()) {
+			return false;
+		}
+		
+		$data = $conn->fetchAssoc('SELECT a.*, '
+			. 't.`id` AS `territory_id`, t.`name` AS `territory_name`, t.`areaNum` AS `territory_areaNum`, t.`requestNum` as `territory_requestNum`, '
+			. self::createPlaceFieldList()
+			. 'FROM `'.CoreTables::AREA_TBL.'` a '
+			. 'INNER JOIN `'.CoreTables::TERRITORY_TBL.'` t ON t.`id` = a.`territoryId` '
+			. self::createPlaceJoin('a')
+			. 'INNER JOIN `'.UserTables::PLACE_MEMBERS_TBL.'` m ON m.`placeId` = e.`id` '
+			. 'INNER JOIN `'.CoreTables::PROJECT_TBL.'` p ON p.`id` = a.`projectId` '
+			. 'WHERE a.`name` = :name AND a.`projectId` = :parentProject AND m`.userId` = :userId', [
+				':name' => $currentArea->getName(), ':parentProject' => $currentArea->getProject()->getParentProject()->getId(), ':userId' => $user->getId()]);
+		if(null === $data) {
+			return false;
+		}
+		$item = Area::fromArray($data);
+		$item->project = Project::fetch($conn, $data['projectId']);
+		if (false === $item->project) {
+			return false;
+		}
+		
+		$item->status = $item->oldStatus = AreaStatus::fetchByProject($conn, $data['statusId'], $item->project);
+		$item->setTerritory($item->oldTerritory = Territory::fromArray($data, 'territory'));
+		if (!empty($data['groupId'])) {
+			$item->group = $item->oldGroup = Group::fetchByProject($conn, $data['groupId'], $item->project);
+		}
+		$item->place = Place::fromArray($data, 'place');
+		return $item;
+	}
+	
 	/**
 	 * @param Connection $conn
 	 * @param int $id
@@ -104,7 +141,7 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		} elseif ($place instanceof Group) {
 			$selector = 'a.`groupId` = :placeId';
 		} else {
-			throw new \LogicException('The specified place type is not supported.');
+			throw new LogicException('The specified place type is not supported.');
 		}
 		$data = $conn->fetchAssoc('SELECT a.*, '
 			. 't.`id` AS `territory_id`, t.`name` AS `territory_name`, t.`areaNum` AS `territory_areaNum`, t.`requestNum` as `territory_requestNum`, '

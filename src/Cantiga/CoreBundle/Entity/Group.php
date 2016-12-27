@@ -92,6 +92,37 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 		return $item;
 	}
 	
+	public static function fetchForImport(Connection $conn, Group $currentGroup, CantigaUserRefInterface $user)
+	{
+		if (null === $currentGroup->getProject()->getParentProject()) {
+			return false;
+		}
+		
+		$data = $conn->fetchAssoc('SELECT g.*, '
+			. self::createPlaceFieldList()
+			. 'FROM `'.CoreTables::GROUP_TBL.'` g '
+			. self::createPlaceJoin('g')
+			. 'INNER JOIN `'.UserTables::PLACE_MEMBERS_TBL.'` m ON m.`placeId` = e.`id` '
+			. 'INNER JOIN `'.CoreTables::PROJECT_TBL.'` p ON p.`id` = g.`projectId` '
+			. 'WHERE g.`name` = :name AND g.`projectId` = :parentProject AND m`.userId` = :userId', [
+				':name' => $currentGroup->getName(), ':parentProject' => $currentGroup->getProject()->getParentProject()->getId(), ':userId' => $user->getId()]);
+		if(null === $data) {
+			return false;
+		}
+		$item = Group::fromArray($data);
+		$item->project = Project::fetchActive($conn, $data['projectId']);
+		if (false === $item->project) {
+			return false;
+		}
+		
+		if (!empty($data['categoryId'])) {
+			$item->category = GroupCategory::fetchByProject($conn, $data['categoryId'], $item->project);
+		}
+		$item->place = Place::fromArray($data, 'place');
+		
+		return $item;
+	}
+	
 	public static function fetchByPlaceRef(Connection $conn, PlaceRef $place)
 	{
 		$data = $conn->fetchAssoc('SELECT g.*, '

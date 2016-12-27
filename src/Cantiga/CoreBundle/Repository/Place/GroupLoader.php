@@ -55,6 +55,6 @@ class GroupLoader implements PlaceLoaderInterface
 	
 	public function loadPlaceForImport(HierarchicalInterface $currentPlace, CantigaUserRefInterface $member)
 	{
-		
+		return Group::fetchForImport($this->conn, $currentPlace, $member);
 	}
 }
