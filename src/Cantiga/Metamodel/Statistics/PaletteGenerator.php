@@ -20,14 +20,16 @@ namespace Cantiga\Metamodel\Statistics;
 
 /**
  * Helps generating nice color palettes for charts.
- *
- * @author Tomasz Jędrzejewski
  */
 class PaletteGenerator
 {
 	public function generatePalette($numberOfColors, $rBase, $gBase, $bBase)
 	{
 		$palette = [];
+		if ($numberOfColors == 0) {
+			return $palette;
+		}
+		
 		$hslBase = $this->rgb2hsl([$rBase / 255.0, $gBase / 255.0, $bBase / 255.0]);
 		$hslBright = $hslBase;
 		$hslBright[2] += 0.25;
