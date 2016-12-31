@@ -1,0 +1,54 @@
+{% extends 'CantigaCoreBundle:layout:base-layout.html.twig' %}
+
+{% block page_title %}
+	{{ 'Archive' | trans([], 'pages') }}
+{% endblock %}
+
+{% block page_subtitle %}
+	{{ 'Access archived places' | trans([], 'pages') }}
+{% endblock %}
+
+{% block page_content %}
+<div class="row">
+	<div class="col-lg-12">
+		<div class="box box-success">
+			<div class="box-header with-border">
+				<i class="fa fa-question"></i>
+				<h3 class="box-title">{{ 'HowItWorksTitle' | trans([], 'general') }}</h3>
+			</div>
+			<div class="box-body">
+				<p>{{ 'ArchiveDescriptionText' | trans }}</p>
+			</div>
+		</div>
+	</div>
+	
+	{% for memberEntity in memberEntities %}
+	<div class="col-lg-4 col-md-12">
+		{% if memberEntity.type == 'Project' %}
+		<div class="small-box bg-blue">
+		{% elseif memberEntity.type == 'Group' %}
+		<div class="small-box bg-gray">	
+		{% else %}
+		<div class="small-box bg-purple">	
+		{% endif%}
+			<div class="inner">
+				<h3>{{ memberEntity.name }}</h3>
+				<p>{{ (memberEntity.type~'MembershipText') | trans([], 'dashboard') }}</p>
+			</div>
+			<div class="icon">
+				{% if memberEntity.type == 'Project' %}
+				<i class="fa fa-lightbulb-o"></i>
+				{% elseif memberEntity.type == 'Group' %}
+				<i class="fa fa-cubes"></i>
+				{% else %}
+				<i class="fa fa-cube"></i>
+				{% endif%}
+			</div>
+			<a href="{{ path('place_dashboard', {'slug': memberEntity.slug} ) }}" class="small-box-footer">
+				{{ ('Goto'~memberEntity.type~'Text') | trans([], 'dashboard') }} <i class="fa fa-arrow-circle-right"></i>
+			</a>
+          </div>
+	</div>
+	{% endfor %}
+</div>
+{% endblock %}

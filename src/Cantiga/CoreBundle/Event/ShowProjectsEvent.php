@@ -41,6 +41,8 @@ class ShowProjectsEvent extends Event
 	 * @var PlaceRef
 	 */
 	private $activePlace;
+	
+	private $showArchives = false;
 
 	public function setActiveProject(PlaceRef $project)
 	{
@@ -72,4 +74,13 @@ class ShowProjectsEvent extends Event
 		return sizeof($this->places) > 0;
 	}
 
+	public function setShowArchives(bool $value)
+	{
+		$this->showArchives = $value;
+	}
+	
+	public function getShowArchives(): bool
+	{
+		return $this->showArchives;
+	}
 }

@@ -96,7 +96,8 @@ class UiBlock
 				? $this->translator->trans($listEvent->getActiveProject()->getType().'Nominative: 0', [$listEvent->getActiveProject()->getName()])
 				: $this->translator->trans($workspace['title'], [], 'pages')),
 			'projects' => $listEvent->getProjects(),
-			'workspaces' => $workspaceEvent->getWorkspaces()
+			'workspaces' => $workspaceEvent->getWorkspaces(),
+			'showArchives' => $listEvent->getShowArchives()
 		));
 	}
 	

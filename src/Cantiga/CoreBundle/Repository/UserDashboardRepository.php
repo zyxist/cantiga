@@ -40,7 +40,17 @@ class UserDashboardRepository
 		return $this->conn->fetchAll('SELECT p.`id`, p.`name`, p.`slug`, p.`type` '
 			. 'FROM `'.CoreTables::PLACE_TBL.'` p '
 			. 'INNER JOIN `'.UserTables::PLACE_MEMBERS_TBL.'` m ON m.`placeId` = p.`id` '
-			. 'WHERE m.`userId` = :userId '
+			. 'WHERE m.`userId` = :userId AND p.archived = 0 '
+			. 'ORDER BY p.`type` DESC, p.`name`',
+			[':userId' => $user->getId()]);
+	}
+	
+	public function getArchivedUserMembership(CantigaUserRefInterface $user)
+	{
+		return $this->conn->fetchAll('SELECT p.`id`, p.`name`, p.`slug`, p.`type` '
+			. 'FROM `'.CoreTables::PLACE_TBL.'` p '
+			. 'INNER JOIN `'.UserTables::PLACE_MEMBERS_TBL.'` m ON m.`placeId` = p.`id` '
+			. 'WHERE m.`userId` = :userId AND p.archived = 1 '
 			. 'ORDER BY p.`type` DESC, p.`name`',
 			[':userId' => $user->getId()]);
 	}

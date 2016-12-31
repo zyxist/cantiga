@@ -138,6 +138,9 @@ class UiListener
 				if ($place->getSlug() == $this->membershipStorage->getMembership()->getPlace()->getSlug()) {
 					$projects->setActiveProject($place);
 				}
+				if ($place->getArchived()) {
+					$projects->setShowArchives(true);
+				}
 			}
 			$projects->addProject($place);
 		}
