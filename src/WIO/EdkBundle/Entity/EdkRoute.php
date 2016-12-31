@@ -18,6 +18,7 @@
  */
 namespace WIO\EdkBundle\Entity;
 
+use Cantiga\Components\Hierarchy\HierarchicalInterface;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Area;
 use Cantiga\CoreBundle\Entity\Group;
@@ -26,7 +27,6 @@ use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\Metamodel\Capabilities\EditableEntityInterface;
 use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
 use Cantiga\Metamodel\Capabilities\InsertableEntityInterface;
-use Cantiga\Components\Hierarchy\MembershipEntityInterface;
 use Cantiga\Metamodel\Capabilities\RemovableEntityInterface;
 use Cantiga\Metamodel\DataMappers;
 use Cantiga\Metamodel\Exception\DiskAssetException;
@@ -88,6 +88,7 @@ class EdkRoute implements IdentifiableInterface, InsertableEntityInterface, Edit
 	private $gpsTrackFileUpload;
 	private $publicAccessSlug;
 	private $commentNum;
+	private $importedFrom;
 
 	/**
 	 * Additional notes related to the route.
@@ -97,7 +98,7 @@ class EdkRoute implements IdentifiableInterface, InsertableEntityInterface, Edit
 	
 	private $postedMessage = null;
 	
-	public static function fetchByRoot(Connection $conn, $id, MembershipEntityInterface $root)
+	public static function fetchByRoot(Connection $conn, $id, HierarchicalInterface $root)
 	{
 		if ($root instanceof Area) {
 			$data = $conn->fetchAssoc('SELECT * FROM `'.EdkTables::ROUTE_TBL.'` WHERE `areaId` = :areaId AND `id` = :id', [':id' => $id, ':areaId' => $root->getId()]);
@@ -118,10 +119,8 @@ class EdkRoute implements IdentifiableInterface, InsertableEntityInterface, Edit
 		$item = self::fromArray($data);
 		if ($root instanceof Area) {
 			$item->area = $root;
-		} elseif ($root instanceof Group) {
-			$item->area = Area::fetchByGroup($conn, $data['areaId'], $root);
-		} elseif ($root instanceof Project) {
-			$item->area = Area::fetchByProject($conn, $data['areaId'], $root);
+		} else {
+			$item->area = Area::fetchByPlace($conn, $data['areaId'], $root);
 		}
 
 		$notes = $conn->fetchAll('SELECT * FROM `'.EdkTables::ROUTE_NOTE_TBL.'` WHERE `routeId` = :routeId', [':routeId' => $item->getId()]);
@@ -450,6 +449,16 @@ class EdkRoute implements IdentifiableInterface, InsertableEntityInterface, Edit
 		$this->commentNum = $commentNum;
 	}
 	
+	function getImportedFrom()
+	{
+		return $this->importedFrom;
+	}
+
+	function setImportedFrom($importedFrom)
+	{
+		$this->importedFrom = $importedFrom;
+	}
+		
 	public function getEditableNote($type)
 	{
 		if (!isset($this->notes[$type])) {
@@ -468,7 +477,7 @@ class EdkRoute implements IdentifiableInterface, InsertableEntityInterface, Edit
 		foreach (self::getNoteTypes() as $id => $name) {
 			if ($id == $type) {
 				$content = $this->getEditableNote($id);
-				return ['id' => $id, 'name' => $translator->trans($name, [], 'edk'), 'content' => $content, 'editable' => htmlspecialchars($content)];
+				return ['id' => $id, 'name' => $translator->trans($name, [], 'edk'), 'content' => $content, 'editable' => $content];
 			}
 		}
 		return ['id' => 0, 'name' => '', 'content' => ''];
@@ -479,7 +488,7 @@ class EdkRoute implements IdentifiableInterface, InsertableEntityInterface, Edit
 		$result = [];
 		foreach (self::getNoteTypes() as $id => $name) {
 			$content = $this->getEditableNote($id);
-			$result[] = ['id' => $id, 'name' => $translator->trans($name, [], 'edk'), 'content' => $content, 'editable' => htmlspecialchars($content)];
+			$result[] = ['id' => $id, 'name' => $translator->trans($name, [], 'edk'), 'content' => $content, 'editable' => $content];
 		}
 		return $result;
 	}
@@ -612,7 +621,7 @@ class EdkRoute implements IdentifiableInterface, InsertableEntityInterface, Edit
 		$this->updatedAt = time();
 		$conn->insert(
 			EdkTables::ROUTE_TBL,
-			DataMappers::pick($this, ['name', 'area', 'routeType', 'routeFrom', 'routeTo', 'routeCourse', 'routeLength', 'routeAscent', 'routeObstacles', 'createdAt', 'updatedAt', 'approved', 'descriptionFile', 'mapFile', 'gpsTrackFile', 'publicAccessSlug'])
+			DataMappers::pick($this, ['name', 'area', 'routeType', 'routeFrom', 'routeTo', 'routeCourse', 'routeLength', 'routeAscent', 'routeObstacles', 'createdAt', 'updatedAt', 'approved', 'descriptionFile', 'mapFile', 'gpsTrackFile', 'publicAccessSlug', 'importedFrom'])
 		);
 		$this->id = $conn->lastInsertId();
 		return $this->id;

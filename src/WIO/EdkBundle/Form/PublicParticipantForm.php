@@ -20,37 +20,30 @@ namespace WIO\EdkBundle\Form;
 
 use Cantiga\CoreBundle\Form\Type\BooleanType;
 use Symfony\Component\Form\FormBuilderInterface;
-use WIO\EdkBundle\Entity\EdkRegistrationSettings;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Public version of the registration form. Requires specifying an additional text about
  * accepting terms, which is customizable.
- *
- * @author Tomasz Jędrzejewski
  */
 class PublicParticipantForm extends AbstractParticipantForm
 {
-	private $terms1AcceptedText;
-	private $terms2AcceptedText;
-	private $terms3AcceptedText;
-	
-	public function __construct(EdkRegistrationSettings $rs = null, $terms1Text, $terms2Text, $terms3Text)
+	public function configureOptions(OptionsResolver $resolver)
 	{
-		parent::__construct($rs);
-		$this->terms1AcceptedText = $terms1Text;
-		$this->terms2AcceptedText = $terms2Text;
-		$this->terms3AcceptedText = $terms3Text;
+		parent::configureOptions($resolver);
+		$resolver->setDefined(['texts']);
+		$resolver->setRequired(['texts']);
 	}
 	
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		parent::buildForm($builder, $options);
-		$builder->add('terms1Accepted', BooleanType::class, ['label' => $this->terms1AcceptedText, 'required' => true]);
-		$builder->add('terms2Accepted', BooleanType::class, ['label' => $this->terms2AcceptedText, 'required' => true]);
-		$builder->add('terms3Accepted', BooleanType::class, ['label' => $this->terms3AcceptedText, 'required' => true]);
+		$builder->add('terms1Accepted', BooleanType::class, ['label' => $options['texts'][1], 'required' => true]);
+		$builder->add('terms2Accepted', BooleanType::class, ['label' => $options['texts'][2], 'required' => true]);
+		$builder->add('terms3Accepted', BooleanType::class, ['label' => $options['texts'][3], 'required' => true]);
 	}
 	
-	protected function isMailRequired()
+	protected function isMailRequired(array $options)
 	{
 		return true;
 	}

@@ -25,27 +25,20 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use WIO\EdkBundle\Repository\EdkPublishedDataRepository;
 
-
-/**
- * @author Tomasz Jędrzejewski
- */
 class EdkMessageForm extends AbstractType
-{
-	private $repository;
-	
-	public function __construct(EdkPublishedDataRepository $repository)
+{	
+	public function configureOptions(OptionsResolver $resolver)
 	{
-		$this->repository = $repository;
-	}
-	
-	public function setDefaultOptions(OptionsResolverInterface $resolver)
-	{    
-		$resolver->setDefaults(array(
-			'translation_domain' => 'public'
-		));
+		$resolver->setDefined(['repository']);
+		$resolver->setRequired(['repository']);
+		$resolver->addAllowedTypes('repository', EdkPublishedDataRepository::class);
+		$resolver->setDefaults([
+			'translation_domain' => 'public',
+			'csrf_protection' => false,
+		]);
 	}
 
 	public function buildForm(FormBuilderInterface $builder, array $options)
@@ -53,7 +46,7 @@ class EdkMessageForm extends AbstractType
 		$builder
 			->add('area', ChoiceType::class, [
 				'label' => 'Choose an area',
-				'choices' => $this->repository->getFormChoices()
+				'choices' => $options['repository']->getFormChoices()
 			])
 			->add('subject', TextType::class, ['label' => 'Subject'])
 			->add('content', TextareaType::class, array('label' => 'Content', 'attr' => ['rows' => 20]))
@@ -61,7 +54,7 @@ class EdkMessageForm extends AbstractType
 			->add('authorEmail', TextType::class, array('label' => 'Your e-mail', 'required' => false))
 			->add('authorPhone', TextType::class, array('label' => 'Your phone number', 'required' => false))
 			->add('save', SubmitType::class, array('label' => 'Send message'));
-		$builder->get('area')->addModelTransformer(new EntityTransformer($this->repository));
+		$builder->get('area')->addModelTransformer(new EntityTransformer($options['repository']));
 	}
 
 	public function getName()

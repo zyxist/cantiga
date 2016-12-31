@@ -87,4 +87,5 @@ return array(
 	'Do you really want to remove the participant \'0\'?' => 'Czy naprawdę chcesz usunąć uczestnika "0"? Ślad po usuniętym zgłoszeniu zostanie zachowany, wraz z datą usunięcia oraz informacją o usuwającym.',
 
 	'Get contacts to area leaders' => 'Pobierz kontakty do liderów rejonów',
+	'ImportRoutesQuestionText' => 'Czy chcesz zaimportować brakujące trasy oraz ich pliki z poprzedniego projektu?',
 );

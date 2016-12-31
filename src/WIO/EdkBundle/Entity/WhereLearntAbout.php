@@ -117,9 +117,9 @@ class WhereLearntAbout
 		if (null === self::$CHOICES) {
 			self::generateItems();
 		}
-		$result = [];
+		$result = ['-- choose --' => null];
 		foreach (self::$CHOICES as $ch) {
-			$result[$ch->getId()] = $ch->getName();
+			$result[$ch->getName()] = $ch->getId();
 		}
 		return $result;
 	}

@@ -1,17 +1,22 @@
-<h4>{{ 'Recent comments in routes' | trans([], 'edk') }}</h4>
-<div class="box">
-	<div class="box-body no-padding">
-		<table class="table table-hover">
-			<tbody>
-				{% for comment in comments %}
-				<tr>
-					<td width="20%"><img src="{{ asset(avatar(comment, 32)) }}" class="img-circle" width="24" /> {{ comment.username }}</td>
-					<td width="15%"><a href="{{ spath(routeInfoPath, {'id': comment.routeId} ) }}">{{ comment.routeName }}</a></td>
-					<td>{{ comment.truncatedContent }}</td>
-					<td width="150">{{ ago(comment.createdAt) }}</td>
-				</tr>
-				{% endfor %}
-			</tbody>	
-		</table>
-	</div>	
+<div class="col-lg-12">
+	<div class="box box-purple">
+		<div class="box-header with-border">
+			<i class="fa fa-comment"></i>
+			<h3 class="box-title">{{ 'Recent comments in routes' | trans([], 'edk') }}</h3>
+		</div>
+		<div class="box-body no-padding">
+			<table class="table table-hover">
+				<tbody>
+					{% for comment in comments %}
+					<tr>
+						<td width="20%"><img src="{{ asset(avatar(comment, 32)) }}" class="img-circle" width="24" /> {{ comment.username }}</td>
+						<td width="15%"><a href="{{ spath(routeInfoPath, {'id': comment.routeId} ) }}">{{ comment.routeName }}</a></td>
+						<td>{{ comment.truncatedContent }}</td>
+						<td width="150">{{ ago(comment.createdAt) }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>	
+			</table>
+		</div>
+	</div>
 </div>

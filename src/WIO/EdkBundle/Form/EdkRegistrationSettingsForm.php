@@ -21,7 +21,6 @@
 namespace WIO\EdkBundle\Form;
 
 use Cantiga\CoreBundle\Form\Type\BooleanType;
-use DateTimeZone;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -30,23 +29,15 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use WIO\EdkBundle\Entity\EdkRegistrationSettings;
 
 class EdkRegistrationSettingsForm extends AbstractType
 {
-	/**
-	 * @var DateTimeZone
-	 */
-	private $timezone;
-
-	public function __construct(DateTimeZone $timezone)
+	public function configureOptions(OptionsResolver $resolver)
 	{
-		$this->timezone = $timezone;
-	}
-	
-	public function setDefaultOptions(OptionsResolverInterface $resolver)
-	{    
+		$resolver->setDefined(['timezone']);
+		$resolver->setRequired(['timezone']);
 		$resolver->setDefaults(array(
 			'translation_domain' => 'edk'
 		));
@@ -64,7 +55,7 @@ class EdkRegistrationSettingsForm extends AbstractType
 				'years' => $this->currentYears(),
 				'input' => 'timestamp',
 				'model_timezone' => 'UTC',
-				'view_timezone' => $this->timezone->getName(),
+				'view_timezone' => $options['timezone']->getName(),
 				'required' => false,
 			))
 			->add('endTime', DateTimeType::class, array(
@@ -72,7 +63,7 @@ class EdkRegistrationSettingsForm extends AbstractType
 				'years' => $this->currentYears(),
 				'input' => 'timestamp',
 				'model_timezone' => 'UTC',
-				'view_timezone' => $this->timezone->getName(),
+				'view_timezone' => $options['timezone']->getName(),
 				'required' => false
 			))
 			->add('externalRegistrationUrl', UrlType::class, ['label' => 'External registration URL', 'attr' => ['help_text' => 'ExternalRegistrationUrlHint'], 'required' => false])

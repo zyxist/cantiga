@@ -154,7 +154,7 @@ class AreaModel implements CustomFormModelInterface, CompletenessCalculatorInter
 				}
 			}
 		}
-		return round(($filled / $total) * 100);
+		return (int) round(($filled / $total) * 100);
 	}
 	
 	public function generateYears() {

@@ -126,15 +126,12 @@ class PublicRegistrationFormController extends PublicEdkController
 		if (null !== $registrationSettings) {
 			$participant->setRegistrationSettings($registrationSettings);
 		}
-		
-		$terms1Text = $this->getTextRepository()->getText(EdkTexts::REGISTRATION_TERMS1_TEXT, $request, $this->project);
-		$terms2Text = $this->getTextRepository()->getText(EdkTexts::REGISTRATION_TERMS2_TEXT, $request, $this->project);
-		$terms3Text = $this->getTextRepository()->getText(EdkTexts::REGISTRATION_TERMS3_TEXT, $request, $this->project);
-		
-		$form = $this->createForm(new PublicParticipantForm($registrationSettings, strip_tags($terms1Text->getContent()), strip_tags($terms2Text->getContent()), strip_tags($terms3Text->getContent())), $participant, array(
+		$form = $this->createForm(PublicParticipantForm::class, $participant, array(
+			'registrationSettings' => $registrationSettings,
+			'texts' => $this->buildTexts($request),
 			'action' => $this->generateUrl('public_edk_register', ['slug' => $slug]).(null !== $registrationSettings ? '?r='.$registrationSettings->getRoute()->getId() : '')
 		));
-		if ($this->getRequest()->getMethod() == 'POST') {
+		if ($request->getMethod() == 'POST') {
 			$form->handleRequest($request);
 			if ($form->isValid()) {
 				if ($recaptcha->verifyRecaptcha($request)) {
@@ -201,5 +198,14 @@ class PublicRegistrationFormController extends PublicEdkController
 			'slug' => $this->project->getSlug(),
 			'currentPage' => self::CURRENT_PAGE,
 		]);
+	}
+	
+	private function buildTexts(Request $request): array
+	{
+		return [
+			1 => strip_tags($this->getTextRepository()->getText(EdkTexts::REGISTRATION_TERMS1_TEXT, $request, $this->project)->getContent()),
+			2 => strip_tags($this->getTextRepository()->getText(EdkTexts::REGISTRATION_TERMS2_TEXT, $request, $this->project)->getContent()),
+			3 => strip_tags($this->getTextRepository()->getText(EdkTexts::REGISTRATION_TERMS3_TEXT, $request, $this->project)->getContent())
+		];
 	}
 }

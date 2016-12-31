@@ -18,6 +18,7 @@
  */
 namespace WIO\EdkBundle\Extension;
 
+use Cantiga\Components\Hierarchy\MembershipStorageInterface;
 use Cantiga\CoreBundle\Api\Controller\CantigaController;
 use Cantiga\CoreBundle\Api\Workspace;
 use Cantiga\CoreBundle\Entity\Project;
@@ -28,8 +29,6 @@ use WIO\EdkBundle\Repository\EdkRouteRepository;
 
 /**
  * Shows the most recent chat activity in the routes.
- *
- * @author Tomasz Jędrzejewski
  */
 class DashboardChatExtension implements DashboardExtensionInterface
 {
@@ -41,11 +40,16 @@ class DashboardChatExtension implements DashboardExtensionInterface
 	 * @var EngineInterface
 	 */
 	private $templating;
+	/**
+	 * @var MembershipStorageInterface
+	 */
+	private $membershipStorage;
 	
-	public function __construct(EdkRouteRepository $repository, EngineInterface $templating)
+	public function __construct(EdkRouteRepository $repository, EngineInterface $templating, MembershipStorageInterface $membershipStorage)
 	{
 		$this->repository = $repository;
 		$this->templating = $templating;
+		$this->membershipStorage = $membershipStorage;
 	}
 	
 	public function getPriority()
@@ -55,8 +59,8 @@ class DashboardChatExtension implements DashboardExtensionInterface
 
 	public function render(CantigaController $controller, Request $request, Workspace $workspace, Project $project = null)
 	{
-		$item = $controller->getMembership()->getItem();
+		$item = $this->membershipStorage->getMembership()->getPlace();
 		$this->repository->setRootEntity($item);
-		return $this->templating->render('WioEdkBundle:Extension:recent-comments.html.twig', ['routeInfoPath' => lcfirst($item->getPlace()->getType()).'_route_info', 'comments' => $this->repository->getRecentCommentActivity(8)]);
+		return $this->templating->render('WioEdkBundle:Extension:recent-comments.html.twig', ['routeInfoPath' => 'edk_route_info', 'comments' => $this->repository->getRecentCommentActivity(8)]);
 	}
 }

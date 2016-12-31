@@ -93,7 +93,7 @@ class AreaRequestModel implements CustomFormModelInterface
 			)]);
 	}
 	
-	public function validateForm($data, ExecutionContextInterface $context)
+	public function validateForm(array $data, ExecutionContextInterface $context)
 	{
 		if ($data['ewcType'] == 'full') {
 			if ($data['routeLength'] < 30) {

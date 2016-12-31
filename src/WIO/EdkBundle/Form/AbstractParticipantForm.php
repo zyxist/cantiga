@@ -26,31 +26,19 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use WIO\EdkBundle\Entity\EdkRegistrationSettings;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use WIO\EdkBundle\Entity\WhereLearntAbout;
 
 /**
  * Base class for the all forms related to the participant registration.
- *
- * @author Tomasz Jędrzejewski
  */
 abstract class AbstractParticipantForm extends AbstractType
 {
-	/**
-	 * @var EdkRegistrationSettings
-	 */
-	protected $registrationSettings;
+	protected abstract function isMailRequired(array $options);
 
-	public function __construct(EdkRegistrationSettings $rs = null)
+	public function configureOptions(OptionsResolver $resolver)
 	{
-		$this->registrationSettings = $rs;
-	}
-	
-	protected abstract function isMailRequired();
-
-	public function setDefaultOptions(OptionsResolverInterface $resolver)
-	{
+		$resolver->setDefined(['registrationSettings']);
 		$resolver->setDefaults([
 			'translation_domain' => 'public',
 			'csrf_protection' => false,
@@ -62,59 +50,57 @@ abstract class AbstractParticipantForm extends AbstractType
 		$builder
 			->add('firstName', TextType::class, ['label' => 'First name'])
 			->add('lastName', TextType::class, ['label' => 'Last name'])
-			->add('email', EmailType::class, ['label' => 'E-mail address', 'required' => $this->isMailRequired(), 'attr' => 
-				$this->isMailRequired() ? [] : ['help_text' => 'EmailNotRequiredHelpText']
+			->add('email', EmailType::class, ['label' => 'E-mail address', 'required' => $this->isMailRequired($options), 'attr' => 
+				$this->isMailRequired($options) ? [] : ['help_text' => 'EmailNotRequiredHelpText']
 			])
 			->add('age', IntegerType::class, ['label' => 'Age', 'attr' => ['help_text' => 'AgeHelpText']])
 			->add('sex', ChoiceType::class, ['label' => 'Sex', 'choices' => [
-					1 => 'male',
-					2 => 'female'
+					'male' => 1,
+					'female' => 2
 				], 'multiple' => false, 'expanded' => true]
 			)
 			->add('howManyTimes', IntegerType::class, ['label' => 'HowManyTimesField'])
 			->add('whereLearnt', ChoiceType::class, [
 				'label' => 'WhereHaveYouLearntAboutField',
-				'empty_value' => '-- choose --',
-				'empty_data' => null,
 				'choices' => WhereLearntAbout::getFormChoices()
 			])
 			->add('whereLearntOther', TextType::class, array('label' => 'WhereHaveYouLearntAboutContField', 'required' => false))
 			->add('whyParticipate', TextareaType::class, array('label' => 'WhyParticipateField', 'required' => false))
-			->add('save', SubmitType::class, array('label' => $this->getRegisterButtonText()));
+			->add('save', SubmitType::class, array('label' => $this->getRegisterButtonText($options)));
 		$builder->add('customAnswer', TextareaType::class, array(
-			'label' => $this->getCustomQuestion(), 'required' => $this->isCustomQuestionRequired()
+			'label' => $this->getCustomQuestion($options), 'required' => $this->isCustomQuestionRequired($options)
 		));
 	}
 
-	public function isPeopleNumEditable()
+	public function isPeopleNumEditable(array $options)
 	{
-		if (null !== $this->registrationSettings) {
-			return $this->registrationSettings->getMaxPeoplePerRecord() > 1;
+		if (!empty($options['registrationSettings'])) {
+			return $options['registrationSettings']->getMaxPeoplePerRecord() > 1;
 		}
 		return true;
 	}
 
-	public function getCustomQuestion()
+	public function getCustomQuestion(array $options)
 	{
-		if (null !== $this->registrationSettings) {
-			$value = $this->registrationSettings->getCustomQuestion();
+		if (!empty($options['registrationSettings'])) {
+			$value = $options['registrationSettings']->getCustomQuestion();
 			if(!empty($value)) {
-				return $this->registrationSettings->getCustomQuestion();
+				return $options['registrationSettings']->getCustomQuestion();
 			}
 		}
 		return 'Additional information';
 	}
 
-	public function isCustomQuestionRequired()
+	public function isCustomQuestionRequired(array $options)
 	{
-		if (null !== $this->registrationSettings) {
-			$value = $this->registrationSettings->getCustomQuestion();
+		if (!empty($options['registrationSettings'])) {
+			$value =$options['registrationSettings']->getCustomQuestion();
 			return (!empty($value));
 		}
 		return false;
 	}
 	
-	public function getRegisterButtonText()
+	public function getRegisterButtonText(array $options)
 	{
 		return 'Register';
 	}

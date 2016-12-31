@@ -46,16 +46,10 @@ class AreaRouteExtension implements AreaInformationExtensionInterface
 
 	public function render(CantigaController $controller, Request $request, Area $area)
 	{
-		if ($controller->getMembership()->getItem()->isRoot()) {
-			$routeLink = 'project_route_info';
-		} else {
-			$routeLink = 'group_route_info';
-		}
-		
 		$routes = $this->repository->findRouteSummary($area);
 		return $this->templating->render('WioEdkBundle:Extension:area-routes.html.twig', [
 			'routes' => $routes,
-			'routeLink' => $routeLink,
+			'routeLink' => 'edk_route_info',
 		]);
 	}
 }

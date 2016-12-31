@@ -18,21 +18,23 @@
  */
 namespace WIO\EdkBundle\Repository;
 
+use Cantiga\Components\Hierarchy\HierarchicalInterface;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Area;
+use Cantiga\CoreBundle\Entity\Group;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\Metamodel\Capabilities\InsertableRepositoryInterface;
-use Cantiga\Components\Hierarchy\MembershipEntityInterface;
+use Cantiga\Metamodel\CsvExporter;
+use Cantiga\Metamodel\CsvFeedInterface;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Exception\ModelException;
 use Cantiga\Metamodel\QueryBuilder;
 use Cantiga\Metamodel\QueryClause;
+use Cantiga\Metamodel\Statistics\MultidimensionalDataset;
 use Cantiga\Metamodel\Statistics\StatDateDataset;
 use Cantiga\Metamodel\TimeFormatterInterface;
 use Cantiga\Metamodel\Transaction;
-use Cantiga\Metamodel\CsvExporter;
-use Cantiga\Metamodel\CsvFeedInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Statement;
 use PDO;
@@ -383,7 +385,7 @@ class EdkParticipantRepository implements InsertableRepositoryInterface
 				. 'INNER JOIN `'.CoreTables::AREA_TBL.'` a ON a.`id` = s.`areaId` '
 				. 'WHERE s.`projectId` = :projectId '
 				. 'ORDER BY `datePoint`', [':projectId' => $project->getId()]);
-		$engine = new \Cantiga\Metamodel\Statistics\MultidimensionalDataset('areaId', 'participantNum');
+		$engine = new MultidimensionalDataset('areaId', 'participantNum');
 		$areas = [];
 		foreach ($data as $row) {
 			$areas[$row['areaId']] = ['id' => $row['areaId'], 'name' => $row['name']];
@@ -394,7 +396,7 @@ class EdkParticipantRepository implements InsertableRepositoryInterface
 		return $engine->process($data);
 	}
 	
-	public function countWhereLearntGrouped(MembershipEntityInterface $root)
+	public function countWhereLearntGrouped(HierarchicalInterface $root)
 	{
 		$rootQuery = '';
 		if ($root instanceof Project) {

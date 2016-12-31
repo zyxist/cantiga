@@ -23,11 +23,7 @@ use Cantiga\Metamodel\Exception\ModelException;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\Translation\TranslatorInterface;
 use WIO\EdkBundle\EdkTables;
-/**
- * Description of EdkAreaNote
- *
- * @author Tomasz Jędrzejewski
- */
+
 class EdkAreaNotes
 {
 	private $area;
@@ -65,7 +61,7 @@ class EdkAreaNotes
 		foreach (self::getNoteTypes() as $id => $name) {
 			if ($id == $type) {
 				$content = $this->getEditableNote($id);
-				return ['id' => $id, 'name' => $translator->trans($name, [], 'edk'), 'content' => $content, 'editable' => htmlspecialchars($content)];
+				return ['id' => $id, 'name' => $translator->trans($name, [], 'edk'), 'content' => $content, 'editable' => $content];
 			}
 		}
 		return ['id' => 0, 'name' => '', 'content' => ''];
@@ -76,7 +72,7 @@ class EdkAreaNotes
 		$result = [];
 		foreach (self::getNoteTypes() as $id => $name) {
 			$content = $this->getEditableNote($id);
-			$result[] = ['id' => $id, 'name' => $translator->trans($name, [], 'edk'), 'content' => $content, 'editable' => htmlspecialchars($content)];
+			$result[] = ['id' => $id, 'name' => $translator->trans($name, [], 'edk'), 'content' => $content, 'editable' => $content];
 		}
 		return $result;
 	}

@@ -1,5 +1,4 @@
 <?php
-
 /*
  * This file is part of Cantiga Project. Copyright 2016 Cantiga contributors.
  *
@@ -20,6 +19,7 @@
 
 namespace WIO\EdkBundle\Controller;
 
+use Cantiga\Components\Hierarchy\Entity\Membership;
 use Cantiga\CoreBundle\Api\Controller\AreaPageController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -44,10 +44,10 @@ class AreaStatsParticipantController extends AreaPageController
 	/**
 	 * @Route("/index", name="area_stats_participant_index")
 	 */
-	public function indexAction(Request $request)
+	public function indexAction(Request $request, Membership $membership)
 	{
 		$stats = $this->getExtensionPoints()->findImplementations(EdkExtensions::AREA_PARTICIPANT_STATS, $this->getExtensionPointFilter());
-		$area = $this->getMembership()->getItem();
+		$area = $membership->getPlace();
 		$tpl = $this->get('templating');
 		$output = [];
 		foreach ($stats as $stat) {

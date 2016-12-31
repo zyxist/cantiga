@@ -26,8 +26,6 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 /**
  * Adds some basic services for the publicly available EWC pages, such as
  * project detection.
- *
- * @author Tomasz Jędrzejewski
  */
 abstract class PublicEdkController extends PublicPageController
 {

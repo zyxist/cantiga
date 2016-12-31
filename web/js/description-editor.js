@@ -38,27 +38,12 @@
 		function editAction(item) {
 			var modal = root.find('#note-modal');
 			modal.find('#note-name').text(item['name']);
-			var noteContentEditor = modal.find('#note-content-editor');
-			noteContentEditor.empty();
-			var actualEditor = $('<textarea class="form-control" name="content" rows="15" cols="50">'+item['editable']+'</textarea>');
-			noteContentEditor.append(actualEditor);
-			actualEditor.wysihtml5({
-				toolbar: {
-					"font-styles": false,
-					"emphasis": true,
-					"lists": true,
-					"html": false,
-					"link": true,
-					"color": false,
-					"blockquote": false,
-					"image": false,
-				}
-			});
-
+			modal.find('#note-content-editor').summernote('reset');
+			modal.find('#note-content-editor').summernote('code', item['editable']);
 			modal.find('#note-modal-save').unbind('click').click(function(data) {
 				$.ajax({
 					url: opts['updateActionUrl'],
-					data: { i: item['id'], c: modal.find('#note-content-editor > textarea').val() },
+					data: { i: item['id'], c: modal.find('#note-content-editor').val() },
 					dataType: "json",
 					success: function (result) {
 						modal.modal('hide');

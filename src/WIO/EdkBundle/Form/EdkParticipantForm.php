@@ -19,52 +19,37 @@
 namespace WIO\EdkBundle\Form;
 
 use Cantiga\CoreBundle\Form\Type\BooleanType;
-use Cantiga\Metamodel\Form\EntityTransformer;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use WIO\EdkBundle\Entity\EdkRegistrationSettings;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Area version of the participant form. Has slightly different options.
- *
- * @author Tomasz Jędrzejewski
  */
 class EdkParticipantForm extends AbstractParticipantForm
 {
 	const ADD = 0;
 	const EDIT = 1;
 	
-	private $mode;
-	private $settingsRepository;
-	private $texts = [1 => '', 2 => '', 3 => ''];
-	
-	public function __construct($mode, EdkRegistrationSettings $settings = null, $settingsRepository = null)
+	public function configureOptions(OptionsResolver $resolver)
 	{
-		parent::__construct($settings);
-		$this->mode = (int) $mode;
-		$this->settingsRepository = $settingsRepository;
-	}
-	
-	public function setText($id, $text)
-	{
-		$this->texts[$id] = $text;
+		parent::configureOptions($resolver);
+		$resolver->setDefined(['texts', 'mode', 'settingsRepository']);
+		$resolver->setRequired(['mode', 'settingsRepository']);
 	}
 
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		parent::buildForm($builder, $options);
-		if($this->mode == self::ADD) {
+		if($options['mode'] == self::ADD) {
 			$builder->add('peopleNum', IntegerType::class, ['label' => 'NumberRegisteredPeopleField', 'attr' => ['help_text' => 'NumberRegisteredPeopleHintText']]);
-			$builder->add('terms1Accepted', BooleanType::class, ['label' => $this->texts[1]->getContent(), 'required' => true, 'disabled' => false]);
-			$builder->add('terms2Accepted', BooleanType::class, ['label' => $this->texts[2]->getContent(), 'required' => true, 'disabled' => false]);
-			$builder->add('terms3Accepted', BooleanType::class, ['label' => $this->texts[3]->getContent(), 'required' => true, 'disabled' => false]);
+			$builder->add('terms1Accepted', BooleanType::class, ['label' => $options['texts'][1], 'required' => true, 'disabled' => false]);
+			$builder->add('terms2Accepted', BooleanType::class, ['label' => $options['texts'][2], 'required' => true, 'disabled' => false]);
+			$builder->add('terms3Accepted', BooleanType::class, ['label' => $options['texts'][3], 'required' => true, 'disabled' => false]);
 		}
 	}
 	
-	protected function isMailRequired()
+	protected function isMailRequired(array $options)
 	{
 		return false;
 	}
@@ -74,8 +59,8 @@ class EdkParticipantForm extends AbstractParticipantForm
 		return 'Participant';
 	}
 	
-	public function getRegisterButtonText()
+	public function getRegisterButtonText(array $options)
 	{
-		return ($this->mode == self::ADD ? 'Add participant' : 'Change data');
+		return ($options['mode'] == self::ADD ? 'Add participant' : 'Change data');
 	}
 }

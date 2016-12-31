@@ -24,9 +24,6 @@ use Cantiga\CoreBundle\Extension\AreaInformationExtensionInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Templating\EngineInterface;
 
-/**
- * @author Tomasz Jędrzejewski
- */
 class AreaInformationMapExtension implements AreaInformationExtensionInterface
 {
 	/**

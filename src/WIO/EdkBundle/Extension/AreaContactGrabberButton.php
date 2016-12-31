@@ -21,14 +21,12 @@ namespace WIO\EdkBundle\Extension;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Extension\MagicButtonExtension;
+use Cantiga\UserBundle\UserTables;
 use Doctrine\DBAL\Connection;
 use PDO;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-/**
- * @author Tomasz Jędrzejewski
- */
 class AreaContactGrabberButton implements MagicButtonExtension
 {
 	/**
@@ -45,7 +43,7 @@ class AreaContactGrabberButton implements MagicButtonExtension
 	{	
 		$stmt = $this->conn->prepare('SELECT a.`name`, s.`name` AS `statusName`, u.`name` AS `username`, u.`email`, m.`note` '
 			. 'FROM `'.CoreTables::AREA_TBL.'` a '
-			. 'INNER JOIN `'.CoreTables::AREA_MEMBER_TBL.'` m ON m.`areaId` = a.`id` '
+			. 'INNER JOIN `'.UserTables::PLACE_MEMBERS_TBL.'` m ON m.`placeId` = a.`placeId` '
 			. 'INNER JOIN `'.CoreTables::USER_TBL.'` u ON u.`id` = m.`userId` '
 			. 'INNER JOIN `'.CoreTables::AREA_STATUS_TBL.'` s ON s.`id` = a.`statusId` '
 			. 'WHERE a.`projectId` = :projectId '

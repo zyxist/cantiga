@@ -24,9 +24,6 @@ use Cantiga\CoreBundle\Event\ContextMenuEvent;
 use Cantiga\CoreBundle\Event\WorkspaceEvent;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
-/**
- * @author Tomasz Jędrzejewski
- */
 class WorkspaceListener
 {
 	/**
@@ -48,9 +45,9 @@ class WorkspaceListener
 			$workspace->addWorkItem('statistics', new WorkItem('project_stats_route_index', 'Route statistics'));
 			$workspace->addWorkItem('statistics', new WorkItem('project_stats_participant_index', 'Participant statistics'));
 			$workspace->addWorkItem('summary', new WorkItem('project_participant_summary', 'Participants'));
-			$workspace->addWorkItem('data', new WorkItem('project_route_index', 'Routes'));
+			$workspace->addWorkItem('data', new WorkItem('edk_route_index', 'Routes'));
 			
-			$workspace->addWorkItem('participants', new WorkItem('project_reg_settings_index', 'Registration settings'));
+			$workspace->addWorkItem('participants', new WorkItem('edk_reg_settings_index', 'Registration settings'));
 		}
 	}
 	
@@ -60,8 +57,8 @@ class WorkspaceListener
 		if ($workspace->getProject()->supportsModule('edk')) {
 			$workspace->addWorkgroup(new Workgroup('participants', 'Participants', 'male', 4));
 			
-			$workspace->addWorkItem('data', new WorkItem('group_route_index', 'Routes'));
-			$workspace->addWorkItem('participants', new WorkItem('group_reg_settings_index', 'Registration settings'));
+			$workspace->addWorkItem('data', new WorkItem('edk_route_index', 'Routes'));
+			$workspace->addWorkItem('participants', new WorkItem('edk_reg_settings_index', 'Registration settings'));
 		}
 	}
 	
@@ -73,9 +70,9 @@ class WorkspaceListener
 			$workspace->addWorkgroup(new Workgroup('participants', 'Participants', 'male', 4));
 			
 			$workspace->addWorkItem('area', new WorkItem('area_note_index', 'WWW: area information'));
-			$workspace->addWorkItem('area', new WorkItem('area_route_index', 'Routes'));
+			$workspace->addWorkItem('area', new WorkItem('edk_route_index', 'Routes'));
 			
-			$workspace->addWorkItem('participants', new WorkItem('area_reg_settings_index', 'Registration settings'));
+			$workspace->addWorkItem('participants', new WorkItem('edk_reg_settings_index', 'Registration settings'));
 			$workspace->addWorkItem('participants', new WorkItem('area_edk_message_index', 'Messages'));
 			$workspace->addWorkItem('participants', new WorkItem('area_stats_participant_index', 'Participant statistics'));
 			if ($this->authChecker->isGranted('PLACE_PD_ADMIN')) {

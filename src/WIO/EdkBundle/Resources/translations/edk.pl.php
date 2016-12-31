@@ -215,4 +215,6 @@ return [
 	'FileStatMapGuidePresent' => 'GPS + mapa + opis',
 	
 	'ShowingOnlyRegisteredViaOurSystemText' => 'Wykres pokazuje tylko ludzi zapisanych przez system zapisów EDK. Liczby uczestników zapisanych innymi kanałami nie są tu uwzględniane.',
+	'EditorStartTypingPlaceholder' => 'Kliknij tutaj i zacznij pisać...',	
+	'EditorFormattingHint' => 'Zaznacz tekst lub kliknij podwójnie na słowie, aby dodać formatowanie.',
 ];

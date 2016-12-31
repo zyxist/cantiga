@@ -50,7 +50,10 @@ class PublicMessageFormController extends PublicEdkController
 				$intent->area = $publishedRepository->getArea($id);
 			}
 			
-			$form = $this->createForm(new EdkMessageForm($publishedRepository), $intent, ['action' => $this->generateUrl('public_edk_write_msg', ['slug' => $this->getSlug()])]);
+			$form = $this->createForm(EdkMessageForm::class, $intent, [
+				'repository' => $publishedRepository,
+				'action' => $this->generateUrl('public_edk_write_msg', ['slug' => $this->getSlug()])
+			]);
 			$form->handleRequest($request);
 			
 			if ($form->isValid()) {

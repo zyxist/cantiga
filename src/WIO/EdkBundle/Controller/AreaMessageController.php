@@ -45,8 +45,10 @@ class AreaMessageController extends AreaPageController
 
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
+		$place = $this->get('cantiga.user.membership.storage')->getMembership()->getPlace();
+		
 		$repository = $this->get(self::REPOSITORY_NAME);
-		$repository->setRootEntity($this->getMembership()->getItem());
+		$repository->setRootEntity($place);
 		$this->crudInfo = $this->newCrudInfo($repository)
 			->setTemplateLocation('WioEdkBundle:AreaMessage:')
 			->setItemNameProperty('subject')

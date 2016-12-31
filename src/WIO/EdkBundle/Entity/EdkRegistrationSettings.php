@@ -33,8 +33,6 @@ use WIO\EdkBundle\EdkTables;
 
 /**
  * Configuration of the participant registration for the EDK route.
- *
- * @author Tomasz Jędrzejewski
  */
 class EdkRegistrationSettings implements IdentifiableInterface, EditableEntityInterface
 {
@@ -118,11 +116,11 @@ class EdkRegistrationSettings implements IdentifiableInterface, EditableEntityIn
 	public static function getRegistrationTypes()
 	{
 		return [
-			self::TYPE_NO => 'RegistrationTypeNo',
-			self::TYPE_EDK_WEBSITE => 'RegistrationTypeEdkWebsite',
-			self::TYPE_OTHER_WEBSITE => 'RegistrationTypeOtherWebsite',
-			self::TYPE_OTHER => 'RegistrationTypeOther',
-			self::TYPE_CLOSED => 'RegistrationTypeClosed'
+			'RegistrationTypeNo' => self::TYPE_NO,
+			'RegistrationTypeEdkWebsite' => self::TYPE_EDK_WEBSITE,
+			'RegistrationTypeOtherWebsite' => self::TYPE_OTHER_WEBSITE,
+			'RegistrationTypeOther' => self::TYPE_OTHER,
+			'RegistrationTypeClosed' => self::TYPE_CLOSED
 		];
 	}
 	

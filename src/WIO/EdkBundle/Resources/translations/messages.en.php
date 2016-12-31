@@ -25,4 +25,5 @@ return array(
 	
 	'RouteLengthHistogram' => 'Route length histogram',
 	'RouteAscentHistogram' => 'Route ascent histogram',
+	'ImportRoutesQuestionText' => 'Do you want to import the missing routes and their files from the previous project?',
 );

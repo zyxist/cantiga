@@ -18,11 +18,11 @@
  */
 namespace WIO\EdkBundle\Repository;
 
+use Cantiga\Components\Hierarchy\HierarchicalInterface;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Area;
 use Cantiga\CoreBundle\Entity\Group;
 use Cantiga\CoreBundle\Entity\Project;
-use Cantiga\Components\Hierarchy\MembershipEntityInterface;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Exception\ModelException;
@@ -39,6 +39,7 @@ use Exception;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use WIO\EdkBundle\EdkTables;
 use WIO\EdkBundle\Entity\EdkRoute;
+use PDO;
 
 class EdkRouteRepository
 {
@@ -76,7 +77,7 @@ class EdkRouteRepository
 		$this->fileRepository = $fileRepository;
 	}
 	
-	public function setRootEntity(MembershipEntityInterface $root)
+	public function setRootEntity(HierarchicalInterface $root)
 	{
 		$this->root = $root;
 	}
@@ -160,10 +161,7 @@ class EdkRouteRepository
 		return $this->conn->fetchAll('SELECT `id`, `name`, `approved` FROM `'.EdkTables::ROUTE_TBL.'` WHERE `areaId` = :id', [':id' => $area->getId()]);
 	}
 	
-	/**
-	 * @return EdkRoute
-	 */
-	public function getItem($id)
+	public function getItem($id): EdkRoute
 	{
 		$this->transaction->requestTransaction();
 		try {
@@ -179,7 +177,7 @@ class EdkRouteRepository
 		}
 	}
 	
-	public function getComments(EdkRoute $item)
+	public function getComments(EdkRoute $item): array
 	{
 		$this->transaction->requestTransaction();
 		try {
@@ -194,10 +192,7 @@ class EdkRouteRepository
 		}
 	}
 	
-	/**
-	 * @return EdkRoute
-	 */
-	public function getItemBySlug($slug)
+	public function getItemBySlug($slug): EdkRoute
 	{
 		$this->transaction->requestTransaction();
 		try {
@@ -404,9 +399,71 @@ class EdkRouteRepository
 		return $types;
 	}
 	
-	public function quickSettingAccess(EdkRoute $route, $property)
+	public function importFrom(HierarchicalInterface $source, HierarchicalInterface $destination)
 	{
+		$this->transaction->requestTransaction();
+		try {
+			$sourceRoutes = $this->conn->fetchAll('SELECT * FROM `'.EdkTables::ROUTE_TBL.'` WHERE `areaId` = :sourceAreaId FOR UPDATE', [':sourceAreaId' => $source->getId()]);
+			$sourceNotes = $this->findAllEditableNotes($source->getId());
+			$destinationRoutes = $this->conn->fetchAll('SELECT `importedFrom` FROM `'.EdkTables::ROUTE_TBL.'` WHERE `areaId` = :dstAreaId FOR UPDATE', [':dstAreaId' => $destination->getId()]);
+			$set = [];
+			foreach ($destinationRoutes as $row) {
+				$set[$row['importedFrom']] = true;
+			}
+			foreach ($sourceRoutes as $route) {
+				if (!isset($set[$route['id']])) {
+					$item = new EdkRoute();
+					$item->setArea($destination);
+					$item->setName($route['name']);
+					$item->setRouteFrom($route['routeFrom']);
+					$item->setRouteTo($route['routeTo']);
+					$item->setRouteCourse($route['routeCourse']);
+					$item->setRouteLength($route['routeLength']);
+					$item->setRouteAscent($route['routeAscent']);
+					$item->setRouteObstacles($route['routeObstacles']);
+					$item->setRouteType($route['routeType']);
+					
+					if (!empty($route['gpsTrackFile'])) {
+						$item->setGpsTrackFile($this->fileRepository->duplicateFile($route['gpsTrackFile']));
+					}
+					if (!empty($route['mapFile'])) {
+						$item->setMapFile($this->fileRepository->duplicateFile($route['mapFile']));
+					}
+					if (!empty($route['descriptionFile'])) {
+						$item->setDescriptionFile($this->fileRepository->duplicateFile($route['descriptionFile']));
+					}
+					
+					$item->setImportedFrom($route['id']);
+					$item->insert($this->conn);
+					
+					foreach (EdkRoute::getNoteTypes() as $type => $name) {
+						if (isset($sourceNotes[$route['id']][$type])) {
+							$item->saveEditableNote($this->conn, $type, $sourceNotes[$route['id']][$type]);
+						}
+					}
+				}
+			}
+		} catch(Exception $ex) {
+			$this->transaction->requestRollback();
+			throw $ex;
+		}
+	}
+	
+	private function findAllEditableNotes($areaId)
+	{
+		$stmt = $this->conn->prepare('SELECT * FROM `'.EdkTables::ROUTE_NOTE_TBL.'` n INNER JOIN `'.EdkTables::ROUTE_TBL.'` r ON r.`id` = n.`routeId` WHERE r.`areaId` = :areaId');
+		$stmt->bindValue(':areaId', $areaId);
+		$stmt->execute();
 		
+		$results = [];
+		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+			if (!isset($results[$row['routeId']])) {
+				$results[$row['routeId']] = [];
+			}
+			$results[$row['routeId']][$row['noteType']] = $row['content'];
+		}
+		$stmt->closeCursor();
+		return $results;
 	}
 	
 	private function getActivationFunc(EdkRoute $route)

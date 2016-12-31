@@ -18,13 +18,13 @@
  */
 namespace WIO\EdkBundle\Repository;
 
+use Cantiga\Components\Hierarchy\HierarchicalInterface;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Area;
 use Cantiga\CoreBundle\Entity\Group;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Entity\User;
 use Cantiga\Metamodel\Capabilities\InsertableRepositoryInterface;
-use Cantiga\Components\Hierarchy\MembershipEntityInterface;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\QueryBuilder;
@@ -66,7 +66,7 @@ class EdkMessageRepository implements InsertableRepositoryInterface
 		$this->timeFormatter = $timeFormatter;
 	}
 	
-	public function setRootEntity(MembershipEntityInterface $root)
+	public function setRootEntity(HierarchicalInterface $root)
 	{
 		$this->root = $root;
 	}

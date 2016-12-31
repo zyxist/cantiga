@@ -18,12 +18,14 @@
  */
 namespace WIO\EdkBundle\Controller;
 
+use Cantiga\Components\Hierarchy\Entity\Membership;
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
 use Cantiga\CoreBundle\Api\Actions\EditAction;
 use Cantiga\CoreBundle\Api\Actions\InfoAction;
 use Cantiga\CoreBundle\Api\Actions\InsertAction;
 use Cantiga\CoreBundle\Api\Actions\RemoveAction;
 use Cantiga\CoreBundle\Api\Controller\AreaPageController;
+use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use DateInterval;
 use DateTime;
@@ -54,8 +56,10 @@ class AreaParticipantController extends AreaPageController
 
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
+		$place = $this->get('cantiga.user.membership.storage')->getMembership()->getPlace();
+		
 		$repository = $this->get(self::REPOSITORY_NAME);
-		$repository->setArea($this->getMembership()->getItem());
+		$repository->setArea($place);
 		$this->crudInfo = $this->newCrudInfo($repository)
 			->setTemplateLocation('WioEdkBundle:AreaParticipant:')
 			->setItemNameProperty('name')
@@ -102,7 +106,7 @@ class AreaParticipantController extends AreaPageController
 	{
 		$routes = $this->dataRoutes()
 			->link('info_link', $this->crudInfo->getInfoPage(), ['id' => '::id', 'slug' => $this->getSlug()])
-			->link('route_link', 'area_route_info', ['id' => '::routeId', 'slug' => $this->getSlug()])
+			->link('route_link', 'edk_route_info', ['id' => '::routeId', 'slug' => $this->getSlug()])
 			->link('edit_link', $this->crudInfo->getEditPage(), ['id' => '::id', 'slug' => $this->getSlug()])
 			->link('remove_link', $this->crudInfo->getRemovePage(), ['id' => '::id', 'slug' => $this->getSlug()]);
 
@@ -115,11 +119,11 @@ class AreaParticipantController extends AreaPageController
 	/**
 	 * @Route("/ajax-routes", name="area_edk_participant_ajax_routes")
 	 */
-	public function ajaxRoutesAction(Request $request)
+	public function ajaxRoutesAction(Request $request, Membership $membership)
 	{
 		try {
 			$repository = $this->get('wio.edk.repo.published_data');
-			$registrations = $repository->getOpenRegistrations($this->getMembership()->getItem(), $this->getProjectSettings()->get(EdkSettings::PUBLISHED_AREA_STATUS)->getValue());
+			$registrations = $repository->getOpenRegistrations($membership->getPlace(), $this->getProjectSettings()->get(EdkSettings::PUBLISHED_AREA_STATUS)->getValue());
 			$response = new JsonResponse($registrations);
 			$response->setDate(new DateTime());
 			$exp = new DateTime();
@@ -144,10 +148,10 @@ class AreaParticipantController extends AreaPageController
 	/**
 	 * @Route("/insert", name="area_edk_participant_insert")
 	 */
-	public function insertAction(Request $request)
+	public function insertAction(Request $request, Membership $membership)
 	{
 		try {
-			$area = $this->getMembership()->getItem();
+			$area = $membership->getPlace();
 			$project = $area->getProject();
 			$settingsRepository = $this->get('wio.edk.repo.registration');
 			$settingsRepository->setRootEntity($area);
@@ -162,11 +166,12 @@ class AreaParticipantController extends AreaPageController
 			$action = new InsertAction($this->crudInfo, $entity);
 			$action->slug($this->getSlug());
 			$action->form(function($controller, $item, $formType, $action) use($request, $project, $settingsRepository) {
-				$form = new EdkParticipantForm(EdkParticipantForm::ADD, null, $settingsRepository);
-				$form->setText(1, $this->getTextRepository()->getText(EdkTexts::REGISTRATION_TERMS1_TEXT, $request, $project));
-				$form->setText(2, $this->getTextRepository()->getText(EdkTexts::REGISTRATION_TERMS2_TEXT, $request, $project));
-				$form->setText(3, $this->getTextRepository()->getText(EdkTexts::REGISTRATION_TERMS3_TEXT, $request, $project));
-				return $controller->createForm($form, $item, array('action' => $action));
+				return $controller->createForm(EdkParticipantForm::class, $item, [
+					'action' => $action,
+					'mode' => EdkParticipantForm::ADD,
+					'settingsRepository' => $settingsRepository,
+					'texts' => $this->buildTexts($request, $project)
+				]);
 			});
 			$action->set('ajaxRoutePage', 'area_edk_participant_ajax_routes');
 			return $action->run($this, $request);
@@ -178,14 +183,19 @@ class AreaParticipantController extends AreaPageController
 	/**
 	 * @Route("/{id}/edit", name="area_edk_participant_edit")
 	 */
-	public function editAction($id, Request $request)
+	public function editAction($id, Request $request, Membership $membership)
 	{
 		$settingsRepository = $this->get('wio.edk.repo.registration');
-		$settingsRepository->setRootEntity($this->getMembership()->getItem());
+		$settingsRepository->setRootEntity($membership->getPlace());
 		
 		$action = new EditAction($this->crudInfo);
 		$action->form(function($controller, $item, $formType, $action) use($settingsRepository) {
-			return $controller->createForm(new EdkParticipantForm(EdkParticipantForm::EDIT, $item->getRegistrationSettings(), $settingsRepository), $item, array('action' => $action));
+			return $controller->createForm(EdkParticipantForm::class, $item, [
+				'action' => $action,
+				'mode' => EdkParticipantForm::EDIT,
+				'settingsRepository' => $settingsRepository,
+				'registrationSettings' => $item->getRegistrationSettings()
+			]);
 		});
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
@@ -204,9 +214,9 @@ class AreaParticipantController extends AreaPageController
 	/**
 	 * @Route("/export", name="area_edk_participant_export_all")
 	 */
-	public function exportAllToCSVAction(Request $request) {
+	public function exportAllToCSVAction(Request $request, Membership $membership) {
 		$repository = $this->get(self::REPOSITORY_NAME);
-		$area = $this->getMembership()->getItem();
+		$area = $membership->getPlace();
 		$response = new StreamedResponse(function() use($repository, $area) {
 			$repository->exportToCSVStream($this->getTranslator(), $area);
 		});
@@ -217,5 +227,14 @@ class AreaParticipantController extends AreaPageController
 		$response->headers->set('Content-Disposition', $contentDisposition);
 		$response->prepare($request);
 		return $response;
+	}
+	
+	private function buildTexts(Request $request, Project $project): array
+	{
+		return [
+			1 => strip_tags($this->getTextRepository()->getText(EdkTexts::REGISTRATION_TERMS1_TEXT, $request, $project)->getContent()),
+			2 => strip_tags($this->getTextRepository()->getText(EdkTexts::REGISTRATION_TERMS2_TEXT, $request, $project)->getContent()),
+			3 => strip_tags($this->getTextRepository()->getText(EdkTexts::REGISTRATION_TERMS3_TEXT, $request, $project)->getContent())
+		];
 	}
 }

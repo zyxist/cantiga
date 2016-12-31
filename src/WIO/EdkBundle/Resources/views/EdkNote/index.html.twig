@@ -21,8 +21,12 @@
 							<h4 class="modal-title" id="note-name"></h4>
 						</div>
 						<div class="modal-body">
+							<p class="text-small text-muted"><i class="fa fa-question"></i> {{ 'EditorFormattingHint' | trans([], 'edk') }}</p>
+							<hr/>
 							<form class="form">
-								<div class="form-group" id="note-content-editor"></div>
+								<div class="form-group">
+									<textarea name="note-content-editor" id="note-content-editor"></textarea>
+								</div>
 							</form>
 						</div>
 						<div class="modal-footer">
@@ -37,12 +41,13 @@
 
 {% block stylesheets %}
 	{{ parent() }}
-	<link rel="stylesheet" href="{{ asset('css/bootstrap3-wysihtml5.min.css') }}" />
+	<link rel="stylesheet" href="{{ asset('css/summernote.css') }}" />
 {% endblock %}
 
 {% block javascripts %}
 	{{ parent() }}
-	<script src="{{ asset('js/bootstrap3-wysihtml5.all.min.js') }}"></script>
+	<script src="{{ asset('js/summernote.min.js') }}"></script>
+	<script src="{{ asset('js/lang/summernote-'~user.settingsLanguage.locale~'.js')}}"></script>
 	<script src="{{ asset('js/description-editor.js') }}"></script>
 	<script src="{{ asset('js/chatbox.js') }}"></script>
 {% endblock %}
@@ -55,5 +60,15 @@
 			'updateActionUrl': '{{ spath(ajaxUpdatePage) }}',
 			'clickToEditText': '{{ 'Click to edit' | trans([], 'edk') }}'
 		});
+	</script>
+	<script>
+		$('#note-content-editor').summernote({ lang: '{{ user.settingsLanguage.locale }}', airMode: true, placeholder: '{{ 'EditorStartTypingPlaceholder' | trans([], 'edk') }}', popover: {
+			air: [
+				['link', ['link', 'unlink']],
+				['font', ['bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript']], 
+				['para', ['ul', 'ol', 'paragraph']], 
+				['misc', ['clear', 'undo', 'redo']]
+			]
+		} } );
 	</script>
 {% endblock %}

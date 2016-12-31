@@ -80,4 +80,6 @@ return [
 	
 	'ParticipantMustExplicitelyAgreeNote' => 'According to the Polish Personal Data Protection Act, the participant must EXPLICITELY agree to the conditions below - if you are unsure whether he/she did it, you MUST NOT add the participant to the system!',
 	'ShowingOnlyRegisteredViaOurSystemText' => 'The chart shows only the people registed via Extreme Way registration system. The numbers of participants registered in a different way are not counted here.',
+	'EditorStartTypingPlaceholder' => 'Click here and start typing...',	
+	'EditorFormattingHint' => 'Select a text or double-click on a word to add formatting.',
 ];

@@ -18,6 +18,7 @@
  */
 namespace WIO\EdkBundle\Extension;
 
+use Cantiga\Components\Hierarchy\MembershipStorageInterface;
 use Cantiga\CoreBundle\Api\Controller\CantigaController;
 use Cantiga\CoreBundle\Api\Workspace;
 use Cantiga\CoreBundle\Entity\Project;
@@ -29,8 +30,6 @@ use WIO\EdkBundle\Repository\EdkRouteRepository;
 
 /**
  * Shows the number of routes in the given item.
- *
- * @author Tomasz Jędrzejewski
  */
 class DashboardRouteSummaryExtension implements DashboardExtensionInterface
 {
@@ -46,12 +45,17 @@ class DashboardRouteSummaryExtension implements DashboardExtensionInterface
 	 * @var EngineInterface
 	 */
 	private $templating;
+	/**
+	 * @var MembershipStorageInterface
+	 */
+	private $membershipStorage;
 	
-	public function __construct(EdkRouteRepository $repository, EdkRegistrationSettingsRepository $settingsRepository, EngineInterface $templating)
+	public function __construct(EdkRouteRepository $repository, EdkRegistrationSettingsRepository $settingsRepository, EngineInterface $templating, MembershipStorageInterface $membershipStorage)
 	{
 		$this->repository = $repository;
 		$this->settingsRepository = $settingsRepository;
 		$this->templating = $templating;
+		$this->membershipStorage = $membershipStorage;
 	}
 	
 	public function getPriority()
@@ -61,7 +65,7 @@ class DashboardRouteSummaryExtension implements DashboardExtensionInterface
 
 	public function render(CantigaController $controller, Request $request, Workspace $workspace, Project $project = null)
 	{
-		$rootEntity = $controller->getMembership()->getItem();
+		$rootEntity = $this->membershipStorage->getMembership()->getPlace();
 		$this->repository->setRootEntity($rootEntity);
 		$this->settingsRepository->setRootEntity($rootEntity);
 		return $this->templating->render('WioEdkBundle:Extension:route-summary.html.twig', [

@@ -18,6 +18,7 @@
  */
 namespace WIO\EdkBundle\Controller;
 
+use Cantiga\Components\Hierarchy\Entity\Membership;
 use Cantiga\CoreBundle\Api\Controller\AreaPageController;
 use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -35,26 +36,26 @@ class AreaNoteController extends AreaPageController
 	/**
 	 * @Route("/index", name="area_note_index")
 	 */
-	public function indexAction(Request $request)
-	{
+	public function indexAction(Request $request) {
 		$this->breadcrumbs()
 			->workgroup('area')
 			->entryLink($this->trans('WWW: area information', [], 'pages'), 'area_note_index', ['slug' => $this->getSlug()]);
-        return $this->render('WioEdkBundle:EdkNote:index.html.twig', array(
-			'pageTitle' => 'WWW: area information',
-			'pageSubtitle' => 'Edit the additional notes visible on the website next to your area',
-			'ajaxReloadPage' => 'area_note_ajax_reload',
-			'ajaxUpdatePage' => 'area_note_ajax_update'
+		return $this->render('WioEdkBundle:EdkNote:index.html.twig', array(
+				'pageTitle' => 'WWW: area information',
+				'pageSubtitle' => 'Edit the additional notes visible on the website next to your area',
+				'ajaxReloadPage' => 'area_note_api_reload',
+				'ajaxUpdatePage' => 'area_note_api_update',
+				'user' => $this->getUser(),
 		));
 	}
-	
+
 	/**
-	 * @Route("/ajax-reload", name="area_note_ajax_reload")
+	 * @Route("/api-reload", name="area_note_api_reload")
 	 */
-	public function ajaxReloadAction(Request $request)
+	public function apiReloadAction(Request $request, Membership $membership)
 	{
 		try {
-			$areaNotes = EdkAreaNotes::fetchNotes($this->get('database_connection'), $this->getMembership()->getItem());
+			$areaNotes = EdkAreaNotes::fetchNotes($this->get('database_connection'), $membership->getPlace());
 			return new JsonResponse(['success' => 1, 'notes' => $areaNotes->getFullNoteInformation($this->getTranslator())]);
 		} catch (Exception $ex) {
 			return new JsonResponse(['success' => 0, 'message' => $ex->getMessage()]);
@@ -62,9 +63,9 @@ class AreaNoteController extends AreaPageController
 	}
 	
 	/**
-	 * @Route("/ajax-update", name="area_note_ajax_update")
+	 * @Route("/api-update", name="area_note_api_update")
 	 */
-	public function ajaxUpdateAction(Request $request)
+	public function ajaxUpdateAction(Request $request, Membership $membership)
 	{
 		try {
 			$i = $request->get('i');
@@ -73,7 +74,7 @@ class AreaNoteController extends AreaPageController
 				$c = null;
 			}
 			
-			$areaNotes = EdkAreaNotes::fetchNotes($this->get('database_connection'), $this->getMembership()->getItem());
+			$areaNotes = EdkAreaNotes::fetchNotes($this->get('database_connection'), $membership->getPlace());
 			$areaNotes->saveEditableNote($this->get('database_connection'), $i, $c);
 			return new JsonResponse(['success' => 1, 'note' => $areaNotes->getFullEditableNote($this->getTranslator(), $i)]);
 		} catch (Exception $ex) {

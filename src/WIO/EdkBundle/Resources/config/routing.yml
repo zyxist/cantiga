@@ -13,11 +13,8 @@ public_registration_form_controller:
 area_note_controller:
     resource: "@WioEdkBundle/Controller/AreaNoteController.php"
     type:     annotation
-area_route_controller:
-    resource: "@WioEdkBundle/Controller/AreaRouteController.php"
-    type:     annotation
-area_registration_controller:
-    resource: "@WioEdkBundle/Controller/AreaRegistrationSettingsController.php"
+edk_registration_controller:
+    resource: "@WioEdkBundle/Controller/RegistrationSettingsController.php"
     type:     annotation
 area_message_controller:
     resource: "@WioEdkBundle/Controller/AreaMessageController.php"
@@ -28,21 +25,12 @@ area_participant_controller:
 area_stats_participant_controller:
     resource: "@WioEdkBundle/Controller/AreaStatsParticipantController.php"
     type:     annotation
-group_route_controller:
-    resource: "@WioEdkBundle/Controller/GroupRouteController.php"
-    type:     annotation
-group_registration_controller:
-    resource: "@WioEdkBundle/Controller/GroupRegistrationSettingsController.php"
-    type:     annotation
-project_route_controller:
-    resource: "@WioEdkBundle/Controller/ProjectRouteController.php"
+edk_route_controller:
+    resource: "@WioEdkBundle/Controller/RouteController.php"
     type:     annotation
 project_stats_route_controller:
     resource: "@WioEdkBundle/Controller/ProjectStatsRouteController.php"
     type:     annotation
 project_stats_participant_controller:
     resource: "@WioEdkBundle/Controller/ProjectStatsParticipantController.php"
-    type:     annotation
-project_registration_controller:
-    resource: "@WioEdkBundle/Controller/ProjectRegistrationSettingsController.php"
     type:     annotation

@@ -24,9 +24,6 @@ use Doctrine\DBAL\Connection;
 use PDO;
 use WIO\EdkBundle\EdkTables;
 
-/**
- * @author Tomasz Jędrzejewski
- */
 class EdkExportRepository
 {
 	/**

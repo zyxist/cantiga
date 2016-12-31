@@ -66,19 +66,19 @@ services:
             - { name: kernel.event_listener, event: cantiga.ui.ctxmenu.project.area, method: onProjectAreaInfo }
     wio.edk.dashboard.recent_comments:
         class:     WIO\EdkBundle\Extension\DashboardChatExtension
-        arguments: ["@wio.edk.repo.route", "@templating"]
+        arguments: ["@wio.edk.repo.route", "@templating", "@cantiga.user.membership.storage"]
         tags:
             - { name: cantiga.extension, point: core.dashboard.area.central, module: edk }
             - { name: cantiga.extension, point: core.dashboard.group.central, module: edk }
     wio.edk.dashboard.recent_routes:
         class:     WIO\EdkBundle\Extension\DashboardRouteExtension
-        arguments: ["@wio.edk.repo.route", "@templating"]
+        arguments: ["@wio.edk.repo.route", "@templating", "@cantiga.user.membership.storage"]
         tags:
             - { name: cantiga.extension, point: core.dashboard.area.central, module: edk }
             - { name: cantiga.extension, point: core.dashboard.group.central, module: edk }
     wio.edk.dashboard.route_summary:
         class: WIO\EdkBundle\Extension\DashboardRouteSummaryExtension
-        arguments: ["@wio.edk.repo.route", "@wio.edk.repo.registration", "@templating"]
+        arguments: ["@wio.edk.repo.route", "@wio.edk.repo.registration", "@templating", "@cantiga.user.membership.storage"]
         tags:
             - { name: cantiga.extension, point: core.dashboard.project.top, module: edk }
             - { name: cantiga.extension, point: core.dashboard.group.top, module: edk }

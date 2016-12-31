@@ -84,9 +84,7 @@
 				</fieldset>
 			</div>
 			<div class="box-footer">
-				<p>
-					<a href="{{ spath(indexPage) }}" class="btn btn-default btn-sm" role="button">{{ 'Back' | trans({}, 'general') }}</a>
-				</p>
+				<a href="{{ spath(indexPage) }}" class="btn btn-default btn-sm" role="button">{{ 'Back' | trans({}, 'general') }}</a>
 			</div>
 		</div>
 	</div>
@@ -100,7 +98,7 @@
 					<tbody>
 						<tr>
 							<td width="30%">{{ 'Name' | trans }}</td>
-							<td><a href="{{ spath('area_route_info', {'id': item.registrationSettings.route.id} ) }}">{{ item.registrationSettings.route.name }}</a></td>
+							<td><a href="{{ spath('edk_route_info', {'id': item.registrationSettings.route.id} ) }}">{{ item.registrationSettings.route.name }}</a></td>
 						</tr>
 						<tr>
 							<td width="30%">{{ 'Beginning' | trans([], 'edk') }}</td>
@@ -125,8 +123,8 @@
 					</tbody>
 				</table>
 				<p>
-					<a href="{{ spath('area_route_info', {'id': item.registrationSettings.route.id} ) }}" class="btn btn-primary btn-sm" role="button">{{ 'Route information' | trans({}, 'edk') }}</a>
-					<a href="{{ spath('area_reg_settings_info', {'id': item.registrationSettings.route.id} ) }}" class="btn btn-primary btn-sm" role="button">{{ 'Registration settings' | trans({}, 'edk') }}</a>
+					<a href="{{ spath('edk_route_info', {'id': item.registrationSettings.route.id} ) }}" class="btn btn-primary btn-sm" role="button">{{ 'Route information' | trans({}, 'edk') }}</a>
+					<a href="{{ spath('edk_reg_settings_info', {'id': item.registrationSettings.route.id} ) }}" class="btn btn-primary btn-sm" role="button">{{ 'Registration settings' | trans({}, 'edk') }}</a>
 				</p>
 			</div>
 		</div>

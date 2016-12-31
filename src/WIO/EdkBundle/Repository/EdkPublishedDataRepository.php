@@ -18,11 +18,11 @@
  */
 namespace WIO\EdkBundle\Repository;
 
+use Cantiga\Components\Hierarchy\HierarchicalInterface;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Area;
 use Cantiga\CoreBundle\Entity\Group;
 use Cantiga\CoreBundle\Entity\Project;
-use Cantiga\Components\Hierarchy\MembershipEntityInterface;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Form\EntityTransformerInterface;
 use Cantiga\Metamodel\Transaction;
@@ -61,10 +61,7 @@ class EdkPublishedDataRepository implements EntityTransformerInterface
 		$this->publishedStatusId = $id;
 	}
 	
-	/**
-	 * @return Area
-	 */
-	public function getArea($id)
+	public function getArea($id): Area
 	{
 		$this->transaction->requestTransaction();
 		try {
@@ -89,7 +86,7 @@ class EdkPublishedDataRepository implements EntityTransformerInterface
 		$stmt->execute();
 		$result = array();
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$result[$row['id']] = $row['name'];
+			$result[$row['name']] = $row['id'];
 		}
 		$stmt->closeCursor();
 		return $result;
@@ -105,7 +102,7 @@ class EdkPublishedDataRepository implements EntityTransformerInterface
 		return $entity->getId();
 	}
 	
-	public function getOpenRegistrations(MembershipEntityInterface $root, $acceptedStatus)
+	public function getOpenRegistrations(HierarchicalInterface $root, $acceptedStatus)
 	{
 		if ($root instanceof Project) {
 			$rootPart = 'a.`projectId` = :rootId';
