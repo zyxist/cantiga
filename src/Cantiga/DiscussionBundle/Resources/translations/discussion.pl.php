@@ -36,4 +36,6 @@ return [
 	
 	'EnabledDiscussionText' => 'Na nieaktywnych kanałach nie można nic pisać, a one same pojawiają się na końcu listy kanałów.',
 	'Archived discussion' => 'Zarchiwizowana dyskusja',
+	'EditorStartTypingPlaceholder' => 'Kliknij tutaj i zacznij pisać...',	
+	'EditorFormattingHint' => 'Zaznacz tekst lub kliknij podwójnie na słowie, aby dodać formatowanie.',
 ];

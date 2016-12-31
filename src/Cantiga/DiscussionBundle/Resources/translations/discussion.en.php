@@ -36,4 +36,6 @@ return [
 	
 	'EnabledDiscussionText' => 'Users cannot post in disabled channels, and they appear at the end of the channel list.',
 	'Archived discussion' => 'Archived discussion',
+	'EditorStartTypingPlaceholder' => 'Click here and start typing...',	
+	'EditorFormattingHint' => 'Select a text or double-click on a word to add formatting.',
 ];

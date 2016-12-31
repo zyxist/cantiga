@@ -73,6 +73,9 @@
 				<h4 class="modal-title">{{ 'WriteMessageTitle' | trans([], 'discussion') }}</h4>
 			</div>
 			<div class="modal-body">
+				<p class="text-small text-muted"><i class="fa fa-question"></i> {{ 'EditorFormattingHint' | trans([], 'discussion') }}</p>
+				<hr/>
+				
 				<div class="form-group">
 					<textarea id="discussion-content" class="form-control" style="width: 100%" rows="15"></textarea>
 				</div>
@@ -101,7 +104,14 @@
 
 {% block javascripts_inline %}
 	<script>
-		$('#discussion-content').summernote({ lang: '{{ user.settingsLanguage.locale }}' });
+		$('#discussion-content').summernote({ lang: '{{ user.settingsLanguage.locale }}', airMode: true, placeholder: '{{ 'EditorStartTypingPlaceholder' | trans([], 'discussion') }}', popover: {
+			air: [
+				['link', ['link', 'unlink']],
+				['font', ['bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript']], 
+				['para', ['ul', 'ol', 'paragraph']], 
+				['misc', ['clear', 'undo', 'redo']]
+			]
+		} });
 		$(document).ready(function() {
 			$(document).discussion({
 				discussionMore: '#discussion-more',
