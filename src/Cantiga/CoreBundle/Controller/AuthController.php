@@ -33,11 +33,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Security;
 
-/**
- * Description of AuthController
- *
- * @author Tomasz Jędrzejewski
- */
 class AuthController extends CantigaController
 {
 	const AUTH_CHECK_ROUTE = 'cantiga_auth_check';
@@ -63,13 +58,13 @@ class AuthController extends CantigaController
 		}
 		$lastUsername = (null === $session) ? '' : $session->get(Security::LAST_USERNAME);
 
-		return $this->render(self::TEMPLATE_NAME, array(
+		return $this->render(self::TEMPLATE_NAME, [
 			'last_username' => $lastUsername,
 			'authCheckRoute' => self::AUTH_CHECK_ROUTE,
 			'error' => $error,
 			'text' => $text,
 			'languages' => $languages
-		));
+		]);
 	}
 	
 	public function routeAction(Request $request)
@@ -99,10 +94,10 @@ class AuthController extends CantigaController
 				$intent->execute();			
 				return $this->render('CantigaCoreBundle:Auth:post-registration.html.twig');
 			}
-			return $this->render('CantigaCoreBundle:Auth:register.html.twig', array(
+			return $this->render('CantigaCoreBundle:Auth:register.html.twig', [
 				'item' => $intent,
 				'form' => $form->createView(),
-			));
+			]);
 		} catch(ModelException $exception) {
 			$this->get('session')->getFlashBag()->add('error', $this->trans($exception->getMessage()));
 			return $this->redirect($this->generateUrl('cantiga_auth_register', [], RouterInterface::ABSOLUTE_URL));
@@ -125,7 +120,7 @@ class AuthController extends CantigaController
 		$repository = $this->get('cantiga.user_provider');
 		$item = new PasswordRecoveryRequestIntent($repository, $this->get('event_dispatcher'));
 
-		$form = $this->createForm(new PasswordRecoveryRequestForm(), $item, array('action' => $this->generateUrl('cantiga_auth_recovery')));
+		$form = $this->createForm(PasswordRecoveryRequestForm::class, $item, ['action' => $this->generateUrl('cantiga_auth_recovery')]);
 		$form->handleRequest($request);
 		if ($form->isValid()) {
 			try {
@@ -135,10 +130,10 @@ class AuthController extends CantigaController
 				$this->get('session')->getFlashBag()->add('error', $this->trans($exception->getMessage()));
 			}
 		}
-		return $this->render('CantigaCoreBundle:Auth:password-recovery.html.twig', array(
+		return $this->render('CantigaCoreBundle:Auth:password-recovery.html.twig', [
 			'item' => $item,
 			'form' => $form->createView(),
-		));
+		]);
 	}
 	
 	public function passwordRecoveryCompleteAction($id, $provisionKey, Request $request)
@@ -150,7 +145,7 @@ class AuthController extends CantigaController
 			
 			if($pcRequest->getStatus() == PasswordRecoveryRequest::STATUS_OK) {
 				$intent = new PasswordRecoveryCompleteIntent($repository, $this->get('event_dispatcher'), $this->get('security.encoder_factory'));
-				$form = $this->createForm(new PasswordRecoveryCompleteForm(), $intent, array('action' => $this->generateUrl('cantiga_auth_recovery_complete', ['id' => $id, 'provisionKey' => $provisionKey])));
+				$form = $this->createForm(PasswordRecoveryCompleteForm::class, $intent, ['action' => $this->generateUrl('cantiga_auth_recovery_complete', ['id' => $id, 'provisionKey' => $provisionKey])]);
 				$form->handleRequest($request);
 				if ($form->isValid()) {
 					try {
@@ -160,10 +155,10 @@ class AuthController extends CantigaController
 						$this->get('session')->getFlashBag()->add('error', $this->trans($exception->getMessage()));
 					}
 				}
-				return $this->render('CantigaCoreBundle:Auth:reset-password.html.twig', array(
+				return $this->render('CantigaCoreBundle:Auth:reset-password.html.twig', [
 					'item' => $intent,
 					'form' => $form->createView(),
-				));
+				]);
 			} else {
 				return $this->render('CantigaCoreBundle:Auth:reset-password-failure.html.twig');
 			}
