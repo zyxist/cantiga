@@ -18,6 +18,7 @@
  */
 namespace Cantiga\CourseBundle\Extension;
 
+use Cantiga\Components\Hierarchy\MembershipStorageInterface;
 use Cantiga\CoreBundle\Api\Controller\CantigaController;
 use Cantiga\CoreBundle\Api\Workspace;
 use Cantiga\CoreBundle\Entity\Project;
@@ -27,8 +28,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Shows the number of completed courses for the given area on the dashboard.
- *
- * @author Tomasz Jędrzejewski
  */
 class DashboardCourseCountExtension implements DashboardExtensionInterface
 {
@@ -36,10 +35,15 @@ class DashboardCourseCountExtension implements DashboardExtensionInterface
 	 * @var AreaCourseRepository
 	 */
 	private $repository;
+	/**
+	 * @var MembershipStorageInterface
+	 */
+	private $membershipStorage;
 	
-	public function __construct(AreaCourseRepository $repository)
+	public function __construct(AreaCourseRepository $repository, MembershipStorageInterface $membershipStorage)
 	{
 		$this->repository = $repository;
+		$this->membershipStorage = $membershipStorage;
 	}
 	
 	public function getPriority()
@@ -49,7 +53,7 @@ class DashboardCourseCountExtension implements DashboardExtensionInterface
 
 	public function render(CantigaController $controller, Request $request, Workspace $workspace, Project $project = null)
 	{
-		$this->repository->setArea($controller->getMembership()->getItem());
+		$this->repository->setArea($this->membershipStorage->getMembership()->getPlace());
 		return $controller->renderView('CantigaCourseBundle:Extension:course-summary.html.twig', ['progress' => $this->repository->findProgress()]);
 	}
 }

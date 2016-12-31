@@ -31,6 +31,6 @@ services:
             - { name: kernel.event_listener, event: cantiga.area.created, method: onAreaCreated }
     cantiga.course.dashboard.course_summary:
         class: Cantiga\CourseBundle\Extension\DashboardCourseCountExtension
-        arguments: ["@cantiga.course.repo.area_course"]
+        arguments: ["@cantiga.course.repo.area_course", "@cantiga.user.membership.storage"]
         tags:
             - { name: cantiga.extension, point: core.dashboard.area.top, module: edk }
