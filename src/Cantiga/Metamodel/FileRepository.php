@@ -93,6 +93,36 @@ class FileRepository implements FileRepositoryInterface
 		return $name;
 	}
 	
+	public function duplicateFile(string $name): string
+	{
+		$path = $this->targetDirectory.DIRECTORY_SEPARATOR.$this->hashToLocation($name);
+		if(!file_exists($path)) {
+			return '';
+		}
+		if (-1 !== ($extStart = strrpos($name, '.'))) {
+			$extension = substr($name, $extStart + 1);
+		} else {
+			$extension = '';
+		}
+		$hashedName = sha1($path.time());
+		$finalName = $hashedName.'.'.$extension;
+		while(file_exists($this->targetDirectory.DIRECTORY_SEPARATOR.$this->hashToLocation($finalName))) {
+			$hashedName .= '1';
+			$finalName = $hashedName.'.'.$extension;
+		}
+		
+		$hashed = $this->hashToLocation($finalName);
+		$directory = dirname($this->targetDirectory.DIRECTORY_SEPARATOR.$hashed);
+		if(!is_dir($directory)) {
+			$ret = mkdir($directory, 0777, true);
+			if(!$ret) {
+				throw new DiskAssetException('Cannot create a directory for uploading the files!');
+			}
+		}
+		copy($path, $this->targetDirectory.DIRECTORY_SEPARATOR.$hashed);
+		return $finalName;
+	}
+	
 	public function fileExists($name)
 	{
 		return file_exists($this->targetDirectory.DIRECTORY_SEPARATOR.$this->hashToLocation($name));

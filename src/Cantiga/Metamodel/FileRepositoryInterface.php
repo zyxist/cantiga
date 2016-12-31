@@ -34,8 +34,6 @@ use Symfony\Component\HttpFoundation\Response;
  * <p>The filenames are hashed. The original names must be stored together with the resource.
  * You shall neither show the hashed slug to the user, nor allow downloading the file via this
  * slug!
- *
- * @author Tomasz Jędrzejewski
  */
 interface FileRepositoryInterface
 {
@@ -58,6 +56,13 @@ interface FileRepositoryInterface
 	 * @throws DiskAssetException
 	 */
 	public function replaceFile($key, UploadedFile $file);
+	/**
+	 * Generates a new key for the given file and copies it. An empty string is returned,
+	 * if the generator was not able to create the file.
+	 * 
+	 * @param string $key
+	 */
+	public function duplicateFile(string $key): string;
 	
 	public function fileExists($key);
 	
