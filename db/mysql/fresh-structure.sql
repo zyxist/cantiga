@@ -546,6 +546,8 @@ ALTER TABLE `cantiga_groups`
 ALTER TABLE `cantiga_group_categories`
   ADD CONSTRAINT `cantiga_group_categories_fk1` FOREIGN KEY (`projectId`) REFERENCES `cantiga_projects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
+ALTER TABLE `cantiga_invitations` ADD FOREIGN KEY (`placeId`) REFERENCES `cantiga_places`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
 ALTER TABLE `cantiga_links`
   ADD CONSTRAINT `cantiga_links_ibfk_1` FOREIGN KEY (`projectId`) REFERENCES `cantiga_projects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
