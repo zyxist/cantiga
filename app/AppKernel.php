@@ -40,7 +40,6 @@ class AppKernel extends Kernel
 			new Cantiga\CourseBundle\CantigaCourseBundle(),
 			new Cantiga\ExportBundle\CantigaExportBundle(),
 			new Cantiga\DiscussionBundle\CantigaDiscussionBundle(),
-			new WIO\EdkBundle\WioEdkBundle(),
 		);
 
 		if (in_array($this->getEnvironment(), array('dev', 'test'))) {
