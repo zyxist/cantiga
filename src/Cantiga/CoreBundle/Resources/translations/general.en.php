@@ -41,12 +41,14 @@ return array(
 	'Details' => 'Details',
 	'Close' => 'Close',
 	'Warning' => 'Warning',
+	'Change' => 'Change',
 
 	'Indeed, remove it' => 'Indeed, remove it',
 	'Edit: 0' => 'Edit: 0',
 	'Details: 0' => 'Details: 0',
 	'Please note that...' => 'Please note that...',
-	
+	'Import from 0' => 'Import from 0',
+
 	'Never' => 'Never',
 	'Just now' => 'Just now',
 	'one second ago|%count% seconds ago' => 'one second ago|%count% seconds ago',

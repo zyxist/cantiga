@@ -79,7 +79,7 @@ return [
 	'Request creating a new area' => 'Request creating a new area',
 	'Inspect your requests to create a new area' => 'Inspect your requests to create a new area',
 	'See if someone invites you to cooperate' => 'See if someone invites you to cooperate',
-	'Places you are a member of' => 'Places you are a member of',
+	'Access archived places' => 'Access archived places',
 	
 	// Supplementary texts for area
 	'AreaTypeSubtitle' => 'Area dashboard',

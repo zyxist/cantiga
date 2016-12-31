@@ -172,8 +172,8 @@ services:
         class:     Cantiga\CoreBundle\Extension\DashboardTextExtension
         arguments: ["@cantiga.core.repo.text", "@templating"]
         tags:
-            - { name: cantiga.extension, point: core.dashboard.user.right }
-            - { name: cantiga.extension, point: core.dashboard.admin.right }
+            - { name: cantiga.extension, point: core.dashboard.user.central }
+            - { name: cantiga.extension, point: core.dashboard.admin.central }
             - { name: cantiga.extension, point: core.dashboard.project.right }
             - { name: cantiga.extension, point: core.dashboard.group.right }
             - { name: cantiga.extension, point: core.dashboard.area.right }

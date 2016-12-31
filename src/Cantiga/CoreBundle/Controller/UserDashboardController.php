@@ -63,6 +63,19 @@ class UserDashboardController extends UserPageController
 			'centralExtensions' => $this->renderExtensions($request, $this->findDashboardExtensions(CoreExtensions::USER_DASHBOARD_CENTRAL)),
 		));
 	}
+	
+	/**
+	 * @Route("/archive", name="user_archive")
+	 */
+	public function archiveAction(Request $request)
+	{
+		$repository = $this->get('cantiga.core.repo.user_dashboard');
+		$memberEntities = $repository->getArchivedUserMembership($this->getUser());
+		
+		return $this->render('CantigaCoreBundle:User:archive.html.twig', array(
+			'memberEntities' => $memberEntities,
+		));
+	}
 
 	/**
 	 * @Route("/help/{page}", name="user_help_page")

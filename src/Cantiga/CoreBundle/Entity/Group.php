@@ -20,7 +20,6 @@ namespace Cantiga\CoreBundle\Entity;
 
 use Cantiga\Components\Hierarchy\Entity\PlaceRef;
 use Cantiga\Components\Hierarchy\HierarchicalInterface;
-use Cantiga\Components\Hierarchy\MembershipEntityInterface;
 use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Traits\PlaceTrait;
 use Cantiga\Metamodel\Capabilities\EditableEntityInterface;
@@ -104,7 +103,7 @@ class Group implements IdentifiableInterface, InsertableEntityInterface, Editabl
 			. self::createPlaceJoin('g')
 			. 'INNER JOIN `'.UserTables::PLACE_MEMBERS_TBL.'` m ON m.`placeId` = e.`id` '
 			. 'INNER JOIN `'.CoreTables::PROJECT_TBL.'` p ON p.`id` = g.`projectId` '
-			. 'WHERE g.`name` = :name AND g.`projectId` = :parentProject AND m`.userId` = :userId', [
+			. 'WHERE g.`name` = :name AND g.`projectId` = :parentProject AND m.`userId` = :userId', [
 				':name' => $currentGroup->getName(), ':parentProject' => $currentGroup->getProject()->getParentProject()->getId(), ':userId' => $user->getId()]);
 		if(null === $data) {
 			return false;

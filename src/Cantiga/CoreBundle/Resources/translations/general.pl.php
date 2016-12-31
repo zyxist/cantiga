@@ -41,11 +41,13 @@ return array(
 	'Details' => 'Szczegóły',
 	'Close' => 'Zamknij',
 	'Warning' => 'Ostrzeżenie',
+	'Change' => 'Zmień',
 	
 	'Indeed, remove it' => 'Zaiste, usuń',
 	'Edit: 0' => 'Edytuj: 0',
 	'Details: 0' => 'Szczegóły: 0',
 	'Please note that...' => 'Pamiętaj, że...',
+	'Import from 0' => 'Importuj z 0',
 	
 	'Never' => 'Nigdy',
 	'Just now' => 'Teraz',

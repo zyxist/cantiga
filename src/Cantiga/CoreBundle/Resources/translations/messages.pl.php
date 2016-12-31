@@ -30,12 +30,16 @@ return array(
 	'PasswordRecoveryEnterNewPasswordText' => 'Dziękujemy, proszę podać nowe hasło do konta. Pamiętaj, że musi być ono skomplikowane i nietrywialne do zgadnięcia!',
 	'PasswordRecoverySuccessText' => 'Twoje hasło zostało zmienione. Możesz się teraz zalogować przy jego pomocy.',
 	'PasswordRecoveryFailureText' => 'Podane żądanie zmiany hasła jest nieprawidłowe.',
+	'PasswordRecoverySentText' => 'Twoje żądanie zmiany hasła zostało wysłane na Twoją skrzynkę pocztową. W razie jakichkolwiek problemów prosimy odczekać kilka minut i wysłać zgłoszenie ponownie lub skontaktować się z administratorami.',
+	'PasswordRecoverySaveError' => 'Prosimy odczekać kilka minut przed ponowieniem próby wysłania nowego żądania zmiany hasła.',
 	'Your login' => 'Twój login',
 	'E-mail used for registration' => 'E-mail podany podczas rejestracji',
 	'Your settings have been updated.' => 'Twoje ustawienia zostały zaktualizowane.',
 	
 	'Your workspaces' => 'Twoje przestrzenie',
 	'You are a member of:' => 'Jesteś członkiem:',
+	
+	'ArchiveDescriptionText' => 'Zakończone projekty oraz związane z nimi miejsca trafiają do archiwum. Tutaj możesz je obejrzeć oraz dostać się do nich.',
 	
 	// General texts
 	'You are about to remove something!' => 'Jesteś o krok od usunięcia...',

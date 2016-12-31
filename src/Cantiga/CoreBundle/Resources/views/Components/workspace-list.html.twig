@@ -1,14 +1,14 @@
 <li class="dropdown workspaces-menu">
-    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-        <i class="fa fa-exchange"></i>
-    </a>
-    <ul class="dropdown-menu">
-		{% for workspace in workspaces %}
+	<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+		<i class="fa fa-exchange"></i>
+	</a>
+	<ul class="dropdown-menu">
+	{% for workspace in workspaces %}
 		{% if active == workspace.id %}
-		<li><a href="{{ path(workspace.homePage) }}" class="active">{{ workspace.title | trans({}, 'pages') }}</a></li>
+			<li><a href="{{ path(workspace.homePage) }}" class="active">{{ workspace.title | trans({}, 'pages') }}</a></li>
 		{% else %}
-        <li><a href="{{ path(workspace.homePage) }}">{{ workspace.title | trans({}, 'pages') }}</a></li>
+			<li><a href="{{ path(workspace.homePage) }}">{{ workspace.title | trans({}, 'pages') }}</a></li>
 		{% endif %}
-		{% endfor %}
-    </ul>
+	{% endfor %}
+	</ul>
 </li>

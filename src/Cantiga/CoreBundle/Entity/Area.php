@@ -108,7 +108,7 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 			. self::createPlaceJoin('a')
 			. 'INNER JOIN `'.UserTables::PLACE_MEMBERS_TBL.'` m ON m.`placeId` = e.`id` '
 			. 'INNER JOIN `'.CoreTables::PROJECT_TBL.'` p ON p.`id` = a.`projectId` '
-			. 'WHERE a.`name` = :name AND a.`projectId` = :parentProject AND m`.userId` = :userId', [
+			. 'WHERE a.`name` = :name AND a.`projectId` = :parentProject AND m.`userId` = :userId', [
 				':name' => $currentArea->getName(), ':parentProject' => $currentArea->getProject()->getParentProject()->getId(), ':userId' => $user->getId()]);
 		if(null === $data) {
 			return false;
@@ -412,7 +412,9 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		$this->place->insert($conn);
 		
 		$this->createdAt = $this->lastUpdatedAt = time();
-		$this->percentCompleteness = 0;
+		if (empty($this->percentCompleteness)) {
+			$this->percentCompleteness = 0;
+		}
 		$conn->insert(
 			CoreTables::AREA_TBL,
 			DataMappers::pick($this, ['name', 'slug', 'project', 'group', 'territory', 'status', 'reporter', 'place', 'createdAt', 'lastUpdatedAt', 'percentCompleteness'], ['customData' => json_encode($this->customData), 'groupName' => $groupName])

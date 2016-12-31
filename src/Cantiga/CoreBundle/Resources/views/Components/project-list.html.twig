@@ -17,5 +17,8 @@
 				{% endif %}
 			{% endfor %}
 		{% endif %}
+		{% if showArchives %}
+		<li class="footer"><a href="{{ path('user_archive') }}">{{ 'Archive' | trans([], 'pages') }}</a></li>
+		{% endif %}
 	</ul>
 </li>

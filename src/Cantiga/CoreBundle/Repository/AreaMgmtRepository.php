@@ -28,11 +28,13 @@ use Cantiga\CoreBundle\Event\CantigaEvents;
 use Cantiga\CoreBundle\Filter\AreaFilter;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
+use Cantiga\Metamodel\Form\EntityTransformerInterface;
 use Cantiga\Metamodel\QueryBuilder;
 use Cantiga\Metamodel\QueryClause;
 use Cantiga\Metamodel\Transaction;
 use Doctrine\DBAL\Connection;
 use Exception;
+use LogicException;
 use PDO;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -40,7 +42,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 /**
  * Manages the areas in the given parent place (project or group).
  */
-class AreaMgmtRepository
+class AreaMgmtRepository implements EntityTransformerInterface
 {
 	/**
 	 * @var Connection 
@@ -76,7 +78,7 @@ class AreaMgmtRepository
 	{
 		$this->place = $place;
 		if ($place instanceof Area) {
-			throw new \LogicException('Unsupported place type: Area');
+			throw new LogicException('Unsupported place type: Area');
 		}
 	}
 	
@@ -213,9 +215,15 @@ class AreaMgmtRepository
 	
 	public function getFormChoices(): array
 	{
+		if ($this->place->getTypeName() == 'Group') {
+			$field = 'groupId';
+		} elseif ($this->place->getTypeName() == 'Project') {
+			$field = 'projectId';
+		}
+		
 		$this->transaction->requestTransaction();
-		$stmt = $this->conn->prepare('SELECT `id`, `name` FROM `'.CoreTables::AREA_TBL.'` WHERE `projectId` = :projectId ORDER BY `name`');
-		$stmt->bindValue(':projectId', $this->project->getId());
+		$stmt = $this->conn->prepare('SELECT `id`, `name` FROM `'.CoreTables::AREA_TBL.'` WHERE `'.$field.'` = :'.$field.' ORDER BY `name`');
+		$stmt->bindValue(':'.$field, $this->place->getId());
 		$stmt->execute();
 		$result = array();
 		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {

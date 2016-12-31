@@ -79,7 +79,7 @@ return [
 	'Request creating a new area' => 'Zgłoś chęć utworzenia nowego rejonu',
 	'Inspect your requests to create a new area' => 'Śledź status Twoich zgłoszeń o utworzenie nowego rejonu',
 	'See if someone invites you to cooperate' => 'Sprawdź czy ktoś nie zaprasza Cię do współpracy',
-	'Places you are a member of' => 'Miejsca, których jesteś członkiem',
+	'Access archived places' => 'Przeglądaj miejsca przeniesione do archiwum',
 	
 	// Supplementary texts for area
 	'AreaTypeSubtitle' => 'Strona rejonu',

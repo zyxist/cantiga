@@ -9,9 +9,13 @@ return array(
 	'PasswordRecoveryEnterNewPasswordText' => 'Thank you, please enter the new password for your account. Remember to keep it complex and nontrivial!',
 	'PasswordRecoverySuccessText' => 'Your password has been successfully changed. You can now log in with your new password.',
 	'PasswordRecoveryFailureText' => 'This password recovery request is invalid.',
+	'PasswordRecoverySentText' => 'Your password recovery request has been sent to your e-mail. In case of any problems, please wait a couple of minutes, and then fill in the form again or contact the administrators.',
+	'PasswordRecoverySaveError' => 'Please wait a couple of minutes before sending another password recovery request.',
 	
 	'Your workspaces' => 'Your workspaces',
 	'You are a member of:' => 'You are a member of:',
+	
+	'ArchiveDescriptionText' => 'Completed projects and places in these projects land in the archive. Here you can view and access them.',
 	
 	// Area group information
 	'AreaNotAssignedToGroupMsg' => 'This area is not assigned to any group yet. Once the assignment is done, you will find here the information about the group you are a member of.',

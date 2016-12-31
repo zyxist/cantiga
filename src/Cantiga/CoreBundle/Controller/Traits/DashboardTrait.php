@@ -54,17 +54,18 @@ trait DashboardTrait
 	
 	protected function renderExtensions(Request $request, array $extensions)
 	{
-		$html = '';
-		
 		$project = null;
 		if ($this instanceof ProjectAwareControllerInterface) {
 			$project = $this->getActiveProject();
 		}
-		
-		foreach ($extensions as $extension) {
-			$html .= $extension->render($this, $request, $this->getWorkspace(), $project);
+		if (sizeof($extensions) > 0) {
+			$html = '';
+			foreach ($extensions as $extension) {
+				$html .= $extension->render($this, $request, $this->getWorkspace(), $project);
+			}
+			return $html;
 		}
-		return $html;
+		return false;
 	}
 	
 	protected function renderHelpPage(Request $request, $route, $pageName)
