@@ -110,7 +110,7 @@ class AuthRepository implements UserProviderInterface
 			':minTime' => time() - PasswordRecoveryRequest::REQUEST_INTERVAL_TIME
 		]);
 		if (!empty($id)) {
-			throw new PasswordRecoveryException('Error while saving the password recovery request.');
+			throw new PasswordRecoveryException('PasswordRecoverySaveError');
 		}
 		
 		$request->insert($this->conn);

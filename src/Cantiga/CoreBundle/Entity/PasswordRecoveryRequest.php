@@ -21,9 +21,6 @@ namespace Cantiga\CoreBundle\Entity;
 use Doctrine\DBAL\Connection;
 use Cantiga\CoreBundle\CoreTables;
 
-/**
- * @author Tomasz Jędrzejewski
- */
 class PasswordRecoveryRequest
 {
 	const STATUS_NEW = 0;
