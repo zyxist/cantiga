@@ -1,6 +1,6 @@
 <?php
 return array(
-	'Passed' => 'PAssed',
+	'Passed' => 'Passed',
 	'Failed' => 'Failed',	
 	'Not started' => 'Not started',
 	'Test' => 'Test',
