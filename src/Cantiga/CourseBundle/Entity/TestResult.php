@@ -29,8 +29,6 @@ use Exception;
 /**
  * Represents a result of the test solved by the user, and controls the time limits
  * required to solve it.
- *
- * @author Tomasz Jędrzejewski
  */
 class TestResult extends AbstractTestResult {
 	const TIME_BETWEEN_TRIALS = 'P1D';
@@ -106,7 +104,7 @@ class TestResult extends AbstractTestResult {
 	 */
 	public function startNewTrial(Connection $conn)
 	{
-		if($this->refresh($conn)) {
+		if($this->refresh($conn, true)) {
 			if($this->result == Question::RESULT_CORRECT) {
 				throw new CourseTestException('Cannot start a passed test.');
 			}
@@ -130,7 +128,7 @@ class TestResult extends AbstractTestResult {
 	 */
 	public function completeTrial(Connection $conn, Area $area, TestTrial $trial)
 	{
-		$this->refresh($conn);
+		$this->refresh($conn, true);
 			
 		$limit = $this->startedAt;
 		$limit += ($trial->getTimeLimitInMinutes() * 60);
@@ -147,12 +145,19 @@ class TestResult extends AbstractTestResult {
 		return $this->tryRecordingAreaResult($conn, $area, $trial);
 	}
 	
-	protected function refresh(Connection $conn)
+	protected function refresh(Connection $conn, bool $forUpdate = false)
 	{
-		$currentSet = $conn->fetchAssoc('SELECT `result`, `trialNumber`, `startedAt`, `completedAt`, `totalQuestions`, `passedQuestions` FROM `'.CourseTables::COURSE_RESULT_TBL.'` WHERE `userId` = :userId AND `courseId` = :courseId', array(
-			':userId' => $this->user->getId(),
-			':courseId' => $this->course->getId()
-		));
+		$clause = '';
+		if ($forUpdate) {
+			$clause = ' FOR UPDATE';
+		}
+		
+		$currentSet = $conn->fetchAssoc('SELECT `result`, `trialNumber`, `startedAt`, `completedAt`, `totalQuestions`, `passedQuestions` '
+			. 'FROM `'.CourseTables::COURSE_RESULT_TBL.'` '
+			. 'WHERE `userId` = :userId AND `courseId` = :courseId'.$clause, [
+				':userId' => $this->user->getId(),
+				':courseId' => $this->course->getId()
+			]);
 		if(empty($currentSet)) {
 			$this->trialNumber = 1;
 			$this->startedAt = time();
@@ -193,7 +198,7 @@ class TestResult extends AbstractTestResult {
 	
 	protected function tryRecordingAreaResult(Connection $conn, Area $area, TestTrial $trial)
 	{
-		$areaResult = AreaCourseResult::fetchResult($conn, $area, $this->course);
+		$areaResult = AreaCourseResult::fetchResult($conn, $area, $this->course, true);
 		if ($areaResult->result == Question::RESULT_UNKNOWN) {
 			$conn->insert(CourseTables::COURSE_AREA_RESULT_TBL, [
 				'areaId' => $area->getId(),
@@ -212,7 +217,7 @@ class TestResult extends AbstractTestResult {
 				'areaId' => $area->getId(),
 				'courseId' => $this->course->getId()
 			]);
-			$progress = CourseProgress::fetchByArea($conn, $area);
+			$progress = CourseProgress::fetchByArea($conn, $area, true);
 			$progress->updateResults($conn, $areaResult, $trial);
 			return $progress;
 		}

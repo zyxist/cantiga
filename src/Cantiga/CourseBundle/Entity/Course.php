@@ -42,8 +42,6 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
  * Represents a single, on-line course, with a set of test questions.
  * Note that this class has been ported from the old code base, so it
  * does not do certain things in 'Cantiga' way.
- *
- * @author Tomasz Jędrzejewski
  */
 class Course implements InsertableEntityInterface, EditableEntityInterface, RemovableEntityInterface
 {
@@ -339,14 +337,14 @@ class Course implements InsertableEntityInterface, EditableEntityInterface, Remo
 			$stmt->bindValue(':passedQuestions', 1);
 			$stmt->execute();
 			
-			$areaResult = AreaCourseResult::fetchResult($conn, $area, $this);
+			$areaResult = AreaCourseResult::fetchResult($conn, $area, $this, true);
 			if ($areaResult->getResult() == Question::RESULT_UNKNOWN) {
 				$conn->insert(CourseTables::COURSE_AREA_RESULT_TBL, [
 					'userId' => $user->getId(),
 					'areaId' => $area->getId(),
 					'courseId' => $this->id
 				]);
-				$progress = CourseProgress::fetchByArea($conn, $area);
+				$progress = CourseProgress::fetchByArea($conn, $area, true);
 				$progress->updateGoodFaithCompletion($conn);
 				return $progress;
 			}
@@ -379,7 +377,7 @@ class Course implements InsertableEntityInterface, EditableEntityInterface, Remo
 		if(null === $this->getId()) {
 			throw new LogicException('Cannot perform update() on an unpersisted Course instance.');
 		}
-		$oldPublished = (boolean) $conn->fetchColumn('SELECT `isPublished` FROM `'.CourseTables::COURSE_TBL.'` WHERE `id` = :id', array(':id' => $this->getId()));
+		$oldPublished = (boolean) $conn->fetchColumn('SELECT `isPublished` FROM `'.CourseTables::COURSE_TBL.'` WHERE `id` = :id FOR UPDATE', array(':id' => $this->getId()));
 
 		$stmt = $conn->prepare('UPDATE `'.CourseTables::COURSE_TBL.'` SET '
 			. '`name` = :name,'

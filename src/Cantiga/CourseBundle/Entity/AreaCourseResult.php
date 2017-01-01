@@ -27,8 +27,6 @@ use Doctrine\DBAL\Connection;
  * Represents a view on the course results from the perspective of the entire area.
  * The assumption is that the first user who passes the test, also passes the test
  * for the entire area.
- *
- * @author Tomasz Jędrzejewski
  */
 class AreaCourseResult extends AbstractTestResult
 {
@@ -41,12 +39,17 @@ class AreaCourseResult extends AbstractTestResult
 	 */
 	private $course;
 	
-	public static function fetchResult(Connection $conn, Area $area, Course $course)
+	public static function fetchResult(Connection $conn, Area $area, Course $course, bool $forUpdate = false)
 	{
+		$clause = '';
+		if ($forUpdate) {
+			$clause = ' FOR UPDATE';
+		}
+		
 		$data = $conn->fetchAssoc('SELECT r.* '
 			. 'FROM `'.CourseTables::COURSE_RESULT_TBL.'` r '
 			. 'INNER JOIN `'.CourseTables::COURSE_AREA_RESULT_TBL.'` a ON a.`courseId` = r.`courseId` AND a.`userId` = r.`userId` '
-			. 'WHERE a.`areaId` = :areaId AND a.`courseId` = :courseId', 
+			. 'WHERE a.`areaId` = :areaId AND a.`courseId` = :courseId'.$clause, 
 			array(':areaId' => $area->getId(), ':courseId' => $course->getId())
 		);
 		$result = new AreaCourseResult();

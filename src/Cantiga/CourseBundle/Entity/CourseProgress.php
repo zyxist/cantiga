@@ -26,8 +26,6 @@ use Exception;
 
 /**
  * Information about course result summary for the given area.
- *
- * @author Tomasz Jędrzejewski
  */
 class CourseProgress implements InsertableEntityInterface
 {
@@ -36,9 +34,14 @@ class CourseProgress implements InsertableEntityInterface
 	private $passedCourseNum = 0;
 	private $failedCourseNum = 0;
 	
-	public static function fetchByArea(Connection $conn, Area $area)
+	public static function fetchByArea(Connection $conn, Area $area, bool $forUpdate = false)
 	{
-		$data = $conn->fetchAssoc('SELECT * FROM `'.CourseTables::COURSE_PROGRESS_TBL.'` WHERE `areaId` = :areaId', [':areaId' => $area->getId()]);
+		$clause = '';
+		if ($forUpdate) {
+			$clause = ' FOR UPDATE';
+		}
+		
+		$data = $conn->fetchAssoc('SELECT * FROM `'.CourseTables::COURSE_PROGRESS_TBL.'` WHERE `areaId` = :areaId'.$clause, [':areaId' => $area->getId()]);
 		if (false === $data) {
 			return false;
 		}

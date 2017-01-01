@@ -304,7 +304,7 @@ class Milestone implements IdentifiableInterface, InsertableEntityInterface, Edi
 			throw new ModelException('Cannot change the state of the milestone!');
 		}
 
-		$currentProgress = $conn->fetchColumn('SELECT `progress` FROM `'.MilestoneTables::MILESTONE_STATUS_TBL.'` WHERE `entityId` = :entityId AND `milestoneId` = :milestoneId', [
+		$currentProgress = $conn->fetchColumn('SELECT `progress` FROM `'.MilestoneTables::MILESTONE_STATUS_TBL.'` WHERE `entityId` = :entityId AND `milestoneId` = :milestoneId FOR UPDATE', [
 			':entityId' => $entity->getId(),
 			':milestoneId' => $this->getId()
 		]);
@@ -353,7 +353,7 @@ class Milestone implements IdentifiableInterface, InsertableEntityInterface, Edi
 			throw new ModelException('Invalid progress value!');
 		}
 
-		$change = $conn->fetchAssoc('SELECT `progress`, `completedAt` FROM `'.MilestoneTables::MILESTONE_STATUS_TBL.'` WHERE `entityId` = :entityId AND `milestoneId` = :milestoneId', [
+		$change = $conn->fetchAssoc('SELECT `progress`, `completedAt` FROM `'.MilestoneTables::MILESTONE_STATUS_TBL.'` WHERE `entityId` = :entityId AND `milestoneId` = :milestoneId FOR UPDATE', [
 			':entityId' => $entity->getId(),
 			':milestoneId' => $this->getId()
 		]);
@@ -396,7 +396,7 @@ class Milestone implements IdentifiableInterface, InsertableEntityInterface, Edi
 			throw new ModelException('Cannot change the state of the milestone!');
 		}
 
-		$currentProgress = $conn->fetchColumn('SELECT `progress` FROM `'.MilestoneTables::MILESTONE_STATUS_TBL.'` WHERE `entityId` = :entityId AND `milestoneId` = :milestoneId', [
+		$currentProgress = $conn->fetchColumn('SELECT `progress` FROM `'.MilestoneTables::MILESTONE_STATUS_TBL.'` WHERE `entityId` = :entityId AND `milestoneId` = :milestoneId FOR UPDATE', [
 			':entityId' => $entity->getId(),
 			':milestoneId' => $this->getId()
 		]);
