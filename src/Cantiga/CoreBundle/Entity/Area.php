@@ -396,12 +396,6 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		if (null !== $this->group) {
 			$groupName = $this->group->getName();
 		}
-		
-		if (null !== $this->group) {
-			DataMappers::recount($conn, CoreTables::GROUP_TBL, null, $this->group, 'areaNum', 'id');
-		}
-		DataMappers::recount($conn, CoreTables::AREA_STATUS_TBL, null, $this->status, 'areaNum', 'id');
-		DataMappers::recount($conn, CoreTables::TERRITORY_TBL, null, $this->territory, 'areaNum', 'id');
 		$this->slug = DataMappers::generateSlug($conn, CoreTables::AREA_TBL);
 		
 		$this->place = new Place();
@@ -419,7 +413,10 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 			CoreTables::AREA_TBL,
 			DataMappers::pick($this, ['name', 'slug', 'project', 'group', 'territory', 'status', 'reporter', 'place', 'createdAt', 'lastUpdatedAt', 'percentCompleteness'], ['customData' => json_encode($this->customData), 'groupName' => $groupName])
 		);
-		return $this->id = $conn->lastInsertId();
+		$this->id = $conn->lastInsertId();
+		$this->updateCounters($conn);
+		return $this->id;
+		
 	}
 
 	public function update(Connection $conn)
@@ -427,27 +424,20 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 		$groupName = null;
 		if (null !== $this->group) {
 			$groupName = $this->group->getName();
-		}
-		
-		if (!DataMappers::same($this->oldGroup, $this->group)) {
-			DataMappers::recount($conn, CoreTables::GROUP_TBL, $this->oldGroup, $this->group, 'areaNum', 'id');
-		}
-		if (!DataMappers::same($this->oldStatus, $this->status)) {
-			DataMappers::recount($conn, CoreTables::AREA_STATUS_TBL, $this->oldStatus, $this->status, 'areaNum', 'id');
-		}
-		if (!DataMappers::same($this->oldTerritory, $this->territory)) {
-			DataMappers::recount($conn, CoreTables::TERRITORY_TBL, $this->oldTerritory, $this->territory, 'areaNum', 'id');
-		}
-		
+		}		
 		$this->place->setName($this->name);
 		$this->place->update($conn);
 		$this->lastUpdatedAt = time();
 		
-		return $conn->update(
+		$result = $conn->update(
 			CoreTables::AREA_TBL,
 			DataMappers::pick($this, ['name', 'group', 'territory', 'status', 'lastUpdatedAt', 'percentCompleteness'], ['customData' => json_encode($this->customData), 'groupName' => $groupName]),
 			DataMappers::pick($this, ['id'])
 		);
+		if ($result > 0) {
+			$this->updateCounters($conn);
+		}
+		return $result;
 	}
 
 	public function getElementOfType(int $type)
@@ -476,5 +466,18 @@ class Area implements IdentifiableInterface, InsertableEntityInterface, Editable
 	public function isChild(HierarchicalInterface $place): bool
 	{
 		return false;
+	}
+	
+	private function updateCounters(Connection $conn)
+	{
+		if (!DataMappers::same($this->oldGroup, $this->group)) {
+			DataMappers::recount($conn, CoreTables::GROUP_TBL, 'areaNum', $this->oldGroup, $this->group, 'SELECT COUNT(id) FROM `'.CoreTables::AREA_TBL.'` WHERE `groupId` = :id');
+		}
+		if (!DataMappers::same($this->oldStatus, $this->status)) {
+			DataMappers::recount($conn, CoreTables::AREA_STATUS_TBL, 'areaNum', $this->oldStatus, $this->status, 'SELECT COUNT(id) FROM `'.CoreTables::AREA_TBL.'` WHERE `statusId` = :id');
+		}
+		if (!DataMappers::same($this->oldTerritory, $this->territory)) {
+			DataMappers::recount($conn, CoreTables::TERRITORY_TBL, 'areaNum', $this->oldTerritory, $this->territory, 'SELECT COUNT(id) FROM `'.CoreTables::AREA_TBL.'` WHERE `territoryId` = :id');
+		}
 	}
 }

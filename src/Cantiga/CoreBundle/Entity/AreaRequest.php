@@ -334,21 +334,20 @@ class AreaRequest implements IdentifiableInterface, InsertableEntityInterface, E
 	public function insert(Connection $conn)
 	{
 		$this->createdAt = $this->lastUpdatedAt = time();
-		
-		DataMappers::recount($conn, CoreTables::TERRITORY_TBL, null, $this->territory, 'requestNum', 'id');
-		
 		$conn->insert(
 			CoreTables::AREA_REQUEST_TBL,
 			DataMappers::pick($this, ['name', 'project', 'territory', 'requestor', 'createdAt', 'lastUpdatedAt', 'status'], ['customData' => json_encode($this->customData)])
 		);
-		return $this->id = $conn->lastInsertId();
+		$this->id = $conn->lastInsertId();
+		$this->updateCounters($conn);
+		return $this->id;
 	}
 
 	public function update(Connection $conn)
 	{
 		$this->lastUpdatedAt = time();
 		if (null !== $this->postedMessage) {
-			$this->commentNum = $conn->fetchColumn('SELECT `commentNum` FROM `'.CoreTables::AREA_REQUEST_TBL.'` WHERE `id` = :id', [':id' => $this->id]);
+			$this->commentNum = $conn->fetchColumn('SELECT `commentNum` FROM `'.CoreTables::AREA_REQUEST_TBL.'` WHERE `id` = :id FOR UPDATE', [':id' => $this->id]);
 			$conn->insert(CoreTables::AREA_REQUEST_COMMENT_TBL, [
 				'requestId' => $this->id,
 				'userId' => $this->postedMessage->getUser()->getId(),
@@ -358,30 +357,30 @@ class AreaRequest implements IdentifiableInterface, InsertableEntityInterface, E
 			$this->commentNum++;
 		}
 		
-		if (!DataMappers::same($this->oldTerritory, $this->territory)) {
-			DataMappers::recount($conn, CoreTables::TERRITORY_TBL, $this->oldTerritory, $this->territory, 'requestNum', 'id');
-		}
-		
 		$cnt = $conn->update(
 			CoreTables::AREA_REQUEST_TBL,
 			DataMappers::pick($this, ['name', 'status', 'territory', 'lastUpdatedAt', 'commentNum'], ['customData' => json_encode($this->customData)]),
 			DataMappers::pick($this, ['id'])
 		);
+		$this->updateCounters($conn);
 		return $cnt;
 	}
 	
 	public function remove(Connection $conn)
 	{
-		$this->status = $conn->fetchColumn('SELECT `status` FROM `'.CoreTables::AREA_REQUEST_TBL.'` WHERE `id` = :id', [':id' => $this->id]);
+		$this->status = $conn->fetchColumn('SELECT `status` FROM `'.CoreTables::AREA_REQUEST_TBL.'` WHERE `id` = :id FOR UPDATE', [':id' => $this->id]);
 		if ($this->canRemove()) {
-			DataMappers::recount($conn, CoreTables::TERRITORY_TBL, $this->territory, null, 'requestNum', 'id');
 			$conn->delete(CoreTables::AREA_REQUEST_TBL, DataMappers::pick($this, ['id']));
+			$this->territory = null;
+			$this->updateCounters($conn);
+			return true;
 		}
+		return false;
 	}
 	
 	public function startVerification(Connection $conn, User $verifier)
 	{
-		$this->status = $conn->fetchColumn('SELECT `status` FROM `'.CoreTables::AREA_REQUEST_TBL.'` WHERE `id` = :id', [':id' => $this->id]);
+		$this->status = $conn->fetchColumn('SELECT `status` FROM `'.CoreTables::AREA_REQUEST_TBL.'` WHERE `id` = :id FOR UPDATE', [':id' => $this->id]);
 		if ($this->status == self::STATUS_NEW) {
 			$this->lastUpdatedAt = time();
 			$this->status = self::STATUS_VERIFICATION;
@@ -398,7 +397,7 @@ class AreaRequest implements IdentifiableInterface, InsertableEntityInterface, E
 	
 	public function approve(Connection $conn, MembershipRoleResolverInterface $resolver)
 	{
-		$this->status = $conn->fetchColumn('SELECT `status` FROM `'.CoreTables::AREA_REQUEST_TBL.'` WHERE `id` = :id', [':id' => $this->id]);
+		$this->status = $conn->fetchColumn('SELECT `status` FROM `'.CoreTables::AREA_REQUEST_TBL.'` WHERE `id` = :id FOR UPDATE', [':id' => $this->id]);
 		if ($this->status == self::STATUS_VERIFICATION) {
 			$this->lastUpdatedAt = time();
 			$this->status = self::STATUS_APPROVED;
@@ -426,7 +425,7 @@ class AreaRequest implements IdentifiableInterface, InsertableEntityInterface, E
 	
 	public function revoke(Connection $conn)
 	{
-		$this->status = $conn->fetchColumn('SELECT `status` FROM `'.CoreTables::AREA_REQUEST_TBL.'` WHERE `id` = :id', [':id' => $this->id]);
+		$this->status = $conn->fetchColumn('SELECT `status` FROM `'.CoreTables::AREA_REQUEST_TBL.'` WHERE `id` = :id FOR UPDATE', [':id' => $this->id]);
 		if ($this->status == self::STATUS_VERIFICATION) {
 			$this->lastUpdatedAt = time();
 			$this->status = self::STATUS_REVOKED;
@@ -465,5 +464,12 @@ class AreaRequest implements IdentifiableInterface, InsertableEntityInterface, E
 		}
 		$stmt->closeCursor();
 		return $result;
+	}
+	
+	private function updateCounters(Connection $conn)
+	{
+		if (!DataMappers::same($this->oldTerritory, $this->territory)) {
+			DataMappers::recount($conn, CoreTables::TERRITORY_TBL, 'requestNum', $this->oldTerritory, $this->territory, 'SELECT COUNT(id) FROM `'.CoreTables::AREA_REQUEST_TBL.'` WHERE `territoryId` = :id');
+		}
 	}
 }

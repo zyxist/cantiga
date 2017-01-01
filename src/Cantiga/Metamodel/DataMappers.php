@@ -138,26 +138,26 @@ final class DataMappers
 	}
 	
 	/**
-	 * Helps manipulating the static, denormalized counters, when some counted entity appears or disappears. If the old
-	 * entity is set, the counter is decremented. If the new entity is set, the counter is incremented. 
+	 * Helps manipulating the static, denormalized counters, when some counted entity appears or disappears. The values of the counters
+	 * are recalculated for both old and the new item, using the specified counting query. If either <tt>$old</tt> or <tt>$new</tt> is null,
+	 * only one row is updated.
 	 * 
 	 * @param Connection $conn
 	 * @param string $table
+	 * @param string $countField
 	 * @param IdentifiableEntity $old
 	 * @param IdentifiableEntity $new
-	 * @param string $countField
-	 * @param string $idField
+	 * @param string $countingQuery
 	 */
-	public static function recount(Connection $conn, $table, $old, $new, $countField, $idField)
+	public static function recount(Connection $conn, string $table, string $countField, IdentifiableInterface $old, IdentifiableInterface $new, string $countingQuery)
 	{
-		$idGetter = 'get'.ucfirst($idField);
 		if (null !== $old) {
-			$id = $old->$idGetter();
-			$conn->executeQuery('UPDATE `'.$table.'` SET `'.$countField.'` = (`'.$countField.'` - 1) WHERE `id` = :id', [':id' => $id]);
+			$id = $old->getId();
+			$conn->executeUpdate('UPDATE `'.$table.'` SET `'.$countField.'` = ('.$countingQuery.') WHERE `id` = :id', [':id' => $id]);
 		}
 		if (null !== $new) {
-			$id = $new->$idGetter();
-			$conn->executeQuery('UPDATE `'.$table.'` SET `'.$countField.'` = (`'.$countField.'` + 1) WHERE `id` = :id', [':id' => $id]);
+			$id = $new->getId();
+			$conn->executeUpdate('UPDATE `'.$table.'` SET `'.$countField.'` = ('.$countingQuery.') WHERE `id` = :id', [':id' => $id]);
 		}
 	}
 	
