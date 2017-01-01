@@ -215,9 +215,9 @@ class ProjectCourseController extends ProjectPageController
 					'form' => $form->createView(),
 			));
 		} catch (ItemNotFoundException $exception) {
-			return $this->showPageWithError($this->crudInfo->getItemNotFoundErrorMessage(), $this->crudInfo->getIndexPage());
+			return $this->showPageWithError($this->crudInfo->getItemNotFoundErrorMessage(), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
 		} catch (ModelException $exception) {
-			return $this->showPageWithError($this->trans($exception->getMessage()), $this->crudInfo->getIndexPage());
+			return $this->showPageWithError($this->trans($exception->getMessage()), $this->crudInfo->getIndexPage(), ['slug' => $this->getSlug()]);
 		}
 	}
 
