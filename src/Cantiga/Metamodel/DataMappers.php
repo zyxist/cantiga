@@ -25,8 +25,6 @@ use LogicException;
 
 /**
  * Static utilities for writing entities.
- *
- * @author Tomasz Jędrzejewski
  */
 final class DataMappers
 {
@@ -149,7 +147,7 @@ final class DataMappers
 	 * @param IdentifiableEntity $new
 	 * @param string $countingQuery
 	 */
-	public static function recount(Connection $conn, string $table, string $countField, IdentifiableInterface $old, IdentifiableInterface $new, string $countingQuery)
+	public static function recount(Connection $conn, string $table, string $countField, IdentifiableInterface $old = null, IdentifiableInterface $new = null, string $countingQuery)
 	{
 		if (null !== $old) {
 			$id = $old->getId();
