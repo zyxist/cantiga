@@ -1,11 +1,11 @@
 /web/bundles/
-/web/ph
+/web/ph/*
 /web/img/*
 /app/Branding.php
 /app/config/parameters.yml
 /app/phpunit.xml
-!web/ph/default.gif
-!web/img/cantiga-logo.png
+!/web/ph/default.gif
+!/web/img/cantiga-logo.png
 !var/.gitkeep
 /build/
 /vendor/
