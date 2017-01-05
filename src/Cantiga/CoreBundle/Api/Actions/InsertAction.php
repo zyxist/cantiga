@@ -29,8 +29,6 @@ use Symfony\Component\Serializer\Exception\LogicException;
 
 /**
  * Generic action for handling forms that create a new entity.
- * 
- * @author Tomasz Jędrzejewski
  */
 class InsertAction extends AbstractAction
 {
@@ -39,7 +37,7 @@ class InsertAction extends AbstractAction
 	private $formBuilder;
 	private $customForm;
 	private $entity;
-	
+
 	public function __construct(CRUDInfo $crudInfo, $entity, $formType = null, array $options = [])
 	{
 		$this->info = $crudInfo;
@@ -48,60 +46,60 @@ class InsertAction extends AbstractAction
 			return $repository->insert($item);
 		};
 		if (null !== $formType) {
-			$this->formBuilder = function($controller, $item, $formType, $action) use($formType, $options) {
+			$this->formBuilder = function($controller, $item, $formTypeParam, $action) use($formType, $options) {
 				return $controller->createForm($formType, $item, array_merge(['action' => $action], $options));
 			};
 		}
 	}
-	
+
 	public function insert($callback)
 	{
 		$this->insertOperation = $callback;
 		return $this;
 	}
-	
+
 	public function form($callback)
 	{
 		$this->formBuilder = $callback;
 		return $this;
 	}
-	
+
 	public function customForm(CustomFormModelInterface $customForm)
 	{
 		$this->customForm = $customForm;
 		return $this;
 	}
-		
+
 	public function run(CantigaController $controller, Request $request)
 	{
 		try {
 			$repository = $this->info->getRepository();
-			$item = $this->entity;			
-					
+			$item = $this->entity;
+
 			if (!$item instanceof InsertableEntityInterface) {
 				throw new LogicException('This entity does not support inserting.');
 			}
 			$call = $this->formBuilder;
 			$form = $call($controller, $item, $this->formType, $controller->generateUrl($this->info->getInsertPage(), $this->slugify()));
 			$form->handleRequest($request);
-			
+
 			if ($form->isValid()) {
 				$call = $this->insertOperation;
 				$id = $call($repository, $item);
-				
+
 				$nameProperty = 'get'.ucfirst($this->info->getItemNameProperty());
 				$name = $item->$nameProperty();
-				
+
 				$controller->get('session')->getFlashBag()->add('info', $controller->trans($this->info->getItemCreatedMessage(), [$name]));
 				return $controller->redirect($controller->generateUrl($this->info->getInfoPage(), $this->slugify(['id' => $id])));
 			}
-			
+
 			if ($this->hasBreadcrumbs()) {
 				$controller->breadcrumbs()->item($this->breadcrumbs);
 			} else {
 				$controller->breadcrumbs()->link($controller->trans('Insert', [], 'general'), $this->info->getInsertPage(), $this->slugify());
 			}
-			
+
 			$vars = $this->getVars();
 			$vars['pageTitle'] = $this->info->getPageTitle();
 			$vars['pageSubtitle'] = $this->info->getPageSubtitle();
@@ -114,7 +112,7 @@ class InsertAction extends AbstractAction
 			$vars['insertPage'] = $this->info->getInsertPage();
 			$vars['editPage'] = $this->info->getEditPage();
 			$vars['removePage'] = $this->info->getRemovePage();
-			
+
 			return $controller->render($this->info->getTemplateLocation().'insert.html.twig', $vars);
 		} catch(ItemNotFoundException $exception) {
 			return $this->onError($controller, $controller->trans($this->info->getItemNotFoundErrorMessage()));
