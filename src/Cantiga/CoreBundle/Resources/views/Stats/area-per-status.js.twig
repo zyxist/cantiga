@@ -1,22 +1,22 @@
-{% raw %}
+{% verbatim %}
 	<script>
 	var areaChartData = {
-	  
-      labels: [{% endraw %}{{ labels | raw }} {% raw %}],
+
+      labels: [{% endverbatim %}{{ labels | raw }} {% verbatim %}],
       datasets: [
         {
-          label: "{% endraw %}{{ 'Areas' | trans }} {% raw %}",
+          label: "{% endverbatim %}{{ 'Areas' | trans }} {% verbatim %}",
           fillColor: "#00a65a",
           strokeColor: "#00965a",
           pointColor: "#00a65a",
           pointStrokeColor: "#c1c7d1",
           pointHighlightFill: "#fff",
           pointHighlightStroke: "rgba(220,220,220,1)",
-          data: [{% endraw %}{{ data | raw }} {% raw %}]
+          data: [{% endverbatim %}{{ data | raw }} {% verbatim %}]
         },
       ]
     };
-		
+
     var barChartCanvas = $("#area-per-status").get(0).getContext("2d");
     var barChart = new Chart(barChartCanvas);
     var barChartData = areaChartData;
@@ -51,4 +51,4 @@
     barChartOptions.datasetFill = false;
     barChart.Bar(barChartData, barChartOptions);
 	</script>
-{% endraw %}
+{% endverbatim %}

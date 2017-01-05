@@ -1,7 +1,7 @@
-{% raw %}
+{% verbatim %}
 	<script>
-	var areaChartData = {% endraw %}{{ data | raw }}{% raw %};
-		
+	var areaChartData = {% endverbatim %}{{ data | raw }}{% verbatim %};
+
     var barChartCanvas = $("#area-requests-over-time").get(0).getContext("2d");
     var barChart = new Chart(barChartCanvas);
     var barChartData = areaChartData;
@@ -36,4 +36,4 @@
     barChartOptions.datasetFill = false;
     barChart.StackedBar(barChartData, barChartOptions);
 	</script>
-{% endraw %}
+{% endverbatim %}
