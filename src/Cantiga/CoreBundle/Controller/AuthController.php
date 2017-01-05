@@ -42,7 +42,7 @@ class AuthController extends CantigaController
 	public function loginAction(Request $request)
 	{
 		$session = $request->getSession();
-		
+
 		$text = $this->getTextRepository()->getText(CoreTexts::LOGIN_TEXT, $request);
 		$languages = $this->get('cantiga.core.repo.language')->getLanguageCodes();
 
@@ -66,7 +66,7 @@ class AuthController extends CantigaController
 			'languages' => $languages
 		]);
 	}
-	
+
 	public function routeAction(Request $request)
 	{
 		if ($user->getAfterLogin() == null) {
@@ -75,7 +75,7 @@ class AuthController extends CantigaController
 			return $this->redirect($user->getAfterLogin());
 		}
 	}
-	
+
 	public function registerAction(Request $request)
 	{
 		$repository = $this->get('cantiga.core.repo.user_registration');
@@ -90,8 +90,8 @@ class AuthController extends CantigaController
 			]);
 			$form->handleRequest($request);
 
-			if ($form->isValid()) {
-				$intent->execute();			
+			if ($form->isSubmitted() && $form->isValid()) {
+				$intent->execute();
 				return $this->render('CantigaCoreBundle:Auth:post-registration.html.twig');
 			}
 			return $this->render('CantigaCoreBundle:Auth:register.html.twig', [
@@ -103,7 +103,7 @@ class AuthController extends CantigaController
 			return $this->redirect($this->generateUrl('cantiga_auth_register', [], RouterInterface::ABSOLUTE_URL));
 		}
 	}
-	
+
 	public function activateAccountAction($id, $provisionKey, Request $request)
 	{
 		$repository = $this->get('cantiga.core.repo.user_registration');
@@ -114,7 +114,7 @@ class AuthController extends CantigaController
 			return $this->render('CantigaCoreBundle:Auth:activation-failure.html.twig');
 		}
 	}
-	
+
 	public function passwordRecoveryAction(Request $request)
 	{
 		$repository = $this->get('cantiga.user_provider');
@@ -122,9 +122,9 @@ class AuthController extends CantigaController
 
 		$form = $this->createForm(PasswordRecoveryRequestForm::class, $item, ['action' => $this->generateUrl('cantiga_auth_recovery')]);
 		$form->handleRequest($request);
-		if ($form->isValid()) {
+		if ($form->isSubmitted() && $form->isValid()) {
 			try {
-				$item->execute();			
+				$item->execute();
 				return $this->render('CantigaCoreBundle:Auth:password-recovery-sent.html.twig');
 			} catch(PasswordRecoveryException $exception) {
 				$this->get('session')->getFlashBag()->add('error', $this->trans($exception->getMessage()));
@@ -135,21 +135,21 @@ class AuthController extends CantigaController
 			'form' => $form->createView(),
 		]);
 	}
-	
+
 	public function passwordRecoveryCompleteAction($id, $provisionKey, Request $request)
 	{
 		try {
 			$repository = $this->get('cantiga.user_provider');
 			$pcRequest = $repository->getPasswordRecoveryRequest($id);
 			$pcRequest->verify($provisionKey, $_SERVER['REMOTE_ADDR']);
-			
+
 			if($pcRequest->getStatus() == PasswordRecoveryRequest::STATUS_OK) {
 				$intent = new PasswordRecoveryCompleteIntent($repository, $this->get('event_dispatcher'), $this->get('security.encoder_factory'));
 				$form = $this->createForm(PasswordRecoveryCompleteForm::class, $intent, ['action' => $this->generateUrl('cantiga_auth_recovery_complete', ['id' => $id, 'provisionKey' => $provisionKey])]);
 				$form->handleRequest($request);
-				if ($form->isValid()) {
+				if ($form->isSubmitted() && $form->isValid()) {
 					try {
-						$intent->execute($pcRequest);			
+						$intent->execute($pcRequest);
 						return $this->render('CantigaCoreBundle:Auth:reset-password-success.html.twig');
 					} catch(PasswordRecoveryException $exception) {
 						$this->get('session')->getFlashBag()->add('error', $this->trans($exception->getMessage()));
@@ -166,7 +166,7 @@ class AuthController extends CantigaController
 			return $this->render('CantigaCoreBundle:Auth:reset-password-failure.html.twig');
 		}
 	}
-	
+
 	public function termsAction(Request $request)
 	{
 		$text = $this->getTextRepository()->getText(CoreTexts::TERMS_OF_USE_TEXT, $request);

@@ -9,7 +9,7 @@ Cantiga is a membership management software that helps non-profit organizations 
 the project of WIO and WIOSNA Associations that gathers more than 30 000 participants every year, and now it is available as an open-source
 software for everyone.
 
-Cantiga is written using PHP7 and Symfony Framework 3.1.
+Cantiga is written using PHP7 and Symfony Framework 3.2.
 
 If you are interested how Cantiga works, and what features it offers, please take a look at the project website and the user documentation.
 

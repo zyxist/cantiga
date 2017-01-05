@@ -155,7 +155,7 @@ class ProjectCourseController extends ProjectPageController
 		$action->slug($this->getSlug());
 		return $action->run($this, $id, $request);
 	}
-	
+
 	/**
 	 * @Route("/import", name="project_course_import")
 	 */
@@ -191,7 +191,7 @@ class ProjectCourseController extends ProjectPageController
 			$form = $this->createForm(CourseTestUploadForm::class);
 			$form->handleRequest($request);
 
-			if ($form->isValid()) {
+			if ($form->isSubmitted() && $form->isValid()) {
 				$data = $form->getData();
 				if (!$data['file'] instanceof UploadedFile) {
 					return $this->showPageWithError($this->trans('An error occurred during uploading the test questions.'), $this->crudInfo->getInfoPage(), array('id' => $id, 'slug' => $this->getSlug()));
@@ -230,7 +230,7 @@ class ProjectCourseController extends ProjectPageController
 	{
 		return (int) $this->getProjectSettings()->get(CourseSettings::MIN_QUESTION_NUM)->getValue();
 	}
-	
+
 	public function getImportService(): ImporterInterface
 	{
 		return $this->get('cantiga.importer');

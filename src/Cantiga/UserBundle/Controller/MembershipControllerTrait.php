@@ -75,13 +75,13 @@ trait MembershipControllerTrait
 			$role = $repository->getRole($managedPlace->getPlace(), $request->get('r'));
 			$note = $request->get('n');
 			$showDownstreamContactData = (bool) $request->get('c');
-			
+
 			return new JsonResponse($repository->editMember($managedPlace->getPlace(), $member, $role, $note, $showDownstreamContactData));
 		} catch(Exception $exception) {
 			return ['status' => 0, 'error' => $exception->getMessage()];
 		}
 	}
-	
+
 	public function apiRemove(Request $request)
 	{
 		try {
@@ -100,12 +100,12 @@ trait MembershipControllerTrait
 		if ($this instanceof WorkspaceController) {
 			$args['slug'] = $this->getSlug();
 		}
-		try {			
+		try {
 			$managedPlace = $this->getManagedPlace();
 			$roleResolver = $this->get('cantiga.roles');
 			$repository = $this->get('cantiga.user.repo.invitation');
 			$invitation = new Invitation();
-			
+
 			$form = $this->createForm(InvitationForm::class, $invitation, [
 				'action' => $this->generateUrl(static::INVITATION_PAGE, $args),
 				'roles' => $roleResolver->getRoles($managedPlace->getTypeName()),
@@ -113,10 +113,10 @@ trait MembershipControllerTrait
 				'showContactHelpText' => 'AccessOthersContactsFrom'.$managedPlace->getTypeName().'HintText'
 			]);
 			$form->handleRequest($request);
-			if ($form->isValid()) {
+			if ($form->isSubmitted() && $form->isValid()) {
 				$invitation->setInviter($this->getUser());
 				$invitation->setPlace($managedPlace->getPlace());
-				
+
 				$repository->invite($invitation);
 				return $this->showPageWithMessage($this->trans('The invitation has been sent.', [], 'users'), static::INDEX_PAGE, $args);
 			}
@@ -131,11 +131,11 @@ trait MembershipControllerTrait
 			return $this->showPageWithError($this->trans($ex->getMessage()), static::INDEX_PAGE, $args);
 		}
 	}
-	
+
 	abstract protected function getExtraArgs(): array;
-	
+
 	abstract protected function getManagedPlace(): HierarchicalInterface;
-	
+
 	private function isShowContactsManageable(HierarchicalInterface $place): bool
 	{
 		return ($place->getTypeName() != 'Area');

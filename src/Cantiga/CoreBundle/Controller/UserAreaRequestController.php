@@ -50,7 +50,7 @@ class UserAreaRequestController extends UserPageController
 {
 	const AREA_REQUEST_FLOW = 'cantiga.core.area_request_flow';
 	const REPOSITORY_NAME = 'cantiga.core.repo.user_area_request';
-	
+
 	/**
 	 * @var CRUDInfo
 	 */
@@ -144,14 +144,14 @@ class UserAreaRequestController extends UserPageController
 			return new JsonResponse(['status' => 0]);
 		}
 	}
-	
+
 	/**
 	 * @Route("/create/{step}/{projectId}", name="user_area_request_create", requirements={"step": "(1|2|3|4)"}, defaults={"step": 1, "projectId": "select"},)
 	 */
 	public function createAction($step, $projectId, Request $request)
 	{
 		$this->breadcrumbs()->entryLink($this->trans('Request a new area', [], 'pages'), $this->crudInfo->getInsertPage(), ['step' => $step]);
-		
+
 		switch ($step) {
 			case 1:
 				return $this->createStep1($request);
@@ -163,7 +163,7 @@ class UserAreaRequestController extends UserPageController
 				return $this->createStep4($projectId, $request);
 		}
 	}
-	
+
 	public function createStep1(Request $request)
 	{
 		$this->getAreaRequestFlow()->clearSession($request->getSession());
@@ -174,7 +174,7 @@ class UserAreaRequestController extends UserPageController
 			'availableProjects' => $repository->getAvailableProjects(),
 		));
 	}
-	
+
 	public function createStep2($projectId, Request $request)
 	{
 		if (!ctype_digit($projectId)) {
@@ -193,8 +193,8 @@ class UserAreaRequestController extends UserPageController
 				]
 			);
 			$form->handleRequest($request);
-			if ($form->isValid()) {
-				$this->getAreaRequestFlow()->persistRequest($request->getSession(), $item);				
+			if ($form->isSubmitted() && $form->isValid()) {
+				$this->getAreaRequestFlow()->persistRequest($request->getSession(), $item);
 				return $this->redirectToRoute($this->crudInfo->getInsertPage(), ['step' => 3, 'projectId' => $projectId]);
 			}
 
@@ -211,7 +211,7 @@ class UserAreaRequestController extends UserPageController
 			return $this->showPageWithError($this->trans($ex->getMessage()), $this->crudInfo->getIndexPage());
 		}
 	}
-	
+
 	public function createStep3($projectId, Request $request)
 	{
 		if (!ctype_digit($projectId)) {
@@ -226,7 +226,7 @@ class UserAreaRequestController extends UserPageController
 				]
 			);
 			$form->handleRequest($request);
-			if ($form->isValid()) {
+			if ($form->isSubmitted() && $form->isValid()) {
 				$this->getAreaRequestFlow()->persistContactData($request->getSession(), $item);
 				return $this->redirectToRoute($this->crudInfo->getInsertPage(), ['step' => 4, 'projectId' => $projectId]);
 			}
@@ -238,7 +238,7 @@ class UserAreaRequestController extends UserPageController
 			return $this->showPageWithError($this->trans($ex->getMessage()), $this->crudInfo->getIndexPage());
 		}
 	}
-	
+
 	public function createStep4($projectId, Request $request)
 	{
 		$session = $request->getSession();
@@ -246,38 +246,38 @@ class UserAreaRequestController extends UserPageController
 			return $this->redirectToBeginning();
 		}
 		try {
-			list($settings, $project, $formModel) = $this->loadEnvironment($projectId);			
-			$id = $this->getAreaRequestFlow()->create($session, $project, $this->getUser());		
+			list($settings, $project, $formModel) = $this->loadEnvironment($projectId);
+			$id = $this->getAreaRequestFlow()->create($session, $project, $this->getUser());
 			return $this->render($this->crudInfo->getTemplateLocation().'insert-step4.html.twig', ['project' => $project, 'id' => $id]);
 		} catch (ModelException $ex) {
 			return $this->showPageWithError($this->trans($ex->getMessage()), $this->crudInfo->getIndexPage());
 		}
 	}
-	
+
 	private function redirectToBeginning()
 	{
 		return $this->redirectToRoute($this->crudInfo->getInsertPage(), ['step' => 1], 303);
 	}
-	
+
 	private function loadEnvironment($projectId): array
 	{
 		$settings = $this->getProjectSettings();
 		$project = $this->getAreaRequestRepository()->getAvailableProject($projectId);
-		
+
 		$settings->setProject($project);
 		$formModel = $this->getExtensionPoints()
 			->getImplementation(CoreExtensions::AREA_REQUEST_FORM, $project->createExtensionPointFilter()->fromSettings($settings, CoreSettings::AREA_REQUEST_FORM)
 		);
-		
+
 		$this->territoryRepository->setProject($project);
 		return [$settings, $project, $formModel];
 	}
-	
+
 	private function getAreaRequestRepository(): UserAreaRequestRepository
 	{
 		return $this->get(self::REPOSITORY_NAME);
 	}
-	
+
 	private function getAreaRequestFlow(): AreaRequestFlow
 	{
 		return $this->get(self::AREA_REQUEST_FLOW);
@@ -309,7 +309,7 @@ class UserAreaRequestController extends UserPageController
 
 			$form->handleRequest($request);
 
-			if ($form->isValid()) {
+			if ($form->isSubmitted() && $form->isValid()) {
 				$repository->update($item);
 				return $this->showPageWithMessage($this->trans('The area request has been updated.'), $this->crudInfo->getInfoPage(), ['id' => $item->getId()]);
 			}

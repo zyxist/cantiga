@@ -136,7 +136,7 @@ class AreaCourseController extends AreaPageController
 			$form = $testTrial->generateTestForm($this->createFormBuilder(), $this->getTranslator());
 			$form->handleRequest($request);
 
-			if ($form->isValid()) {
+			if ($form->isSubmitted() && $form->isValid()) {
 				$this->get('session')->remove('trial');
 				$ok = $testTrial->validateTestTrial($form->getData());
 				$repo->completeTrial($result, $membership->getPlace(), $testTrial);

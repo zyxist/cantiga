@@ -76,19 +76,19 @@ class UserInvitationController extends UserPageController
 			$invitation = $this->getInvitationRepository()->getItem($id, $this->getUser());
 			$project = $this->getContactRepository()->getPlaceProject($invitation->getPlace());
 			$contactData = $this->getContactRepository()->findContactData($project, $this->getUser());
-			
+
 			$form = $this->createForm(
 				ContactDataForm::class, $contactData, [
 					'action' => $this->generateUrl('user_invitation_accept', ['id' => $id]),
 				]
 			);
 			$form->handleRequest($request);
-			if ($form->isValid()) {
+			if ($form->isSubmitted() && $form->isValid()) {
 				$this->getContactRepository()->persistContactData($contactData);
 				$this->getInvitationRepository()->accept($id, $this->getUser());
 				return $this->showPageWithMessage($this->trans('InvitationAcceptedText', [], 'users'), 'user_invitation_index');
 			}
-			
+
 			$this->breadcrumbs()
 				->entryLink($this->trans('Invitations', [], 'pages'), 'user_invitation_index')
 				->link($this->trans('Accept invitation', [], 'pages'), 'user_invitation_accept', ['id' => $id]);
@@ -116,12 +116,12 @@ class UserInvitationController extends UserPageController
 			return $this->showPageWithError($this->trans($ex->getMessage(), [], 'users'), 'user_invitation_index');
 		}
 	}
-	
+
 	private function getInvitationRepository(): InvitationRepository
 	{
 		return $this->get(self::REPOSITORY_NAME);
 	}
-	
+
 	private function getContactRepository(): ContactRepository
 	{
 		return $this->get('cantiga.user.repo.contact');
