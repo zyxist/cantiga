@@ -1,4 +1,21 @@
 <?php
+/*
+ * This file is part of Cantiga Project. Copyright 2016 Cantiga contributors.
+ *
+ * Cantiga Project is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Cantiga Project is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Foobar; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 namespace Cantiga\CoreBundle\Api\Actions;
 
 use Cantiga\CoreBundle\Api\Controller\CantigaController;
@@ -26,7 +43,7 @@ class EditAction extends AbstractAction
 		$this->updateOperation = function($repository, $item) {
 			$repository->update($item);
 		};
-		$this->formBuilder = function($controller, $item, $formType, $action) use($formType, $options) {
+		$this->formBuilder = function($controller, $item, $formTypeParam, $action) use($formType, $options) {
 			return $controller->createForm($formType, $item, array_merge(['action' => $action], $options));
 		};
 	}

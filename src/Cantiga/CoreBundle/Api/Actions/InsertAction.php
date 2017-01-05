@@ -29,8 +29,6 @@ use Symfony\Component\Serializer\Exception\LogicException;
 
 /**
  * Generic action for handling forms that create a new entity.
- *
- * @author Tomasz Jędrzejewski
  */
 class InsertAction extends AbstractAction
 {
@@ -48,7 +46,7 @@ class InsertAction extends AbstractAction
 			return $repository->insert($item);
 		};
 		if (null !== $formType) {
-			$this->formBuilder = function($controller, $item, $formType, $action) use($formType, $options) {
+			$this->formBuilder = function($controller, $item, $formTypeParam, $action) use($formType, $options) {
 				return $controller->createForm($formType, $item, array_merge(['action' => $action], $options));
 			};
 		}
