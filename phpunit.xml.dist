@@ -9,6 +9,7 @@
 >
     <testsuites>
         <testsuite name="Cantiga Test Suite">
+			<directory>src/*/Components/*/Tests</directory>
             <directory>src/*/*Bundle/Tests</directory>
             <directory>src/*/Bundle/*Bundle/Tests</directory>
             <directory>src/*Bundle/Tests</directory>

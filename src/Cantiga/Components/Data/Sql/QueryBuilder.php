@@ -61,7 +61,7 @@ class QueryBuilder
 		return $this;
 	}
 
-	public function from(string $table, string $alias): self
+	public function from(string $table, ?string $alias = null): self
 	{
 		$this->from = ['table' => $table, 'alias' => $alias];
 		return $this;
@@ -259,7 +259,7 @@ class QueryBuilder
 			}
 			$first = false;
 		}
-		$query .= ' FROM `'.$this->from['table'].'` AS `'.$this->from['alias'].'` ';
+		$query .= $this->buildFromClause();
 		foreach ($this->joins as $join) {
 			$query .= ' '.$join->build();
 		}
@@ -284,5 +284,14 @@ class QueryBuilder
 			$query .= ' LIMIT '.$this->limit.' OFFSET '.$this->offset;
 		}
 		return $query;
+	}
+
+	private function buildFromClause(): string
+	{
+		if (!empty($this->from['alias'])) {
+			return ' FROM `'.$this->from['table'].'` AS `'.$this->from['alias'].'` ';
+		} else {
+			return ' FROM `'.$this->from['table'].'` ';
+		}
 	}
 }
