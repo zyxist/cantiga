@@ -27,8 +27,9 @@ use Cantiga\CoreBundle\Event\GroupEvent;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Form\EntityTransformerInterface;
-use Cantiga\Metamodel\QueryBuilder;
-use Cantiga\Metamodel\QueryClause;
+use Cantiga\Components\Data\Sql\QueryBuilder;
+use Cantiga\Components\Data\Sql\QueryClause;
+use Cantiga\Components\Data\Sql\Join;
 use Cantiga\Metamodel\Transaction;
 use Doctrine\DBAL\Connection;
 use PDO;
@@ -37,7 +38,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class ProjectGroupRepository implements EntityTransformerInterface
 {
 	/**
-	 * @var Connection 
+	 * @var Connection
 	 */
 	private $conn;
 	/**
@@ -53,19 +54,19 @@ class ProjectGroupRepository implements EntityTransformerInterface
 	 * @var Project
 	 */
 	private $project;
-	
+
 	public function __construct(Connection $conn, Transaction $transaction, EventDispatcherInterface $eventDispatcher)
 	{
 		$this->conn = $conn;
 		$this->transaction = $transaction;
 		$this->eventDispatcher = $eventDispatcher;
 	}
-	
+
 	public function setProject(Project $project)
 	{
 		$this->project = $project;
 	}
-	
+
 	/**
 	 * @return DataTable
 	 */
@@ -79,7 +80,7 @@ class ProjectGroupRepository implements EntityTransformerInterface
 			->column('areaNum', 'i.areaNum');
 		return $dt;
 	}
-	
+
 	public function listData(DataTable $dataTable)
 	{
 		$qb = QueryBuilder::select()
@@ -89,14 +90,14 @@ class ProjectGroupRepository implements EntityTransformerInterface
 			->field('p.memberNum', 'memberNum')
 			->field('i.areaNum', 'areaNum')
 			->from(CoreTables::GROUP_TBL, 'i')
-			->join(CoreTables::PLACE_TBL, 'p', QueryClause::clause('p.id = i.placeId'))
-			->leftJoin(CoreTables::GROUP_CATEGORY_TBL, 'c', QueryClause::clause('c.id = i.categoryId'))
-			->where(QueryClause::clause('i.projectId = :projectId', ':projectId', $this->project->getId()));	
-		
+			->join(Join::inner(CoreTables::PLACE_TBL, 'p', QueryClause::clause('p.id = i.placeId')))
+			->join(Join::left(CoreTables::GROUP_CATEGORY_TBL, 'c', QueryClause::clause('c.id = i.categoryId')))
+			->where(QueryClause::clause('i.projectId = :projectId', ':projectId', $this->project->getId()));
+
 		$countingQuery = QueryBuilder::select()
 			->from(CoreTables::GROUP_TBL, 'i')
-			->where(QueryClause::clause('i.projectId = :projectId', ':projectId', $this->project->getId()));	
-		
+			->where(QueryClause::clause('i.projectId = :projectId', ':projectId', $this->project->getId()));
+
 		$recordsTotal = QueryBuilder::copyWithoutFields($countingQuery)
 			->field('COUNT(i.id)', 'cnt')
 			->where($dataTable->buildCountingCondition($qb->getWhere()))
@@ -113,7 +114,7 @@ class ProjectGroupRepository implements EntityTransformerInterface
 			$qb->where($dataTable->buildFetchingCondition($qb->getWhere()))->fetchAll($this->conn)
 		);
 	}
-	
+
 	/**
 	 * @return Group
 	 */
@@ -132,7 +133,7 @@ class ProjectGroupRepository implements EntityTransformerInterface
 			throw $exception;
 		}
 	}
-	
+
 	public function findMembers(Group $group)
 	{
 		$items = $this->conn->fetchAll('SELECT u.name, u.avatar, p.location, p.telephone, p.publicMail, p.privShowTelephone, p.privShowPublicMail, m.note '
@@ -140,14 +141,14 @@ class ProjectGroupRepository implements EntityTransformerInterface
 			. 'INNER JOIN `'.CoreTables::USER_PROFILE_TBL.'` p ON p.`userId` = u.`id` '
 			. 'INNER JOIN `'.CoreTables::GROUP_MEMBER_TBL.'` m ON m.`userId` = u.`id` '
 			. 'WHERE m.`groupId` = :groupId ORDER BY m.`role` DESC, u.`name`', [':groupId' => $group->getId()]);
-		
+
 		foreach ($items as &$item) {
 			$item['publicMail'] = (User::evaluateUserPrivacy($item['privShowPublicMail'], $this->project) ? $item['publicMail'] : '');
 			$item['telephone'] = (User::evaluateUserPrivacy($item['privShowTelephone'], $this->project) ? $item['telephone'] : '');
 		}
 		return $items;
 	}
-	
+
 	public function findGroupAreas(Group $group)
 	{
 		$this->transaction->requestTransaction();
@@ -163,7 +164,7 @@ class ProjectGroupRepository implements EntityTransformerInterface
 			throw $exception;
 		}
 	}
-	
+
 	public function insert(Group $item)
 	{
 		$this->transaction->requestTransaction();
@@ -176,7 +177,7 @@ class ProjectGroupRepository implements EntityTransformerInterface
 			throw $exception;
 		}
 	}
-	
+
 	public function update(Group $item)
 	{
 		$this->transaction->requestTransaction();
@@ -188,7 +189,7 @@ class ProjectGroupRepository implements EntityTransformerInterface
 			throw $exception;
 		}
 	}
-	
+
 	public function remove(Group $item)
 	{
 		$this->transaction->requestTransaction();
@@ -200,7 +201,7 @@ class ProjectGroupRepository implements EntityTransformerInterface
 			throw $exception;
 		}
 	}
-	
+
 	public function getFormChoices()
 	{
 		$this->transaction->requestTransaction();

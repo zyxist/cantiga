@@ -27,12 +27,12 @@ use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
 use Cantiga\Metamodel\Capabilities\InsertableEntityInterface;
 use Cantiga\Metamodel\Capabilities\RemovableEntityInterface;
 use Cantiga\Metamodel\DataMappers;
-use Cantiga\Metamodel\Join;
-use Cantiga\Metamodel\Membership;
-use Cantiga\Metamodel\QueryBuilder;
-use Cantiga\Metamodel\QueryClause;
-use Cantiga\Metamodel\QueryElement;
-use Cantiga\Metamodel\QueryOperator;
+use Cantiga\Components\Data\Sql\Join;
+use Cantiga\Components\Hierarchy\Entity\Membership;
+use Cantiga\Components\Data\Sql\QueryBuilder;
+use Cantiga\Components\Data\Sql\QueryClause;
+use Cantiga\Components\Data\Sql\QueryElementInterface;
+use Cantiga\Components\Data\Sql\QueryOperator;
 use Cantiga\UserBundle\UserTables;
 use Doctrine\DBAL\Connection;
 use PDO;
@@ -63,22 +63,17 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 	private $location;
 	private $settingsLanguage;
 	private $settingsTimezone;
-	
+
 	private $afterLogin = null;
 	/**
 	 * The content of this array is auto-populated by the framework.
 	 * @var array
 	 */
 	private $roles = ['ROLE_USER'];
-	/**
-	 * Information about the membership in the current context.
-	 * @var Membership
-	 */
-	private $membership = null;
-	
+
 	/**
 	 * Creates the user for the purpose of the automatic tests.
-	 * 
+	 *
 	 * @param string $login
 	 * @param string $name
 	 */
@@ -108,15 +103,15 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 		$user->admin = 0;
 		return $user;
 	}
-	
-	public static function fetchByCriteria(Connection $conn, QueryElement $queryElement, bool $allowInactive = false)
+
+	public static function fetchByCriteria(Connection $conn, QueryElementInterface $queryElement, bool $allowInactive = false)
 	{
 		if ($allowInactive) {
 			$clause = QueryClause::clause('u.`removed` = 0');
 		} else {
 			$clause = QueryClause::clause('u.`active` = 1 AND u.`removed` = 0');
 		}
-		
+
 		$qb = QueryBuilder::select()
 			->field('u.*')
 			->field('p.*')
@@ -124,8 +119,8 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 			->field('l.`name`', 'language_name')
 			->field('l.`locale`', 'language_locale')
 			->from(CoreTables::USER_TBL, 'u')
-			->join(CoreTables::USER_PROFILE_TBL, 'p', QueryClause::clause('p.`userId` = u.`id`'))
-			->join(CoreTables::LANGUAGE_TBL, 'l', QueryClause::clause('l.`id` = p.`settingsLanguageId`'))
+			->join(Join::inner(CoreTables::USER_PROFILE_TBL, 'p', QueryClause::clause('p.`userId` = u.`id`')))
+			->join(Join::inner(CoreTables::LANGUAGE_TBL, 'l', QueryClause::clause('l.`id` = p.`settingsLanguageId`')))
 			->where(QueryOperator::op('AND')
 				->expr($clause)
 				->expr($queryElement));
@@ -136,38 +131,11 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 		return User::fromArray($data);
 	}
 
-	public static function fetchLinkedProfile(Connection $conn, MembershipRoleResolverInterface $roleResolver, IdentifiableInterface $item, Join $join, QueryElement $element)
-	{
-		$qb = QueryBuilder::select()
-			->field('u.*')
-			->field('p.*')
-			->field('m.role AS `membership_role`')
-			->field('m.note AS `membership_note`')
-			->field('l.`id`', 'language_id')
-			->field('l.`name`', 'language_name')
-			->field('l.`locale`', 'language_locale')
-			->from(CoreTables::USER_TBL, 'u')
-			->join(CoreTables::USER_PROFILE_TBL, 'p', QueryClause::clause('p.`userId` = u.`id`'))
-			->join(CoreTables::LANGUAGE_TBL, 'l', QueryClause::clause('l.`id` = p.`settingsLanguageId`'))
-			->join($join)
-			->where(QueryOperator::op('AND')
-				->expr(QueryClause::clause('u.`active` = 1 AND u.`removed` = 0'))
-				->expr($element));
-		$data = $qb->fetchAssoc($conn);
-		if (false === $data) {
-			return false;
-		}
-		$user = User::fromArray($data);
-		$membership = new Membership($item, $roleResolver->getRole(get_class($item), $data['membership_role']), $data['membership_note']);
-		User::installMembershipInformation($user, $membership);
-		return $user;
-	}
-
 	public static function fromArray($array, $prefix = '')
 	{
 		$user = new User;
 		DataMappers::fromArray($user, $array, $prefix);
-		
+
 		if (isset($array['language_id'])) {
 			$user->settingsLanguage = Language::fromArray($array, 'language');
 		}
@@ -176,17 +144,12 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 		}
 		return $user;
 	}
-	
-	public static function installMembershipInformation(User $user, Membership $membership)
-	{
-		$user->membership = $membership;
-	}
-	
+
 	public static function getRelationships()
 	{
 		return ['settingsLanguage'];
 	}
-	
+
 	public static function loadValidatorMetadata(ClassMetadata $metadata)
 	{
 		$metadata->addPropertyConstraint('location', new Length(array('max' => 100)));
@@ -221,8 +184,8 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 	{
 		return $this->lastVisit;
 	}
-	
-	public function getAvatar()
+
+	public function getAvatar(): ?string
 	{
 		return $this->avatar;
 	}
@@ -245,13 +208,13 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 		$this->name = $name;
 		return $this;
 	}
-	
+
 	public function setPassword($password)
 	{
 		$this->password = $password;
 		return $this;
 	}
-	
+
 	public function setSalt($salt)
 	{
 		$this->salt = $salt;
@@ -275,7 +238,7 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 		$this->lastVisit = $lastVisit;
 		return $this;
 	}
-	
+
 	public function setAvatar($avatar)
 	{
 		$this->avatar = $avatar;
@@ -306,7 +269,7 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 	{
 		return $this->login;
 	}
-	
+
 	public function getLocation()
 	{
 		return $this->location;
@@ -317,7 +280,7 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 		$this->location = $location;
 		return $this;
 	}
-	
+
 	public function getSettingsLanguage()
 	{
 		return $this->settingsLanguage;
@@ -339,7 +302,7 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 		$this->settingsTimezone = $settingsTimezone;
 		return $this;
 	}
-	
+
 	public function getRegisteredAt()
 	{
 		return $this->registeredAt;
@@ -356,7 +319,7 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 		$this->placeNum = $placeNum;
 		return $this;
 	}
-	
+
 	public function setRegisteredAt($registeredAt)
 	{
 		DataMappers::noOverwritingField($this->registeredAt);
@@ -374,7 +337,7 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 		$this->afterLogin = $afterLogin;
 		return $this;
 	}
-	
+
 	public function getAdmin()
 	{
 		return $this->admin;
@@ -385,18 +348,10 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 		$this->admin = $admin;
 		return $this;
 	}
-	
-	/**
-	 * @return Membership
-	 */
-	public function getMembership()
-	{
-		return $this->membership;
-	}
-	
+
 	/**
 	 * Adds a new role marker.
-	 * 
+	 *
 	 * @param string $role Role name. False values are silently ignored.
 	 */
 	public function addRole($role)
@@ -426,7 +381,7 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 		$this->name = $out['name'];
 		$this->email = $out['email'];
 	}
-	
+
 	public function checkPassword($encoder, $password)
 	{
 		if ($encoder instanceof EncoderFactoryInterface) {
@@ -457,7 +412,7 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 			DataMappers::id($this)
 		);
 	}
-	
+
 	public function updateCredentials(Connection $conn)
 	{
 		$conn->update(
@@ -475,7 +430,7 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 			['userId' => $this->getId()]
 		);
 	}
-	
+
 	public function updateSettings(Connection $conn)
 	{
 		$conn->update(
@@ -484,7 +439,7 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 			['userId' => $this->getId()]
 		);
 	}
-	
+
 	public function canRemove()
 	{
 		return true;
@@ -495,30 +450,29 @@ class User implements UserInterface, IdentifiableInterface, InsertableEntityInte
 		$conn->update(CoreTables::USER_TBL, ['removed' => 1, 'active' => 0, 'name' => '???'], DataMappers::id($this));
 		$conn->executeQuery('DELETE FROM `'.CoreTables::USER_PROFILE_TBL.'` WHERE `userId` = :id', [':id' => $this->getId()]);
 	}
-	
+
 	public function findPlaces(Connection $conn, MembershipRoleResolverInterface $roleResolver): array
 	{
-		$stmt = $conn->prepare('SELECT p.*, m.* '
-			. 'FROM `'.CoreTables::PLACE_TBL.'` p '
-			. 'INNER JOIN `'.UserTables::PLACE_MEMBERS_TBL.'` m ON m.`placeId` = p.`id` '
-			. 'WHERE m.`userId` = :userId '
-			. 'ORDER BY p.`type` DESC, p.`name`');
-		$stmt->bindValue(':userId', $this->getId());
-		$stmt->execute();
-		$results = [];
-		while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-			$results[] = new PlaceRef(
-				(int) $row['id'],
-				$row['name'],
-				$row['type'],
-				$row['slug'],
-				(bool) $row['archived'],
-				$roleResolver->getRole($row['type'], (int) $row['role']),
-				$row['note'],
-				(bool) $row['showDownstreamContactData']
-			);
-		}
-		$stmt->closeCursor();
-		return $results;
+		return QueryBuilder::select()
+			->field('p.*')
+			->field('m.*')
+			->from(CoreTables::PLACE_TBL, 'p')
+			->join(Join::inner(UserTables::PLACE_MEMBERS_TBL, 'm', QueryClause::clause('m.`placeId` = p.`id`')))
+			->where(QueryClause::clause('m.`userId` = :userId', ':userId', $this->getId()))
+			->orderBy('p.`type`', QueryBuilder::DESC)
+			->orderBy('p.`name`')
+			->postprocess(function(array $row) use($roleResolver): PlaceRef {
+				return new PlaceRef(
+					(int) $row['id'],
+					$row['name'],
+					$row['type'],
+					$row['slug'],
+					(bool) $row['archived'],
+					$roleResolver->getRole($row['type'], (int) $row['role']),
+					$row['note'],
+					(bool) $row['showDownstreamContactData']
+				);
+			})
+			->fetchAll($conn);
 	}
 }

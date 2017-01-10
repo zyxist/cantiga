@@ -24,8 +24,8 @@ use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Form\EntityTransformerInterface;
-use Cantiga\Metamodel\QueryBuilder;
-use Cantiga\Metamodel\QueryClause;
+use Cantiga\Components\Data\Sql\QueryBuilder;
+use Cantiga\Components\Data\Sql\QueryClause;
 use Cantiga\Metamodel\Transaction;
 use Doctrine\DBAL\Connection;
 use PDO;
@@ -34,7 +34,7 @@ use Symfony\Component\HttpFoundation\Request;
 class AppTextRepository implements EntityTransformerInterface
 {
 	/**
-	 * @var Connection 
+	 * @var Connection
 	 */
 	private $conn;
 	/**
@@ -45,18 +45,18 @@ class AppTextRepository implements EntityTransformerInterface
 	 * @var Project
 	 */
 	private $project;
-	
+
 	public function __construct(Connection $conn, Transaction $transaction)
 	{
 		$this->conn = $conn;
 		$this->transaction = $transaction;
 	}
-	
+
 	public function setProject(Project $project)
 	{
 		$this->project = $project;
 	}
-	
+
 	/**
 	 * @return DataTable
 	 */
@@ -69,7 +69,7 @@ class AppTextRepository implements EntityTransformerInterface
 			->column('locale', 'i.locale');
 		return $dt;
 	}
-	
+
 	public function listData(DataTable $dataTable)
 	{
 		$qb = QueryBuilder::select()
@@ -84,7 +84,7 @@ class AppTextRepository implements EntityTransformerInterface
 			$where = QueryClause::clause('i.`projectId` = :projectId', ':projectId', $this->project->getId());
 		}
 		$qb->where($where);
-		
+
 		$recordsTotal = QueryBuilder::copyWithoutFields($qb)
 			->field('COUNT(id)', 'cnt')
 			->where($dataTable->buildCountingCondition($qb->getWhere()))
@@ -101,7 +101,7 @@ class AppTextRepository implements EntityTransformerInterface
 			$qb->where($dataTable->buildFetchingCondition($qb->getWhere()))->fetchAll($this->conn)
 		);
 	}
-	
+
 	/**
 	 * @return AppText
 	 */
@@ -115,11 +115,11 @@ class AppTextRepository implements EntityTransformerInterface
 		}
 		return $item;
 	}
-	
+
 	/**
 	 * Fetches the text by the place name, the currently set locale, and optionally - the project. The method never
 	 * fails - if the text does not exist, it returns a dummy entity that indicates a missing text.
-	 * 
+	 *
 	 * @param string $place Name of the place, where the text is shown
 	 * @param \Cantiga\CoreBundle\Repository\Request $request Request is used to obtain the locale
 	 * @param Project $project If project is specified, project-specific texts are prioritized over general ones.
@@ -140,11 +140,11 @@ class AppTextRepository implements EntityTransformerInterface
 		}
 		return $item;
 	}
-	
+
 	/**
 	 * Fetches the text by the place name, the currently set locale, and optionally - the project. The method returns
 	 * <strong>false</strong>, if no text has been found.
-	 * 
+	 *
 	 * @param string $place Name of the place, where the text is shown
 	 * @param \Cantiga\CoreBundle\Repository\Request $request Request is used to obtain the locale
 	 * @param Project $project If project is specified, project-specific texts are prioritized over general ones.
@@ -156,7 +156,7 @@ class AppTextRepository implements EntityTransformerInterface
 		$this->transaction->requestTransaction();
 		return AppText::fetchByLocation($this->conn, $place, $locale, $project);
 	}
-	
+
 	public function insert(AppText $item)
 	{
 		$this->transaction->requestTransaction();
@@ -169,7 +169,7 @@ class AppTextRepository implements EntityTransformerInterface
 			$this->transaction->requestRollback();
 		}
 	}
-	
+
 	public function update(AppText $item)
 	{
 		$this->transaction->requestTransaction();
@@ -179,7 +179,7 @@ class AppTextRepository implements EntityTransformerInterface
 			$this->transaction->requestRollback();
 		}
 	}
-	
+
 	public function remove(AppText $item)
 	{
 		$this->transaction->requestTransaction();
@@ -189,7 +189,7 @@ class AppTextRepository implements EntityTransformerInterface
 			$this->transaction->requestRollback();
 		}
 	}
-	
+
 	public function getFormChoices()
 	{
 		$this->transaction->requestTransaction();

@@ -24,8 +24,8 @@ use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Form\EntityTransformerInterface;
-use Cantiga\Metamodel\QueryBuilder;
-use Cantiga\Metamodel\QueryClause;
+use Cantiga\Components\Data\Sql\QueryBuilder;
+use Cantiga\Components\Data\Sql\QueryClause;
 use Cantiga\Metamodel\Transaction;
 use Doctrine\DBAL\Connection;
 use PDO;
@@ -33,7 +33,7 @@ use PDO;
 class ProjectGroupCategoryRepository implements EntityTransformerInterface
 {
 	/**
-	 * @var Connection 
+	 * @var Connection
 	 */
 	private $conn;
 	/**
@@ -44,18 +44,18 @@ class ProjectGroupCategoryRepository implements EntityTransformerInterface
 	 * @var Project
 	 */
 	private $project;
-	
+
 	public function __construct(Connection $conn, Transaction $transaction)
 	{
 		$this->conn = $conn;
 		$this->transaction = $transaction;
 	}
-	
+
 	public function setProject(Project $project)
 	{
 		$this->project = $project;
 	}
-	
+
 	/**
 	 * @return DataTable
 	 */
@@ -66,7 +66,7 @@ class ProjectGroupCategoryRepository implements EntityTransformerInterface
 			->searchableColumn('name', 'i.name');
 		return $dt;
 	}
-	
+
 	public function listData(DataTable $dataTable)
 	{
 		$qb = QueryBuilder::select()
@@ -74,7 +74,7 @@ class ProjectGroupCategoryRepository implements EntityTransformerInterface
 			->field('i.name', 'name')
 			->from(CoreTables::GROUP_CATEGORY_TBL, 'i');
 		$where = QueryClause::clause('i.`projectId` = :projectId', ':projectId', $this->project->getId());
-		
+
 		$recordsTotal = QueryBuilder::copyWithoutFields($qb)
 			->field('COUNT(id)', 'cnt')
 			->where($dataTable->buildCountingCondition($where))
@@ -91,7 +91,7 @@ class ProjectGroupCategoryRepository implements EntityTransformerInterface
 			$qb->where($dataTable->buildFetchingCondition($where))->fetchAll($this->conn)
 		);
 	}
-	
+
 	/**
 	 * @return GroupCategory
 	 */
@@ -99,14 +99,14 @@ class ProjectGroupCategoryRepository implements EntityTransformerInterface
 	{
 		$this->transaction->requestTransaction();
 		$item = GroupCategory::fetchByProject($this->conn, $id, $this->project);
-		
+
 		if(false === $item) {
 			$this->transaction->requestRollback();
 			throw new ItemNotFoundException('The specified item has not been found.', $id);
 		}
 		return $item;
 	}
-	
+
 	public function insert(GroupCategory $item)
 	{
 		$this->transaction->requestTransaction();
@@ -117,7 +117,7 @@ class ProjectGroupCategoryRepository implements EntityTransformerInterface
 			throw $ex;
 		}
 	}
-	
+
 	public function update(GroupCategory $item)
 	{
 		$this->transaction->requestTransaction();
@@ -128,7 +128,7 @@ class ProjectGroupCategoryRepository implements EntityTransformerInterface
 			throw $ex;
 		}
 	}
-	
+
 	public function remove(GroupCategory $item)
 	{
 		$this->transaction->requestTransaction();

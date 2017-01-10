@@ -13,51 +13,50 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Foobar; if not, write to the Free Software
+ * along with Cantiga; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-namespace Cantiga\Metamodel;
+declare(strict_types=1);
+namespace Cantiga\Components\Data\Sql;
 
 /**
  * Represents a connection of two sub-expressions with a logical operator
  * in the <tt>WHERE</tt> or <tt>JOIN</tt> clauses.
- *
- * @author Tomasz Jędrzejewski
  */
-class QueryOperator implements QueryElement
+class QueryOperator implements QueryElementInterface
 {
 	private $operator;
 	private $expressions = array();
-	
-	private function __construct($operator)
+
+	private function __construct(string $operator)
 	{
 		$this->operator = $operator;
 	}
-	
-	public static function op($operator)
+
+	public static function op(string $operator): QueryOperator
 	{
 		return new QueryOperator($operator);
 	}
-	
-	public function expr(QueryElement $element = null)
+
+	public function expr(?QueryElementInterface $element)
 	{
 		if (null !== $element) {
 			$this->expressions[] = $element;
 		}
 		return $this;
 	}
-	
-	public function registerBindings(QueryBuilder $qb)
+
+	public function registerBindings(QueryBuilder $qb): void
 	{
 		foreach ($this->expressions as $expr) {
 			$expr->registerBindings($qb);
 		}
 	}
 
-	public function build()
+	public function build(): string
 	{
 		if (sizeof($this->expressions) == 0) {
-			return null;
+			return '';
 		}
 		if (sizeof($this->expressions) == 1) {
 			return '('.$this->expressions[0]->build().')';
@@ -65,7 +64,7 @@ class QueryOperator implements QueryElement
 		$subItems = array();
 		foreach($this->expressions as $expr) {
 			$result = $expr->build();
-			if (null !== $result) {
+			if (!empty($result)) {
 				$subItems[] = $result;
 			}
 		}

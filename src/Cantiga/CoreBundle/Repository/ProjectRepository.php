@@ -28,8 +28,8 @@ use Cantiga\CoreBundle\Settings\SettingsStorageInterface;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Form\EntityTransformerInterface;
-use Cantiga\Metamodel\QueryBuilder;
-use Cantiga\Metamodel\QueryClause;
+use Cantiga\Components\Data\Sql\QueryBuilder;
+use Cantiga\Components\Data\Sql\QueryClause;
 use Cantiga\Metamodel\TimeFormatterInterface;
 use Cantiga\Metamodel\Transaction;
 use Doctrine\DBAL\Connection;
@@ -39,7 +39,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class ProjectRepository implements EntityTransformerInterface
 {
 	/**
-	 * @var Connection 
+	 * @var Connection
 	 */
 	private $conn;
 	/**
@@ -47,7 +47,7 @@ class ProjectRepository implements EntityTransformerInterface
 	 */
 	private $transaction;
 	/**
-	 * @var TimeFormatterInterface 
+	 * @var TimeFormatterInterface
 	 */
 	private $timeFormatter;
 	/**
@@ -55,10 +55,10 @@ class ProjectRepository implements EntityTransformerInterface
 	 */
 	private $eventDispatcher;
 	/**
-	 * @var SettingsStorageInterface 
+	 * @var SettingsStorageInterface
 	 */
 	private $settingsStorage;
-	
+
 	public function __construct(Connection $conn, Transaction $transaction, TimeFormatterInterface $timeFormatter, EventDispatcherInterface $eventDispatcher, SettingsStorageInterface $settingsStorage)
 	{
 		$this->conn = $conn;
@@ -67,7 +67,7 @@ class ProjectRepository implements EntityTransformerInterface
 		$this->eventDispatcher = $eventDispatcher;
 		$this->settingsStorage = $settingsStorage;
 	}
-	
+
 	/**
 	 * @return DataTable
 	 */
@@ -81,7 +81,7 @@ class ProjectRepository implements EntityTransformerInterface
 			->column('areaRegistrationAllowed', 'i.areaRegistrationAllowed');
 		return $dt;
 	}
-	
+
 	public function listData(DataTable $dataTable)
 	{
 		$qb = QueryBuilder::select()
@@ -91,8 +91,8 @@ class ProjectRepository implements EntityTransformerInterface
 			->field('i.areasAllowed', 'areasAllowed')
 			->field('i.areaRegistrationAllowed', 'areaRegistrationAllowed')
 			->from(CoreTables::PROJECT_TBL, 'i')
-			->where(QueryClause::clause('i.archived = 0'));	
-		
+			->where(QueryClause::clause('i.archived = 0'));
+
 		$recordsTotal = QueryBuilder::copyWithoutFields($qb)
 			->field('COUNT(id)', 'cnt')
 			->where($dataTable->buildCountingCondition($qb->getWhere()))
@@ -102,7 +102,7 @@ class ProjectRepository implements EntityTransformerInterface
 			->where($dataTable->buildFetchingCondition($qb->getWhere()))
 			->fetchCell($this->conn);
 
-		$qb->postprocess(function(array $row) { 
+		$qb->postprocess(function(array $row) {
 			$row['createdAtFormatted'] = $this->timeFormatter->ago($row['createdAt']);
 			return $row;
 		});
@@ -114,7 +114,7 @@ class ProjectRepository implements EntityTransformerInterface
 			$qb->where($dataTable->buildFetchingCondition($qb->getWhere()))->fetchAll($this->conn)
 		);
 	}
-	
+
 	/**
 	 * @return Project
 	 */
@@ -132,7 +132,7 @@ class ProjectRepository implements EntityTransformerInterface
 			throw $ex;
 		}
 	}
-	
+
 	public function insert(Project $project)
 	{
 		$this->transaction->requestTransaction();
@@ -148,7 +148,7 @@ class ProjectRepository implements EntityTransformerInterface
 			throw $exception;
 		}
 	}
-	
+
 	public function update(Project $project)
 	{
 		$this->transaction->requestTransaction();
@@ -163,7 +163,7 @@ class ProjectRepository implements EntityTransformerInterface
 			throw $exception;
 		}
 	}
-	
+
 	public function getFormChoices()
 	{
 		$this->transaction->requestTransaction();

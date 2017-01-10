@@ -23,16 +23,17 @@ use Cantiga\LinksBundle\Entity\Link;
 use Cantiga\LinksBundle\LinksTables;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
-use Cantiga\Metamodel\QueryBuilder;
-use Cantiga\Metamodel\QueryClause;
+use Cantiga\Components\Data\Sql\QueryBuilder;
+use Cantiga\Components\Data\Sql\QueryClause;
 use Cantiga\Metamodel\Transaction;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\Translation\TranslatorInterface;
+use Exception;
 
 class LinkRepository
 {
 	/**
-	 * @var Connection 
+	 * @var Connection
 	 */
 	private $conn;
 	/**
@@ -43,18 +44,18 @@ class LinkRepository
 	 * @var Project
 	 */
 	private $project;
-	
+
 	public function __construct(Connection $conn, Transaction $transaction)
 	{
 		$this->conn = $conn;
 		$this->transaction = $transaction;
 	}
-	
+
 	public function setProject(Project $project)
 	{
 		$this->project = $project;
 	}
-	
+
 	/**
 	 * @return DataTable
 	 */
@@ -67,7 +68,7 @@ class LinkRepository
 			->column('order', 'i.order');
 		return $dt;
 	}
-	
+
 	public function listData(DataTable $dataTable, TranslatorInterface $translator)
 	{
 		$qb = QueryBuilder::select()
@@ -85,7 +86,7 @@ class LinkRepository
 			$row['presentedToText'] = $translator->trans(Link::presentedToText($row['presentedTo']));
 			return $row;
 		});
-		
+
 		$recordsTotal = QueryBuilder::copyWithoutFields($qb)
 			->field('COUNT(id)', 'cnt')
 			->where($dataTable->buildCountingCondition($where))
@@ -101,10 +102,10 @@ class LinkRepository
 			$qb->where($dataTable->buildFetchingCondition($where))->fetchAll($this->conn)
 		);
 	}
-	
+
 	/**
 	 * Fetches the list of links to present on the dashboard.
-	 * 
+	 *
 	 * @param int $presentationPlace
 	 */
 	public function findLinks($presentationPlace)
@@ -120,7 +121,7 @@ class LinkRepository
 			]);
 		}
 	}
-	
+
 	/**
 	 * @return Link
 	 */
@@ -132,14 +133,14 @@ class LinkRepository
 		} else {
 			$item = Link::fetchByProject($this->conn, $id, $this->project);
 		}
-		
+
 		if(false === $item) {
 			$this->transaction->requestRollback();
 			throw new ItemNotFoundException('The specified item has not been found.', $id);
 		}
 		return $item;
 	}
-	
+
 	public function insert(Link $item)
 	{
 		$this->transaction->requestTransaction();
@@ -150,7 +151,7 @@ class LinkRepository
 			throw $ex;
 		}
 	}
-	
+
 	public function update(Link $item)
 	{
 		$this->transaction->requestTransaction();
@@ -161,7 +162,7 @@ class LinkRepository
 			throw $ex;
 		}
 	}
-	
+
 	public function remove(Link $item)
 	{
 		$this->transaction->requestTransaction();

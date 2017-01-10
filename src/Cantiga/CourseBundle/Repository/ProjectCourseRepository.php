@@ -25,8 +25,8 @@ use Cantiga\CourseBundle\Entity\Course;
 use Cantiga\CourseBundle\Entity\CourseTest;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
-use Cantiga\Metamodel\QueryBuilder;
-use Cantiga\Metamodel\QueryClause;
+use Cantiga\Components\Data\Sql\QueryBuilder;
+use Cantiga\Components\Data\Sql\QueryClause;
 use Cantiga\Metamodel\TimeFormatterInterface;
 use Cantiga\Metamodel\Transaction;
 use Doctrine\DBAL\Connection;
@@ -34,7 +34,7 @@ use Doctrine\DBAL\Connection;
 class ProjectCourseRepository
 {
 	/**
-	 * @var Connection 
+	 * @var Connection
 	 */
 	private $conn;
 	/**
@@ -45,18 +45,18 @@ class ProjectCourseRepository
 	 * @var Project
 	 */
 	private $project;
-	
+
 	public function __construct(Connection $conn, Transaction $transaction)
 	{
 		$this->conn = $conn;
 		$this->transaction = $transaction;
 	}
-	
+
 	public function setProject(Project $project)
 	{
 		$this->project = $project;
 	}
-	
+
 	/**
 	 * @return DataTable
 	 */
@@ -71,7 +71,7 @@ class ProjectCourseRepository
 			->column('displayOrder', 'i.displayOrder');
 		return $dt;
 	}
-	
+
 	public function listData(DataTable $dataTable, TimeFormatterInterface $timeFormatter)
 	{
 		$qb = QueryBuilder::select()
@@ -93,7 +93,7 @@ class ProjectCourseRepository
 			}
 			return $row;
 		});
-		
+
 		$recordsTotal = QueryBuilder::copyWithoutFields($qb)
 			->field('COUNT(id)', 'cnt')
 			->where($dataTable->buildCountingCondition($qb->getWhere()))
@@ -109,7 +109,7 @@ class ProjectCourseRepository
 			$qb->where($dataTable->buildFetchingCondition($qb->getWhere()))->fetchAll($this->conn)
 		);
 	}
-	
+
 	/**
 	 * @return Course
 	 */
@@ -117,14 +117,14 @@ class ProjectCourseRepository
 	{
 		$this->transaction->requestTransaction();
 		$item = Course::fetchByProject($this->conn, $id, $this->project);
-		
+
 		if(false === $item) {
 			$this->transaction->requestRollback();
 			throw new ItemNotFoundException('The specified item has not been found.', $id);
 		}
 		return $item;
 	}
-	
+
 	public function insert(Course $item)
 	{
 		$this->transaction->requestTransaction();
@@ -135,7 +135,7 @@ class ProjectCourseRepository
 			throw $ex;
 		}
 	}
-	
+
 	public function saveTest(Course $item)
 	{
 		$this->transaction->requestTransaction();
@@ -148,7 +148,7 @@ class ProjectCourseRepository
 			throw $ex;
 		}
 	}
-	
+
 	public function update(Course $item)
 	{
 		$this->transaction->requestTransaction();
@@ -159,7 +159,7 @@ class ProjectCourseRepository
 			throw $ex;
 		}
 	}
-	
+
 	public function remove(Course $item)
 	{
 		$this->transaction->requestTransaction();
@@ -170,7 +170,7 @@ class ProjectCourseRepository
 			throw $ex;
 		}
 	}
-	
+
 	public function importFrom(HierarchicalInterface $source, HierarchicalInterface $destination)
 	{
 		$this->transaction->requestTransaction();
@@ -196,7 +196,7 @@ class ProjectCourseRepository
 					$item->setNotes($course['notes']);
 					$item->setIsPublished(false);
 					$id = $item->insert($this->conn);
-					
+
 					if (!empty($course['testStructure'])) {
 						$test = new CourseTest($item, $course['testStructure']);
 						$test->save($this->conn);

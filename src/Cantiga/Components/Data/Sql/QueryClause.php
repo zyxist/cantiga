@@ -13,28 +13,28 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Foobar; if not, write to the Free Software
+ * along with Cantiga; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 declare(strict_types=1);
-namespace Cantiga\Metamodel;
+namespace Cantiga\Components\Data\Sql;
 
 /**
  * Represents a single expression in the <tt>WHERE</tt> clause. It can hold up to one
  * data binding.
  */
-class QueryClause implements QueryElement
+class QueryClause implements QueryElementInterface
 {
 	private $clause;
 	private $bindingName;
 	private $bindingValue;
-	
+
 	public function __construct(string $clause)
 	{
 		$this->clause = $clause;
 	}
-	
-	public static function clause(string $clause, string $binding = null, $value = null): QueryClause
+
+	public static function clause(string $clause, ?string $binding = null, $value = null): QueryClause
 	{
 		$cc = new QueryClause($clause);
 		if (null !== $binding) {
@@ -43,14 +43,14 @@ class QueryClause implements QueryElement
 		}
 		return $cc;
 	}
-	
-	public function registerBindings(QueryBuilder $qb)
+
+	public function registerBindings(QueryBuilder $qb): void
 	{
 		if (null !== $this->bindingName) {
 			$qb->bind($this->bindingName, $this->bindingValue);
 		}
 	}
-	
+
 	public function getClause(): string
 	{
 		return $this->clause;

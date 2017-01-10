@@ -23,8 +23,8 @@ use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\CoreBundle\Repository\ProjectTerritoryRepository;
 use Cantiga\Metamodel\DataFilterInterface;
 use Cantiga\Metamodel\Form\EntityTransformer;
-use Cantiga\Metamodel\QueryClause;
-use Cantiga\Metamodel\QueryOperator;
+use Cantiga\Components\Data\Sql\QueryClause;
+use Cantiga\Components\Data\Sql\QueryOperator;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -41,18 +41,18 @@ class AreaRequestFilter implements DataFilterInterface
 	private $territory;
 	private $territoryRepository;
 	private $translator;
-	
+
 	public function __construct(TranslatorInterface $translator, ProjectTerritoryRepository $territoryRepository)
 	{
 		$this->translator = $translator;
 		$this->territoryRepository = $territoryRepository;
 	}
-	
+
 	public function setTargetProject(Project $project)
 	{
 		$this->territoryRepository->setProject($project);
 	}
-		
+
 	public function getStatus()
 	{
 		return $this->status;
@@ -74,7 +74,7 @@ class AreaRequestFilter implements DataFilterInterface
 		$this->territory = $territory;
 		return $this;
 	}
-	
+
 	public function createForm(FormBuilderInterface $formBuilder)
 	{
 		$formBuilder->setMethod('GET');
@@ -82,10 +82,10 @@ class AreaRequestFilter implements DataFilterInterface
 		$formBuilder->add('territory', ChoiceType::class, ['label' => 'Territory', 'choices' => $this->territoryRepository->getFormChoices(), 'required' => false]);
 		$formBuilder->add('submit', SubmitType::class, ['label' => 'Filter']);
 		$formBuilder->get('territory')->addModelTransformer(new EntityTransformer($this->territoryRepository));
-		
+
 		return $formBuilder->getForm();
 	}
-	
+
 	public function createFilterClause()
 	{
 		$op = QueryOperator::op(' AND ');
@@ -97,7 +97,7 @@ class AreaRequestFilter implements DataFilterInterface
 		}
 		return $op;
 	}
-	
+
 	public function createParamArray()
 	{
 		$result = [];
@@ -109,7 +109,7 @@ class AreaRequestFilter implements DataFilterInterface
 		}
 		return ['form' => $result];
 	}
-	
+
 	private function translateStatus(array $status)
 	{
 		foreach ($status as &$str) {

@@ -25,26 +25,26 @@ use Cantiga\CoreBundle\Entity\AppMail;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Form\EntityTransformerInterface;
-use Cantiga\Metamodel\QueryBuilder;
+use Cantiga\Components\Data\Sql\QueryBuilder;
 use Cantiga\Metamodel\Transaction;
 
 class AppMailRepository implements EntityTransformerInterface
 {
 	/**
-	 * @var Connection 
+	 * @var Connection
 	 */
 	private $conn;
 	/**
 	 * @var Transaction
 	 */
 	private $transaction;
-	
+
 	public function __construct(Connection $conn, Transaction $transaction)
 	{
 		$this->conn = $conn;
 		$this->transaction = $transaction;
 	}
-	
+
 	/**
 	 * @return DataTable
 	 */
@@ -57,7 +57,7 @@ class AppMailRepository implements EntityTransformerInterface
 			->column('locale', 'i.locale');
 		return $dt;
 	}
-	
+
 	public function listData(DataTable $dataTable)
 	{
 		$qb = QueryBuilder::select()
@@ -65,8 +65,8 @@ class AppMailRepository implements EntityTransformerInterface
 			->field('i.place', 'place')
 			->field('i.subject', 'subject')
 			->field('i.locale', 'locale')
-			->from(CoreTables::MAIL_TBL, 'i');	
-		
+			->from(CoreTables::MAIL_TBL, 'i');
+
 		$recordsTotal = QueryBuilder::copyWithoutFields($qb)
 			->field('COUNT(id)', 'cnt')
 			->where($dataTable->buildCountingCondition($qb->getWhere()))
@@ -83,7 +83,7 @@ class AppMailRepository implements EntityTransformerInterface
 			$qb->where($dataTable->buildFetchingCondition($qb->getWhere()))->fetchAll($this->conn)
 		);
 	}
-	
+
 	/**
 	 * @return AppText
 	 */
@@ -97,7 +97,7 @@ class AppMailRepository implements EntityTransformerInterface
 		}
 		return $item;
 	}
-	
+
 	public function insert(AppMail $item)
 	{
 		$this->transaction->requestTransaction();
@@ -107,7 +107,7 @@ class AppMailRepository implements EntityTransformerInterface
 			$this->transaction->requestRollback();
 		}
 	}
-	
+
 	public function update(AppMail $item)
 	{
 		$this->transaction->requestTransaction();
@@ -117,7 +117,7 @@ class AppMailRepository implements EntityTransformerInterface
 			$this->transaction->requestRollback();
 		}
 	}
-	
+
 	public function remove(AppMail $item)
 	{
 		$this->transaction->requestTransaction();
@@ -127,7 +127,7 @@ class AppMailRepository implements EntityTransformerInterface
 			$this->transaction->requestRollback();
 		}
 	}
-	
+
 	public function getFormChoices()
 	{
 		$this->transaction->requestTransaction();

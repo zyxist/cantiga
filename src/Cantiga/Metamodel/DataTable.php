@@ -19,24 +19,25 @@
 namespace Cantiga\Metamodel;
 
 use Symfony\Component\HttpFoundation\Request;
+use Cantiga\Components\Data\Sql\QueryBuilder;
+use Cantiga\Components\Data\Sql\QueryElementInterface;
+use Cantiga\Components\Data\Sql\QueryOperator;
 
 /**
  * Manages the server side processing of dynamic, JS-based data table. You specify all the columns used by your
  * repository, and the class automatically handles request parameter parsing, generating proper SQL query clauses
  * for sorting, pagination and searching. The class co-operates with Twig helper methods which produce the necessary
  * JavaScript code for columns directly from this definition.
- *
- * @author Tomasz Jędrzejewski
  */
 class DataTable
 {
 	const TYPE_ID = 0;
 	const TYPE_STD = 1;
 	const TYPE_SEARCHABLE = 2;
-	
+
 	// -- configuration
 	private $columns = array();
-	
+
 	// --- data retrieved from request
 	private $draw;
 	private $start;
@@ -44,68 +45,68 @@ class DataTable
 	private $searchString = null;
 	private $orders = array();
 	private $filter;
-	
+
 	/**
 	 * Defines the column with the row identifier.
-	 * 
+	 *
 	 * @param string $name Data set column name
 	 * @param string $dbColumn Column reference in SQL query.
-	 * @return Cantiga\Metamodel\DataTable
+	 * @return DataTable
 	 */
-	public function id($name, $dbColumn)
+	public function id($name, $dbColumn): self
 	{
 		$this->columns[] = ['type' => self::TYPE_ID, 'name' => $name, 'db' => $dbColumn];
 		return $this;
 	}
-	
+
 	/**
 	 * Defines a regular, sortable column.
-	 * 
+	 *
 	 * @param string $name Data set column name
 	 * @param string $dbColumn Column reference in SQL query.
-	 * @return Cantiga\Metamodel\DataTable
+	 * @return DataTable
 	 */
-	public function column($name, $dbColumn)
+	public function column($name, $dbColumn): self
 	{
 		$this->columns[] = ['type' => self::TYPE_STD, 'name' => $name, 'db' => $dbColumn];
 		return $this;
 	}
-	
+
 	/**
 	 * Defines the sortable column, which is also searchable. If the user types something in
 	 * the search field, all the searchable fields are checked - one of them must contain the
 	 * given phrase.
-	 * 
+	 *
 	 * @param string $name Data set column name
 	 * @param string $dbColumn Column reference in SQL query.
-	 * @return Cantiga\Metamodel\DataTable
+	 * @return DataTable
 	 */
-	public function searchableColumn($name, $dbColumn)
+	public function searchableColumn($name, $dbColumn): self
 	{
 		$this->columns[] = ['type' => self::TYPE_SEARCHABLE, 'name' => $name, 'db' => $dbColumn];
 		return $this;
 	}
-	
+
 	/**
 	 * Installs a filter. Usually the filter is a form that the user can customize. The filter allows
 	 * greater flexibility in choosing, what we want to see.
-	 * 
+	 *
 	 * @param \Cantiga\Metamodel\DataFilterInterface $filter
-	 * @return Cantiga\Metamodel\DataTable
+	 * @return DataTable
 	 */
-	public function filter(DataFilterInterface $filter)
+	public function filter(DataFilterInterface $filter): self
 	{
 		$this->filter = $filter;
 		return $this;
 	}
-	
+
 	/**
 	 * Checks if any filter is installed in this data table.
-	 * 
+	 *
 	 * @param string $filterType Checks that the filter is also an implementation of the specified class/interface
-	 * @return boolean
+	 * @return bool
 	 */
-	public function hasFilter($filterType = null)
+	public function hasFilter($filterType = null): bool
 	{
 		if (null === $this->filter) {
 			return false;
@@ -115,25 +116,25 @@ class DataTable
 		}
 		return true;
 	}
-	
+
 	/**
 	 * @return DataFilterInterface
 	 */
-	public function getFilter()
+	public function getFilter(): ?DataFilterInterface
 	{
 		return $this->filter;
 	}
 
 	/**
 	 * Processes the request and parses the variables produced by JS front-end for data tables.
-	 * 
+	 *
 	 * @param Request $request
 	 */
-	public function process(Request $request)
+	public function process(Request $request): void
 	{
 		$this->draw = (int) $request->get('draw', 1);
 		$search = $request->get('search');
-		
+
 		if (!empty($search['value'])) {
 			$this->searchString = str_replace('%', '', $search['value']);
 		}
@@ -146,43 +147,43 @@ class DataTable
 				}
 			}
 		}
-		
+
 		$this->start = (int) $request->get('start', 1);
 		$this->length = (int) $request->get('length', 25);
 		if ($this->length < 1 || $this->length > 100) {
 			$this->length = 25;
 		}
 	}
-	
+
 	/**
 	 * Returns the number of columns.
-	 * 
-	 * @return int 
+	 *
+	 * @return int
 	 */
-	public function columnCount()
+	public function columnCount(): int
 	{
 		return sizeof($this->columns);
 	}
-	
+
 	/**
 	 * Returns the definitions of all columns. The returned value is an array of enumerated rows
 	 * with three cells: <tt>type</tt>, <tt>key</tt> and <tt>db</tt>.
-	 * 
+	 *
 	 * @return array
 	 */
-	public function getColumnDefinitions()
+	public function getColumnDefinitions(): array
 	{
 		return $this->columns;
 	}
-	
+
 	/**
 	 * The method shall be used in the repositories to produce the part of the <tt>WHERE</tt>
 	 * clause that will be used for fetching the data from the database.
-	 * 
-	 * @param Cantiga\Metamodel\QueryElement $custom
+	 *
+	 * @param QueryElementInterface $custom
 	 * @return QueryOperator
 	 */
-	public function buildFetchingCondition(QueryElement $custom = null)
+	public function buildFetchingCondition(QueryElementInterface $custom = null): QueryElementInterface
 	{
 		$op = QueryOperator::op(' AND ');
 		$op
@@ -191,29 +192,29 @@ class DataTable
 			->expr($this->buildSearchClause());
 		return $op;
 	}
-	
+
 	/**
 	 * The method shall be used in the repositories to produce the part of the <tt>WHERE</tt>
 	 * clause that will be used for counting the number of available rows.
-	 * 
-	 * @param Cantiga\Metamodel\QueryElement $custom
+	 *
+	 * @param QueryElementInterface $custom
 	 * @return QueryOperator
 	 */
-	public function buildCountingCondition(QueryElement $custom = null)
+	public function buildCountingCondition(QueryElementInterface $custom = null): QueryElementInterface
 	{
 		$op = QueryOperator::op(' AND ');
 		return $op->expr($custom);
 	}
-	
-	private function buildFilterClause()
+
+	private function buildFilterClause(): ?QueryElementInterface
 	{
 		if (null !== $this->filter) {
 			return $this->filter->createFilterClause();
 		}
 		return null;
 	}
-	
-	private function buildSearchClause()
+
+	private function buildSearchClause(): ?QueryElementInterface
 	{
 		$bIdx = 0;
 		$op = QueryOperator::op(' OR ');
@@ -225,21 +226,21 @@ class DataTable
 				}
 			}
 		}
-		
+
 		if($bIdx > 0) {
 			return $op;
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Adds the <tt>ORDER BY</tt> and <tt>LIMIT</tt> clauses to the given SQL query, and returns
 	 * that query for convenience.
-	 * 
-	 * @param \Cantiga\Metamodel\QueryBuilder $qb
-	 * @return \Cantiga\Metamodel\QueryBuilder
+	 *
+	 * @param QueryBuilder $qb
+	 * @return QueryBuilder
 	 */
-	public function processQuery(QueryBuilder $qb)
+	public function processQuery(QueryBuilder $qb): QueryBuilder
 	{
 		$qb->limit($this->length, $this->start);
 		if (sizeof($this->orders) > 0) {
@@ -250,10 +251,10 @@ class DataTable
 		}
 		return $qb;
 	}
-	
+
 	/**
 	 * Constructs the final result set understood by the JavaScript front end.
-	 * 
+	 *
 	 * @param int $total The total number of rows
 	 * @param int $filtered The number of rows after applying the search filter.
 	 * @param array $data Rows displayed on the current page.

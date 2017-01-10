@@ -29,8 +29,9 @@ use Cantiga\CoreBundle\Filter\AreaFilter;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Form\EntityTransformerInterface;
-use Cantiga\Metamodel\QueryBuilder;
-use Cantiga\Metamodel\QueryClause;
+use Cantiga\Components\Data\Sql\QueryBuilder;
+use Cantiga\Components\Data\Sql\QueryClause;
+use Cantiga\Components\Data\Sql\Join;
 use Cantiga\Metamodel\Transaction;
 use Doctrine\DBAL\Connection;
 use Exception;
@@ -45,7 +46,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 class AreaMgmtRepository implements EntityTransformerInterface
 {
 	/**
-	 * @var Connection 
+	 * @var Connection
 	 */
 	private $conn;
 	/**
@@ -65,7 +66,7 @@ class AreaMgmtRepository implements EntityTransformerInterface
 	 * @var HierarchicalInterface
 	 */
 	private $place;
-	
+
 	public function __construct(Connection $conn, Transaction $transaction, EventDispatcherInterface $eventDispatcher, MembershipRoleResolverInterface $roleResolver)
 	{
 		$this->conn = $conn;
@@ -73,7 +74,7 @@ class AreaMgmtRepository implements EntityTransformerInterface
 		$this->eventDispatcher = $eventDispatcher;
 		$this->roleResolver = $roleResolver;
 	}
-	
+
 	public function setParentPlace(HierarchicalInterface $place)
 	{
 		$this->place = $place;
@@ -81,7 +82,7 @@ class AreaMgmtRepository implements EntityTransformerInterface
 			throw new LogicException('Unsupported place type: Area');
 		}
 	}
-	
+
 	/**
 	 * @return DataTable
 	 */
@@ -98,10 +99,10 @@ class AreaMgmtRepository implements EntityTransformerInterface
 			->column('memberNum', 'p.memberNum')
 			->column('percentCompleteness', 'i.percentCompleteness');
 
-		
+
 		return $dt;
 	}
-	
+
 	public function listData(DataTable $dataTable, TranslatorInterface $translator): array
 	{
 		$qb = QueryBuilder::select()
@@ -115,19 +116,19 @@ class AreaMgmtRepository implements EntityTransformerInterface
 			->field('p.memberNum', 'memberNum')
 			->field('i.percentCompleteness', 'percentCompleteness')
 			->from(CoreTables::AREA_TBL, 'i')
-			->join(CoreTables::PLACE_TBL, 'p', QueryClause::clause('i.placeId = p.id'))
-			->join(CoreTables::TERRITORY_TBL, 't', QueryClause::clause('i.territoryId = t.id'))
-			->join(CoreTables::AREA_STATUS_TBL, 's', QueryClause::clause('i.statusId = s.id'));
+			->join(Join::inner(CoreTables::PLACE_TBL, 'p', QueryClause::clause('i.placeId = p.id')))
+			->join(Join::inner(CoreTables::TERRITORY_TBL, 't', QueryClause::clause('i.territoryId = t.id')))
+			->join(Join::inner(CoreTables::AREA_STATUS_TBL, 's', QueryClause::clause('i.statusId = s.id')));
 		if ($this->place->isRoot()) {
 			$qb->where(QueryClause::clause('i.projectId = :projectId', ':projectId', $this->place->getId()));
 			if ($dataTable->hasFilter(AreaFilter::class) && $dataTable->getFilter()->isCategorySelected()) {
-				$qb->join(CoreTables::GROUP_TBL, 'g', QueryClause::clause('g.id = i.groupId'));
+				$qb->join(Join::inner(CoreTables::GROUP_TBL, 'g', QueryClause::clause('g.id = i.groupId')));
 			}
 		} else {
 			$qb->where(QueryClause::clause('i.groupId = :groupId', ':groupId', $this->place->getId()));
-			$qb->join(CoreTables::GROUP_TBL, 'g', QueryClause::clause('g.id = i.groupId'));
+			$qb->join(Join::inner(CoreTables::GROUP_TBL, 'g', QueryClause::clause('g.id = i.groupId')));
 		}
-		
+
 		$recordsTotal = QueryBuilder::copyWithoutFields($qb)
 			->field('COUNT(i.id)', 'cnt')
 			->where($dataTable->buildCountingCondition($qb->getWhere()))
@@ -149,7 +150,7 @@ class AreaMgmtRepository implements EntityTransformerInterface
 			$qb->where($dataTable->buildFetchingCondition($qb->getWhere()))->fetchAll($this->conn)
 		);
 	}
-	
+
 	public function getItem($id): Area
 	{
 		$this->transaction->requestTransaction();
@@ -165,7 +166,7 @@ class AreaMgmtRepository implements EntityTransformerInterface
 			throw $exception;
 		}
 	}
-	
+
 	public function findMembers(Area $area): array
 	{
 		$this->transaction->requestTransaction();
@@ -176,7 +177,7 @@ class AreaMgmtRepository implements EntityTransformerInterface
 			throw $exception;
 		}
 	}
-	
+
 	public function insert(Area $item): int
 	{
 		$this->transaction->requestTransaction();
@@ -189,7 +190,7 @@ class AreaMgmtRepository implements EntityTransformerInterface
 			throw $exception;
 		}
 	}
-	
+
 	public function update(Area $item)
 	{
 		$this->transaction->requestTransaction();
@@ -201,7 +202,7 @@ class AreaMgmtRepository implements EntityTransformerInterface
 			throw $exception;
 		}
 	}
-	
+
 	public function remove(Area $item)
 	{
 		$this->transaction->requestTransaction();
@@ -212,7 +213,7 @@ class AreaMgmtRepository implements EntityTransformerInterface
 			throw $exception;
 		}
 	}
-	
+
 	public function getFormChoices(): array
 	{
 		if ($this->place->getTypeName() == 'Group') {
@@ -220,7 +221,7 @@ class AreaMgmtRepository implements EntityTransformerInterface
 		} elseif ($this->place->getTypeName() == 'Project') {
 			$field = 'projectId';
 		}
-		
+
 		$this->transaction->requestTransaction();
 		$stmt = $this->conn->prepare('SELECT `id`, `name` FROM `'.CoreTables::AREA_TBL.'` WHERE `'.$field.'` = :'.$field.' ORDER BY `name`');
 		$stmt->bindValue(':'.$field, $this->place->getId());

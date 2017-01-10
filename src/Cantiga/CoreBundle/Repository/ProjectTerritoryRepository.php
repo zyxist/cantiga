@@ -25,8 +25,8 @@ use Cantiga\CoreBundle\Entity\Territory;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Form\EntityTransformerInterface;
-use Cantiga\Metamodel\QueryBuilder;
-use Cantiga\Metamodel\QueryClause;
+use Cantiga\Components\Data\Sql\QueryBuilder;
+use Cantiga\Components\Data\Sql\QueryClause;
 use Cantiga\Metamodel\Transaction;
 use Doctrine\DBAL\Connection;
 use PDO;
@@ -34,7 +34,7 @@ use PDO;
 class ProjectTerritoryRepository implements EntityTransformerInterface
 {
 	/**
-	 * @var Connection 
+	 * @var Connection
 	 */
 	private $conn;
 	/**
@@ -45,18 +45,18 @@ class ProjectTerritoryRepository implements EntityTransformerInterface
 	 * @var Project
 	 */
 	private $project;
-	
+
 	public function __construct(Connection $conn, Transaction $transaction)
 	{
 		$this->conn = $conn;
 		$this->transaction = $transaction;
 	}
-	
+
 	public function setProject(Project $project)
 	{
 		$this->project = $project;
 	}
-	
+
 	/**
 	 * @return DataTable
 	 */
@@ -70,7 +70,7 @@ class ProjectTerritoryRepository implements EntityTransformerInterface
 			->column('requestNum', 'i.requestNum');
 		return $dt;
 	}
-	
+
 	public function listData(DataTable $dataTable)
 	{
 		$qb = QueryBuilder::select()
@@ -81,7 +81,7 @@ class ProjectTerritoryRepository implements EntityTransformerInterface
 			->field('i.requestNum', 'requestNum')
 			->from(CoreTables::TERRITORY_TBL, 'i');
 		$where = QueryClause::clause('i.`projectId` = :projectId', ':projectId', $this->project->getId());
-		
+
 		$recordsTotal = QueryBuilder::copyWithoutFields($qb)
 			->field('COUNT(id)', 'cnt')
 			->where($dataTable->buildCountingCondition($where))
@@ -102,7 +102,7 @@ class ProjectTerritoryRepository implements EntityTransformerInterface
 			$qb->where($dataTable->buildFetchingCondition($where))->fetchAll($this->conn)
 		);
 	}
-	
+
 	/**
 	 * @return Territory
 	 */
@@ -110,14 +110,14 @@ class ProjectTerritoryRepository implements EntityTransformerInterface
 	{
 		$this->transaction->requestTransaction();
 		$item = Territory::fetchByProject($this->conn, $id, $this->project);
-		
+
 		if(false === $item) {
 			$this->transaction->requestRollback();
 			throw new ItemNotFoundException('The specified item has not been found.', $id);
 		}
 		return $item;
 	}
-	
+
 	public function insert(Territory $item)
 	{
 		$this->transaction->requestTransaction();
@@ -128,7 +128,7 @@ class ProjectTerritoryRepository implements EntityTransformerInterface
 			throw $ex;
 		}
 	}
-	
+
 	public function update(Territory $item)
 	{
 		$this->transaction->requestTransaction();
@@ -139,7 +139,7 @@ class ProjectTerritoryRepository implements EntityTransformerInterface
 			throw $ex;
 		}
 	}
-	
+
 	public function remove(Territory $item)
 	{
 		$this->transaction->requestTransaction();
@@ -150,7 +150,7 @@ class ProjectTerritoryRepository implements EntityTransformerInterface
 			throw $ex;
 		}
 	}
-	
+
 	public function importFrom(HierarchicalInterface $source, HierarchicalInterface $destination)
 	{
 		$this->transaction->requestTransaction();

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Foobar; if not, write to the Free Software
+ * along with Cantiga; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 namespace Cantiga\CoreBundle\Repository;
@@ -22,8 +22,8 @@ use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\PasswordRecoveryRequest;
 use Cantiga\CoreBundle\Entity\User;
 use Cantiga\CoreBundle\Exception\PasswordRecoveryException;
-use Cantiga\Metamodel\QueryClause;
-use Cantiga\Metamodel\QueryOperator;
+use Cantiga\Components\Data\Sql\QueryClause;
+use Cantiga\Components\Data\Sql\QueryOperator;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
@@ -32,13 +32,11 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 /**
  * Used for authentication purposes.
- *
- * @author Tomasz Jędrzejewski
  */
 class AuthRepository implements UserProviderInterface
 {
 	const LASTVISIT_UPDATE_THRESHOLD_SEC = 60;
-	
+
 	/**
 	 * @var Connection
 	 */
@@ -68,7 +66,7 @@ class AuthRepository implements UserProviderInterface
 		if (false === $user) {
 			throw new UsernameNotFoundException(sprintf('Username "%s" not found.', $original->getUsername()));
 		}
-		
+
 		if ($user->getLastVisit() < (time() - self::LASTVISIT_UPDATE_THRESHOLD_SEC)) {
 			$this->conn->update(CoreTables::USER_TBL, ['lastVisit' => time()], ['id' => $user->getId()]);
 		}
@@ -85,7 +83,7 @@ class AuthRepository implements UserProviderInterface
 	{
 		return User::fetchByCriteria($this->conn, QueryClause::clause('u.`login` = :login', ':login', $username));
 	}
-	
+
 	public function findUserByNameMail($username, $email)
 	{
 		return User::fetchByCriteria($this->conn, QueryOperator::op('AND')
@@ -93,10 +91,10 @@ class AuthRepository implements UserProviderInterface
 			->expr(QueryClause::clause('u.`email` = :email', ':email', $email))
 		);
 	}
-	
+
 	/**
 	 * Creates and inserts into the database the password recovery request.
-	 * 
+	 *
 	 * @param User $user The user that requests password recovery
 	 * @param string $ip Current IP address of the request
 	 * @return PasswordRecoveryRequest
@@ -104,7 +102,7 @@ class AuthRepository implements UserProviderInterface
 	public function createPasswordRecoveryRequest(User $user, $ip)
 	{
 		$request = PasswordRecoveryRequest::create($user, $ip, time());
-		
+
 		$id = $this->conn->fetchColumn('SELECT `id` FROM `'.CoreTables::PASSWORD_RECOVERY_TBL.'` WHERE `requestIp` = :ip AND `requestTime` > :minTime', [
 			':ip' => $request->getRequestIp(),
 			':minTime' => time() - PasswordRecoveryRequest::REQUEST_INTERVAL_TIME
@@ -112,14 +110,14 @@ class AuthRepository implements UserProviderInterface
 		if (!empty($id)) {
 			throw new PasswordRecoveryException('PasswordRecoverySaveError');
 		}
-		
+
 		$request->insert($this->conn);
 		return $request;
 	}
-	
+
 	/**
 	 * Retrieves an existing password recovery request.
-	 * 
+	 *
 	 * @param int $id
 	 * @return PasswordRecoveryRequest
 	 * @throws PasswordRecoveryException
@@ -135,7 +133,7 @@ class AuthRepository implements UserProviderInterface
 		}
 		return PasswordRecoveryRequest::fromArray(User::fromArray($data), $data);
 	}
-	
+
 	public function updateRequest(PasswordRecoveryRequest $request)
 	{
 		$request->update($this->conn);

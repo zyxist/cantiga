@@ -25,8 +25,8 @@ use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Form\EntityTransformerInterface;
-use Cantiga\Metamodel\QueryBuilder;
-use Cantiga\Metamodel\QueryClause;
+use Cantiga\Components\Data\Sql\QueryBuilder;
+use Cantiga\Components\Data\Sql\QueryClause;
 use Cantiga\Metamodel\Transaction;
 use Doctrine\DBAL\Connection;
 use PDO;
@@ -34,7 +34,7 @@ use PDO;
 class ProjectAreaStatusRepository implements EntityTransformerInterface
 {
 	/**
-	 * @var Connection 
+	 * @var Connection
 	 */
 	private $conn;
 	/**
@@ -45,18 +45,18 @@ class ProjectAreaStatusRepository implements EntityTransformerInterface
 	 * @var Project
 	 */
 	private $project;
-	
+
 	public function __construct(Connection $conn, Transaction $transaction)
 	{
 		$this->conn = $conn;
 		$this->transaction = $transaction;
 	}
-	
+
 	public function setProject(Project $project)
 	{
 		$this->project = $project;
 	}
-	
+
 	/**
 	 * @return DataTable
 	 */
@@ -70,7 +70,7 @@ class ProjectAreaStatusRepository implements EntityTransformerInterface
 			->column('areaNum', 'i.areaNum');
 		return $dt;
 	}
-	
+
 	public function listData(DataTable $dataTable)
 	{
 		$qb = QueryBuilder::select()
@@ -81,7 +81,7 @@ class ProjectAreaStatusRepository implements EntityTransformerInterface
 			->field('i.areaNum', 'areaNum')
 			->from(CoreTables::AREA_STATUS_TBL, 'i');
 		$where = QueryClause::clause('i.`projectId` = :projectId', ':projectId', $this->project->getId());
-		
+
 		$recordsTotal = QueryBuilder::copyWithoutFields($qb)
 			->field('COUNT(id)', 'cnt')
 			->where($dataTable->buildCountingCondition($where))
@@ -98,7 +98,7 @@ class ProjectAreaStatusRepository implements EntityTransformerInterface
 			$qb->where($dataTable->buildFetchingCondition($where))->fetchAll($this->conn)
 		);
 	}
-	
+
 	/**
 	 * @return AreaStatus
 	 */
@@ -106,14 +106,14 @@ class ProjectAreaStatusRepository implements EntityTransformerInterface
 	{
 		$this->transaction->requestTransaction();
 		$item = AreaStatus::fetchByProject($this->conn, $id, $this->project);
-		
+
 		if(false === $item) {
 			$this->transaction->requestRollback();
 			throw new ItemNotFoundException('The specified item has not been found.', $id);
 		}
 		return $item;
 	}
-	
+
 	public function insert(AreaStatus $item)
 	{
 		$this->transaction->requestTransaction();
@@ -124,7 +124,7 @@ class ProjectAreaStatusRepository implements EntityTransformerInterface
 			throw $ex;
 		}
 	}
-	
+
 	public function update(AreaStatus $item)
 	{
 		$this->transaction->requestTransaction();
@@ -135,7 +135,7 @@ class ProjectAreaStatusRepository implements EntityTransformerInterface
 			throw $ex;
 		}
 	}
-	
+
 	public function remove(AreaStatus $item)
 	{
 		$this->transaction->requestTransaction();
@@ -146,7 +146,7 @@ class ProjectAreaStatusRepository implements EntityTransformerInterface
 			throw $ex;
 		}
 	}
-	
+
 	public function importFrom(HierarchicalInterface $source, HierarchicalInterface $destination)
 	{
 		$this->transaction->requestTransaction();
@@ -178,7 +178,7 @@ class ProjectAreaStatusRepository implements EntityTransformerInterface
 		if (null === $project) {
 			$project = $this->project;
 		}
-		
+
 		$this->transaction->requestTransaction();
 		$stmt = $this->conn->prepare('SELECT `id`, `name` FROM `'.CoreTables::AREA_STATUS_TBL.'` WHERE `projectId` = :projectId ORDER BY `name`');
 		$stmt->bindValue(':projectId', $project->getId());

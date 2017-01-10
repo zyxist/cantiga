@@ -27,8 +27,9 @@ use Cantiga\CourseBundle\Entity\Course;
 use Cantiga\CourseBundle\Entity\TestResult;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
-use Cantiga\Metamodel\QueryBuilder;
-use Cantiga\Metamodel\QueryClause;
+use Cantiga\Components\Data\Sql\QueryBuilder;
+use Cantiga\Components\Data\Sql\QueryClause;
+use Cantiga\Components\Data\Sql\Join;
 use Cantiga\Metamodel\Transaction;
 use Cantiga\UserBundle\UserTables;
 use Doctrine\DBAL\Connection;
@@ -39,7 +40,7 @@ use Doctrine\DBAL\Connection;
 abstract class AbstractCourseSummaryRepository
 {
 	/**
-	 * @var Connection 
+	 * @var Connection
 	 */
 	protected $conn;
 	/**
@@ -54,23 +55,23 @@ abstract class AbstractCourseSummaryRepository
 	 * @var Group
 	 */
 	protected $group;
-	
+
 	public function __construct(Connection $conn, Transaction $transaction)
 	{
 		$this->conn = $conn;
 		$this->transaction = $transaction;
 	}
-	
+
 	public function setProject(Project $project)
 	{
 		$this->project = $project;
 	}
-	
+
 	public function setGroup(Group $group)
 	{
 		$this->group = $group;
 	}
-	
+
 	/**
 	 * @return DataTable
 	 */
@@ -84,7 +85,7 @@ abstract class AbstractCourseSummaryRepository
 			->column('progress', 'r.passedCourseNum');
 		return $dt;
 	}
-	
+
 	public function listData(DataTable $dataTable)
 	{
 		$qb = QueryBuilder::select()
@@ -94,14 +95,14 @@ abstract class AbstractCourseSummaryRepository
 			->field('r.passedCourseNum', 'passedCourseNum')
 			->field('r.failedCourseNum', 'failedCourseNum')
 			->from(CoreTables::AREA_TBL, 'i')
-			->join(CourseTables::COURSE_PROGRESS_TBL, 'r', QueryClause::clause('r.areaId = i.id'))
-			->leftJoin(CoreTables::GROUP_TBL, 'g', QueryClause::clause('g.id = i.groupId'));
+			->join(Join::inner(CourseTables::COURSE_PROGRESS_TBL, 'r', QueryClause::clause('r.areaId = i.id')))
+			->join(Join::left(CoreTables::GROUP_TBL, 'g', QueryClause::clause('g.id = i.groupId')));
 		if (null !== $this->group) {
 			$qb->where(QueryClause::clause('i.`groupId` = :groupId', ':groupId', $this->group->getId()));
 		} else {
 			$qb->where(QueryClause::clause('i.`projectId` = :projectId', ':projectId', $this->project->getId()));
 		}
-		
+
 		$recordsTotal = QueryBuilder::copyWithoutFields($qb)
 			->field('COUNT(i.id)', 'cnt')
 			->where($dataTable->buildCountingCondition($qb->getWhere()))
@@ -118,7 +119,7 @@ abstract class AbstractCourseSummaryRepository
 			}
 			return $row;
 		});
-		
+
 		$dataTable->processQuery($qb);
 		return $dataTable->createAnswer(
 			$recordsTotal,
@@ -126,7 +127,7 @@ abstract class AbstractCourseSummaryRepository
 			$qb->where($dataTable->buildFetchingCondition($qb->getWhere()))->fetchAll($this->conn)
 		);
 	}
-	
+
 	public function findTotalIndividualResultsForArea(Area $area)
 	{
 		$items = $this->conn->fetchAll('SELECT c.`id` AS `courseId`, c.`name` AS `courseName`, u.`id` AS `userId`, u.`name` AS `userName`, u.`avatar`, '
@@ -142,7 +143,7 @@ abstract class AbstractCourseSummaryRepository
 		}
 		return $items;
 	}
-	
+
 	/**
 	 * @return Course
 	 */
@@ -150,7 +151,7 @@ abstract class AbstractCourseSummaryRepository
 	{
 		$this->transaction->requestTransaction();
 		$item = Course::fetchByProject($this->conn, $id, $this->project);
-		
+
 		if(false === $item) {
 			$this->transaction->requestRollback();
 			throw new ItemNotFoundException('The specified item has not been found.', $id);

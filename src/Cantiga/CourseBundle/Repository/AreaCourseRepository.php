@@ -36,13 +36,11 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Manages the area-related activities around courses, especially completing them.
- *
- * @author Tomasz Jędrzejewski
  */
 class AreaCourseRepository
 {
 	/**
-	 * @var Connection 
+	 * @var Connection
 	 */
 	private $conn;
 	/**
@@ -57,19 +55,19 @@ class AreaCourseRepository
 	 * @var Area
 	 */
 	private $area;
-	
+
 	public function __construct(Connection $conn, Transaction $transaction, EventDispatcherInterface $eventDispatcher)
 	{
 		$this->conn = $conn;
 		$this->transaction = $transaction;
 		$this->eventDispatcher = $eventDispatcher;
 	}
-	
+
 	public function setArea(Area $area)
 	{
 		$this->area = $area;
 	}
-	
+
 	public function findAvailableCourses(User $user)
 	{
 		$items = $this->conn->fetchAll('SELECT c.`id`, c.`name`, c.`deadline`, r.`result` AS `user_result`, r.`passedQuestions` AS `user_passedQuestions`, '
@@ -86,7 +84,7 @@ class AreaCourseRepository
 		}
 		return $items;
 	}
-	
+
 	public function getItem($id)
 	{
 		$item = Course::fetchPublished($this->conn, $id, $this->area->getProject());
@@ -100,12 +98,12 @@ class AreaCourseRepository
 	{
 		return TestResult::fetchResult($this->conn, $user, $course);
 	}
-	
+
 	public function getAreaResult(Area $area, Course $course)
 	{
 		return AreaCourseResult::fetchResult($this->conn, $area, $course);
 	}
-	
+
 	public function startNewTrial(TestResult $result)
 	{
 		$this->transaction->requestTransaction();
@@ -116,7 +114,7 @@ class AreaCourseRepository
 			throw $ex;
 		}
 	}
-	
+
 	public function completeTrial(TestResult $result, Area $area, TestTrial $trial)
 	{
 		$this->transaction->requestTransaction();
@@ -128,7 +126,7 @@ class AreaCourseRepository
 			throw $ex;
 		}
 	}
-	
+
 	public function confirmGoodFaithCompletion(Area $area, User $user, Course $course)
 	{
 		$this->transaction->requestTransaction();
@@ -140,12 +138,12 @@ class AreaCourseRepository
 			throw $ex;
 		}
 	}
-	
+
 	public function findProgress()
 	{
 		return CourseProgress::fetchByArea($this->conn, $this->area);
 	}
-	
+
 	private function spawnActivationEvent(Area $area, $output)
 	{
 		if ($output instanceof CourseProgress) {

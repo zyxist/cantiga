@@ -13,46 +13,22 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Foobar; if not, write to the Free Software
+ * along with Cantiga; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-namespace Cantiga\Metamodel;
+declare(strict_types=1);
+namespace Cantiga\Components\Data\Sql;
 
 /**
- * Injectable JOIN clause for Query builder.
- *
- * @author Tomasz Jędrzejewski
+ * Used for building WHERE clauses in the query builder.
  */
-class Join
+interface QueryElementInterface
 {
-	private $table;
-	private $alias;
-	private $link;
-	
-	public static function create($table, $alias, QueryElement $link)
-	{
-		$join = new Join();
-		$join->table = $table;
-		$join->alias = $alias;
-		$join->link = $link;
-		return $join;
-	}
-	
-	public function getTable()
-	{
-		return $this->table;
-	}
-
-	public function getAlias()
-	{
-		return $this->alias;
-	}
-
 	/**
-	 * @return QueryElement
+	 * Builds the piece of SQL code for this query element.
+	 *
+	 * @return string SQL code for this query element.
 	 */
-	public function getLink()
-	{
-		return $this->link;
-	}
+	public function build(): string;
+	public function registerBindings(QueryBuilder $qb): void;
 }

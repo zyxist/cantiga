@@ -23,8 +23,9 @@ use Cantiga\ExportBundle\ExportTables;
 use Cantiga\ExportBundle\Entity\DataExport;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
-use Cantiga\Metamodel\QueryBuilder;
-use Cantiga\Metamodel\QueryClause;
+use Cantiga\Components\Data\Sql\QueryBuilder;
+use Cantiga\Components\Data\Sql\QueryClause;
+use Cantiga\Components\Data\Sql\Join;
 use Cantiga\Metamodel\Transaction;
 use Doctrine\DBAL\Connection;
 use Exception;
@@ -33,20 +34,20 @@ use Symfony\Component\Translation\TranslatorInterface;
 class ExportRepository
 {
 	/**
-	 * @var Connection 
+	 * @var Connection
 	 */
 	private $conn;
 	/**
 	 * @var Transaction
 	 */
 	private $transaction;
-	
+
 	public function __construct(Connection $conn, Transaction $transaction)
 	{
 		$this->conn = $conn;
 		$this->transaction = $transaction;
 	}
-	
+
 	/**
 	 * @return DataTable
 	 */
@@ -59,7 +60,7 @@ class ExportRepository
 			->column('active', 'i.active');
 		return $dt;
 	}
-	
+
 	public function listData(DataTable $dataTable)
 	{
 		$qb = QueryBuilder::select()
@@ -68,8 +69,8 @@ class ExportRepository
 			->field('p.name', 'project')
 			->field('i.active', 'active')
 			->from(ExportTables::DATA_EXPORT_TBL, 'i')
-			->join(CoreTables::PROJECT_TBL, 'p', QueryClause::clause('i.projectId = p.id'));
-		
+			->join(Join::inner(CoreTables::PROJECT_TBL, 'p', QueryClause::clause('i.projectId = p.id')));
+
 		$recordsTotal = QueryBuilder::copyWithoutFields($qb)
 			->field('COUNT(i.id)', 'cnt')
 			->where($dataTable->buildCountingCondition($qb->getWhere()))
@@ -85,7 +86,7 @@ class ExportRepository
 			$qb->where($dataTable->buildFetchingCondition($qb->getWhere()))->fetchAll($this->conn)
 		);
 	}
-	
+
 	/**
 	 * @return DataExport
 	 */
@@ -93,14 +94,14 @@ class ExportRepository
 	{
 		$this->transaction->requestTransaction();
 		$item = DataExport::fetchById($this->conn, $id);
-		
+
 		if(false === $item) {
 			$this->transaction->requestRollback();
 			throw new ItemNotFoundException('The specified item has not been found.', $id);
 		}
 		return $item;
 	}
-	
+
 	public function insert(DataExport $item)
 	{
 		$this->transaction->requestTransaction();
@@ -111,7 +112,7 @@ class ExportRepository
 			throw $ex;
 		}
 	}
-	
+
 	public function update(DataExport $item)
 	{
 		$this->transaction->requestTransaction();
@@ -122,7 +123,7 @@ class ExportRepository
 			throw $ex;
 		}
 	}
-	
+
 	public function remove(DataExport $item)
 	{
 		$this->transaction->requestTransaction();

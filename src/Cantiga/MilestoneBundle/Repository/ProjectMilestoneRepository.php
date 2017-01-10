@@ -22,19 +22,20 @@ use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Form\EntityTransformerInterface;
-use Cantiga\Metamodel\QueryBuilder;
-use Cantiga\Metamodel\QueryClause;
+use Cantiga\Components\Data\Sql\QueryBuilder;
+use Cantiga\Components\Data\Sql\QueryClause;
 use Cantiga\Metamodel\Transaction;
 use Cantiga\MilestoneBundle\Entity\Milestone;
 use Cantiga\MilestoneBundle\MilestoneTables;
 use Doctrine\DBAL\Connection;
 use PDO;
+use Exception;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class ProjectMilestoneRepository implements EntityTransformerInterface
 {
 	/**
-	 * @var Connection 
+	 * @var Connection
 	 */
 	private $conn;
 	/**
@@ -45,18 +46,18 @@ class ProjectMilestoneRepository implements EntityTransformerInterface
 	 * @var Project
 	 */
 	private $project;
-	
+
 	public function __construct(Connection $conn, Transaction $transaction)
 	{
 		$this->conn = $conn;
 		$this->transaction = $transaction;
 	}
-	
+
 	public function setProject(Project $project)
 	{
 		$this->project = $project;
 	}
-	
+
 	/**
 	 * @return DataTable
 	 */
@@ -69,7 +70,7 @@ class ProjectMilestoneRepository implements EntityTransformerInterface
 			->column('displayOrder', 'i.displayOrder');
 		return $dt;
 	}
-	
+
 	public function listData(DataTable $dataTable, TranslatorInterface $translator)
 	{
 		$qb = QueryBuilder::select()
@@ -84,7 +85,7 @@ class ProjectMilestoneRepository implements EntityTransformerInterface
 			$row['entityTypeText'] = $translator->trans($row['entityType']);
 			return $row;
 		});
-		
+
 		$recordsTotal = QueryBuilder::copyWithoutFields($qb)
 			->field('COUNT(id)', 'cnt')
 			->where($dataTable->buildCountingCondition($qb->getWhere()))
@@ -100,7 +101,7 @@ class ProjectMilestoneRepository implements EntityTransformerInterface
 			$qb->where($dataTable->buildFetchingCondition($qb->getWhere()))->fetchAll($this->conn)
 		);
 	}
-	
+
 	/**
 	 * @return Milestone
 	 */
@@ -108,14 +109,14 @@ class ProjectMilestoneRepository implements EntityTransformerInterface
 	{
 		$this->transaction->requestTransaction();
 		$item = Milestone::fetchByProject($this->conn, $id, $this->project);
-		
+
 		if(false === $item) {
 			$this->transaction->requestRollback();
 			throw new ItemNotFoundException('The specified item has not been found.', $id);
 		}
 		return $item;
 	}
-	
+
 	public function insert(Milestone $item)
 	{
 		$this->transaction->requestTransaction();
@@ -126,7 +127,7 @@ class ProjectMilestoneRepository implements EntityTransformerInterface
 			throw $ex;
 		}
 	}
-	
+
 	public function update(Milestone $item)
 	{
 		$this->transaction->requestTransaction();
@@ -137,7 +138,7 @@ class ProjectMilestoneRepository implements EntityTransformerInterface
 			throw $ex;
 		}
 	}
-	
+
 	public function remove(Milestone $item)
 	{
 		$this->transaction->requestTransaction();
@@ -148,7 +149,7 @@ class ProjectMilestoneRepository implements EntityTransformerInterface
 			throw $ex;
 		}
 	}
-	
+
 	public function getFormChoices($entityType)
 	{
 		$this->transaction->requestTransaction();

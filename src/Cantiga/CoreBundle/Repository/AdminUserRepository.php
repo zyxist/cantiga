@@ -26,8 +26,8 @@ use Cantiga\CoreBundle\Event\UserEvent;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Form\EntityTransformerInterface;
-use Cantiga\Metamodel\QueryBuilder;
-use Cantiga\Metamodel\QueryClause;
+use Cantiga\Components\Data\Sql\QueryBuilder;
+use Cantiga\Components\Data\Sql\QueryClause;
 use Cantiga\Metamodel\TimeFormatterInterface;
 use Cantiga\Metamodel\Transaction;
 use Doctrine\DBAL\Connection;
@@ -37,7 +37,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class AdminUserRepository implements EntityTransformerInterface
 {
 	/**
-	 * @var Connection 
+	 * @var Connection
 	 */
 	private $conn;
 	/**
@@ -53,10 +53,10 @@ class AdminUserRepository implements EntityTransformerInterface
 	 */
 	private $timeFormatter;
 	/**
-	 * @var MembershipRoleResolverInterface 
+	 * @var MembershipRoleResolverInterface
 	 */
 	private $roleResolver;
-	
+
 	public function __construct(Connection $conn, Transaction $transaction, EventDispatcherInterface $eventDispatcher, TimeFormatterInterface $timeFormatter, MembershipRoleResolverInterface $roleResolver)
 	{
 		$this->conn = $conn;
@@ -65,7 +65,7 @@ class AdminUserRepository implements EntityTransformerInterface
 		$this->timeFormatter = $timeFormatter;
 		$this->roleResolver = $roleResolver;
 	}
-	
+
 	/**
 	 * @return DataTable
 	 */
@@ -80,7 +80,7 @@ class AdminUserRepository implements EntityTransformerInterface
 			->column('admin', 'i.admin');
 		return $dt;
 	}
-	
+
 	public function listData(DataTable $dataTable)
 	{
 		$qb = QueryBuilder::select()
@@ -92,7 +92,7 @@ class AdminUserRepository implements EntityTransformerInterface
 			->field('i.admin', 'admin')
 			->from(CoreTables::USER_TBL, 'i');
 		$where = QueryClause::clause('i.removed = 0');
-		
+
 		$recordsTotal = QueryBuilder::copyWithoutFields($qb)
 			->field('COUNT(id)', 'cnt')
 			->where($dataTable->buildCountingCondition($where))
@@ -101,8 +101,8 @@ class AdminUserRepository implements EntityTransformerInterface
 			->field('COUNT(id)', 'cnt')
 			->where($dataTable->buildFetchingCondition($where))
 			->fetchCell($this->conn);
-		
-		$qb->postprocess(function(array $row) { 
+
+		$qb->postprocess(function(array $row) {
 			$row['registeredAtFormatted'] = $this->timeFormatter->ago($row['registeredAt']);
 			return $row;
 		});
@@ -114,12 +114,12 @@ class AdminUserRepository implements EntityTransformerInterface
 			$qb->where($dataTable->buildFetchingCondition($where))->fetchAll($this->conn)
 		);
 	}
-	
+
 	public function tryJumpToUser($login, $email)
 	{
 		return $this->conn->fetchColumn('SELECT `id` FROM `'.CoreTables::USER_TBL.'` WHERE `login` = :login OR `email` = :email', [':login' => $login, ':email' => $email]);
 	}
-	
+
 	public function getItem(int $id): User
 	{
 		$this->transaction->requestTransaction();
@@ -134,7 +134,7 @@ class AdminUserRepository implements EntityTransformerInterface
 			throw $ex;
 		}
 	}
-	
+
 	public function findPlaces(User $user): array
 	{
 		$this->transaction->requestTransaction();
@@ -145,7 +145,7 @@ class AdminUserRepository implements EntityTransformerInterface
 			throw $ex;
 		}
 	}
-	
+
 	public function update(User $item)
 	{
 		$this->transaction->requestTransaction();
@@ -156,7 +156,7 @@ class AdminUserRepository implements EntityTransformerInterface
 			throw $exception;
 		}
 	}
-	
+
 	public function remove(User $item)
 	{
 		$this->transaction->requestTransaction();
@@ -168,7 +168,7 @@ class AdminUserRepository implements EntityTransformerInterface
 			throw $exception;
 		}
 	}
-	
+
 	public function getFormChoices()
 	{
 		$this->transaction->requestTransaction();

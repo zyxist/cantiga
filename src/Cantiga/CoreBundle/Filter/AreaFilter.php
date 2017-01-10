@@ -26,8 +26,8 @@ use Cantiga\CoreBundle\Repository\ProjectGroupRepository;
 use Cantiga\CoreBundle\Repository\ProjectTerritoryRepository;
 use Cantiga\Metamodel\DataFilterInterface;
 use Cantiga\Metamodel\Form\EntityTransformer;
-use Cantiga\Metamodel\QueryClause;
-use Cantiga\Metamodel\QueryOperator;
+use Cantiga\Components\Data\Sql\QueryClause;
+use Cantiga\Components\Data\Sql\QueryOperator;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -43,14 +43,14 @@ class AreaFilter implements DataFilterInterface
 	private $group;
 	private $category;
 	private $territory;
-	
+
 	private $fixedGroup = false;
-	
+
 	private $statusRepository;
 	private $groupRepository;
 	private $categoryRepository;
 	private $territoryRepository;
-	
+
 	public function __construct(ProjectAreaStatusRepository $areaStatusRepository, ProjectGroupRepository $groupRepository, ProjectGroupCategoryRepository $categoryRepository, ProjectTerritoryRepository $territoryRepository)
 	{
 		$this->statusRepository = $areaStatusRepository;
@@ -58,7 +58,7 @@ class AreaFilter implements DataFilterInterface
 		$this->categoryRepository = $categoryRepository;
 		$this->territoryRepository = $territoryRepository;
 	}
-	
+
 	public function setTargetProject(Project $project)
 	{
 		$this->statusRepository->setProject($project);
@@ -66,7 +66,7 @@ class AreaFilter implements DataFilterInterface
 		$this->categoryRepository->setProject($project);
 		$this->territoryRepository->setProject($project);
 	}
-		
+
 	public function getStatus()
 	{
 		return $this->status;
@@ -110,7 +110,7 @@ class AreaFilter implements DataFilterInterface
 		$this->territory = $territory;
 		return $this;
 	}
-	
+
 	/**
 	 * Checks if we can change the groups and categories (false) or not (true).
 	 * @return boolean
@@ -119,10 +119,10 @@ class AreaFilter implements DataFilterInterface
 	{
 		return $this->fixedGroup;
 	}
-	
+
 	/**
 	 * Fixes the filter on the given group - the user can no longer change groups and categories.
-	 * 
+	 *
 	 * @param Group $group
 	 * @return AreaFilter
 	 */
@@ -131,12 +131,12 @@ class AreaFilter implements DataFilterInterface
 		$this->fixedGroup = true;
 		return $this;
 	}
-	
+
 	public function isCategorySelected()
 	{
 		return null !== $this->category;
 	}
-	
+
 	public function createForm(FormBuilderInterface $formBuilder)
 	{
 		$formBuilder->setMethod('GET');
@@ -147,17 +147,17 @@ class AreaFilter implements DataFilterInterface
 		}
 		$formBuilder->add('territory', ChoiceType::class, ['label' => 'Territory', 'choices' => $this->territoryRepository->getFormChoices(), 'required' => false]);
 		$formBuilder->add('submit', SubmitType::class, ['label' => 'Filter']);
-		
+
 		$formBuilder->get('status')->addModelTransformer(new EntityTransformer($this->statusRepository));
 		if (!$this->fixedGroup) {
 			$formBuilder->get('group')->addModelTransformer(new EntityTransformer($this->groupRepository));
 			$formBuilder->get('category')->addModelTransformer(new EntityTransformer($this->categoryRepository));
 		}
 		$formBuilder->get('territory')->addModelTransformer(new EntityTransformer($this->territoryRepository));
-		
+
 		return $formBuilder->getForm();
 	}
-	
+
 	public function createFilterClause()
 	{
 		$op = QueryOperator::op(' AND ');
@@ -175,7 +175,7 @@ class AreaFilter implements DataFilterInterface
 		}
 		return $op;
 	}
-	
+
 	public function createParamArray()
 	{
 		$result = [];

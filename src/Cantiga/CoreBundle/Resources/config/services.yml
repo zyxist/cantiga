@@ -12,32 +12,21 @@ parameters:
     archived_project_repository.class: Cantiga\CoreBundle\Repository\ArchivedProjectRepository
     language_repository.class: Cantiga\CoreBundle\Repository\LanguageRepository
     project_repository.class: Cantiga\CoreBundle\Repository\ProjectRepository
-    admin_membership_repository.class: Cantiga\CoreBundle\Repository\AdminMembershipRepository
-    area_memberlist_repository.class: Cantiga\CoreBundle\Repository\AreaMemberListRepository
-    group_membership_repository.class: Cantiga\CoreBundle\Repository\GroupMembershipRepository
-    project_group_membership_repository.class: Cantiga\CoreBundle\Repository\ProjectGroupMembershipRepository
-    project_membership_repository.class: Cantiga\CoreBundle\Repository\ProjectMembershipRepository
-    project_memberlist_repository.class: Cantiga\CoreBundle\Repository\ProjectMemberListRepository
     UserRegistrationRepository.class: Cantiga\CoreBundle\Repository\UserRegistrationRepository
     user_area_request_repository.class: Cantiga\CoreBundle\Repository\UserAreaRequestRepository
     project_area_request_repository.class: Cantiga\CoreBundle\Repository\ProjectAreaRequestRepository
-    project_group_repository.class: Cantiga\CoreBundle\Repository\ProjectGroupRepository
     project_area_membership_repository.class: Cantiga\CoreBundle\Repository\ProjectAreaMembershipRepository
     app_text_repository.class: Cantiga\CoreBundle\Repository\AppTextRepository
     app_mail_repository.class: Cantiga\CoreBundle\Repository\AppMailRepository
-    project_membership_loader.class: Cantiga\CoreBundle\Entity\Membership\ProjectMembershipLoader
-    group_membership_loader.class: Cantiga\CoreBundle\Entity\Membership\GroupMembershipLoader
-    area_membership_loader.class: Cantiga\CoreBundle\Entity\Membership\AreaMembershipLoader
     ui_block.class: Cantiga\CoreBundle\Block\UiBlock
     block_launcher.class: Cantiga\CoreBundle\Block\BlockLauncher
-    area_membership_repository.class: Cantiga\CoreBundle\Repository\AreaMembershipRepository
     project_area_status.class: Cantiga\CoreBundle\Repository\ProjectAreaStatusRepository
     project_territory.class: Cantiga\CoreBundle\Repository\ProjectTerritoryRepository
     cantiga.controller.exception.class: Cantiga\CoreBundle\Controller\ExceptionController
     area_per_status_stats.class: Cantiga\CoreBundle\Statistics\AreasPerStatusStats
     db_files: %kernel.root_dir%/../db/
     targetFileDirectory: %kernel.root_dir%/../uploads/
-    
+
 services:
     cantiga.extensions:
         class:     "%extensions.class%"
@@ -101,16 +90,16 @@ services:
     cantiga.core.repo.language:
         class:     "%language_repository.class%"
         arguments: ["@database_connection", "@cantiga.transaction"]
-    cantiga.core.repo.admin_user:                                                                                                                                                       
-        class:     Cantiga\CoreBundle\Repository\AdminUserRepository                                                                                                                                     
+    cantiga.core.repo.admin_user:
+        class:     Cantiga\CoreBundle\Repository\AdminUserRepository
         arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher", "@cantiga.time", "@cantiga.roles"]
-    cantiga.core.repo.project:                                                                                                                                                     
+    cantiga.core.repo.project:
         class:     Cantiga\CoreBundle\Repository\ProjectRepository
         arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.time", "@event_dispatcher", "@cantiga.project.settings.database_storage"]
-    cantiga.core.repo.archived_project:                                                                                                                                                     
+    cantiga.core.repo.archived_project:
         class:     Cantiga\CoreBundle\Repository\ArchivedProjectRepository
         arguments: ["@database_connection", "@cantiga.transaction", "@cantiga.time"]
-    cantiga.core.repo.user_registration:                                                                                                                                                
+    cantiga.core.repo.user_registration:
         class:     Cantiga\CoreBundle\Repository\UserRegistrationRepository
         arguments: ["@database_connection", "@cantiga.transaction", "@event_dispatcher", "@security.encoder_factory", "@cantiga.time"]
     cantiga.core.repo.user_dashboard:
@@ -143,7 +132,7 @@ services:
     cantiga.core.repo.mail:
         class:     Cantiga\CoreBundle\Repository\AppMailRepository
         arguments: ["@database_connection", "@cantiga.transaction"]
-    cantiga.core.repo.statistics:                                                                                                                               
+    cantiga.core.repo.statistics:
         class:     Cantiga\CoreBundle\Repository\CoreStatisticsRepository
         arguments: ["@database_connection"]
         tags:

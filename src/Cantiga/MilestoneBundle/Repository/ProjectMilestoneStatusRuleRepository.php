@@ -22,19 +22,21 @@ use Cantiga\CoreBundle\CoreTables;
 use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
-use Cantiga\Metamodel\QueryBuilder;
-use Cantiga\Metamodel\QueryClause;
+use Cantiga\Components\Data\Sql\QueryBuilder;
+use Cantiga\Components\Data\Sql\QueryClause;
+use Cantiga\Components\Data\Sql\Join;
 use Cantiga\Metamodel\TimeFormatterInterface;
 use Cantiga\Metamodel\Transaction;
 use Cantiga\MilestoneBundle\Entity\MilestoneStatusRule;
 use Cantiga\MilestoneBundle\MilestoneTables;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\Translation\TranslatorInterface;
+use Exception;
 
 class ProjectMilestoneStatusRuleRepository
 {
 	/**
-	 * @var Connection 
+	 * @var Connection
 	 */
 	private $conn;
 	/**
@@ -49,19 +51,19 @@ class ProjectMilestoneStatusRuleRepository
 	 * @var TimeFormatterInterface
 	 */
 	private $timeFormatter;
-	
+
 	public function __construct(Connection $conn, Transaction $transaction, TimeFormatterInterface $timeFormatter)
 	{
 		$this->conn = $conn;
 		$this->transaction = $transaction;
 		$this->timeFormatter = $timeFormatter;
 	}
-	
+
 	public function setProject(Project $project)
 	{
 		$this->project = $project;
 	}
-	
+
 	/**
 	 * @return DataTable
 	 */
@@ -76,7 +78,7 @@ class ProjectMilestoneStatusRuleRepository
 			->column('lastUpdatedAt', 'i.lastUpdatedAt');
 		return $dt;
 	}
-	
+
 	public function listData(DataTable $dataTable, TranslatorInterface $translator)
 	{
 		$qb = QueryBuilder::select()
@@ -89,15 +91,15 @@ class ProjectMilestoneStatusRuleRepository
 			->field('i.activationOrder', 'activationOrder')
 			->field('i.lastUpdatedAt', 'lastUpdatedAt')
 			->from(MilestoneTables::MILESTONE_STATUS_RULE_TBL, 'i')
-			->join(CoreTables::AREA_STATUS_TBL, 's1', QueryClause::clause('i.newStatusId = s1.id'))
-			->join(CoreTables::AREA_STATUS_TBL, 's2', QueryClause::clause('i.prevStatusId = s2.id'))
+			->join(Join::inner(CoreTables::AREA_STATUS_TBL, 's1', QueryClause::clause('i.newStatusId = s1.id')))
+			->join(Join::inner(CoreTables::AREA_STATUS_TBL, 's2', QueryClause::clause('i.prevStatusId = s2.id')))
 			->where(QueryClause::clause('i.`projectId` = :projectId', ':projectId', $this->project->getId()));
 
 		$qb->postprocess(function($row) use($translator) {
 			$row['lastUpdatedAt'] = $this->timeFormatter->ago($row['lastUpdatedAt']);
 			return $row;
 		});
-		
+
 		$recordsTotal = QueryBuilder::select()
 			->field('COUNT(id)', 'cnt')
 			->from(MilestoneTables::MILESTONE_STATUS_RULE_TBL, 'i')
@@ -115,7 +117,7 @@ class ProjectMilestoneStatusRuleRepository
 			$qb->where($dataTable->buildFetchingCondition($qb->getWhere()))->fetchAll($this->conn)
 		);
 	}
-	
+
 	/**
 	 * @return MilestoneStatusRule
 	 */
@@ -136,7 +138,7 @@ class ProjectMilestoneStatusRuleRepository
 			throw $ex;
 		}
 	}
-	
+
 	public function insert(MilestoneStatusRule $item)
 	{
 		$this->transaction->requestTransaction();
@@ -147,7 +149,7 @@ class ProjectMilestoneStatusRuleRepository
 			throw $ex;
 		}
 	}
-	
+
 	public function update(MilestoneStatusRule $item)
 	{
 		$this->transaction->requestTransaction();
@@ -158,7 +160,7 @@ class ProjectMilestoneStatusRuleRepository
 			throw $ex;
 		}
 	}
-	
+
 	public function remove(MilestoneStatusRule $item)
 	{
 		$this->transaction->requestTransaction();

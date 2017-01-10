@@ -23,8 +23,8 @@ use Cantiga\DiscussionBundle\DiscussionTables;
 use Cantiga\DiscussionBundle\Entity\Channel;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
-use Cantiga\Metamodel\QueryBuilder;
-use Cantiga\Metamodel\QueryClause;
+use Cantiga\Components\Data\Sql\QueryBuilder;
+use Cantiga\Components\Data\Sql\QueryClause;
 use Cantiga\Metamodel\Transaction;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -32,7 +32,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 class ManagementRepository
 {
 	/**
-	 * @var Connection 
+	 * @var Connection
 	 */
 	private $conn;
 	/**
@@ -43,18 +43,18 @@ class ManagementRepository
 	 * @var Project
 	 */
 	private $project;
-	
+
 	public function __construct(Connection $conn, Transaction $transaction)
 	{
 		$this->conn = $conn;
 		$this->transaction = $transaction;
 	}
-	
+
 	public function setProject(Project $project)
 	{
 		$this->project = $project;
 	}
-	
+
 	/**
 	 * @return DataTable
 	 */
@@ -67,7 +67,7 @@ class ManagementRepository
 			->column('enabled', 'i.enabled');
 		return $dt;
 	}
-	
+
 	public function listData(DataTable $dataTable, TranslatorInterface $translator)
 	{
 		$qb = QueryBuilder::select()
@@ -82,7 +82,7 @@ class ManagementRepository
 			$row['discussionGroupingText'] = $translator->trans(Channel::discussionGroupingText($row['discussionGrouping']), [], 'discussion');
 			return $row;
 		});
-		
+
 		$recordsTotal = QueryBuilder::copyWithoutFields($qb)
 			->field('COUNT(id)', 'cnt')
 			->where($dataTable->buildCountingCondition($qb->getWhere()))
@@ -98,7 +98,7 @@ class ManagementRepository
 			$qb->where($dataTable->buildFetchingCondition($qb->getWhere()))->fetchAll($this->conn)
 		);
 	}
-	
+
 	/**
 	 * @return Channel
 	 */
@@ -106,14 +106,14 @@ class ManagementRepository
 	{
 		$this->transaction->requestTransaction();
 		$item = Channel::fetchByProject($this->conn, $id, $this->project);
-		
+
 		if(false === $item) {
 			$this->transaction->requestRollback();
 			throw new ItemNotFoundException('The specified item has not been found.', $id);
 		}
 		return $item;
 	}
-	
+
 	public function insert(Channel $item)
 	{
 		$this->transaction->requestTransaction();
@@ -124,7 +124,7 @@ class ManagementRepository
 			throw $ex;
 		}
 	}
-	
+
 	public function update(Channel $item)
 	{
 		$this->transaction->requestTransaction();
@@ -135,7 +135,7 @@ class ManagementRepository
 			throw $ex;
 		}
 	}
-	
+
 	public function remove(Channel $item)
 	{
 		$this->transaction->requestTransaction();

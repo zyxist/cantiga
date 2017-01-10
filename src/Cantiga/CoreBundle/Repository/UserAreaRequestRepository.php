@@ -27,7 +27,7 @@ use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Exception\ModelException;
 use Cantiga\Metamodel\Form\EntityTransformerInterface;
-use Cantiga\Metamodel\QueryBuilder;
+use Cantiga\Components\Data\Sql\QueryBuilder;
 use Cantiga\Metamodel\TimeFormatterInterface;
 use Cantiga\Metamodel\Transaction;
 use Doctrine\DBAL\Connection;
@@ -38,7 +38,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 class UserAreaRequestRepository implements EntityTransformerInterface
 {
 	/**
-	 * @var Connection 
+	 * @var Connection
 	 */
 	private $conn;
 	/**
@@ -57,7 +57,7 @@ class UserAreaRequestRepository implements EntityTransformerInterface
 	 * @var TimeFormatterInterface
 	 */
 	private $timeFormatter;
-	
+
 	public function __construct(Connection $conn, Transaction $transaction, EventDispatcherInterface $eventDispatcher, TimeFormatterInterface $timeFormatter, TokenStorageInterface $tokenStorage)
 	{
 		$this->conn = $conn;
@@ -66,7 +66,7 @@ class UserAreaRequestRepository implements EntityTransformerInterface
 		$this->tokenStorage = $tokenStorage;
 		$this->timeFormatter = $timeFormatter;
 	}
-	
+
 	public function findUserRequests()
 	{
 		$stmt = $this->conn->prepare('SELECT r.`id`, p.`name` AS `projectName`, r.`name`, r.`createdAt`, r.`lastUpdatedAt`, r.`status`, r.`commentNum` '
@@ -75,18 +75,18 @@ class UserAreaRequestRepository implements EntityTransformerInterface
 			. 'WHERE r.`requestorId` = :id AND p.`archived` = 0 ORDER BY p.`id` DESC, r.`status`');
 		$stmt->bindValue(':id', $this->tokenStorage->getToken()->getUser()->getId());
 		$stmt->execute();
-		
+
 		$results = array();
 		while($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 			$row['statusLabel'] = AreaRequest::statusLabel($row['status']);
 			$row['statusText'] = AreaRequest::statusText($row['status']);
-			
+
 			$results[] = $row;
 		}
 		$stmt->closeCursor();
 		return $results;
 	}
-	
+
 	/**
 	 * @return DataTable
 	 */
@@ -97,14 +97,14 @@ class UserAreaRequestRepository implements EntityTransformerInterface
 			->searchableColumn('name', 'i.name');
 		return $dt;
 	}
-	
+
 	public function listData(DataTable $dataTable)
 	{
 		$qb = QueryBuilder::select()
 			->field('i.id', 'id')
 			->field('i.name', 'name')
-			->from(CoreTables::AREA_REQUEST_TBL, 'i');	
-		
+			->from(CoreTables::AREA_REQUEST_TBL, 'i');
+
 		$recordsTotal = QueryBuilder::copyWithoutFields($qb)
 			->field('COUNT(id)', 'cnt')
 			->where($dataTable->buildCountingCondition($qb->getWhere()))
@@ -121,7 +121,7 @@ class UserAreaRequestRepository implements EntityTransformerInterface
 			$qb->where($dataTable->buildFetchingCondition($qb->getWhere()))->fetchAll($this->conn)
 		);
 	}
-	
+
 	/**
 	 * @return AreaRequest
 	 */
@@ -135,7 +135,7 @@ class UserAreaRequestRepository implements EntityTransformerInterface
 		}
 		return $item;
 	}
-	
+
 	public function getFeedback(AreaRequest $item)
 	{
 		$this->transaction->requestTransaction();
@@ -150,7 +150,7 @@ class UserAreaRequestRepository implements EntityTransformerInterface
 			throw $ex;
 		}
 	}
-	
+
 	public function update(AreaRequest $item)
 	{
 		$this->transaction->requestTransaction();
@@ -162,10 +162,10 @@ class UserAreaRequestRepository implements EntityTransformerInterface
 			throw $exception;
 		}
 	}
-	
+
 	/**
 	 * Fetches a project, where the area registration is currently possible.
-	 * 
+	 *
 	 * @param int $id Project ID
 	 * @return Project
 	 * @throws Cantiga\CoreBundle\Repository\Exception
@@ -185,7 +185,7 @@ class UserAreaRequestRepository implements EntityTransformerInterface
 			throw $exception;
 		}
 	}
-	
+
 	public function getAvailableProjects()
 	{
 		$stmt = $this->conn->query('SELECT `id`, `name`, `description` FROM `'.CoreTables::PROJECT_TBL.'` WHERE `archived` = 0 AND `areasAllowed` = 1 AND `areaRegistrationAllowed` = 1 ORDER BY `name`');
@@ -196,10 +196,10 @@ class UserAreaRequestRepository implements EntityTransformerInterface
 		$stmt->closeCursor();
 		return $result;
 	}
-	
+
 	/**
 	 * Sends a request for the creation of the new area.
-	 * 
+	 *
 	 * @param AreaRequest $request
 	 */
 	public function insert(AreaRequest $request)
@@ -215,7 +215,7 @@ class UserAreaRequestRepository implements EntityTransformerInterface
 			throw $ex;
 		}
 	}
-	
+
 	public function remove(AreaRequest $item)
 	{
 		$this->transaction->requestTransaction();

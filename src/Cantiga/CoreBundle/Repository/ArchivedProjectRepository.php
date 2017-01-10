@@ -25,15 +25,15 @@ use Cantiga\CoreBundle\Entity\Project;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Form\EntityTransformerInterface;
-use Cantiga\Metamodel\QueryBuilder;
-use Cantiga\Metamodel\QueryClause;
+use Cantiga\Components\Data\Sql\QueryBuilder;
+use Cantiga\Components\Data\Sql\QueryClause;
 use Cantiga\Metamodel\TimeFormatterInterface;
 use Cantiga\Metamodel\Transaction;
 
 class ArchivedProjectRepository implements EntityTransformerInterface
 {
 	/**
-	 * @var Connection 
+	 * @var Connection
 	 */
 	private $conn;
 	/**
@@ -41,17 +41,17 @@ class ArchivedProjectRepository implements EntityTransformerInterface
 	 */
 	private $transaction;
 	/**
-	 * @var TimeFormatterInterface 
+	 * @var TimeFormatterInterface
 	 */
 	private $timeFormatter;
-	
+
 	public function __construct(Connection $conn, Transaction $transaction, TimeFormatterInterface $timeFormatter)
 	{
 		$this->conn = $conn;
 		$this->transaction = $transaction;
 		$this->timeFormatter = $timeFormatter;
 	}
-	
+
 	/**
 	 * @return DataTable
 	 */
@@ -62,7 +62,7 @@ class ArchivedProjectRepository implements EntityTransformerInterface
 			->searchableColumn('name', 'i.name');
 		return $dt;
 	}
-	
+
 	public function listData(DataTable $dataTable)
 	{
 		$qb = QueryBuilder::select()
@@ -70,7 +70,7 @@ class ArchivedProjectRepository implements EntityTransformerInterface
 			->field('i.name', 'name')
 			->from(CoreTables::PROJECT_TBL, 'i')
 			->where(QueryClause::clause('i.archived = 1'));
-		
+
 		$recordsTotal = QueryBuilder::copyWithoutFields($qb)
 			->field('COUNT(id)', 'cnt')
 			->where($dataTable->buildCountingCondition($qb->getWhere()))
@@ -87,7 +87,7 @@ class ArchivedProjectRepository implements EntityTransformerInterface
 			$qb->where($dataTable->buildFetchingCondition($qb->getWhere()))->fetchAll($this->conn)
 		);
 	}
-	
+
 	public function getItem($id): Project
 	{
 		$this->transaction->requestTransaction();
@@ -112,7 +112,7 @@ class ArchivedProjectRepository implements EntityTransformerInterface
 	{
 		return $entity->getId();
 	}
-	
+
 	public function getFormChoices()
 	{
 		$this->transaction->requestTransaction();

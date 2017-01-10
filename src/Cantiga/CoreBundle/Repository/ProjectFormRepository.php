@@ -30,7 +30,7 @@ use Cantiga\Metamodel\CustomForm\CustomFormBuilderInterface;
 use Cantiga\Metamodel\CustomForm\CustomFormModel;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
-use Cantiga\Metamodel\QueryBuilder;
+use Cantiga\Components\Data\Sql\QueryBuilder;
 use Cantiga\Metamodel\Transaction;
 
 /**
@@ -42,7 +42,7 @@ use Cantiga\Metamodel\Transaction;
 class ProjectFormRepository
 {
 	/**
-	 * @var Connection 
+	 * @var Connection
 	 */
 	private $conn;
 	/**
@@ -53,14 +53,14 @@ class ProjectFormRepository
 	 * @var CustomFormBuilderInterface
 	 */
 	private $customFormBuilder;
-	
+
 	public function __construct(Connection $conn, Transaction $transaction, CustomFormBuilderInterface $customFormBuilder)
 	{
 		$this->conn = $conn;
 		$this->transaction = $transaction;
 		$this->customFormBuilder = $customFormBuilder;
 	}
-	
+
 	/**
 	 * @return DataTable
 	 */
@@ -74,7 +74,7 @@ class ProjectFormRepository
 			->column('lastVersion', 'i.lastVersion');
 		return $dt;
 	}
-	
+
 	public function listData(DataTable $dataTable)
 	{
 		$qb = QueryBuilder::select()
@@ -83,8 +83,8 @@ class ProjectFormRepository
 			->field('i.title', 'title')
 			->field('i.locale', 'locale')
 			->field('i.lastVersion', 'lastVersion')
-			->from(CoreTables::FORM_TBL, 'i');	
-		
+			->from(CoreTables::FORM_TBL, 'i');
+
 		$recordsTotal = QueryBuilder::copyWithoutFields($qb)
 			->field('COUNT(id)', 'cnt')
 			->where($dataTable->buildCountingCondition($qb->getWhere()))
@@ -101,7 +101,7 @@ class ProjectFormRepository
 			$qb->where($dataTable->buildFetchingCondition($qb->getWhere()))->fetchAll($this->conn)
 		);
 	}
-	
+
 	/**
 	 * @return AppText
 	 */
@@ -115,11 +115,11 @@ class ProjectFormRepository
 		}
 		return $item;
 	}
-	
+
 	/**
 	 * Fetches the custom form metadata associated with the given place, from the given project.
 	 * The metadata are located by the locale settings specified in the request.
-	 * 
+	 *
 	 * @param Project $project Project to load the form from
 	 * @param string $place Name of the place, where the text is shown
 	 * @param Cantiga\CoreBundle\Repository\Request $request Request is used to obtain the locale
@@ -140,11 +140,11 @@ class ProjectFormRepository
 			throw $exception;
 		}
 	}
-	
+
 	/**
 	 * Fetches the custom form model associated with the given place, from the given project.
 	 * The metadata are located by the locale settings specified in the request.
-	 * 
+	 *
 	 * @param Project $project Project to load the form from
 	 * @param string $place Name of the place, where the text is shown
 	 * @param Cantiga\CoreBundle\Repository\Request $request Request is used to obtain the locale
@@ -154,12 +154,12 @@ class ProjectFormRepository
 	public function getFormModel(Project $project, $place, Request $request)
 	{
 		$projectForm = $this->getForm($project, $place, $request);
-		
+
 		$model = new CustomFormModel($projectForm);
 		$this->customFormBuilder->buildFormModel($model, $projectForm->getContent());
 		return $model;
 	}
-	
+
 	public function insert(ProjectForm $item)
 	{
 		$this->transaction->requestTransaction();
@@ -169,7 +169,7 @@ class ProjectFormRepository
 			$this->transaction->requestRollback();
 		}
 	}
-	
+
 	public function update(ProjectForm $item)
 	{
 		$this->transaction->requestTransaction();
@@ -179,7 +179,7 @@ class ProjectFormRepository
 			$this->transaction->requestRollback();
 		}
 	}
-	
+
 	public function remove(ProjectForm $item)
 	{
 		$this->transaction->requestTransaction();
@@ -189,7 +189,7 @@ class ProjectFormRepository
 			$this->transaction->requestRollback();
 		}
 	}
-	
+
 	public function getFormChoices()
 	{
 		$this->transaction->requestTransaction();

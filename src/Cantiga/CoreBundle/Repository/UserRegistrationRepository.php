@@ -28,7 +28,7 @@ use Cantiga\CoreBundle\Event\UserRegistrationEvent;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Form\EntityTransformerInterface;
-use Cantiga\Metamodel\QueryBuilder;
+use Cantiga\Components\Data\Sql\QueryBuilder;
 use Cantiga\Metamodel\TimeFormatterInterface;
 use Cantiga\Metamodel\Transaction;
 use Doctrine\DBAL\Connection;
@@ -38,9 +38,9 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class UserRegistrationRepository implements EntityTransformerInterface
 {
 	const PRUNE_PERIOD = 2592000; // 30 days
-	
+
 	/**
-	 * @var Connection 
+	 * @var Connection
 	 */
 	private $conn;
 	/**
@@ -56,7 +56,7 @@ class UserRegistrationRepository implements EntityTransformerInterface
 	 */
 	private $timeFormatter;
 	private $encoderFactory;
-	
+
 	public function __construct(Connection $conn, Transaction $transaction, EventDispatcherInterface $eventDispatcher, $encoderFactory, TimeFormatterInterface $timeFormatter)
 	{
 		$this->conn = $conn;
@@ -65,7 +65,7 @@ class UserRegistrationRepository implements EntityTransformerInterface
 		$this->encoderFactory = $encoderFactory;
 		$this->timeFormatter = $timeFormatter;
 	}
-	
+
 	/**
 	 * @return DataTable
 	 */
@@ -79,7 +79,7 @@ class UserRegistrationRepository implements EntityTransformerInterface
 			->column('requestIp', 'i.requestIp');
 		return $dt;
 	}
-	
+
 	public function listData(DataTable $dataTable)
 	{
 		$qb = QueryBuilder::select()
@@ -88,8 +88,8 @@ class UserRegistrationRepository implements EntityTransformerInterface
 			->field('i.login', 'login')
 			->field('i.requestTime', 'requestTime')
 			->field('i.requestIp', 'requestIp')
-			->from(CoreTables::USER_REGISTRATION_TBL, 'i');	
-		
+			->from(CoreTables::USER_REGISTRATION_TBL, 'i');
+
 		$recordsTotal = QueryBuilder::copyWithoutFields($qb)
 			->field('COUNT(id)', 'cnt')
 			->where($dataTable->buildCountingCondition($qb->getWhere()))
@@ -98,8 +98,8 @@ class UserRegistrationRepository implements EntityTransformerInterface
 			->field('COUNT(id)', 'cnt')
 			->where($dataTable->buildFetchingCondition($qb->getWhere()))
 			->fetchCell($this->conn);
-		
-		$qb->postprocess(function(array $row) { 
+
+		$qb->postprocess(function(array $row) {
 			$row['requestTimeFormatted'] = $this->timeFormatter->ago($row['requestTime']);
 			$row['requestIpFormatted'] = long2ip($row['requestIp']);
 			return $row;
@@ -112,7 +112,7 @@ class UserRegistrationRepository implements EntityTransformerInterface
 			$qb->where($dataTable->buildFetchingCondition($qb->getWhere()))->fetchAll($this->conn)
 		);
 	}
-	
+
 	/**
 	 * @return UserRegistration
 	 */
@@ -123,7 +123,7 @@ class UserRegistrationRepository implements EntityTransformerInterface
 			. 'FROM `'.CoreTables::USER_REGISTRATION_TBL.'` r '
 			. 'INNER JOIN `'.CoreTables::LANGUAGE_TBL.'` l ON l.`id` = r.`languageId` '
 			. 'WHERE r.`id` = :id', [':id' => $id]);
-		
+
 		if(false === $data) {
 			$this->transaction->requestRollback();
 			throw new ItemNotFoundException('The specified item has not been found.', $id);
@@ -132,7 +132,7 @@ class UserRegistrationRepository implements EntityTransformerInterface
 		$item->setLanguage(Language::fromArray($data, 'language'));
 		return $item;
 	}
-	
+
 	public function register(UserRegistration $item)
 	{
 		$this->transaction->requestTransaction();
@@ -145,7 +145,7 @@ class UserRegistrationRepository implements EntityTransformerInterface
 			throw $exception;
 		}
 	}
-	
+
 	public function activate($id, $provisionKey)
 	{
 		try {
@@ -159,7 +159,7 @@ class UserRegistrationRepository implements EntityTransformerInterface
 			throw $exception;
 		}
 	}
-	
+
 	public function remove(UserRegistration $item)
 	{
 		$this->transaction->requestTransaction();
@@ -170,7 +170,7 @@ class UserRegistrationRepository implements EntityTransformerInterface
 			throw $exception;
 		}
 	}
-	
+
 	public function pruneOld()
 	{
 		$this->transaction->requestTransaction();
@@ -182,7 +182,7 @@ class UserRegistrationRepository implements EntityTransformerInterface
 			throw $exception;
 		}
 	}
-	
+
 	public function getFormChoices()
 	{
 		$this->transaction->requestTransaction();

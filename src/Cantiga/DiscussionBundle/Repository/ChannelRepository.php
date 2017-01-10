@@ -26,14 +26,14 @@ use Cantiga\CoreBundle\Entity\User;
 use Cantiga\DiscussionBundle\Database\DiscussionAdapter;
 use Cantiga\DiscussionBundle\Entity\Channel;
 use Cantiga\DiscussionBundle\Entity\Subchannel;
-use Cantiga\Components\Hierarchy\MembershipEntityInterface;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Transaction;
+use Exception;
 
 class ChannelRepository
 {
 	/**
-	 * @var DiscussionAdapter 
+	 * @var DiscussionAdapter
 	 */
 	private $adapter;
 	/**
@@ -44,18 +44,18 @@ class ChannelRepository
 	 * @var Project
 	 */
 	private $project;
-	
+
 	public function __construct(DiscussionAdapter $adapter, Transaction $transaction)
 	{
 		$this->adapter = $adapter;
 		$this->transaction = $transaction;
 	}
-	
+
 	public function setProject(Project $project)
 	{
 		$this->project = $project;
 	}
-	
+
 	public function getItem(int $id): Channel
 	{
 		$this->transaction->requestTransaction();
@@ -66,7 +66,7 @@ class ChannelRepository
 		}
 		return $item;
 	}
-	
+
 	public function getSubchannel(int $channelId, HierarchicalInterface $context): Subchannel
 	{
 		$this->transaction->requestTransaction();
@@ -74,7 +74,7 @@ class ChannelRepository
 			$channel = Channel::fetchByProject($this->adapter->getConnection(), $channelId, $this->project);
 			$subchannel = Subchannel::lazilyFetchByChannel($this->adapter, $channel, $context);
 			if (empty($subchannel)) {
-				throw new ItemNotFoundException('The specified item has not been found.', $channelId); 
+				throw new ItemNotFoundException('The specified item has not been found.', $channelId);
 			}
 			return $subchannel;
 		} catch (Exception $ex) {
@@ -82,18 +82,18 @@ class ChannelRepository
 			throw $ex;
 		}
 	}
-	
+
 	public function publish(Subchannel $subchannel, $content, User $user, HierarchicalInterface $context)
 	{
 		$this->transaction->requestTransaction();
 		try {
-			return $subchannel->publish($this->adapter, $content, $user, $context);			
+			return $subchannel->publish($this->adapter, $content, $user, $context);
 		} catch (Exception $ex) {
 			$this->transaction->requestRollback();
 			throw $ex;
 		}
 	}
-	
+
 	public function findWorkspaceChannels(HierarchicalInterface $entity): array
 	{
 		$entityIds = [$entity->getPlace()->getId()];

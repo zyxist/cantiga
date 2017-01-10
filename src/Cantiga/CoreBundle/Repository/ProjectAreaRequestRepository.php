@@ -30,8 +30,9 @@ use Cantiga\CoreBundle\Event\CantigaEvents;
 use Cantiga\Metamodel\DataTable;
 use Cantiga\Metamodel\Exception\ItemNotFoundException;
 use Cantiga\Metamodel\Exception\ModelException;
-use Cantiga\Metamodel\QueryBuilder;
-use Cantiga\Metamodel\QueryClause;
+use Cantiga\Components\Data\Sql\QueryBuilder;
+use Cantiga\Components\Data\Sql\QueryClause;
+use Cantiga\Components\Data\Sql\Join;
 use Cantiga\Metamodel\TimeFormatterInterface;
 use Cantiga\Metamodel\Transaction;
 use Cantiga\UserBundle\Entity\ContactData;
@@ -46,7 +47,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 class ProjectAreaRequestRepository
 {
 	/**
-	 * @var Connection 
+	 * @var Connection
 	 */
 	private $conn;
 	/**
@@ -63,14 +64,14 @@ class ProjectAreaRequestRepository
 	 */
 	private $project;
 	/**
-	 * @var EventDispatcherInterface 
+	 * @var EventDispatcherInterface
 	 */
 	private $eventDispatcher;
 	/**
 	 * @var MembershipRoleResolverInterface
 	 */
 	private $resolver;
-	
+
 	public function __construct(Connection $conn, Transaction $transaction, TimeFormatterInterface $timeFormatter, EventDispatcherInterface $eventDispatcher, MembershipRoleResolverInterface $resolver)
 	{
 		$this->conn = $conn;
@@ -79,12 +80,12 @@ class ProjectAreaRequestRepository
 		$this->eventDispatcher = $eventDispatcher;
 		$this->resolver = $resolver;
 	}
-	
+
 	public function setActiveProject(Project $project)
 	{
 		$this->project = $project;
 	}
-	
+
 	public function createDataTable(): DataTable
 	{
 		$dt = new DataTable();
@@ -96,7 +97,7 @@ class ProjectAreaRequestRepository
 			->column('commentNum', 'i.commentNum');
 		return $dt;
 	}
-	
+
 	public function listData(TranslatorInterface $trans, DataTable $dataTable)
 	{
 		$qb = QueryBuilder::select()
@@ -107,14 +108,14 @@ class ProjectAreaRequestRepository
 			->field('i.status', 'status')
 			->field('i.commentNum', 'commentNum')
 			->from(CoreTables::AREA_REQUEST_TBL, 'i')
-			->join(CoreTables::USER_TBL, 'u', QueryClause::clause('u.`id` = i.`requestorId`'))
-			->join(CoreTables::TERRITORY_TBL, 't', QueryClause::clause('t.`id` = i.`territoryId`'))
-			->where(QueryClause::clause('i.projectId = :projectId', ':projectId', $this->project->getId()));	
-		
+			->join(Join::inner(CoreTables::USER_TBL, 'u', QueryClause::clause('u.`id` = i.`requestorId`')))
+			->join(Join::inner(CoreTables::TERRITORY_TBL, 't', QueryClause::clause('t.`id` = i.`territoryId`')))
+			->where(QueryClause::clause('i.projectId = :projectId', ':projectId', $this->project->getId()));
+
 		$countingQuery = QueryBuilder::select()
 			->from(CoreTables::AREA_REQUEST_TBL, 'i')
 			->where(QueryClause::clause('i.projectId = :projectId', ':projectId', $this->project->getId()));
-		
+
 		$recordsTotal = QueryBuilder::copyWithoutFields($countingQuery)
 			->field('COUNT(id)', 'cnt')
 			->where($dataTable->buildCountingCondition($qb->getWhere()))
@@ -137,7 +138,7 @@ class ProjectAreaRequestRepository
 			$qb->where($dataTable->buildFetchingCondition($qb->getWhere()))->fetchAll($this->conn)
 		);
 	}
-	
+
 	public function getItem($id): AreaRequest
 	{
 		$this->transaction->requestTransaction();
@@ -153,7 +154,7 @@ class ProjectAreaRequestRepository
 			throw $exception;
 		}
 	}
-	
+
 	public function getFeedback(AreaRequest $item)
 	{
 		$this->transaction->requestTransaction();
@@ -168,7 +169,7 @@ class ProjectAreaRequestRepository
 			throw $ex;
 		}
 	}
-	
+
 	public function getRecentFeedbackActivity($count)
 	{
 		$this->transaction->requestTransaction();
@@ -196,7 +197,7 @@ class ProjectAreaRequestRepository
 			throw $ex;
 		}
 	}
-	
+
 	public function getRecentRequests($count)
 	{
 		$this->transaction->requestTransaction();
@@ -216,13 +217,13 @@ class ProjectAreaRequestRepository
 			throw $ex;
 		}
 	}
-	
+
 	public function update(AreaRequest $item)
 	{
 		$this->transaction->requestTransaction();
 		$item->update($this->conn);
 	}
-	
+
 	public function remove(AreaRequest $item)
 	{
 		$this->transaction->requestTransaction();
@@ -235,7 +236,7 @@ class ProjectAreaRequestRepository
 			throw $exception;
 		}
 	}
-	
+
 	public function startVerification(AreaRequest $item, User $verifier)
 	{
 		$this->transaction->requestTransaction();
@@ -249,7 +250,7 @@ class ProjectAreaRequestRepository
 			throw $ex;
 		}
 	}
-	
+
 	public function approve(AreaRequest $item)
 	{
 		$this->transaction->requestTransaction();
@@ -265,7 +266,7 @@ class ProjectAreaRequestRepository
 			throw $ex;
 		}
 	}
-	
+
 	public function revoke(AreaRequest $item)
 	{
 		$this->transaction->requestTransaction();
