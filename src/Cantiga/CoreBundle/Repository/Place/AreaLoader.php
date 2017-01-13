@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Cantiga Project. Copyright 2016 Cantiga contributors.
+ * This file is part of Cantiga Project. Copyright 2017 Cantiga contributors.
  *
  * Cantiga Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,12 +29,12 @@ use Doctrine\DBAL\Connection;
 class AreaLoader implements PlaceLoaderInterface
 {
 	private $conn;
-	
+
 	public function __construct(Connection $conn)
 	{
 		$this->conn = $conn;
 	}
-	
+
 	public function loadPlace(PlaceRef $place): HierarchicalInterface
 	{
 		$area = Area::fetchByPlaceRef($this->conn, $place);
@@ -43,7 +43,7 @@ class AreaLoader implements PlaceLoaderInterface
 		}
 		return $area;
 	}
-	
+
 	public function loadPlaceById(int $id): HierarchicalInterface
 	{
 		$area = Area::fetchActive($this->conn, $id);
@@ -52,9 +52,13 @@ class AreaLoader implements PlaceLoaderInterface
 		}
 		return $area;
 	}
-	
-	public function loadPlaceForImport(HierarchicalInterface $currentPlace, CantigaUserRefInterface $member)
+
+	public function loadPlaceForImport(HierarchicalInterface $currentPlace, CantigaUserRefInterface $member): ?HierarchicalInterface
 	{
-		return Area::fetchForImport($this->conn, $currentPlace, $member);
+		$area = Area::fetchForImport($this->conn, $currentPlace, $member);
+		if (false === $area) {
+			return null;
+		}
+		return $area;
 	}
 }

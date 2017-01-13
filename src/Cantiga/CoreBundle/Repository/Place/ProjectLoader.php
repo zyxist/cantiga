@@ -29,12 +29,12 @@ use Doctrine\DBAL\Connection;
 class ProjectLoader implements PlaceLoaderInterface
 {
 	private $conn;
-	
+
 	public function __construct(Connection $conn)
 	{
 		$this->conn = $conn;
 	}
-	
+
 	public function loadPlace(PlaceRef $place): HierarchicalInterface
 	{
 		$project = Project::fetchByPlaceRef($this->conn, $place);
@@ -43,7 +43,7 @@ class ProjectLoader implements PlaceLoaderInterface
 		}
 		return $project;
 	}
-	
+
 	public function loadPlaceById(int $id): HierarchicalInterface
 	{
 		$project = Project::fetchActive($this->conn, $id);
@@ -52,9 +52,13 @@ class ProjectLoader implements PlaceLoaderInterface
 		}
 		return $project;
 	}
-	
-	public function loadPlaceForImport(HierarchicalInterface $currentPlace, CantigaUserRefInterface $member)
+
+	public function loadPlaceForImport(HierarchicalInterface $currentPlace, CantigaUserRefInterface $member): ?HierarchicalInterface
 	{
-		return Project::fetchForImport($this->conn, $currentPlace, $member);
+		$project = Project::fetchForImport($this->conn, $currentPlace, $member);
+		if (false === $project) {
+			return null;
+		}
+		return $group;
 	}
 }

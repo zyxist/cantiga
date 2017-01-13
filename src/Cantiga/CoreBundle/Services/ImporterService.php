@@ -34,7 +34,7 @@ class ImporterService implements ImporterInterface
 	private $membershipStorage;
 	private $tokenStorage;
 	/**
-	 * @var TranslatorInterface 
+	 * @var TranslatorInterface
 	 */
 	private $translator;
 	/**
@@ -45,24 +45,24 @@ class ImporterService implements ImporterInterface
 	 * @var array
 	 */
 	private $cache;
-	
+
 	public function __construct(MembershipStorageInterface $membershipStorage, TokenStorageInterface $tokenStorage, TranslatorInterface $translator)
 	{
 		$this->membershipStorage = $membershipStorage;
 		$this->tokenStorage = $tokenStorage;
 		$this->translator = $translator;
 	}
-	
+
 	public function addPlaceLoader(string $type, PlaceLoaderInterface $loader)
 	{
 		$this->loaders[$type] = $loader;
 	}
-	
+
 	public function getImportLabel(): string
 	{
 		if ($this->membershipStorage->hasMembership()) {
 			$place = $this->loadMatchingPlace($this->membershipStorage->getMembership());
-			if (false !== $place) {
+			if (null !== $place) {
 				$project = $this->getProject($place);
 				return $this->translator->trans('Import from 0', [$project->getName()], 'general');
 			}
@@ -74,14 +74,18 @@ class ImporterService implements ImporterInterface
 	{
 		if ($this->membershipStorage->hasMembership()) {
 			$place = $this->loadMatchingPlace($this->membershipStorage->getMembership());
-			return false !== $place;
+			return null !== $place;
 		}
 		return false;
 	}
-	
+
 	public function getImportSource(): HierarchicalInterface
 	{
-		return $this->loadMatchingPlace($this->membershipStorage->getMembership());
+		$place = $this->loadMatchingPlace($this->membershipStorage->getMembership());
+		if (null === $place) {
+			throw new \LogicException('There is no place to import anything from.');
+		}
+		return $place;
 	}
 
 	public function getImportDestination(): HierarchicalInterface
@@ -95,8 +99,8 @@ class ImporterService implements ImporterInterface
 		$helper->title($pageTitle, $this->getImportLabel());
 		return $helper;
 	}
-	
-	private function getProject(HierarchicalInterface $place): Project
+
+	private function getProject(HierarchicalInterface $place): HierarchicalInterface
 	{
 		if ($place->isRoot()) {
 			return $place;
@@ -112,11 +116,11 @@ class ImporterService implements ImporterInterface
 		if (isset($this->cache[$key])) {
 			return $this->cache[$key];
 		}
-		
+
 		if (!isset($this->loaders[$place->getTypeName()])) {
-			throw new LogicException('Place loader not registered for place type \''.$place->getTypeName().'\'');
+			throw new \LogicException('Place loader not registered for place type \''.$place->getTypeName().'\'');
 		}
-		
+
 		$loader = $this->loaders[$place->getTypeName()];
 		return $this->cache[$key] = $loader->loadPlaceForImport($membership->getPlace(), $this->tokenStorage->getToken()->getUser());
 	}
