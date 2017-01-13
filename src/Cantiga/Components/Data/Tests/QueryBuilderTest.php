@@ -174,6 +174,98 @@ class QueryBuilderTest extends TestCase
 		], $result);
 	}
 
+	public function testFetchAssocWithoutPostprocessing()
+	{
+		// Given
+		$qb = $this->createSimpleQueryBuilder();
+		[$conn, $stmt] = $this->createMockConnection($qb->buildQuery());
+		$stmt->expects($this->once())
+			->method('fetch')
+			->with(\PDO::FETCH_ASSOC)
+			->will($this->returnValue(['id' => 1, 'name' => 'foo']));
+
+		// When
+		$result = $qb->fetchAssoc($conn);
+
+		// Then
+		$this->assertEquals(['id' => 1, 'name' => 'foo'], $result);
+	}
+
+	public function testFetchAssocWithPostprocessing()
+	{
+		// Given
+		$qb = $this->createSimpleQueryBuilder();
+		$qb->postprocess(function(array $row): array {
+			$row['xyz'] = 'modified';
+			return $row;
+		});
+		[$conn, $stmt] = $this->createMockConnection($qb->buildQuery());
+		$stmt->expects($this->once())
+			->method('fetch')
+			->with(\PDO::FETCH_ASSOC)
+			->will($this->returnValue(['id' => 1, 'name' => 'foo']));
+
+		// When
+		$result = $qb->fetchAssoc($conn);
+
+		// Then
+		$this->assertEquals(['id' => 1, 'name' => 'foo', 'xyz' => 'modified'], $result);
+	}
+
+	public function testFetchColumnWithoutPostprocessing()
+	{
+		// Given
+		$qb = $this->createSimpleQueryBuilder();
+		[$conn, $stmt] = $this->createMockConnection($qb->buildQuery());
+		$stmt->expects($this->exactly(3))
+			->method('fetch')
+			->with(\PDO::FETCH_NUM)
+			->will($this->onConsecutiveCalls([0 => 'a'], [0 => 'b'], false));
+
+		// When
+		$result = $qb->fetchColumn($conn);
+
+		// Then
+		$this->assertEquals(['a', 'b'], $result);
+	}
+
+	public function testFetchColumnWithPostprocessing()
+	{
+		// Given
+		$qb = $this->createSimpleQueryBuilder();
+		$qb->postprocess(function($value): string {
+			return $value.'a';
+		});
+		[$conn, $stmt] = $this->createMockConnection($qb->buildQuery());
+		$stmt->expects($this->exactly(3))
+			->method('fetch')
+			->with(\PDO::FETCH_NUM)
+			->will($this->onConsecutiveCalls([0 => 'a'], [0 => 'b'], false));
+
+		// When
+		$result = $qb->fetchColumn($conn);
+
+		// Then
+		$this->assertEquals(['aa', 'ba'], $result);
+	}
+
+	public function testFetchCell()
+	{
+		// Given
+		$qb = $this->createSimpleQueryBuilder();
+		[$conn, $stmt] = $this->createMockConnection($qb->buildQuery());
+		$stmt->expects($this->once())
+			->method('fetch')
+			->with(\PDO::FETCH_NUM)
+			->will($this->returnValue([0 => 42]));
+
+		// When
+		$result = $qb->fetchCell($conn);
+
+		// Then
+		$this->assertEquals(42, $result);
+	}
+
 	private function createMockConnection(string $expectedQuery): array
 	{
 		$conn = $this->getMockBuilder(Connection::class)
