@@ -1,6 +1,9 @@
 cantiga_core_bundle:
     resource: "@CantigaCoreBundle/Resources/config/routing.yml"
     prefix:   /
+cantiga_apptext_bundle:
+    resource: "@CantigaAppTextBundle/Resources/config/routing.yml"
+    prefix:   /
 cantiga_user_bundle:
     resource: "@CantigaUserBundle/Resources/config/routing.yml"
     prefix:   /

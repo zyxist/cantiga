@@ -57,8 +57,8 @@ class GroupMilestoneEditorController extends GroupPageController
 		if ($i === 'current' || !ctype_digit($i)) {
 			$i = $membership->getPlace()->getPlace()->getId();
 		}
-		
-		$text = $this->getTextRepository()->getText(MilestoneTexts::GROUP_MILESTONE_EDITOR_TEXT, $request, $this->getActiveProject());
+
+		$text = $this->getTextHolder()->findText(MilestoneTexts::GROUP_MILESTONE_EDITOR_TEXT, $this->getActiveProject());
 		return $this->render(self::MILESTONE_TEMPLATE, array(
 			'pageTitle' => 'Milestones',
 			'pageSubtitle' => 'View and manage the progress',

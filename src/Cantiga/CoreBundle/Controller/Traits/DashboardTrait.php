@@ -29,7 +29,7 @@ trait DashboardTrait
 	/**
 	 * Finds and processes all the dashboard extensions. Dashboard extensions must implement
 	 * the interface <tt>DashboardExtensionInterface</tt>.
-	 * 
+	 *
 	 * @param string $extensionPoint Name of the extension point
 	 * @return array
 	 */
@@ -41,7 +41,7 @@ trait DashboardTrait
 			$modules[] = 'core';
 			$filter = $filter->withModules($modules);
 		}
-		
+
 		$extensions = $this->getExtensionPoints()->findImplementations($extensionPoint, $filter);
 		if (false === $extensions) {
 			return [];
@@ -51,7 +51,7 @@ trait DashboardTrait
 		});
 		return $extensions;
 	}
-	
+
 	protected function renderExtensions(Request $request, array $extensions)
 	{
 		$project = null;
@@ -67,15 +67,15 @@ trait DashboardTrait
 		}
 		return false;
 	}
-	
+
 	protected function renderHelpPage(Request $request, $route, $pageName)
 	{
 		$textId = $this->findText($pageName);
 		if (null === $textId) {
 			throw $this->createNotFoundException('The specified help page does not exist.');
 		}
-		
-		$text = $this->getTextRepository()->getText($textId, $request);
+
+		$text = $this->getTextHolder()->findText($textId);
 		$pages = $this->getWorkspace()->getHelpPages($this->get('router'));
 		foreach ($pages as &$page) {
 			if ($page['route'] == $pageName) {
@@ -89,7 +89,7 @@ trait DashboardTrait
 			->url($text->getTitle(), $route, ['page' => $route]);
 		return $this->render('CantigaCoreBundle:Components:help-page.html.twig', ['text' => $text, 'pages' => $pages, 'route' => $route]);
 	}
-	
+
 	private function findText(string $route)
 	{
 		foreach ($this->getWorkspace()->getHelpPages() as $page) {

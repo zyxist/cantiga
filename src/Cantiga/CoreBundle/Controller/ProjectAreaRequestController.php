@@ -274,7 +274,7 @@ class ProjectAreaRequestController extends ProjectPageController
 				$textType = CoreTexts::AREA_REQUEST_REVOKED_INFO_TEXT;
 				break;
 		}
-		return $this->getTextRepository()->getTextOrFalse($textType, $request, $this->getActiveProject());
+		return $this->getTextHolder()->findText($textType, $this->getActiveProject());
 	}
 
 }

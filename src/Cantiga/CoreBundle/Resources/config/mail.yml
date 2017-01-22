@@ -10,7 +10,7 @@ parameters:
 services:
     cantiga.mail.db_loader:
         class:     "%mail_db_loader.class%"
-        arguments: ["@database_connection", "@=service('cantiga.locale').getLocale()"]
+        arguments: ["@database_connection", "@=service('cantiga.locale').findLocale()"]
     cantiga.mail.twig_extension:
         class:     "%mail_twig_extension.class%"
         arguments: ["@router", "@cantiga.time", "@translator"]

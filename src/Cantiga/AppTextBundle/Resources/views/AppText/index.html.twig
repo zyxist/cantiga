@@ -3,9 +3,9 @@
 {% block column_list %}
 <tr>
 	<th width="30">#</th>
-	<th width="25%">{{ 'Place' | trans }}</th>
-	<th>{{ 'Title' | trans }}</th>
-	<th width="140">{{ 'Locale' | trans }}</th>
+	<th width="25%">{{ 'Place' | trans([], 'apptext') }}</th>
+	<th>{{ 'Title' | trans([], 'apptext') }}</th>
+	<th width="140">{{ 'Locale' | trans([], 'apptext') }}</th>
 	<th width="120">{{ 'Actions' | trans({}, 'general') }}</th>
 </tr>
 {% endblock %}

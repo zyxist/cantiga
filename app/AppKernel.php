@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Cantiga Project. Copyright 2016 Cantiga contributors.
+ * This file is part of Cantiga Project. Copyright 2016-2017 Cantiga contributors.
  *
  * Cantiga Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Foobar; if not, write to the Free Software
+ * along with Cantiga; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
@@ -34,6 +34,7 @@ class AppKernel extends Kernel
 			new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
 			new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
 			new Cantiga\CoreBundle\CantigaCoreBundle(),
+			new Cantiga\AppTextBundle\CantigaAppTextBundle(),
 			new Cantiga\UserBundle\CantigaUserBundle(),
 			new Cantiga\LinksBundle\CantigaLinksBundle(),
 			new Cantiga\MilestoneBundle\CantigaMilestoneBundle(),

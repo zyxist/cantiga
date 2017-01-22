@@ -93,7 +93,7 @@ trait SummaryTrait
 	protected function performResults($courseInfoPage, $profilePage, Area $area, Request $request)
 	{
 		$repository = $this->get(self::REPOSITORY_NAME);
-		$text = $this->getTextRepository()->getText(CourseTexts::AREA_COURSE_LIST_TEXT, $request);
+		$text = $this->getTextHolder()->findText(CourseTexts::AREA_COURSE_LIST_TEXT);
 		$this->breadcrumbs()->link($area->getName(), $this->crudInfo->getInfoPage(), ['id' => $area->getId(), 'slug' => $this->getSlug()]);
 		return $this->render($this->crudInfo->getTemplateLocation() . 'other-individual-results.html.twig', array(
 				'pageSubtitle' => $this->crudInfo->getPageSubtitle(),

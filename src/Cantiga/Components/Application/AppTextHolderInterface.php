@@ -16,18 +16,21 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
+declare(strict_types=1);
 namespace Cantiga\Components\Application;
+
+use Cantiga\Components\Hierarchy\HierarchicalInterface;
 
 /**
  * API for fetching the application texts that can be displayed in the Cantiga
  * UI. Concrete backends may provide additional features, such as internationalization.
- * 
- * This is an experimental API.
- * 
- * TODO: Add strict type declaration once you get an IDE with PHP7 support.
  */
 interface AppTextHolderInterface
 {
-	public function findText(string $id): AppTextInterface;
+	/**
+	 * Finds the given text in the application text repository. The text may be associated
+	 * with the given place (optional). The method shall always return a value: if the text
+	 * does not exist, a default object shall be returned.
+	 */
+	public function findText(string $id, ?HierarchicalInterface $place = null): AppTextInterface;
 }

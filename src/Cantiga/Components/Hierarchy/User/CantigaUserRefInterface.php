@@ -28,5 +28,5 @@ use Cantiga\Metamodel\Capabilities\IdentifiableInterface;
 interface CantigaUserRefInterface extends IdentifiableInterface
 {
 	public function getName(): string;
-	public function getAvatar();
+	public function getAvatar(): ?string;
 }

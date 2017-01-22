@@ -22,22 +22,22 @@
 						<table class="table table-hover">
 							<tbody>
 								<tr>
-									<td width="30%">{{ 'Title' | trans }}</td>
+									<td width="30%">{{ 'Title' | trans([], 'apptext') }}</td>
 									<td>{{ item.title }}</td>
 								</tr>
 								<tr>
-									<td width="30%">{{ 'Place' | trans }}</td>
+									<td width="30%">{{ 'Place' | trans([], 'apptext') }}</td>
 									<td>{{ item.place }}</td>
 								</tr>
 								<tr>
-									<td width="30%">{{ 'Locale' | trans }}</td>
+									<td width="30%">{{ 'Locale' | trans([], 'apptext') }}</td>
 									<td>{{ item.locale }}</td>
 								</tr>
 							</tbody>
 						</table>
 					</div>
 					<div class="col-md-7 col-xs-12">
-						<h4>{{ 'Text content' | trans }}</h4>
+						<h4>{{ 'Text content' | trans([], 'apptext') }}</h4>
 						{{ item.content | raw }}
 					</div>
 				</div>

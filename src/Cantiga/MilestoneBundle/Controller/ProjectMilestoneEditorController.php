@@ -58,7 +58,7 @@ class ProjectMilestoneEditorController extends ProjectPageController
 			$i = $membership->getPlace()->getPlace()->getId();
 		}
 
-		$text = $this->getTextRepository()->getText(MilestoneTexts::PROJECT_MILESTONE_EDITOR_TEXT, $request, $this->getActiveProject());
+		$text = $this->getTextHolder()->findText(MilestoneTexts::PROJECT_MILESTONE_EDITOR_TEXT, $this->getActiveProject());
 		return $this->render(self::MILESTONE_TEMPLATE, array(
 			'pageTitle' => 'Milestones',
 			'pageSubtitle' => 'View and manage the progress',

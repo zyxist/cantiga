@@ -16,31 +16,32 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-namespace Cantiga\Metamodel;
+declare(strict_types=1);
+namespace Cantiga\Components\Application;
 
-/**
- * Keeps the information about the current locale, so that the services do not have
- * to depend on requests, or be preloaded without any need just to set the locale.
- *
- * @author Tomasz Jędrzejewski
- */
-class LocaleProvider
+interface LocaleProviderInterface
 {
-	private $locale;
-	
-	public function __construct($fallbackLocale)
-	{
-		$this->locale = $fallbackLocale;
-	}
-	
-	public function getLocale()
-	{
-		return $this->locale;
-	}
+	/**
+	 * Checks whether the locale is already known.
+	 *
+	 * @return bool
+	 */
+	public function isLocaleKnown(): bool;
 
-	public function setLocale($locale)
-	{
-		$this->locale = $locale;
-		return $this;
-	}
+	/**
+	 * Returns the current locale, if it is already know. If the locale is not known,
+	 * the fallback locale is returned.
+	 *
+	 * @return string Current locale
+	 */
+	public function findLocale(): string;
+
+	/**
+	 * Returns the current locale, if it is already know. If the locale is not known, an
+	 * exception is thrown.
+	 *
+	 * @throws \LogicException Locale is not known yet.
+	 * @return string Current locale
+	 */
+	public function findKnownLocale(): string;
 }

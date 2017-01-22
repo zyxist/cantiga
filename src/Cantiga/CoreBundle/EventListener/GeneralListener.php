@@ -21,7 +21,7 @@
 namespace Cantiga\CoreBundle\EventListener;
 
 use Cantiga\CoreBundle\Api\Controller\CantigaController;
-use Cantiga\Metamodel\LocaleProvider;
+use Cantiga\CoreBundle\Services\LocaleProvider;
 use Cantiga\Metamodel\TimeFormatter;
 use Cantiga\Metamodel\Transaction;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -34,9 +34,6 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 use Symfony\Component\Translation\TranslatorInterface;
 
-/**
- * @author Tomasz Jędrzejewski
- */
 class GeneralListener
 {
 
@@ -45,18 +42,18 @@ class GeneralListener
 	const DEF_LAST_LANG_TIME = 2592000; // 30 days
 
 	/**
-	 * @var AuthorizationCheckerInterface 
+	 * @var AuthorizationCheckerInterface
 	 */
 
 	private $authChecker;
 
 	/**
-	 * @var TokenStorageInterface 
+	 * @var TokenStorageInterface
 	 */
 	private $tokenStorage;
 
 	/**
-	 * @var Transaction 
+	 * @var Transaction
 	 */
 	private $transaction;
 
@@ -77,7 +74,7 @@ class GeneralListener
 	 * @var LocaleProvider
 	 */
 	private $localeProvider;
-	
+
 	public function __construct(AuthorizationCheckerInterface $authChecker, TokenStorageInterface $tokenStorage, Transaction $transaction, Session $session, TimeFormatter $timeFormatter, TranslatorInterface $translator, LocaleProvider $localeProvider)
 	{
 		$this->authChecker = $authChecker;
@@ -133,7 +130,7 @@ class GeneralListener
 
 	/**
 	 * Make sure that the transaction is always SOMEHOW closed at the end of the request.
-	 * 
+	 *
 	 * @param FilterResponseEvent $event
 	 */
 	public function onKernelResponse(FilterResponseEvent $event)

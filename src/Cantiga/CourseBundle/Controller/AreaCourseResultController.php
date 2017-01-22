@@ -64,7 +64,7 @@ class AreaCourseResultController extends AreaPageController
 	public function resultsAction(Request $request, Membership $membership)
 	{
 		$repository = $this->get(self::REPOSITORY_NAME);
-		$text = $this->getTextRepository()->getText(CourseTexts::AREA_COURSE_LIST_TEXT, $request);
+		$text = $this->getTextHolder()->findText(CourseTexts::AREA_COURSE_LIST_TEXT);
 		return $this->render($this->crudInfo->getTemplateLocation() . 'area-individual-results.html.twig', array(
 			'pageTitle' => $this->crudInfo->getPageTitle(),
 			'pageSubtitle' => $this->crudInfo->getPageSubtitle(),

@@ -73,7 +73,7 @@
 	<div class="col-md-6 col-xs-12">
 		{{ macro.chat_box('Feedback' | trans, 'feedback') }}
 	</div>
-	{% if custom.text %}
+	{% if custom.text.isPresent() %}
 	<div class="col-md-6 col-xs-12">
 		<div class="box">
 			<div class="box-body">

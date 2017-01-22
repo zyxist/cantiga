@@ -1,0 +1,6 @@
+_project_app_text_controller:
+    resource: "@CantigaAppTextBundle/Controller/ProjectAppTextController.php"
+    type:     annotation
+_admin_app_text_controller:
+    resource: "@CantigaAppTextBundle/Controller/AdminAppTextController.php"
+    type:     annotation

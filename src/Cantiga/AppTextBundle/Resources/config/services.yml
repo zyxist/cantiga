@@ -1,0 +1,27 @@
+imports:
+    - { resource: ../../../../../app/config/parameters.yml }
+
+services:
+    cantiga.apptext.holder:
+        class:     Cantiga\AppTextBundle\Services\AppTextHolder
+        arguments: ["@cantiga.apptext.adapter", "@cantiga.locale"]
+    cantiga.apptext.adapter:
+        class:     Cantiga\AppTextBundle\Database\AppTextAdapter
+        arguments: ["@database_connection"]
+    cantiga.apptext.repo.text:
+        class:     Cantiga\AppTextBundle\Repository\AppTextRepository
+        arguments: ["@database_connection", "@cantiga.transaction"]
+    cantiga.apptext.dashboard.text:
+        class:     Cantiga\AppTextBundle\Extension\DashboardTextExtension
+        arguments: ["@cantiga.apptext.holder", "@templating"]
+        tags:
+            - { name: cantiga.extension, point: core.dashboard.user.central }
+            - { name: cantiga.extension, point: core.dashboard.admin.central }
+            - { name: cantiga.extension, point: core.dashboard.project.right }
+            - { name: cantiga.extension, point: core.dashboard.group.right }
+            - { name: cantiga.extension, point: core.dashboard.area.right }
+    cantiga.apptext.workspace_listener:
+        class: Cantiga\AppTextBundle\EventListener\WorkspaceListener
+        tags:
+            - { name: kernel.event_listener, event: cantiga.workspace.project, method: onProjectWorkspace }
+            - { name: kernel.event_listener, event: cantiga.workspace.admin, method: onAdminWorkspace }

@@ -108,7 +108,7 @@ class UserAreaRequestController extends UserPageController
 				$formModel = $this->getExtensionPoints()
 					->getImplementation(CoreExtensions::AREA_REQUEST_FORM, $item->getProject()->createExtensionPointFilter()->fromSettings($settings, CoreSettings::AREA_REQUEST_FORM)
 				);
-				return ['summary' => $formModel->createSummary(), 'text' => $this->chooseText($item, $request)];
+				return ['summary' => $formModel->createSummary(), 'text' => $this->chooseText($item)];
 			});
 	}
 
@@ -168,7 +168,7 @@ class UserAreaRequestController extends UserPageController
 	{
 		$this->getAreaRequestFlow()->clearSession($request->getSession());
 		$repository = $this->get(self::REPOSITORY_NAME);
-		$text = $this->getTextRepository()->getText(CoreTexts::AREA_REQUEST_CREATION_STEP1_TEXT, $request);
+		$text = $this->getTextHolder()->findText(CoreTexts::AREA_REQUEST_CREATION_STEP1_TEXT);
 		return $this->render($this->crudInfo->getTemplateLocation().'insert-step1.html.twig', array(
 			'text' => $text,
 			'availableProjects' => $repository->getAvailableProjects(),
@@ -198,7 +198,7 @@ class UserAreaRequestController extends UserPageController
 				return $this->redirectToRoute($this->crudInfo->getInsertPage(), ['step' => 3, 'projectId' => $projectId]);
 			}
 
-			$text = $this->getTextRepository()->getText(CoreTexts::AREA_REQUEST_CREATION_STEP2_TEXT, $request, $project);
+			$text = $this->getTextHolder()->findText(CoreTexts::AREA_REQUEST_CREATION_STEP2_TEXT, $project);
 			$projectSpecificText = $settings->get(CoreSettings::AREA_REQUEST_INFO_TEXT)->getValue();
 			return $this->render($this->crudInfo->getTemplateLocation().'insert-step2.html.twig', array(
 				'text' => $text,
@@ -337,7 +337,7 @@ class UserAreaRequestController extends UserPageController
 		return $action->run($this, $id, $request);
 	}
 
-	private function chooseText(AreaRequest $ar, Request $request)
+	private function chooseText(AreaRequest $ar)
 	{
 		switch ($ar->getStatus()) {
 			case AreaRequest::STATUS_NEW:
@@ -353,7 +353,7 @@ class UserAreaRequestController extends UserPageController
 				$textType = CoreTexts::AREA_REQUEST_REVOKED_INFO_TEXT;
 				break;
 		}
-		return $this->getTextRepository()->getTextOrFalse($textType, $request, $ar->getProject());
+		return $this->getTextHolder()->findText($textType, $ar->getProject());
 	}
 
 }

@@ -32,7 +32,7 @@ services:
         class:     "%extensions.class%"
         arguments: ["@service_container"]
     cantiga.locale:
-        class:     "%locale_provider.class%"
+        class:     Cantiga\CoreBundle\Services\LocaleProvider
         arguments: ["%locale%"]
     cantiga.user_provider:
         class:     Cantiga\CoreBundle\Repository\AuthRepository
@@ -126,9 +126,6 @@ services:
     cantiga.core.repo.project_territory:
         class:     Cantiga\CoreBundle\Repository\ProjectTerritoryRepository
         arguments: ["@database_connection", "@cantiga.transaction"]
-    cantiga.core.repo.text:
-        class:     Cantiga\CoreBundle\Repository\AppTextRepository
-        arguments: ["@database_connection", "@cantiga.transaction"]
     cantiga.core.repo.mail:
         class:     Cantiga\CoreBundle\Repository\AppMailRepository
         arguments: ["@database_connection", "@cantiga.transaction"]
@@ -157,15 +154,6 @@ services:
         arguments: ["@database_connection", "@cantiga.core.repo.statistics", "@translator"]
         tags:
             - { name: cantiga.extension, point: core.stats.area }
-    cantiga.core.dashboard.text:
-        class:     Cantiga\CoreBundle\Extension\DashboardTextExtension
-        arguments: ["@cantiga.core.repo.text", "@templating"]
-        tags:
-            - { name: cantiga.extension, point: core.dashboard.user.central }
-            - { name: cantiga.extension, point: core.dashboard.admin.central }
-            - { name: cantiga.extension, point: core.dashboard.project.right }
-            - { name: cantiga.extension, point: core.dashboard.group.right }
-            - { name: cantiga.extension, point: core.dashboard.area.right }
     cantiga.core.dashboard.recent_comments:
         class:     Cantiga\CoreBundle\Extension\DashboardChatExtension
         arguments: ["@cantiga.core.repo.project_area_request", "@templating"]

@@ -54,7 +54,7 @@ class AreaMilestoneEditorController extends AreaPageController
 	 */
 	public function indexAction(Request $request, Membership $membership)
 	{
-		$text = $this->getTextRepository()->getText(MilestoneTexts::AREA_MILESTONE_EDITOR_TEXT, $request, $this->getActiveProject());
+		$text = $this->getTextHolder()->findText(MilestoneTexts::AREA_MILESTONE_EDITOR_TEXT, $this->getActiveProject());
 		return $this->render(self::MILESTONE_TEMPLATE, array(
 			'pageTitle' => 'Milestones',
 			'pageSubtitle' => 'View and manage the progress',

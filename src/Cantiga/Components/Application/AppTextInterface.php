@@ -16,7 +16,7 @@
  * along with Foobar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
+declare(strict_types=1);
 namespace Cantiga\Components\Application;
 
 /**
@@ -27,6 +27,7 @@ namespace Cantiga\Components\Application;
  */
 interface AppTextInterface
 {
-	public function getTitle();
-	public function getContent();
+	public function getTitle(): string;
+	public function getContent(): string;
+	public function isPresent(): bool;
 }

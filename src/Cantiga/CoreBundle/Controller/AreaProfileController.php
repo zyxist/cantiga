@@ -38,12 +38,12 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class AreaProfileController extends AreaPageController
 {
 	const REPOSITORY = 'cantiga.core.repo.area_mgmt';
-	
+
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 		$this->breadcrumbs()->workgroup('area');
 	}
-	
+
 	/**
 	 * @Route("/editor", name="area_profile_editor")
 	 */
@@ -54,10 +54,10 @@ class AreaProfileController extends AreaPageController
 		$repo = $this->get(self::REPOSITORY);
 		$territoryRepo = $this->get('cantiga.core.repo.project_territory');
 		$territoryRepo->setProject($area->getProject());
-		$formModel = $this->extensionPointFromSettings(CoreExtensions::AREA_FORM, CoreSettings::AREA_FORM);		
-		
-		$text = $this->getTextRepository()->getTextOrFalse(CoreTexts::AREA_PROFILE_EDITOR_TEXT, $request, $this->getActiveProject());
-		
+		$formModel = $this->extensionPointFromSettings(CoreExtensions::AREA_FORM, CoreSettings::AREA_FORM);
+
+		$text = $this->getTextHolder()->findText(CoreTexts::AREA_PROFILE_EDITOR_TEXT, $this->getActiveProject());
+
 		$intent = new AreaProfileIntent($area, $repo);
 		$action = new FormAction($intent, AreaProfileForm::class, [
 			'projectSettings' => $this->getProjectSettings(),

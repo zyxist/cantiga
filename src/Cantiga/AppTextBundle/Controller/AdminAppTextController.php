@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of Cantiga Project. Copyright 2016 Cantiga contributors.
+ * This file is part of Cantiga Project. Copyright 2016-2017 Cantiga contributors.
  *
  * Cantiga Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Foobar; if not, write to the Free Software
+ * along with Cantiga; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-namespace Cantiga\CoreBundle\Controller;
+namespace Cantiga\AppTextBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -31,8 +31,8 @@ use Cantiga\CoreBundle\Api\Actions\InsertAction;
 use Cantiga\CoreBundle\Api\Actions\EditAction;
 use Cantiga\CoreBundle\Api\Actions\InfoAction;
 use Cantiga\CoreBundle\Api\Controller\AdminPageController;
-use Cantiga\CoreBundle\Form\AppTextForm;
-use Cantiga\CoreBundle\Entity\AppText;
+use Cantiga\AppTextBundle\Form\AppTextForm;
+use Cantiga\AppTextBundle\Entity\AppText;
 
 /**
  * @Route("/admin/app/text")
@@ -41,7 +41,7 @@ use Cantiga\CoreBundle\Entity\AppText;
 class AdminAppTextController extends AdminPageController
 {
 
-	const REPOSITORY_NAME = 'cantiga.core.repo.text';
+	const REPOSITORY_NAME = 'cantiga.apptext.repo.text';
 
 	/**
 	 * @var CRUDInfo
@@ -51,7 +51,7 @@ class AdminAppTextController extends AdminPageController
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 		$this->crudInfo = $this->newCrudInfo(self::REPOSITORY_NAME)
-			->setTemplateLocation('CantigaCoreBundle:AppText:')
+			->setTemplateLocation('CantigaAppTextBundle:AppText:')
 			->setItemNameProperty('title')
 			->setPageTitle('Application texts')
 			->setPageSubtitle('Manage texts displayed in various places of the application')
@@ -60,10 +60,10 @@ class AdminAppTextController extends AdminPageController
 			->setInsertPage('admin_app_text_insert')
 			->setEditPage('admin_app_text_edit')
 			->setRemovePage('admin_app_text_remove')
-			->setItemCreatedMessage('The text \'0\' has been created.')
-			->setItemUpdatedMessage('The text \'0\' has been updated.')
-			->setItemRemovedMessage('The text \'0\' has been removed.')
-			->setRemoveQuestion('Do you really want to remove \'0\' text?');
+			->setItemCreatedMessage('AppTextCreatedInfoMsg: 0')
+			->setItemUpdatedMessage('AppTextUpdatedInfoMsg: 0')
+			->setItemRemovedMessage('AppTextRemovedInfoMsg: 0')
+			->setRemoveQuestion('AppTextRemoveQuestion: 0');
 
 		$this->breadcrumbs()
 			->workgroup('settings')

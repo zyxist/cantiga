@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Cantiga Project. Copyright 2016 Cantiga contributors.
+ * This file is part of Cantiga Project. Copyright 2016-2017 Cantiga contributors.
  *
  * Cantiga Project is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,40 +13,39 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Foobar; if not, write to the Free Software
+ * along with Cantiga; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
-namespace Cantiga\CoreBundle\Extension;
+namespace Cantiga\AppTextBundle\Extension;
 
+use Cantiga\Components\Application\AppTextHolderInterface;
 use Cantiga\CoreBundle\Api\Controller\CantigaController;
 use Cantiga\CoreBundle\Api\Workspace;
 use Cantiga\CoreBundle\Entity\Project;
-use Cantiga\CoreBundle\Repository\AppTextRepository;
+use Cantiga\CoreBundle\Extension\DashboardExtensionInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Templating\EngineInterface;
 
 /**
  * Displays a custom static text on a dashboard, if such a text is defined in the currently selected language.
- *
- * @author Tomasz Jędrzejewski
  */
 class DashboardTextExtension implements DashboardExtensionInterface
 {
 	/**
-	 * @var AppTextRepository 
+	 * @var AppTextHolderInterface
 	 */
-	private $textRepository;
+	private $textHolder;
 	/**
 	 * @var EngineInterface
 	 */
 	private $templating;
-	
-	public function __construct(AppTextRepository $repository, EngineInterface $templating)
+
+	public function __construct(AppTextHolderInterface $holder, EngineInterface $templating)
 	{
-		$this->textRepository = $repository;
+		$this->textHolder = $holder;
 		$this->templating = $templating;
 	}
-	
+
 	public function getPriority()
 	{
 		return self::PRIORITY_HIGH + 5;
@@ -54,10 +53,10 @@ class DashboardTextExtension implements DashboardExtensionInterface
 
 	public function render(CantigaController $controller, Request $request, Workspace $workspace, Project $project = null)
 	{
-		$text = $this->textRepository->getTextOrFalse('cantiga:dashboard:'.$workspace->getKey(), $request, $project);
-		if (false === $text) {
+		$text = $this->textHolder->findText('cantiga:dashboard:'.$workspace->getKey(), $project);
+		if (!$text->isPresent()) {
 			return '';
 		}
-		return $this->templating->render('CantigaCoreBundle:AppText:dashboard-element.html.twig', ['text' => $text]);
+		return $this->templating->render('CantigaAppTextBundle:AppText:dashboard-element.html.twig', ['text' => $text]);
 	}
 }

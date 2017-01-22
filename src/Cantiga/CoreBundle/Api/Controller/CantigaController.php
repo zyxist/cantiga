@@ -18,6 +18,7 @@
  */
 namespace Cantiga\CoreBundle\Api\Controller;
 
+use Cantiga\Components\Application\AppTextHolderInterface;
 use Cantiga\CoreBundle\Api\Actions\CRUDInfo;
 use Cantiga\CoreBundle\Api\Breadcrumbs;
 use Cantiga\CoreBundle\Api\ExtensionPoints\ExtensionPointFilter;
@@ -46,28 +47,28 @@ class CantigaController extends Controller
 	private $translator;
 	private $breadcrumbs;
 	private $locale;
-	
+
 	/**
 	 * This method will be spawned before any main action in this controller. Can be used for
 	 * setting up something. Cantiga takes care of running it.
-	 * 
+	 *
 	 * @param Request $request
 	 * @param AuthorizationCheckerInterface $authChecker
 	 */
 	public function initialize(Request $request, AuthorizationCheckerInterface $authChecker)
 	{
 	}
-	
+
 	/**
 	 * Without it, the translation won't work as expected.
-	 * 
+	 *
 	 * @param Request $request
 	 */
 	public function setLocale(Request $request)
 	{
 		$this->locale = $request->getLocale();
 	}
-	
+
 	/**
 	 * @return Breadcrumbs
 	 */
@@ -78,15 +79,12 @@ class CantigaController extends Controller
 		}
 		return $this->breadcrumbs;
 	}
-	
-	/**
-	 * @return AppTextRepository
-	 */
-	public function getTextRepository()
+
+	public function getTextHolder(): AppTextHolderInterface
 	{
-		return $this->get('cantiga.core.repo.text');
+		return $this->get('cantiga.apptext.holder');
 	}
-	
+
 	/**
 	 * @return ProjectFormRepository
 	 */
@@ -94,7 +92,7 @@ class CantigaController extends Controller
 	{
 		return $this->get('cantiga.core.forms');
 	}
-	
+
 	/**
 	 * @return ProjectSettings
 	 */
@@ -102,7 +100,7 @@ class CantigaController extends Controller
 	{
 		return $this->get('cantiga.project.settings');
 	}
-	
+
 	/**
 	 * @return ExtensionPointsInterface
 	 */
@@ -110,19 +108,19 @@ class CantigaController extends Controller
 	{
 		return $this->get('cantiga.extensions');
 	}
-	
+
 	/**
 	 * Returns a new instance of data routes, a route builder for data sets that are sent via AJAX
 	 * to the JS code. In this way, we don't have to generate the links in JavaScript, but we get
 	 * ready links there.
-	 * 
+	 *
 	 * @return DataRoutes
 	 */
 	public function dataRoutes()
 	{
 		return new DataRoutes($this->get('router'));
 	}
-	
+
 	public function trans($string, array $args = [], $domain = null)
 	{
 		if (null === $this->translator) {
@@ -130,7 +128,7 @@ class CantigaController extends Controller
 		}
 		return $this->translator->trans($string, $args, $domain, $this->locale);
 	}
-	
+
 	/**
 	 * @return TranslatorInterface
 	 */
@@ -141,11 +139,11 @@ class CantigaController extends Controller
 		}
 		return $this->translator;
 	}
-	
+
 	public function newCrudInfo($repositoryService): CRUDInfo
 	{
 		$info = new CRUDInfo();
-		
+
 		if (is_object($repositoryService)) {
 			$info->setRepository($repositoryService);
 		} else {
@@ -153,22 +151,22 @@ class CantigaController extends Controller
 		}
 		return $info;
 	}
-	
+
 	public function showPageWithMessage($message, $page, array $args = array()): Response
 	{
 		$this->get('session')->getFlashBag()->add('info', $message);
 		return $this->redirect($this->generateUrl($page, $args));
 	}
-	
+
 	public function showPageWithError($message, $page, array $args = array()): Response
 	{
 		$this->get('session')->getFlashBag()->add('error', $message);
 		return $this->redirect($this->generateUrl($page, $args));
 	}
-	
+
 	/**
 	 * Show a page with some message for the user, without redirecting him anywhere.
-	 * 
+	 *
 	 * @param string $title Page title
 	 * @param string $message Message to display
 	 * @return Response
@@ -182,12 +180,12 @@ class CantigaController extends Controller
 			'message' => $message
 		));
 	}
-	
+
 	public function hasRole($role): bool
 	{
 		return $this->get('security.authorization_checker')->isGranted($role) === true;
 	}
-	
+
 	/**
 	 * @return ExtensionPointFilter
 	 */
@@ -195,23 +193,23 @@ class CantigaController extends Controller
 	{
 		return new ExtensionPointFilter();
 	}
-	
+
 	// ----------------------
 	// All the methods below come from the default Symfony controller, but we change
 	// the access to public, like in Symfony 2.x, because a lot of actions rely on this.
 	// Until we find and develop a better way to handle this, let's use the old way.
 	// ----------------------
-	
+
 	public function generateUrl($route, $parameters = array(), $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
 	{
 		return parent::generateUrl($route, $parameters, $referenceType);
 	}
-	
+
 	public function forward($controller, array $path = array(), array $query = array())
 	{
 		return parent::forward($controller, $path, $query);
 	}
-	
+
 	public function redirect($url, $status = 302)
 	{
 		return parent::redirect($url, $status);
@@ -221,77 +219,77 @@ class CantigaController extends Controller
 	{
 		return parent::redirectToRoute($route, $parameters, $status);
 	}
-	
+
 	public function addFlash($type, $message)
 	{
 		return parent::addFlash($type, $message);
 	}
-	
+
 	public function isGranted($attributes, $object = null)
 	{
 		return parent::isGranted($attributes, $object);
 	}
-	
+
 	public function denyAccessUnlessGranted($attributes, $object = null, $message = 'Access Denied.')
 	{
 		return parent::denyAccessUnlessGranted($attributes, $object, $message);
 	}
-	
+
 	public function renderView($view, array $parameters = array())
 	{
 		return parent::renderView($view, $parameters);
 	}
-	
+
 	public function render($view, array $parameters = array(), Response $response = null)
 	{
 		return parent::render($view, $parameters, $response);
 	}
-	
+
 	public function stream($view, array $parameters = array(), StreamedResponse $response = null)
 	{
 		return parent::stream($view, $parameters, $response);
 	}
-	
+
 	public function createNotFoundException($message = 'Not Found', Exception $previous = null)
 	{
 		return parent::createNotFoundException($message, $previous);
 	}
-	
+
 	public function createAccessDeniedException($message = 'Access Denied.', Exception $previous = null)
 	{
 		return parent::createAccessDeniedException($message, $previous);
 	}
-	
+
 	public function createForm($type, $data = null, array $options = array())
 	{
 		return parent::createForm($type, $data, $options);
 	}
-	
+
 	public function createFormBuilder($data = null, array $options = array())
 	{
 		return parent::createFormBuilder($data, $options);
 	}
-	
+
 	public function getUser()
 	{
 		return parent::getUser();
 	}
-	
+
 	public function has($id)
 	{
 		return parent::has($id);
 	}
-	
+
 	public function get($id)
 	{
 		return parent::get($id);
 	}
-	
+
 	public function getParameter($name)
 	{
 		return parent::getParameter($name);
 	}
-	
+
 	public function isCsrfTokenValid($id, $token)
 	{
 		return parent::isCsrfTokenValid($id, $token);

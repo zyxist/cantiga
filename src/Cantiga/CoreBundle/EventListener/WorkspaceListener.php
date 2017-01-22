@@ -49,10 +49,10 @@ class WorkspaceListener implements WorkspaceSourceInterface
 	private $membershipFinder;
 	private $tokenStorage;
 	/**
-	 * @var ProjectSettings 
+	 * @var ProjectSettings
 	 */
 	private $projectSettings;
-	
+
 	public function __construct(AuthorizationCheckerInterface $authChecker, TokenStorageInterface $tokenStorage, MembershipFinderInterface $membershipFinder, ProjectSettings $settings)
 	{
 		$this->authChecker = $authChecker;
@@ -60,7 +60,7 @@ class WorkspaceListener implements WorkspaceSourceInterface
 		$this->projectSettings = $settings;
 		$this->membershipFinder = $membershipFinder;
 	}
-	
+
 	public function onControllerSelected(FilterControllerEvent $event)
 	{
 		if (null !== $this->workspace) {
@@ -74,30 +74,29 @@ class WorkspaceListener implements WorkspaceSourceInterface
 			$membership = $this->membershipFinder->findMembership($this->tokenStorage->getToken()->getUser(), $event->getRequest());
 			$this->workspace = $ctrl->createWorkspace($membership);
 			$this->workspaceController = $ctrl;
-			
+
 			if (!empty($membership)) {
 				$this->projectSettings->setProject($membership->getPlace()->getRootElement());
 			}
 		}
 	}
-	
+
 	public function onAdminWorkspace(WorkspaceEvent $event)
 	{
 		$workspace = $event->getWorkspace();
 		$workspace->addWorkgroup(new Workgroup('access', 'Access settings', 'lock', 1));
 		$workspace->addWorkgroup(new Workgroup('projects', 'Projects', 'lightbulb-o', 2));
 		$workspace->addWorkgroup(new Workgroup('settings', 'Settings', 'wrench', 3));
-		
+
 		$workspace->addWorkItem('access', new WorkItem('admin_user_index', 'Users'));
 		$workspace->addWorkItem('access', new WorkItem('admin_registration_index', 'User registrations'));
-		
+
 		$workspace->addWorkItem('projects', new WorkItem('admin_project_index', 'Projects'));
-		
+
 		$workspace->addWorkItem('settings', new WorkItem('admin_language_index', 'Languages'));
-		$workspace->addWorkItem('settings', new WorkItem('admin_app_text_index', 'Application texts'));
 		$workspace->addWorkItem('settings', new WorkItem('admin_app_mail_index', 'Mail templates'));
 	}
-	
+
 	public function onProjectWorkspace(WorkspaceEvent $event)
 	{
 		$workspace = $event->getWorkspace();
@@ -114,11 +113,11 @@ class WorkspaceListener implements WorkspaceSourceInterface
 		if ($this->authChecker->isGranted('PLACE_MANAGER')) {
 			$workspace->addWorkgroup(new Workgroup('manage', 'Manage', 'wrench', 10));
 		}
-		
+
 		if ($project->getAreasAllowed()) {
 			$workspace->addWorkItem('statistics', new WorkItem('project_stats_area_index', 'Area statistics'));
 		}
-		
+
 		if ($project->getAreasAllowed()) {
 			$workspace->addWorkItem('data', new WorkItem('project_area_request_index', 'Area requests'));
 			$workspace->addWorkItem('data', new WorkItem('area_mgmt_index', 'Areas'));
@@ -126,20 +125,19 @@ class WorkspaceListener implements WorkspaceSourceInterface
 		$workspace->addWorkItem('data', new WorkItem('project_buttons', 'Magic buttons'));
 		$workspace->addWorkItem('data', new WorkItem('group_mgmt_index', 'Groups'));
 		$workspace->addWorkItem('data', new WorkItem('project_group_category_index', 'Group categories'));
-		
+
 		$workspace->addWorkItem('manage', new WorkItem('project_settings_index', 'Settings'));
 		if ($project->getAreasAllowed()) {
 			$workspace->addWorkItem('manage', new WorkItem('project_area_status_index', 'Area status'));
 			$workspace->addWorkItem('manage', new WorkItem('project_territory_index', 'Territories'));
 		}
-		$workspace->addWorkItem('manage', new WorkItem('project_app_text_index', 'Application texts'));
 	}
-	
+
 	public function onGroupWorkspace(WorkspaceEvent $event)
 	{
 		$workspace = $event->getWorkspace();
 		$project = $workspace->getProject();
-		
+
 		$workspace->addWorkgroup(new Workgroup('community', 'Community', 'users', 1));
 		$workspace->addWorkgroup(new Workgroup('summary', 'Summary', 'table', 2));
 		$workspace->addWorkgroup(new Workgroup('data', 'Data', 'database', 3));
@@ -147,7 +145,7 @@ class WorkspaceListener implements WorkspaceSourceInterface
 			$workspace->addWorkItem('data', new WorkItem('area_mgmt_index', 'Areas'));
 		}
 	}
-	
+
 	public function onAreaWorkspace(WorkspaceEvent $event)
 	{
 		$workspace = $event->getWorkspace();
@@ -160,12 +158,12 @@ class WorkspaceListener implements WorkspaceSourceInterface
 		$workspace->addWorkItem('community', new WorkItem('area_my_group', 'My group'));
 		$workspace->addWorkItem('area', new WorkItem('area_profile_editor', 'Profile editor'));
 	}
-	
+
 	public function onUserWorkspace(WorkspaceEvent $event)
 	{
 		$workspace = $event->getWorkspace();
 		$workspace->addWorkgroup(new Workgroup('profile', 'Profile', 'user', 1));
-		
+
 		$workspace->addRootItem(new WorkItem('user_area_request_create', 'Request area', 'thumbs-up'));
 		$workspace->addRootItem(new WorkItem('user_area_request_index', 'Your area requests', 'flag-o'));
 	}

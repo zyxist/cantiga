@@ -34,7 +34,7 @@ abstract class AbstractProfileView implements CantigaUserRefInterface
 	private $contactMail;
 	private $contactTelephone;
 	private $notes;
-	
+
 	public function __construct(array $data)
 	{
 		$this->id = (int) $data['id'] ?? null;
@@ -46,47 +46,47 @@ abstract class AbstractProfileView implements CantigaUserRefInterface
 		$this->contactTelephone = $data['contactTelephone'] ?? null;
 		$this->notes = $data['notes'] ?? null;
 	}
-	
+
 	public function getId(): int
 	{
 		return $this->id;
 	}
-	
+
 	public function getName(): string
 	{
 		return $this->name;
 	}
-	
-	public function getAvatar()
+
+	public function getAvatar(): ?string
 	{
 		return $this->avatar;
 	}
-	
+
 	public function getLastVisit()
 	{
 		return $this->lastVisit;
 	}
-	
+
 	public function getLocation()
 	{
 		return $this->location;
 	}
-	
+
 	public function getContactMail()
 	{
 		return $this->contactMail;
 	}
-	
+
 	public function getContactTelephone()
 	{
 		return $this->contactTelephone;
 	}
-	
+
 	public function getNotes()
 	{
 		return $this->notes;
 	}
-	
+
 	public function asArray(): array
 	{
 		return [

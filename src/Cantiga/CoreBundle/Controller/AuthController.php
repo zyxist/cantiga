@@ -43,7 +43,7 @@ class AuthController extends CantigaController
 	{
 		$session = $request->getSession();
 
-		$text = $this->getTextRepository()->getText(CoreTexts::LOGIN_TEXT, $request);
+		$text = $this->getTextHolder()->findText(CoreTexts::LOGIN_TEXT);
 		$languages = $this->get('cantiga.core.repo.language')->getLanguageCodes();
 
 		if ($request->attributes->has(Security::AUTHENTICATION_ERROR)) {
@@ -169,7 +169,7 @@ class AuthController extends CantigaController
 
 	public function termsAction(Request $request)
 	{
-		$text = $this->getTextRepository()->getText(CoreTexts::TERMS_OF_USE_TEXT, $request);
+		$text = $this->getTextHolder()->findText(CoreTexts::TERMS_OF_USE_TEXT);
 		return $this->render('CantigaCoreBundle:Auth:terms-of-use.html.twig', ['text' => $text]);
 	}
 }

@@ -8,13 +8,13 @@ cantiga_auth_login:
     defaults:
         _localeFromQuery: true
         _controller: CantigaCoreBundle:Auth:login
-    
+
 cantiga_auth_check:
     path:     /auth/check
 
 cantiga_auth_logout:
     path:     /auth/logout
-    
+
 cantiga_auth_register:
     path:     /auth/register
     defaults:
@@ -40,18 +40,18 @@ cantiga_auth_terms:
     defaults:
         _localeFromQuery: true
         _controller: CantigaCoreBundle:Auth:terms
-        
+
 _cantiga_error_controller:
     resource: "@CantigaCoreBundle/Controller/ErrorController.php"
     type:     annotation
-        
+
 _user_dashboard_controller:
     resource: "@CantigaCoreBundle/Controller/UserDashboardController.php"
     type:     annotation
 _user_area_request_controller:
     resource: "@CantigaCoreBundle/Controller/UserAreaRequestController.php"
     type:     annotation
-    
+
 _area_mgmt_controller:
     resource: "@CantigaCoreBundle/Controller/AreaMgmtController.php"
     type:     annotation
@@ -83,14 +83,11 @@ _project_group_category_controller:
 _project_settings_controller:
     resource: "@CantigaCoreBundle/Controller/ProjectSettingsController.php"
     type:     annotation
-_project_area_status_controller:                                                                                                                                                   
-    resource: "@CantigaCoreBundle/Controller/ProjectAreaStatusController.php"                                                                                                      
+_project_area_status_controller:
+    resource: "@CantigaCoreBundle/Controller/ProjectAreaStatusController.php"
     type:     annotation
-_project_territory_controller:                                                                                                                                                   
-    resource: "@CantigaCoreBundle/Controller/ProjectTerritoryController.php"                                                                                                      
-    type:     annotation
-_project_app_text_controller:
-    resource: "@CantigaCoreBundle/Controller/ProjectAppTextController.php"
+_project_territory_controller:
+    resource: "@CantigaCoreBundle/Controller/ProjectTerritoryController.php"
     type:     annotation
 
 _admin_dashboard_controller:
@@ -107,9 +104,6 @@ _admin_language_controller:
     type:     annotation
 _admin_project_controller:
     resource: "@CantigaCoreBundle/Controller/AdminProjectController.php"
-    type:     annotation
-_admin_app_text_controller:
-    resource: "@CantigaCoreBundle/Controller/AdminAppTextController.php"
     type:     annotation
 _admin_app_mail_controller:
     resource: "@CantigaCoreBundle/Controller/AdminAppMailController.php"
