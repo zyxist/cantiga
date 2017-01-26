@@ -22,3 +22,6 @@ cantiga_export_bundle:
 cantiga_discussion_bundle:
     resource: "@CantigaDiscussionBundle/Resources/config/routing.yml"
     prefix:   /
+cantiga_mailing_bundle:
+    resource: "@CantigaMailingBundle/Resources/config/routing.yml"
+    prefix:   /
